@@ -1,30 +1,30 @@
 {
-  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "AAAE0E0E918775B1ACBCB3548F52DAC9EC3204AF",
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
-    "AAAE0E0E918775B1ACBCB3548F52DAC9EC3204AF" : 0,
-    "DC4732A8D0CC983CF520085D709B6EC073C35DBF" : 0
+    "DC4732A8D0CC983CF520085D709B6EC073C35DBF" : 0,
+    "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2" : 0
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "05C815B6-21AD-4782-BD95-485F4D368E84",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
-    "AAAE0E0E918775B1ACBCB3548F52DAC9EC3204AF" : "icymi\/",
-    "DC4732A8D0CC983CF520085D709B6EC073C35DBF" : "New"
+    "DC4732A8D0CC983CF520085D709B6EC073C35DBF" : "New",
+    "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2" : "icymi\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "ICYMI",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
   "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ICYMI.xcodeproj",
   "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
     {
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/freshappflyer\/icymi.git",
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
-      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "AAAE0E0E918775B1ACBCB3548F52DAC9EC3204AF"
-    },
-    {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/olander1985\/collabro_new.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "DC4732A8D0CC983CF520085D709B6EC073C35DBF"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/freshappflyer\/icymi.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2"
     }
   ]
 }
