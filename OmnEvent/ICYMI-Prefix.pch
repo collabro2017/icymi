@@ -1,0 +1,134 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_5_0
+#warning "This project uses features only available in iOS SDK 5.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+    #import <SystemConfiguration/SystemConfiguration.h>
+    #import <MobileCoreServices/MobileCoreServices.h>
+    #import <AssetsLibrary/AssetsLibrary.h>
+    #import <QuartzCore/QuartzCore.h>
+    #import <CoreData/CoreData.h>
+    #import <AVFoundation/AVFoundation.h>
+    #import <Twitter/TWTweetComposeViewController.h>
+    #import <MessageUI/MessageUI.h>
+    #import <CoreMedia/CoreMedia.h>
+    #import <MediaPlayer/MediaPlayer.h>
+
+    #import <Parse/Parse.h>
+    #import <ParseUI/ParseUI.h>
+    #import <ParseCrashReporting/ParseCrashReporting.h>
+    #import <FacebookSDK/FacebookSDK.h>
+    #import <ParseFacebookUtils/PFFacebookUtils.h>
+    #import "MBProgressHUD+Add.h"
+    #import "UIImageView+AFNetworking.h"
+    #import "OMGlobal.h"
+    #import "OMAppDelegate.h"
+    #import "FTTabBarController.h"
+    #import "OMPushServiceManager.h"
+
+
+#endif
+
+// APP ID
+
+#define APP_ID                  @"988376529"
+
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
+// Tab Controller
+
+#define TABController           [((OMAppDelegate *)[UIApplication sharedApplication].delegate) tabBarController]
+#define APP_DELEGATE            (OMAppDelegate *)[UIApplication sharedApplication].delegate
+
+//
+
+#define LOG_IN  @"LoggedIn"
+#define kImageWidth 106
+#define kImageHeight 106
+
+
+//Image Size
+
+#define AVATAR_SIZE                         300.0f
+
+#define POSTIMAGE_SIZE                      1000.0f
+#define THUMBNAIL_SIZE                      300.0f
+
+
+
+//Push notification
+
+#define kShowBadgeOnEvent       @"showBadgeOnEvent"
+
+// Load Data
+
+#define  kLoadFeedData          @"loadFeedData"
+#define  kLoadPhotoData         @"loadPhotoData"
+#define  kLoadEventData         @"loadEventData"
+#define  kLoadCurrentEventData  @"loadCurrentEventData"
+#define  kLoadCurrentPhotoData  @"loadCurrentPhotoData"
+
+#define  kLoadComponentsData    @"loadComponentsData"
+
+#define  kLoadSearchData        @"loadSearchData"
+#define  kLoadFriendData        @"loadFriendData"
+#define  kLoadProfileData       @"loadProfileData"
+
+#define  kReceivedNotification  @"receivedNotification"
+#define  kNotificationFirstViewLoad     @"kNotificationFirstViewLoad"
+#define  kNotificationFirstDetailViewLoad     @"kNotificationFirstDetailViewLoad"
+
+#define  kNotificationKeyboardShow     @"kNotificationKeyboardShow"
+#define  kNotificationKeyboardHide     @"kNotificationKeyboardHide"
+
+
+//TableView Cell
+
+#define         kFeedHeaderCell             @"FeedHeaderCell"
+#define         kFeedImageCell              @"FeedImageCell"
+#define         kFeedControlCell            @"FeedControlCell"
+#define         kFeedCommentCell            @"FeedCommentCell"
+#define         kFeedOtherCommentCell       @"FeedOtherCommentCell"
+#define         kSearchCell                 @"SearchCell"
+#define         kFriendCell                 @"FriendCell"
+#define         kTextCell                   @"TextCell"
+#define         kMediaCell                  @"MediaCell"
+#define         kDetailHeaderCell           @"DetailHeaderCell"
+#define         kDescriptionCell            @"DescriptionCell"
+
+#define         kEventListCell              @"EventListCell"
+#define         kChangeTypeCell             @"ChangeTypeCell"
+#define         kProfileInfoCell            @"ProfileInfoCell"
+#define         kFolderListCell             @"FolderListCell"
+
+
+// Class Names
+
+#define         kClassInstallation          @"Installation"
+#define         kClassUser                  @"User"
+#define         kClassComments              @"Comments"
+#define         kClassEvent                 @"Event"
+#define         kClassEventComment          @"EventComment"
+#define         kClassFollower              @"Follower"
+#define         kClassPost                  @"Post"
+#define         kClassFolder                @"Folder"
+
+//Current User ObjectId
+
+#define         kIDOfCurrentUser            [PFUser currentUser].objectId
+
+#define         USER                        [PFUser currentUser]
+
+// Bio Default Text
+
+#define         kDefaultTextBio             @"Write something here..."

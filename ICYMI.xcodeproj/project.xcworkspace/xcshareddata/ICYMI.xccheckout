@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>05C815B6-21AD-4782-BD95-485F4D368E84</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ICYMI</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>DC4732A8D0CC983CF520085D709B6EC073C35DBF</key>
+		<string>https://bitbucket.org/olander1985/collabro_new.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ICYMI.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>DC4732A8D0CC983CF520085D709B6EC073C35DBF</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://bitbucket.org/olander1985/collabro_new.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>DC4732A8D0CC983CF520085D709B6EC073C35DBF</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DC4732A8D0CC983CF520085D709B6EC073C35DBF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>New</string>
+		</dict>
+	</array>
+</dict>
+</plist>
