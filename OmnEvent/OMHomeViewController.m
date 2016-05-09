@@ -129,15 +129,14 @@
                                         target:nil action:nil];
     negativeSpacer1.width = -6;// it was -6 in iOS 6
 
-    BBBadgeBarButtonItem *changeBtn = [[BBBadgeBarButtonItem alloc] initWithCustomUIButton:changeModeButton];
-//    self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:negativeSpacer1, changeBtn, nil];
+    //BBBadgeBarButtonItem *changeBtn = [[BBBadgeBarButtonItem alloc] initWithCustomUIButton:changeModeButton];
+    //self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:negativeSpacer1, changeBtn, nil];
 
  
     self.refreshControl1 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, collectionViewForFeed.frame.size.width, 100.0f)];
-    
     [self.refreshControl1 addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
-    
     [collectionViewForFeed addSubview:self.refreshControl1];
+    
 //    self.refreshControl2 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, tblForEventFeed.frame.size.width, 100.0f)];
 //    
 //    [self.refreshControl2 addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
@@ -267,15 +266,6 @@
 
 - (void)loadData {
     
-    //Save date inside « lastUpdateLocalDatastore » variable in NSUserDefaults
-    
-//    NSDate* lastUpdatedate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastUpdateLocalDatastore"];
-//    if (!lastUpdatedate) {
-//        lastUpdatedate = [NSDate date];
-//        [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
-//        [[NSUserDefaults standardUserDefaults] synchronize];
-//    }
-    
     arrForFirstArray = [NSMutableArray array];
     
     [MBProgressHUD showMessag:@"Loading..." toView:self.view];
@@ -297,23 +287,23 @@
         } else {
             
             if ([objects count] == 0) {
-                
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 NSLog(@"No Data : Local Query : %@", [mainQuery parseClassName]);
-                //return;
+                return;
             }
             
             [arrForFeed removeAllObjects];
-            
             arrForFirstArray = [objects copy];
             
             process_number = 0;
             
-            //[self newProcessBadge:[arrForFirstArray objectAtIndex:0]];
-            //[self processBadge];
+            [self newProcessBadge];
             
-            NSUInteger i = 0;
+            
+            //NSUInteger i = 0;
             //NSUInteger j = 0;
+            
+            /*
             
             for (PFObject *object in objects) {
                 
@@ -324,12 +314,10 @@
                 if ([object[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] ) {
                     
                     if ([object[@"TagFriends"] containsObject:currentUser.objectId]) {
-                        i++;
+                        //i++;
                         // NSLog(@"user was tagged. %lu", (unsigned long)i);
                         NSLog(@"user was tagged.");
-                    }
-                    else
-                    {
+                    } else {
                         //j++;
                         //NSLog(@"user is me. %lu", (unsigned long)j);
                         //NSLog(@"-------%@", object.objectId);
@@ -348,267 +336,39 @@
                 [collectionViewForFeed reloadData];
             } else {
                 [tblForEventFeed reloadData];
-            }
+            }*/
         }
     }];
-    
-    /*
-    PFQuery *localQuery = [PFQuery queryWithClassName:@"Event"];
-    //[localQuery fromLocalDatastore];
-    [localQuery orderByDescending:@"createdAt"];
-    [localQuery includeKey:@"user"];
-    [localQuery includeKey:@"likeUserArray"];
-    
-    [localQuery findObjectsInBackgroundWithBlock:^(NSArray *localObjects, NSError *error) {
-
-        if (error) {
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-            NSLog(@"Error : Local Query %@ %@", [localQuery parseClassName], error);
-            return;
-        }
-        else
-        {
-            if ([localObjects count] == 0) {
-                NSLog(@"No Data : Local Query : %@", [localQuery parseClassName]);
-                //return;
-            }
-            
-            [arrForFeed removeAllObjects];
-            
-            NSUInteger i = 0;
-            //NSUInteger j = 0;
-            
-            for (PFObject *object in localObjects) {
-                
-                //NSLog(@"-------%@", object.objectId);
-                
-                PFUser *user = (PFUser *)object[@"user"];
-                
-                if ([object[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] ) {
-                    
-                    if ([object[@"TagFriends"] containsObject:currentUser.objectId]) {
-                        i++;
-                        // NSLog(@"user was tagged. %lu", (unsigned long)i);
-                        NSLog(@"user was tagged.");
-                    }
-                    else
-                    {
-                        //j++;
-                        //NSLog(@"user is me. %lu", (unsigned long)j);
-                        //NSLog(@"-------%@", object.objectId);
-                        
-                        NSLog(@"user is me.");
-                    }
-                    
-                    OMSocialEvent *eventObj = (OMSocialEvent *)object;               
-                    [arrForFeed addObject:eventObj];
-                }
-            }
-            
-            if (is_grid) {
-                [collectionViewForFeed reloadData];
-            } else {
-                [tblForEventFeed reloadData];
-            }
-            
-            PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
-            [mainQuery orderByDescending:@"createdAt"];
-            [mainQuery includeKey:@"user"];
-            [mainQuery includeKey:@"likeUserArray"];
-            
-            //Save date inside « lastUpdateLocalDatastore » variable in NSUserDefaults
-            NSDate* lastUpdatedate = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastUpdateLocalDatastore"];
-            if (!lastUpdatedate) {
-                lastUpdatedate = [NSDate date];
-                [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-            }
-            else
-                [mainQuery whereKey:@"updateAt" greaterThanOrEqualTo:lastUpdatedate];
-            
-            [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-
-                if (error == nil) {
-                    
-                    NSLog(@"Success : Network Query %@", [mainQuery parseClassName]);
-                    
-                    for (PFObject *object in objects) {
-                        
-                        PFUser *user = (PFUser *)object[@"user"];
-                        
-                        if ([object[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] ) {
-                            
-                            if ([object[@"TagFriends"] containsObject:currentUser.objectId]) {
-                                NSLog(@"***********user was tagged.-------");
-                            } else {
-                                NSLog(@"**************user is me.-----");
-                            }
-                            
-                            OMSocialEvent *eventObj = (OMSocialEvent *)object;
-                            [arrForFeed addObject:eventObj];
-                        }
-                    }
-                    
-                    //Pin data in Local Datastore
-                    [PFObject pinAllInBackground:objects withName:@"Event"];
-                    
-                    NSDate* lastUpdatedate = [NSDate date];
-                    [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-                    
-                    if (is_grid) {
-                        [collectionViewForFeed reloadData];
-                    } else {
-                        [tblForEventFeed reloadData];
-                    }
-                }
-                else
-                    NSLog(@"Error : Network Query %@", error);
-            }];
-        }
-    }];*/
 }
 
-- (void)processBadge {
+- (void)newProcessBadge {
     
-    NSUInteger i = 0;
+    PFObject *temp_obj = [arrForFirstArray objectAtIndex:process_number];
     
-    process_number = 0;
-    
-    for (PFObject *object in arrForFirstArray) {
-        
-        i++ ;
-        
-        NSLog(@"-------%lu=======%@--------%@", i, object.objectId, object.parseClassName);
-        
-        //NSLog(@"-------%@", object.objectId);
-        
-        PFUser *user = (PFUser *)object[@"user"];
-        
-        if ([object[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] ) {
-            
-            if ([object[@"TagFriends"] containsObject:currentUser.objectId]) {
-                
-                // NSLog(@"user was tagged. %lu", (unsigned long)i);
-                NSLog(@"user was tagged.");
-                
-            } else {
-                //j++;
-                //NSLog(@"user is me. %lu", (unsigned long)j);
-                //NSLog(@"-------%@", object.objectId);
-                
-                NSLog(@"user is me.");
-            }
-            
-            OMSocialEvent *eventObj = (OMSocialEvent *)object;
-            
-            NSString *lastLoadTime_Key = [NSString stringWithFormat:@"%@-lastLoadTime", object.objectId];
-            
-            NSDate* lastLoadTime = [[NSUserDefaults standardUserDefaults] objectForKey:lastLoadTime_Key];
-            if (!lastLoadTime) {
-                lastLoadTime = [NSDate date];
-                [[NSUserDefaults standardUserDefaults] setObject:lastLoadTime forKey:lastLoadTime_Key];
-                [[NSUserDefaults standardUserDefaults] synchronize];
-            }
-            
-            NSDate *postTime = [object updatedAt];
-            
-            NSComparisonResult result = [lastLoadTime compare:postTime];
-            
-            BOOL newEventFlag = NO;
-            
-            if (result == NSOrderedSame || result == NSOrderedAscending){
-                newEventFlag = YES;
-            }
-            
-            PFQuery *temp_mainQuery = [PFQuery queryWithClassName:@"Post"];
-            [temp_mainQuery whereKey:@"targetEvent" equalTo:object];
-            
-            [temp_mainQuery includeKey:@"user"];
-            [temp_mainQuery includeKey:@"commentsArray"];
-            [temp_mainQuery orderByDescending:@"createdAt"];
-            
-            if (!newEventFlag && lastLoadTime)
-                [temp_mainQuery whereKey:@"updateAt" greaterThanOrEqualTo:lastLoadTime];
-            
-            [temp_mainQuery findObjectsInBackgroundWithBlock:^(NSArray *sub_objects, NSError *error) {
-                
-                process_number++;
-                
-                NSLog(@"------j------%lu", process_number);
-                
-                
-                NSLog(@"--------error----------%@", error);
-                //NSLog(@"%@", objects);
-                
-                if (error || !sub_objects) {
-                    
-                    //NSLog(@"--------error----------%@", error);
-                    
-                    eventObj.badgeCount = 0;
-                    [arrForFeed addObject:eventObj];
-                    
-                } else {
-                    
-                    //NSLog(@"--------right----------");
-                    
-                    eventObj.badgeCount = sub_objects.count;
-                    [arrForFeed addObject:eventObj];
-                }
-                
-                //NSLog(@"--------here end----------%lu", arrForFirstArray.count);
-                
-                if (process_number == arrForFirstArray.count){
-                    
-                    NSLog(@"--------here end----------");
-                    
-                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                    
-                    NSDate* lastUpdatedate = [NSDate date];
-                    [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
-                    [[NSUserDefaults standardUserDefaults] synchronize];
-                    
-                    if (is_grid) {
-                        [collectionViewForFeed reloadData];
-                    } else {
-                        [tblForEventFeed reloadData];
-                    }
-                }
-                
-            }];
-        }
-    }
-}
-
-- (void)newProcessBadge:(PFObject *) temp_obj {
+    process_number ++;
     
     PFUser *user = (PFUser *)temp_obj[@"user"];
     
     if ([temp_obj[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] ) {
         
+        /*
         if ([temp_obj[@"TagFriends"] containsObject:currentUser.objectId]) {
-            // NSLog(@"user was tagged. %lu", (unsigned long)i);
-            NSLog(@"user was tagged.");
             
         } else {
-            //j++;
-            //NSLog(@"user is me. %lu", (unsigned long)j);
-            //NSLog(@"-------%@", object.objectId);
             
-            NSLog(@"user is me.");
-        }
+        }*/
         
         OMSocialEvent *eventObj = (OMSocialEvent *)temp_obj;
         
         NSString *lastLoadTime_Key = [NSString stringWithFormat:@"%@-lastLoadTime", temp_obj.objectId];
         
-        NSDate* lastLoadTime = [[NSUserDefaults standardUserDefaults] objectForKey:lastLoadTime_Key];
-        if (!lastLoadTime) {
-            lastLoadTime = [NSDate date];
-            [[NSUserDefaults standardUserDefaults] setObject:lastLoadTime forKey:lastLoadTime_Key];
-            [[NSUserDefaults standardUserDefaults] synchronize];
-        }
+        NSDate *lastLoadTime = [[NSUserDefaults standardUserDefaults] objectForKey:lastLoadTime_Key];
+        
+//        if (!lastLoadTime) {
+//            lastLoadTime = [NSDate date];
+//            [[NSUserDefaults standardUserDefaults] setObject:lastLoadTime forKey:lastLoadTime_Key];
+//            [[NSUserDefaults standardUserDefaults] synchronize];
+//        }
         
         NSDate *postTime = [temp_obj updatedAt];
         
@@ -619,7 +379,6 @@
         if (result == NSOrderedSame || result == NSOrderedAscending){
             newEventFlag = YES;
         }
-        
         
         PFQuery *temp_mainQuery = [PFQuery queryWithClassName:@"Post"];
         [temp_mainQuery whereKey:@"targetEvent" equalTo:temp_obj];
@@ -633,51 +392,55 @@
         
         [temp_mainQuery findObjectsInBackgroundWithBlock:^(NSArray *sub_objects, NSError *error) {
             
-            process_number ++;
-            
-            NSLog(@"------process_number------%lu", process_number);
-            
-            NSLog(@"------process_number------%lu", arrForFirstArray.count);
-            //NSLog(@"%@", objects);
-            
             if (error || !sub_objects) {
-                
-                NSLog(@"--------error----------%@", error);
                 
                 eventObj.badgeCount = 0;
                 [arrForFeed addObject:eventObj];
                 
             } else {
                 
-                //NSLog(@"--------right----------");
+                NSLog(@"--------new object number-------%lu", sub_objects.count);
                 
                 eventObj.badgeCount = sub_objects.count;
                 [arrForFeed addObject:eventObj];
             }
             
-            //NSLog(@"--------here end----------%lu", arrForFirstArray.count);
+            if (is_grid) {
+                [collectionViewForFeed reloadData];
+            } else {
+                [tblForEventFeed reloadData];
+            }
             
-            if (arrForFeed.count == arrForFirstArray.count){
+            if (process_number < arrForFirstArray.count){
                 
-                NSLog(@"--------here end----------");
+                [self newProcessBadge];
+                
+            } else {
                 
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 
                 NSDate* lastUpdatedate = [NSDate date];
                 [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
-                
-                if (is_grid) {
-                    [collectionViewForFeed reloadData];
-                } else {
-                    [tblForEventFeed reloadData];
-                }
-            } else {
-                
-                [self newProcessBadge:[arrForFirstArray objectAtIndex:process_number]];
+               
             }
             
         }];
+    } else {
+        
+        if (process_number < arrForFirstArray.count){
+            
+            [self newProcessBadge];
+            
+        } else {
+            
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+            
+            NSDate* lastUpdatedate = [NSDate date];
+            [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+            
+        }
     }
 }
 
@@ -1366,6 +1129,10 @@
         default:
             break;
     }
+}
+
+- (void)selectDidCancel:(OMTagListViewController *)fsCategoryVC {
+    //[fsCategoryVC.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end

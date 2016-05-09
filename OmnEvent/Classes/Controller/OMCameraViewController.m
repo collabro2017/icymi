@@ -669,7 +669,7 @@
     if (error) {
         NSLog(@": %@", error);
     } else {
-        NSLog(@" %@", fileURL);
+        NSLog(@"++++++++++++++file URL++++++++++++++++++ %@", fileURL);
         NSLog(@": %f", totalDur);
     }
     

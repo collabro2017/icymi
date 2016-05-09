@@ -412,6 +412,7 @@
         case kTypeUploadPost:
         {
             PFObject *post = [PFObject objectWithClassName:@"Post"];
+            
             post[@"user"] = USER;
             post[@"targetEvent"] = curObj;
             post[@"title"]          = lblForTitle.text;
@@ -521,8 +522,10 @@
                     NSLog(@"There IS NO internet connection");
                     
                     [appDel.m_offlinePosts addObject:post];
+                    [appDel.m_offlinePostURLs addObject:_outPutURL];
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
 
                 } else {
                     NSLog(@"There IS internet connection");

@@ -31,6 +31,7 @@ typedef enum {
     kTypeRecordAudio = 0
     
 }kTypeRecord;
+
 @interface OMGlobal : NSObject
 
 + (void)setLogInUserDefault;
@@ -53,4 +54,5 @@ typedef enum {
 + (UIImage *)croppedImage:(UIImage *)originalImage;
 + (UIImage *)thumbnailImageForVideo:(NSURL *)videoURL atTime:(NSTimeInterval)time;
 + (void)removeImage:(NSString *)fileName;
+
 @end

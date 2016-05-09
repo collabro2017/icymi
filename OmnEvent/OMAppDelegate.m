@@ -118,6 +118,7 @@ static BOOL logedOut;
     [self handlePush:launchOptions];
     
     _m_offlinePosts = [[NSMutableArray alloc] init];
+    _m_offlinePostURLs = [[NSMutableArray alloc] init];
     return YES;
 }
 

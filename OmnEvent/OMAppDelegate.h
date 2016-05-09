@@ -22,6 +22,7 @@
 @property (nonatomic, assign) BOOL logOut;
 @property (nonatomic, assign) BOOL m_fLoadingPostView;
 @property (nonatomic, retain) NSMutableArray* m_offlinePosts;
+@property (nonatomic, retain) NSMutableArray* m_offlinePostURLs;
 @property (nonatomic, assign) BOOL network_state;
 
 - (FTTabBarController *)tabBarController;

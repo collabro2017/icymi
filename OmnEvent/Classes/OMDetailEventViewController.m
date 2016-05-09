@@ -60,6 +60,10 @@
     
     NSURL *pdfURL;
     BOOL editable_flag;
+    
+    NSUInteger real_parse_data_num;
+    NSUInteger offline_data_num;
+    NSMutableArray *offlineURLs;
 }
 
 
@@ -89,8 +93,24 @@
         {
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
+            
+            real_parse_data_num = objects.count;
+            
             OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
-            [arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+            //[arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+            
+            offline_data_num = appDel.m_offlinePosts.count;
+            
+            for (NSUInteger i = 0; i < offline_data_num; i ++){
+                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
+                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];          
+                
+                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
+                    [arrForDetail addObject:temp_object];
+                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
+                }
+            }
+            
             [tblForDetailList reloadData];
         }
     }];
@@ -116,6 +136,7 @@
     // Initialize variables
     
     arrForDetail = [NSMutableArray array];
+    offlineURLs = [NSMutableArray array];
     imagePicker = [[UIImagePickerController alloc] init];
     [imagePicker setDelegate:self];
     isVideoAdd = NO;
@@ -219,33 +240,36 @@
     }==============================================================================================================*/
 }
 
-- (void)firstViewLoad
-{
+- (void)firstViewLoad {
+    
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
-- (void)viewWillAppear:(BOOL)animated
-{
+
+- (void)viewWillAppear:(BOOL)animated {
+    
     [super viewWillAppear:animated];
     
     [UIApplication sharedApplication].statusBarOrientation = UIInterfaceOrientationPortrait;
     
     OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-    Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
-    if (networkStatus == NotReachable) {
+    
+    //Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
+    //NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];   
+    
+    appDel.network_state = [[NSUserDefaults standardUserDefaults] boolForKey:@"network_status"];
+    
+    if (appDel.network_state) {
         
-        NSLog(@"There IS NO internet connection");
-        appDel.network_state = NO;
+        NSLog(@"There IS internet connection");
         
-        UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
+        UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
         
     } else {
         
-        NSLog(@"There IS internet connection");
-        appDel.network_state = YES;
+        NSLog(@"There IS NO internet connection");
         
-        UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
+        UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
 }
@@ -306,8 +330,8 @@
     editable_flag = NO;
 }
 
-- (void)initializeControls
-{
+- (void)initializeControls {
+    
     customPickerView = [[UIView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height + 300, self.view.frame.size.width, 250 + 40  )];
     
     rectForPickerView = customPickerView.frame;
@@ -411,8 +435,7 @@
     }];
 }
 
-- (void)loadContents:(NSString* ) postType
-{
+- (void)loadContents:(NSString* ) postType {
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
@@ -431,13 +454,30 @@
         
         if (error || !objects) {
             return;
-        }
-        else
-        {
+        } else {
+            
             [arrForDetail removeAllObjects];
+            [offlineURLs removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
+            
+            real_parse_data_num = objects.count;
+            
             OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
-            [arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+            //[arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+            
+            offline_data_num = appDel.m_offlinePosts.count;
+            
+            for (NSUInteger i = 0; i < offline_data_num; i ++){
+                
+                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
+                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
+                
+                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
+                    [arrForDetail addObject:temp_object];
+                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];                    
+                }
+            }
+            
             [tblForDetailList reloadData];
         }
         
@@ -535,8 +575,14 @@
     
     OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
     
+    
+    NSDate* lastUpdatedate = [NSDate date];
+    [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
+    
     if (networkStatus == NotReachable) {
         
         NSLog(@"There IS NO internet connection");
@@ -567,8 +613,8 @@
             UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
             [btnForNetState setImage:btnImage forState:UIControlStateNormal];
             
-            for(PFObject* post in appDel.m_offlinePosts)
-            {
+            for(PFObject* post in appDel.m_offlinePosts){
+                
                 //Request a background execution task to allow us to finish uploading the photo even if the app is background
                 self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
@@ -576,6 +622,7 @@
                 
                 
                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     if (succeeded) {
                         NSLog(@"Success ---- Post");
@@ -587,9 +634,8 @@
                             
                         }];
                         
-                    }
-                    else
-                    {
+                    } else {
+                        
                         //[OMGlobal showAlertTips:@"Uploading Failed." title:nil];
                         NSLog(@"Error ---- Post = %@", error);
                         
@@ -599,6 +645,9 @@
             }
         }
     }
+    
+    [[NSUserDefaults standardUserDefaults] setBool:appDel.network_state forKey:@"network_status"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
@@ -980,7 +1029,7 @@
             
         default:
         {
-            PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
+            PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];       
          
             if ([tempObj[@"postType"] isEqualToString:@"text"])
             {
@@ -1031,6 +1080,16 @@
                     
                     if (cell == nil) {
                         cell = [[OMMediaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kMediaCell];
+                    }
+                    
+                    //NSLog(@"-------tempObj----------%@", tempObj);
+                    
+                    if (indexPath.section > real_parse_data_num ){
+                        cell.file = (PFFile *)tempObj[@"postFile"];
+                        cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - real_parse_data_num - 1];
+                    } else {
+                        cell.file = nil;
+                        cell.offline_url = nil;
                     }
                     
                     [cell setDelegate:self];
@@ -1203,7 +1262,7 @@
                     PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
                     NSString* strComments =  _obj[@"Comments"];
                     
-                    return [OMGlobal heightForCellWithPost:strComments] + 30;;
+                    return [OMGlobal heightForCellWithPost:strComments] + 30;
                     
                 }
                 

@@ -28,6 +28,7 @@
 - (IBAction)showTableView:(id)sender;
 
 - (IBAction)showLeftMenu:(id)sender;
+
 @property (nonatomic, retain) UIDocumentInteractionController *dic;
 
 @property (nonatomic, strong) NSMutableArray *arrForFeed;

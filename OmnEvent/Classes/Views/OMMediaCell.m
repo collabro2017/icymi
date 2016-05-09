@@ -176,6 +176,7 @@
         button = nil;
         
     }
+    
     if ([imageViewForMedia viewWithTag:11]) {
         
         PCSEQVisualizer *tempEQ = (PCSEQVisualizer *)[imageViewForMedia viewWithTag:11];
@@ -189,18 +190,19 @@
     [_videoPlayerController.view setHidden:YES];
     
     PFFile *postImgFile = (PFFile *)currentObj[@"thumbImage"];
+    
     if (postImgFile) {
         [imageViewForMedia setImageWithURL:[NSURL URLWithString:postImgFile.url] placeholderImage:nil];
-    }
-    else
-    {
+    } else {
        
     }
     
     if ([currentObj[@"postType"] isEqualToString:@"video"]) {
         
         [_videoPlayerController.view setHidden:NO];
+        
         PFFile *videoFile = (PFFile *)currentObj[@"postFile"];
+        
         if (_videoPlayerController) {
             
             [_videoPlayerController.view removeFromSuperview];
@@ -221,8 +223,14 @@
         _videoPlayerController = [[PBJVideoPlayerController alloc] init];
         _videoPlayerController.delegate = self;
         _videoPlayerController.view.frame = imageViewForMedia.frame;
+        
         _videoPlayerController.videoPath = videoFile.url;
-
+        
+        if (_file != nil && _offline_url){
+            NSString *urlString = [_offline_url absoluteString];
+            _videoPlayerController.videoPath = urlString;            
+        }
+        
         [self insertSubview:_videoPlayerController.view aboveSubview:imageViewForMedia];
         
         _playButton = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"play.png"]];
@@ -253,19 +261,23 @@
         //
         //
         //        });
-    }
-    else if ([currentObj[@"postType"] isEqualToString:@"photo"])
-    {
-//        [_btnForVideo setHidden:YES];
+        
+    } else if ([currentObj[@"postType"] isEqualToString:@"photo"]) {
+        
+        //[_btnForVideo setHidden:YES];
         
         [_videoPlayerController.view setHidden:YES];
+        
         if (_videoPlayerController.view) {
-            
             [_videoPlayerController.view removeFromSuperview];
             _videoPlayerController = nil;
-            
-            
         }
+        
+        if (_file != nil){
+            
+            [imageViewForMedia setImage:[UIImage imageWithData:_file.getData]];
+        }
+        
         if (!postImgFile) {
             
             PFFile *postFile = (PFFile *)currentObj[@"postFile"];
@@ -273,15 +285,14 @@
             if (postFile) {
                 
                 [imageViewForMedia setImageWithURL:[NSURL URLWithString:postFile.url]];
+                
             }
-
         }
-       
         
-    }
-    else if ([currentObj[@"postType"] isEqualToString:@"audio"])
-    {
+    } else if ([currentObj[@"postType"] isEqualToString:@"audio"]) {
+        
         [_videoPlayerController.view setHidden:YES];
+        
         if (_videoPlayerController.view) {
             
             [_videoPlayerController.view removeFromSuperview];
@@ -290,11 +301,15 @@
         
         PFFile *thumbImageFile = (PFFile *)currentObj[@"thumbImage"];
         
-        if (thumbImageFile)
-            [imageViewForMedia setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImageFile.url]]]];
-        else
+        if (thumbImageFile){
+            
+            if (thumbImageFile.url != nil) {
+                [imageViewForMedia setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImageFile.url]]]];
+            } else {
+                [imageViewForMedia setImage:[UIImage imageWithData:thumbImageFile.getData]];
+            }
+        } else
             [imageViewForMedia setImage:[UIImage imageNamed:@"layer_audio"]];  ////audio special
-        
         
         btnForPlay = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
         btnForPlay.tag = 10;
@@ -302,7 +317,6 @@
         [btnForPlay setImage:[UIImage imageNamed:@"btn_playaudio"] forState:UIControlStateNormal];
         [self addSubview:btnForPlay];
         [btnForPlay addTarget:self action:@selector(playAudio) forControlEvents:UIControlEventTouchUpInside];
-        
         
         eq = [[PCSEQVisualizer alloc]initWithNumberOfBars:6];
         eq.tag = 11;
@@ -314,42 +328,33 @@
         [imageViewForMedia addSubview:eq];
         [eq setHidden:YES];
 
-    }
-    else
-    {
+    } else {
         
         PFFile *postFile = (PFFile *)currentObj[@"postFile"];
         
         if (postFile) {
-            
             [imageViewForMedia setImageWithURL:[NSURL URLWithString:postFile.url]];
         }
-
         
+        if (_file != nil){
+            [imageViewForMedia setImage:[UIImage imageWithData:_file.getData]];
+        }
     }
     
-    
     //display comment count
-    
     
     if (currentObj[@"commentsUsers"]) {
         
         [btnForCommentCount setTitle:[NSString stringWithFormat:@"%lu",(unsigned long) [currentObj[@"commentsUsers"] count]] forState:UIControlStateNormal];
         
-    }
-    else
+    } else
         [btnForCommentCount setTitle:[NSString stringWithFormat:@"0"] forState:UIControlStateNormal];
-    
-    
     
     //display like status
     
     if (currentObj[@"likers"]) {
         likeCount = [currentObj[@"likers"] count];
-        
-    }
-    else
-    {
+    } else {
         likeCount = 0;
     }
     
@@ -362,48 +367,41 @@
         [likeUserArray addObjectsFromArray:currentObj[@"likers"]];
         [likerArr addObjectsFromArray:currentObj[@"likeUserArray"]];
 
-    }
-    else
+    } else
         [btnForLikeCount setTitle:@"0" forState:UIControlStateNormal];
     
     if (currentObj[@"likers"]) {
     }
+    
     if ([likeUserArray containsObject:USER.objectId]) {
         liked = YES;
-    }
-    else
-    {
+    } else {
         liked = NO;
     }
-    [self setLikeButtonStatus:liked];
     
+    [self setLikeButtonStatus:liked];
 }
 
-- (void)setLikeButtonStatus:(BOOL) _status
-{
+- (void)setLikeButtonStatus:(BOOL) _status {
     
     if (_status) {
         
         liked = YES;
         [btnForLike setImage:[UIImage imageNamed:@"btn_like_selected"] forState:UIControlStateNormal];
         
-    }
-    else
-    {
+    } else {
         liked = NO;
         [btnForLike setImage:[UIImage imageNamed:@"btn_like_unselected"] forState:UIControlStateNormal];
-        
     }
 }
 
-- (void)playVideo
-{
+- (void)playVideo {
     [_videoPlayerController playFromBeginning];
 }
 
 #pragma mark - PBJ Delegate
-- (void)videoPlayerPlaybackWillStartFromBeginning:(PBJVideoPlayerController *)videoPlayer
-{
+- (void)videoPlayerPlaybackWillStartFromBeginning:(PBJVideoPlayerController *)videoPlayer {
+    
     _playButton.alpha = 1.0f;
     _playButton.hidden = NO;
     
@@ -414,8 +412,7 @@
     }];
 }
 
-- (void)videoPlayerPlaybackDidEnd:(PBJVideoPlayerController *)videoPlayer
-{
+- (void)videoPlayerPlaybackDidEnd:(PBJVideoPlayerController *)videoPlayer {
     _playButton.hidden = NO;
     
     [UIView animateWithDuration:0.1f animations:^{
@@ -424,16 +421,14 @@
     }];
 }
 
-- (void)videoPlayerReady:(PBJVideoPlayerController *)videoPlayer
-{
+- (void)videoPlayerReady:(PBJVideoPlayerController *)videoPlayer {
     
 //    [self addSubview:videoPlayer.view];
 //    [videoPlayer.view setFrame:imageViewForMedia.bounds];
 
 }
 
-- (void)videoPlayerPlaybackStateDidChange:(PBJVideoPlayerController *)videoPlayer
-{
+- (void)videoPlayerPlaybackStateDidChange:(PBJVideoPlayerController *)videoPlayer {
     
     switch (videoPlayer.playbackState) {
         case PBJVideoPlayerPlaybackStateStopped:
@@ -462,28 +457,35 @@
             break;
     }
 }
-////
 
-- (void)playAudio
-{
+- (void)playAudio {
+    
     if (audioPlayer.isPlaying || [[btnForPlay imageForState:UIControlStateNormal] isEqual:[UIImage imageNamed:@"btn_pauseaudio"]]) {
         
         [audioPlayer stop];
         [btnForPlay setImage:[UIImage imageNamed:@"btn_playaudio"] forState:UIControlStateNormal];
         [eq stop];
         [eq setHidden:YES];
-    }
-    else
-    {
+        
+    } else {
+        
         PFFile *audioFile = (PFFile *)currentObj[@"postFile"];
         
         if (audioFile) {
-            NSData *fetchedData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:audioFile.url]];
-            if (audioPlayer)
-            {
+            
+            NSData *fetchedData = nil;
+            
+            if (audioFile.url != nil){
+                fetchedData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:audioFile.url]];
+            } else {
+                fetchedData = audioFile.getData;
+            }
+            
+            if (audioPlayer) {
                 [audioPlayer stop]; //data is an iVar holding any existing playing music
                 audioPlayer = nil;
             }
+            
             audioPlayer = [[AVAudioPlayer alloc] initWithData:fetchedData error:nil];
             audioPlayer.delegate = self;
             [audioPlayer play];
@@ -492,14 +494,8 @@
             [eq setHidden:NO];
             
             [eq start];
-            
         }
-
     }
-    
-   
-    
-    
     
 //    if ([delegate respondsToSelector:@selector(playAudio:)]) {
 //        
@@ -509,8 +505,8 @@
 
 }
 
-- (void)stopAudio
-{
+- (void)stopAudio {
+    
     if (audioPlayer.isPlaying) {
         audioPlayer = nil;
 
@@ -519,28 +515,24 @@
         [eq stop];
         [eq setHidden:YES];
     }
-
 }
 
-- (void)stopVideo
-{
+- (void)stopVideo {
     [_videoPlayerController stop];
 }
 
 #pragma mark - AVAudio Player Delegate
 
-- (void)audioPlayerBeginInterruption:(AVAudioPlayer *)player
-{
+- (void)audioPlayerBeginInterruption:(AVAudioPlayer *)player {
     
 }
 
-- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error
-{
+- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error {
     
 }
 
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
-{
+- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
+    
     [btnForPlay setImage:[UIImage imageNamed:@"play_button"] forState:UIControlStateNormal];
     [eq stop];
     [eq setHidden:YES];
@@ -559,9 +551,7 @@
         [currentObj setObject:likeUserArray forKey:@"likers"];
         [currentObj setObject:likerArr forKey:@"likeUserArray"];
         [currentObj saveInBackground];
-    }
-    else
-    {
+    } else {
         [self setLikeButtonStatus:YES];
         [btnForLikeCount setTitle:[NSString stringWithFormat:@"%ld",(long)++likeCount] forState:UIControlStateNormal];
         [likeUserArray addObject:USER.objectId];
@@ -571,7 +561,6 @@
 
         [currentObj saveInBackground];
     }
-
 }
 
 - (IBAction)showLikersAction:(id)sender {
@@ -585,7 +574,6 @@
 - (IBAction)commentAction:(id)sender {
     
     if ([delegate respondsToSelector:@selector(showComments:)]) {
-        
         [delegate performSelector:@selector(showComments:) withObject:currentObj];
     }
 
@@ -604,7 +592,6 @@
 }
 
 - (IBAction)playAction:(id)sender {
-    
     
     switch (_videoPlayerController.playbackState) {
         case PBJVideoPlayerPlaybackStateStopped:
@@ -640,12 +627,11 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     
-    if (textField == lblForTitle)
-    {
+    if (textField == lblForTitle) {
         beforeTitle = lblForTitle.text;
     }
-    if (textField == lblForDes)
-    {
+    
+    if (textField == lblForDes) {
         beforeDescription = lblForDes.text;
     }
     
@@ -666,8 +652,7 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
     
-    if (textField == lblForTitle)
-    {
+    if (textField == lblForTitle) {
         if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
             currentObj[@"title"] = lblForTitle.text;
             [currentObj saveEventually];
@@ -675,8 +660,9 @@
         
         [lblForTitle resignFirstResponder];
     }
-    if (textField == lblForDes)
-    {
+    
+    if (textField == lblForDes){
+        
         if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
             currentObj[@"description"] = lblForDes.text;
             [currentObj saveEventually];
