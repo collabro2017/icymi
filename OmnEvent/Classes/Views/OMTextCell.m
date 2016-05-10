@@ -33,6 +33,8 @@
 {
     currentObj = obj;
     
+    NSLog(@"-------here run-------%@", currentObj);
+    
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showDetailPage:)];
     gesture.numberOfTapsRequired = 1;
     
@@ -245,9 +247,9 @@
 
 - (IBAction)moreAction:(id)sender {
     
-//    if ([delegate respondsToSelector:@selector(sharePost:)]) {
-//        [delegate performSelector:@selector(sharePost:) withObject:currentObj];
-//    }
+    if ([delegate respondsToSelector:@selector(sharePostText:)]) {
+        [delegate performSelector:@selector(sharePostText:) withObject:currentObj];
+    }
     
 }
 

@@ -47,6 +47,9 @@
 #define kTag_Share1             8000
 #define kTag_EventShare         2000
 
+#define kTag_TextShare          9000
+#define kTag_TextShare1         10000
+
 @interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 {
     
@@ -1343,30 +1346,33 @@
 
 }
 
-- (void)sharePost:(UITableViewCell *)_cell
-{
-    
-    NSLog(@"------user-------@");
+- (void)sharePost:(UITableViewCell *)_cell {
     
     currentMediaCell = _cell;
     OMMediaCell* _tmpCell = (OMMediaCell*)_cell;
+    
+    //NSLog(@"----_tmpCell-------%@", _tmpCell.currentObj);
+    
     PFObject* _obj = _tmpCell.currentObj;
+    
     UIActionSheet *shareAction1 = nil;
+    
     postImgView = [[UIImageView alloc] init];
     PFFile *file = (PFFile *)_obj[@"thumbImage"];
     [postImgView setImageWithURL:[NSURL URLWithString:file.url]];
     tempObejct = _obj;
     PFUser *user = (PFUser *)_obj[@"user"];
-    NSLog(@"%@----%@",user,[PFUser currentUser]);
+    
+    NSLog(@"%@----%@", user, [PFUser currentUser]);
 
     if ([user.objectId isEqualToString:USER.objectId]) {
+        
         shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Use this as thumbnail", @"Delete", @"Report", nil];
         [shareAction1 setTag:kTag_Share];
         [shareAction1 showInView:self.view];
 
-    }
-    else
-    {
+    } else {
+        
         shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Report", nil];
         [shareAction1 setTag:kTag_Share1];
         [shareAction1 showInView:self.view];
@@ -1374,8 +1380,41 @@
     }
 }
 
-- (void)noticeNewPost:(PFObject *)_obj
-{
+- (void)sharePostText:(PFObject *) _obj{
+    
+    //currentMediaCell = _cell;
+    //OMTextCell* _tmpCell = (OMTextCell*)_cell;
+    
+    //NSLog(@"----_tmpCell-------%@", _tmpCell.currentObj);
+    
+    //PFObject* _obj = _tmpCell.currentObj;
+    
+    UIActionSheet *shareAction1 = nil;
+    
+    postImgView = [[UIImageView alloc] init];
+    PFFile *file = (PFFile *)_obj[@"thumbImage"];
+    [postImgView setImageWithURL:[NSURL URLWithString:file.url]];
+    tempObejct = _obj;
+    PFUser *user = (PFUser *)_obj[@"user"];
+    
+    NSLog(@"%@----%@", user, [PFUser currentUser]);
+    
+    if ([user.objectId isEqualToString:USER.objectId]) {
+        
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Delete", @"Report", nil];
+        [shareAction1 setTag:kTag_TextShare];
+        [shareAction1 showInView:self.view];
+        
+    } else {
+        
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Report", nil];
+        [shareAction1 setTag:kTag_TextShare1];
+        [shareAction1 showInView:self.view];
+        
+    }
+}
+
+- (void)noticeNewPost:(PFObject *)_obj{
     
 }
 
@@ -1688,6 +1727,45 @@
                 }
                     break;
                 case 1:
+                {
+                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+                    
+                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    
+                }
+                default:
+                    break;
+            }
+        }
+            break;
+            
+        case kTag_TextShare:
+        {
+            switch (buttonIndex) {
+                case 0:
+                {
+                    [self deleteFeed];
+                    
+                }
+                    break;
+                    
+                case 1:
+                {
+                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+                    
+                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    
+                }
+                default:
+                    break;
+            }
+        }
+            break;
+        case kTag_TextShare1:
+        {
+            switch (buttonIndex) {
+                
+                case 0:
                 {
                     [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
                     

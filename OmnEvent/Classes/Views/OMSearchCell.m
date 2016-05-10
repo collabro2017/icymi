@@ -37,6 +37,8 @@
         [btnForVideo setHidden:YES];
     }
     
+    //NSLog(@"-------_currentObj.badgeCount cell------------%lu", _currentObj.badgeCount);
+    
     if (_currentObj.badgeCount == 0) {
         
         [lblForBadge setHidden:YES];

@@ -176,7 +176,7 @@
     
     NSDictionary *userInfo = _notification.userInfo;
     
-    NSLog(@"------------notification receive now-----------------%@", userInfo);
+    //NSLog(@"------------notification receive now-----------------%@", userInfo);
     
     if ([userInfo objectForKey:@"request"]) {
         
@@ -321,15 +321,13 @@
         
         OMSocialEvent *eventObj = (OMSocialEvent *)temp_obj;
         
-        NSString *lastLoadTime_Key = [NSString stringWithFormat:@"%@-lastLoadTime", temp_obj.objectId];
+        NSDate *lastLoadTime = [[NSUserDefaults standardUserDefaults] objectForKey:@"lastUpdateLocalDatastore"];
         
-        NSDate *lastLoadTime = [[NSUserDefaults standardUserDefaults] objectForKey:lastLoadTime_Key];
-        
-//        if (!lastLoadTime) {
-//            lastLoadTime = [NSDate date];
-//            [[NSUserDefaults standardUserDefaults] setObject:lastLoadTime forKey:lastLoadTime_Key];
-//            [[NSUserDefaults standardUserDefaults] synchronize];
-//        }
+        if (!lastLoadTime) {
+            lastLoadTime = [NSDate date];
+            [[NSUserDefaults standardUserDefaults] setObject:lastLoadTime forKey:@"lastUpdateLocalDatastore"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
         
         NSDate *postTime = [temp_obj updatedAt];
         
@@ -348,12 +346,15 @@
         [temp_mainQuery includeKey:@"commentsArray"];
         [temp_mainQuery orderByDescending:@"createdAt"];
         
-        if (lastLoadTime){
-            [temp_mainQuery whereKey:@"updateAt" greaterThanOrEqualTo:lastLoadTime];
-            NSLog(@"--------last load time  key : ----%@", lastLoadTime_Key);
-            NSLog(@"--------last load time : ---------%@", lastLoadTime);
-        }
-        
+//        if (lastLoadTime){
+//            //[temp_mainQuery whereKey:@"updateAt" greaterThanOrEqualTo:lastLoadTime];
+//            
+//            if ([temp_obj.objectId isEqualToString:@"BYdwjvIL76"]) {
+//                NSLog(@"--------last load time  key : ----%@", lastLoadTime_Key);
+//                NSLog(@"--------last load time : ---------%@", lastLoadTime);
+//            }
+//            
+//        }
         
         [temp_mainQuery findObjectsInBackgroundWithBlock:^(NSArray *sub_objects, NSError *error) {
             
@@ -364,10 +365,31 @@
                 
             } else {
                 
-                NSLog(@"--------new object number-------%lu", sub_objects.count);
+                 NSUInteger temp_badge_number = 0;
                 
-                eventObj.badgeCount = sub_objects.count;
+                if (newEventFlag){
+                    temp_badge_number = sub_objects.count;
+                } else {
+                    
+                    if (sub_objects.count > 0){
+                        
+                        NSString * temp_lastLoadTime_Key = [NSString stringWithFormat:@"%@-lastLoadTime", temp_obj.objectId];
+                        NSDate * temp_lastLoadTime = [[NSUserDefaults standardUserDefaults] objectForKey:temp_lastLoadTime_Key];
+                        
+                        for (PFObject *t_obj in sub_objects){
+                            NSDate *temp_postTime = t_obj.updatedAt;
+                            NSComparisonResult temp_result = [temp_lastLoadTime compare:temp_postTime];
+                            
+                            if (temp_result == NSOrderedSame || temp_result == NSOrderedAscending){
+                                temp_badge_number ++;
+                            }
+                        }
+                    }
+                }
+                
+                eventObj.badgeCount = temp_badge_number;
                 [arrForFeed addObject:eventObj];
+
             }
             
             if (is_grid) {
@@ -389,7 +411,6 @@
                 [[NSUserDefaults standardUserDefaults] synchronize];
                
             }
-            
         }];
     } else {
         
@@ -421,20 +442,6 @@
 - (void)eventClick:(UIButton *)btn {
     
     PFObject * _obj = [arrForFeed objectAtIndex:btn.tag];
-    
-    OMSocialEvent *eventObj = (OMSocialEvent *)_obj;
-    
-    NSString *lastLoadTime_Key = [NSString stringWithFormat:@"%@-lastLoadTime", _obj.objectId];
-    
-    NSDate* lastUpdatedate = [NSDate date];
-    [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:lastLoadTime_Key];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    eventObj.badgeCount = 0;
-    eventObj.loadTimeAt = lastUpdatedate;
-    
-    [arrForFeed replaceObjectAtIndex:btn.tag withObject:eventObj];
-    
     OMDetailEventViewController *detailEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailEventVC"];
     [detailEventVC setCurrentObject:_obj];
     [[SlideNavigationController sharedInstance] pushViewController:detailEventVC animated:YES];
@@ -530,7 +537,22 @@
     
     OMDetailEventViewController *detailEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailEventVC"];
     OMSocialEvent *event = [arrForFeed objectAtIndex:indexPath.item];
+    
+    NSString *lastLoadTime_Key = [NSString stringWithFormat:@"%@-lastLoadTime", event.objectId];
+    NSDate* lastLoadTime = [NSDate date];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:lastLoadTime forKey:lastLoadTime_Key];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     event.badgeCount = 0;
+    event.loadTimeAt = lastLoadTime;
+    
+    //NSLog(@"--------lastLoadTime_Key-------%@", lastLoadTime_Key);
+    //NSLog(@"---------lastLoadTime----------%@", lastLoadTime);
+    
+    [arrForFeed replaceObjectAtIndex:indexPath.item withObject:event];
+    
+    
     [detailEventVC setCurrentObject:[arrForFeed objectAtIndex:indexPath.item]];
     [self.navigationController pushViewController:detailEventVC animated:YES];
     

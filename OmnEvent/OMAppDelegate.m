@@ -212,8 +212,7 @@ static BOOL logedOut;
     
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-{
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
 //    [PFPush handlePush:userInfo];
     NSLog(@"%@", userInfo);
     
@@ -238,10 +237,14 @@ static BOOL logedOut;
     
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-{
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
-
+    //NSLog(@"-------notification received --------%@", userInfo);
+    
+    if ([userInfo objectForKey:@"request"]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kShowBadgeOnEvent object:nil userInfo:userInfo];
+    }
+    
     if ([UIApplication sharedApplication].applicationState != UIApplicationStateActive) {
         // Track app opens due to a push notification being acknowledged while the app wasn't active.
         [PFAnalytics trackAppOpenedWithRemoteNotificationPayload:userInfo];
