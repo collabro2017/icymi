@@ -1005,11 +1005,11 @@
                     cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
                 }
                 
-                NSLog(@"%@", [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2]);
+                //NSLog(@"%@", [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2]);
                 
                 NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
                 
-                NSLog(@"%@", temp);
+                //NSLog(@"%@", temp);
                 
                 NSString *objectId = [temp objectForKey:@"objectId"];
                 
@@ -1045,9 +1045,9 @@
                     [cell setCurrentObj:tempObj];
                     
                     return cell;
-                }
-                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
-                {
+                    
+                } else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj]) {
+                    
                     NSMutableArray *arr;
                     
                     if (tempObj[@"commentsArray"]) {
@@ -1379,8 +1379,7 @@
     
 }
 
-- (void)showEventComments:(PFObject *)_obj
-{
+- (void)showEventComments:(PFObject *)_obj {
     
     OMAppDelegate *appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
     
@@ -1392,7 +1391,6 @@
     [eventCommentVC setCurrentObject:_obj];
     
     [self.navigationController pushViewController:eventCommentVC animated:YES];
-
 }
 
 - (void)showLikersOfEvent:(PFObject *)_obj
@@ -1704,9 +1702,6 @@
         default:
             break;
     }
-    
-    
-    
 }
 
 //Report
@@ -1760,9 +1755,10 @@
 
 // Export feed data table to pdf
 
--(void) exportToPDF
-{
+-(void) exportToPDF {
+    
     NSMutableDictionary* contentPDF = [[NSMutableDictionary alloc] init];
+    
     [contentPDF setObject:currentObject forKey:@"currentObject"];
     [contentPDF setObject:arrForDetail forKey:@"arrDetail"];
     

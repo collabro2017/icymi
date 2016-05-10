@@ -134,8 +134,8 @@
     
 }
 
-- (void)loadComments
-{
+- (void)loadComments {
+    
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     PFQuery *query = [PFQuery queryWithClassName:@"EventComment"];
     [query whereKey:@"targetEvent" equalTo:currentObject];
@@ -152,8 +152,7 @@
     }];
 }
 
-- (void)backAction
-{
+- (void)backAction {
     
     OMAppDelegate *appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
     FTTabBarController *tab = [appDel tabBarController];

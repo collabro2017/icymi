@@ -298,45 +298,6 @@
             process_number = 0;
             
             [self newProcessBadge];
-            
-            
-            //NSUInteger i = 0;
-            //NSUInteger j = 0;
-            
-            /*
-            
-            for (PFObject *object in objects) {
-                
-                //NSLog(@"-------%@", object.objectId);
-                
-                PFUser *user = (PFUser *)object[@"user"];
-                
-                if ([object[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] ) {
-                    
-                    if ([object[@"TagFriends"] containsObject:currentUser.objectId]) {
-                        //i++;
-                        // NSLog(@"user was tagged. %lu", (unsigned long)i);
-                        NSLog(@"user was tagged.");
-                    } else {
-                        //j++;
-                        //NSLog(@"user is me. %lu", (unsigned long)j);
-                        //NSLog(@"-------%@", object.objectId);
-                        
-                        NSLog(@"user is me.");
-                    }
-                    
-                    OMSocialEvent *eventObj = (OMSocialEvent *)object;
-                    [arrForFeed addObject:eventObj];
-                }
-            }
-            
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-            
-            if (is_grid) {
-                [collectionViewForFeed reloadData];
-            } else {
-                [tblForEventFeed reloadData];
-            }*/
         }
     }];
 }
@@ -387,8 +348,12 @@
         [temp_mainQuery includeKey:@"commentsArray"];
         [temp_mainQuery orderByDescending:@"createdAt"];
         
-        if (!newEventFlag && lastLoadTime)
+        if (lastLoadTime){
             [temp_mainQuery whereKey:@"updateAt" greaterThanOrEqualTo:lastLoadTime];
+            NSLog(@"--------last load time  key : ----%@", lastLoadTime_Key);
+            NSLog(@"--------last load time : ---------%@", lastLoadTime);
+        }
+        
         
         [temp_mainQuery findObjectsInBackgroundWithBlock:^(NSArray *sub_objects, NSError *error) {
             
@@ -826,8 +791,8 @@
     [self.navigationController presentViewController:nav animated:YES completion:nil];
 }
 
-- (void)shareEvent:(PFObject *)_obj
-{
+- (void)shareEvent:(PFObject *)_obj {
+    
     UIActionSheet *shareAction1 = nil;
 
     NSString *status = @"Close";

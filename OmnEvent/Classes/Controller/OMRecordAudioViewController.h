@@ -10,33 +10,26 @@
 
 #import "F3BarGauge.h"
 
-@interface OMRecordAudioViewController : UIViewController<AVAudioRecorderDelegate, AVAudioPlayerDelegate>
-{
-    
+@interface OMRecordAudioViewController : UIViewController<AVAudioRecorderDelegate, AVAudioPlayerDelegate> {
     
     IBOutlet UILabel *lblForRecordTime;
     
     IBOutlet F3BarGauge *viewForStatus;
-    
     
     IBOutlet UIButton *btnForRecord;
     
     NSData *recordedData;
 
 }
+
 @property (nonatomic, strong) AVAudioRecorder *audioRecorder;
-
-
 @property (nonatomic, strong) NSData    *audioData;
-
 
 @property (nonatomic, strong) PFObject *curObj;
 @property (nonatomic) kTypeUpload      uploadOption;
 @property (nonatomic) kTypeCapture      captureOption;
 @property (nonatomic) kTypeRecord       audioOption;
+
 - (IBAction)recordAction:(id)sender;
-
-
-
 
 @end

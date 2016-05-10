@@ -114,9 +114,7 @@
 {
     [super viewWillAppear:animated];
     
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-    
-    
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];  
     
     switch (uploadOption) {
         case kTypeUploadEvent:
@@ -522,7 +520,14 @@
                     NSLog(@"There IS NO internet connection");
                     
                     [appDel.m_offlinePosts addObject:post];
-                    [appDel.m_offlinePostURLs addObject:_outPutURL];
+                    
+                    if (_outPutURL != nil){
+                        [appDel.m_offlinePostURLs addObject:_outPutURL];
+                    } else {
+                        NSURL *baseURL = [NSURL fileURLWithPath:@"file://path/to/user/"];
+                        [appDel.m_offlinePostURLs addObject:baseURL];
+                    }
+                    
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
@@ -571,7 +576,6 @@
             if (_outPutURL) {
                 
                 [OMGlobal removeImage:_outPutURL.path];
-                
                 
             }
             [self sendPushToTaggedFriends:_post];

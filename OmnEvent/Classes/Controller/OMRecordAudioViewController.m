@@ -11,8 +11,9 @@
 #import <CoreText/CoreText.h>
 
 #import "OMPostEventViewController.h"
-@interface OMRecordAudioViewController ()
-{
+
+@interface OMRecordAudioViewController () {
+    
     NSString        *soundFilePath;
     NSString        *plistFilePath;
     NSURL           *outputFileURL;
@@ -27,7 +28,6 @@
     NSString        *fileName;
     
     float Pitch;
-
 }
 
 @end
@@ -35,17 +35,13 @@
 @implementation OMRecordAudioViewController
 @synthesize audioRecorder;
 
-- (void)useAudio
-{
-    
+- (void)useAudio {
     
     recordedData = [NSData dataWithContentsOfURL:outputFileURL];
-
     
     if (recordedData) {
         
         OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
-        
         
         [postEventVC setUploadOption:_uploadOption];
         [postEventVC setCaptureOption:_captureOption];
@@ -53,27 +49,19 @@
         [postEventVC setAudioData:recordedData];
         
         [self.navigationController pushViewController:postEventVC animated:YES];
-        
     }
-    
-    
 }
 
-
-
-
-
-- (void)loadView
-{
-    [super loadView];
+- (void)loadView {
     
+    [super loadView];
     [OMGlobal setCircleView:btnForRecord borderColor:nil];
 }
 
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
     
     isRecording = NO;
     ticks = 0;
@@ -82,7 +70,6 @@
     [lblForRecordTime setHidden:YES];
     
     [self initializeAudioRecorder];
-    
     
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     UIBarButtonItem *backBarButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"btn_back_profile"] style:UIBarButtonItemStylePlain target:self action:@selector(backAction)];
@@ -102,8 +89,6 @@
     self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:negativeSpacer1, uploadBarButton,nil];
     
     self.title = @"Record Audio";
-
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -111,23 +96,20 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
     
+    [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
 }
 
-- (void)backAction
-{
+- (void)backAction {
+    
     [self stopRecording];
     [self.navigationController dismissViewControllerAnimated:YES completion:^{
     }];
 }
 
-- (void)initializeAudioRecorder
-{
-    
+- (void)initializeAudioRecorder {
     
     fileName = [NSString stringWithFormat:@"%@.wav",[NSDate date]];
     
@@ -172,15 +154,11 @@
     audioRecorder.meteringEnabled = YES;
     [audioRecorder prepareToRecord];
     
-    
 }
 
 #pragma Actions
 
-- (void)recordAudio
-{
-    
-    
+- (void)recordAudio {
     
     if (!audioRecorder.recording) {
         
@@ -195,20 +173,20 @@
         [audioRecorder record];
         [lblForRecordTime setHidden:NO];
         [btnForRecord setTitle:@"Stop" forState:UIControlStateNormal];
+        
         if (!isRecording) {
+            
             timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimer:) userInfo:nil repeats:YES];
             timerRange = [NSTimer scheduledTimerWithTimeInterval: 0.01 target: self selector: @selector(levelTimerCallback:) userInfo: nil repeats: YES];
-            
             isRecording = YES;
         }
         
         if (isRecording) {
-            
             NSMutableArray *images = [[NSMutableArray alloc] init];
-    
         }
-    }else
-    {
+        
+    } else {
+        
         [audioRecorder stop];
       
         [btnForRecord setTitle:@"Record" forState:UIControlStateNormal];
@@ -218,16 +196,13 @@
             timerRange = nil;
             timer = nil;
             ticks = 0;
-            
-            
         }
         isRecording = NO;
     }
-    
 }
 
-- (void)pause
-{
+- (void)pause {
+    
     if (audioRecorder.recording) {
         [audioRecorder pause];
         if (timer || timerRange) {
@@ -235,41 +210,38 @@
             [timerRange invalidate];
         }
         isRecording = NO;
-        
     }
 }
 
-- (void)reset
-{
+- (void)reset {
+    
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     
     NSString *filePath = [documentsPath stringByAppendingPathComponent:fileName];
     NSError *error;
     BOOL success = [fileManager removeItemAtPath:filePath error:&error];
+    
     if (success) {
         //        UIAlertView *removeSuccessFulAlert=[[UIAlertView alloc]initWithTitle:nil message:@"Successfully removed" delegate:self cancelButtonTitle:@"Close" otherButtonTitles:nil];
         //        [removeSuccessFulAlert show];
         
         ticks = 0;
         isRecording = NO;
-    }
-    else
-    {
+    } else {
         NSLog(@"Could not delete file -:%@ ",[error localizedDescription]);
     }
 }
 
-- (void)playAudio
-{
+- (void)playAudio {
     
     audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:outputFileURL error:nil];
     
     [audioPlayer play];
 }
 
-- (void)stopRecording
-{
+- (void)stopRecording {
+    
     [UIApplication sharedApplication].idleTimerDisabled = NO;
     
     if ([audioRecorder isRecording]) {
@@ -289,12 +261,12 @@
     viewForStatus.value = 0;
     
     [btnForRecord setTitle:@"Record" forState:UIControlStateNormal];
-    
-    
 }
+
 #pragma mark - Timer
 
 - (void)levelTimerCallback:(NSTimer *)timer {
+    
     [audioRecorder updateMeters];
     NSLog(@"Average input: %f Peak input: %f", [audioRecorder averagePowerForChannel:0], [audioRecorder peakPowerForChannel:0]);
     
@@ -302,11 +274,11 @@
     NSLog(@"linear===%f",linear);
     float linear1 = pow (10, [audioRecorder averagePowerForChannel:0] / 20);
     NSLog(@"linear1===%f",linear1);
+    
     if (linear1>0.03) {
         
         Pitch = linear1+.20;//pow (10, [audioRecorder averagePowerForChannel:0] / 20);//[audioRecorder peakPowerForChannel:0];
-    }
-    else {
+    } else {
         
         Pitch = 0.0;
     }
@@ -321,8 +293,8 @@
     
 }
 
-- (void)updateTimer:(NSTimer *)_timer
-{
+- (void)updateTimer:(NSTimer *)_timer {
+    
     if (audioRecorder.recording) {
         
         ticks++;
@@ -335,20 +307,16 @@
             
             [self useAudio];
         }
-        
-        
     }
 }
 
 #pragma mark
 
-- (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag
-{
+- (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag {
     
 }
 
-- (void)audioRecorderEncodeErrorDidOccur:(AVAudioRecorder *)recorder error:(NSError *)error
-{
+- (void)audioRecorderEncodeErrorDidOccur:(AVAudioRecorder *)recorder error:(NSError *)error {
     NSLog(@"Encode Error occured");
 }
 
@@ -364,18 +332,13 @@
 
 - (IBAction)recordAction:(id)sender {
     
-    
     if (isRecording) {
         
         [self stopRecording];
-    }
-    else
-    {
-         lblForRecordTime.text = [NSString stringWithFormat:@"00:00:00"];
-    
+    } else {
+        
+        lblForRecordTime.text = [NSString stringWithFormat:@"00:00:00"];
         [self performSelector:@selector(recordAudio) withObject:nil afterDelay:0.3f];
     }
-    
-   
 }
 @end

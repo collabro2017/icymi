@@ -548,56 +548,118 @@
 
     // FeedCommentCell
     
-    if ([currentObject objectForKey:@"commenters"])
-    {
-        for(int i = 0; i < [currentObject[@"commenters"] count]; i++)
-        {
+    if ([currentObject objectForKey:@"commenters"]) {
+        
+        for(int i = 0; i < [currentObject[@"commenters"] count]; i++) {
+            
             PFUser* commenter = [currentObject[@"commenters"] objectAtIndex:i];
             NSString* comment = [currentObject[@"commentsArray"] objectAtIndex:i];
             
-            [commenter fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                if (!error) {
-                    NSLog(@"%@",commenter.username);
-                    if ([commenter[@"loginType"] isEqualToString:@"email"]) {
-                        PFFile *avatarFile = (PFFile *)commenter[@"ProfileImage"];
-                        if (avatarFile) {
-                            UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];
+            //NSLog(@"---------here run-------------%@", commenter);
+            
+            NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:i];
+            NSString *objectId = [temp objectForKey:@"objectId"];
+            
+            if (objectId != nil){
+                
+                PFQuery *query = [PFUser query];
+                [query whereKey:@"objectId" equalTo:objectId];
+                [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                    
+                    if (error || !objects) {
+                        return;
+                    } else {
+                        
+                        PFUser *temp_commenter = (PFUser *)objects[0];
+                        
+                        NSLog(@"%@",temp_commenter.username);
+                        
+                        if ([temp_commenter[@"loginType"] isEqualToString:@"email"]) {
                             
-                            CGRect frame = CGRectMake(8 * rScale, (nCurrentOffset+ 8) * rScale, 35 * rScale, 35 * rScale);
+                            PFFile *avatarFile = (PFFile *)temp_commenter[@"ProfileImage"];
+                            
+                            if (avatarFile) {
+                                
+                                UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];
+                                CGRect frame = CGRectMake(8 * rScale, (nCurrentOffset+ 8) * rScale, 35 * rScale, 35 * rScale);
+                                UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale) withCornerRadius:(35 * rScale / 2)];
+                                
+                                [PDFRenderer drawImage:newImage inRect:frame];
+                            }
+                            
+                        } else if ([temp_commenter[@"loginType"] isEqualToString:@"facebook"]) {
+                            
+                            UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:commenter[@"profileURL"]]]];
+                            
+                            CGRect frame = CGRectMake(8 * rScale, (nCurrentOffset + 8) * rScale, 35 * rScale, 35 * rScale);
                             
                             UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale) withCornerRadius:(35 * rScale / 2)];
                             
                             [PDFRenderer drawImage:newImage inRect:frame];
                         }
                         
-                    }
-                    else if ([commenter[@"loginType"] isEqualToString:@"facebook"])
-                    {
-                        UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:commenter[@"profileURL"]]]];
+                        [PDFRenderer drawText:temp_commenter.username inFrame:CGRectMake(51 * rScale, (nCurrentOffset + 20) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor blackColor]];
                         
-                        CGRect frame = CGRectMake(8 * rScale, (nCurrentOffset + 8) * rScale, 35 * rScale, 35 * rScale);
+                        int nDesHeight = [OMGlobal heightForCellWithPost:comment];
                         
-                        UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale) withCornerRadius:(35 * rScale / 2)];
+                        [PDFRenderer drawText:comment inFrame:CGRectMake(51 * rScale, (nCurrentOffset + 70) * rScale, 250 * rScale, nDesHeight * rScale) fontName:@"HelveticaNeue-Light " fontSize:12 * rScale fontColor:[UIColor grayColor]];
                         
-                        [PDFRenderer drawImage:newImage inRect:frame];
+                        nCurrentOffset += 70;
+                        
+                        if ((nCurrentOffset * rScale) > 712) {
+                            
+                            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
+                            nCurrentOffset = 30;
+                        }
                     }
+                }];
+                
+            } else {
+                
+                [commenter fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                     
-                    [PDFRenderer drawText:commenter.username inFrame:CGRectMake(51 * rScale, (nCurrentOffset + 20) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor blackColor]];
-                    
-                    int nDesHeight = [OMGlobal heightForCellWithPost:comment];
-                    
-                    [PDFRenderer drawText:comment inFrame:CGRectMake(51 * rScale, (nCurrentOffset + 70) * rScale, 250 * rScale, nDesHeight * rScale) fontName:@"HelveticaNeue-Light " fontSize:12 * rScale fontColor:[UIColor grayColor]];
-                    
-                    nCurrentOffset += 70;
-                    
-                    if ((nCurrentOffset * rScale) > 712)
-                    {
-                        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
-                        nCurrentOffset = 30;
+                    if (!error) {
+                        
+                        NSLog(@"%@",commenter.username);
+                        
+                        if ([commenter[@"loginType"] isEqualToString:@"email"]) {
+                            PFFile *avatarFile = (PFFile *)commenter[@"ProfileImage"];
+                            if (avatarFile) {
+                                UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];
+                                
+                                CGRect frame = CGRectMake(8 * rScale, (nCurrentOffset+ 8) * rScale, 35 * rScale, 35 * rScale);
+                                
+                                UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale) withCornerRadius:(35 * rScale / 2)];
+                                
+                                [PDFRenderer drawImage:newImage inRect:frame];
+                            }
+                            
+                        } else if ([commenter[@"loginType"] isEqualToString:@"facebook"]) {
+                            
+                            UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:commenter[@"profileURL"]]]];
+                            
+                            CGRect frame = CGRectMake(8 * rScale, (nCurrentOffset + 8) * rScale, 35 * rScale, 35 * rScale);
+                            
+                            UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale) withCornerRadius:(35 * rScale / 2)];
+                            
+                            [PDFRenderer drawImage:newImage inRect:frame];
+                        }
+                        
+                        [PDFRenderer drawText:commenter.username inFrame:CGRectMake(51 * rScale, (nCurrentOffset + 20) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor blackColor]];
+                        
+                        int nDesHeight = [OMGlobal heightForCellWithPost:comment];
+                        
+                        [PDFRenderer drawText:comment inFrame:CGRectMake(51 * rScale, (nCurrentOffset + 70) * rScale, 250 * rScale, nDesHeight * rScale) fontName:@"HelveticaNeue-Light " fontSize:12 * rScale fontColor:[UIColor grayColor]];
+                        
+                        nCurrentOffset += 70;
+                        
+                        if ((nCurrentOffset * rScale) > 712) {
+                            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
+                            nCurrentOffset = 30;
+                        }                        
                     }
-
-                }
-            }];
+                }];
+            }
         }
     }
     
