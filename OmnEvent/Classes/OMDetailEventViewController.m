@@ -97,7 +97,7 @@
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
             
-            real_parse_data_num = objects.count;
+            real_parse_data_num = objects.count;      
             
             OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
             //[arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
@@ -105,14 +105,17 @@
             offline_data_num = appDel.m_offlinePosts.count;
             
             for (NSUInteger i = 0; i < offline_data_num; i ++){
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];          
+                
+                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex: offline_data_num - i - 1];
+                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
                 
                 if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
                     [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
+                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:offline_data_num - i - 1]];
                 }
             }
+            
+            [arrForDetail addObjectsFromArray:objects];
             
             [tblForDetailList reloadData];
         }
@@ -461,25 +464,25 @@
             
             [arrForDetail removeAllObjects];
             [offlineURLs removeAllObjects];
-            [arrForDetail addObjectsFromArray:objects];
             
             real_parse_data_num = objects.count;
             
             OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
-            //[arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
             
             offline_data_num = appDel.m_offlinePosts.count;
             
             for (NSUInteger i = 0; i < offline_data_num; i ++){
                 
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
+                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex: offline_data_num - i - 1];
                 PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
                 
                 if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
                     [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];                    
+                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:offline_data_num - i - 1]];
                 }
             }
+            
+            [arrForDetail addObjectsFromArray:objects];
             
             [tblForDetailList reloadData];
         }
@@ -1085,11 +1088,11 @@
                         cell = [[OMMediaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kMediaCell];
                     }
                     
-                    //NSLog(@"-------tempObj----------%@", tempObj);
-                    
-                    if (indexPath.section > real_parse_data_num ){
+                    if (indexPath.section - 1 < offline_data_num){
+                        
                         cell.file = (PFFile *)tempObj[@"postFile"];
-                        cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - real_parse_data_num - 1];
+                        cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - 1];
+                        
                     } else {
                         cell.file = nil;
                         cell.offline_url = nil;
