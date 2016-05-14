@@ -28,18 +28,14 @@
 #define TAG_VIDEO_BUTTON        300
 
 
-
-@interface OMCameraViewController ()
-{
+@interface OMCameraViewController () {
     
     BOOL isPhotoMode;
     CGFloat defaultValue;
     
-    
     int second;
     int min;
     int hour;
-    
 }
 
 
@@ -55,7 +51,6 @@
 
 // Video Control View
 
-
 @end
 
 @implementation OMCameraViewController
@@ -63,37 +58,27 @@
 
 // Timer Methods
 
--(void)incrementTime:(id)obj
-{
+-(void)incrementTime:(id)obj {
     
     second ++;
     
-    if (second== 11)
-    {
+    if (second== 11) {
         second = 0;
-        
         
         [_recorder stopCurrentVideoRecording];
         return;
-        
-        
         
     }
     lblForTimer.text = [NSString stringWithFormat:@"%02d:%02d", min,second];
     [self performSelector:@selector(incrementTime:) withObject:nil afterDelay:1.0];
     
-    
 }
--(void)animateRecordView
-{
+
+-(void)animateRecordView {
     
     imageViewForRedTimer.hidden = !imageViewForRedTimer.hidden ;
     [self performSelector:@selector(animateRecordView) withObject:nil afterDelay:0.5];
 }
-
-
-
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -101,7 +86,7 @@
     isPhotoMode = YES;
     defaultValue = constraintForVideoControl.constant;
     
-    [[UIApplication sharedApplication] setStatusBarHidden:YES                                            withAnimation:UIStatusBarAnimationFade];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     // Do any additional setup after loading the view.
     
     
@@ -118,7 +103,6 @@
     [SBCaptureToolKit createVideoFolderIfNotExist];
     [self initProgressBar];
     [self performSelectorOnMainThread:@selector(initRecorder) withObject:nil waitUntilDone:NO];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -127,38 +111,20 @@
     
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES
-                                            withAnimation:UIStatusBarAnimationFade];
-//    switch (uploadOption) {
-//        case kTypeEvent:
-//        {
-//            
-//        }
-//            break;
-//        case kTypePost:
-//        {
-//            
-//        }
-//            break;
-//        default:
-//            break;
-//    }
-
-  }
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
+- (void)viewWillAppear:(BOOL)animated {
     
-   
-
+    [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+    
+    
 }
 
-- (void)initTopBar
-{
+- (void)viewDidAppear:(BOOL)animated {
+    
+    [super viewDidAppear:animated];
+}
+
+- (void)initTopBar {
     
     //Close Button
     [btnForClose setImage:[UIImage imageNamed:@"record_close_normal.png"] forState:UIControlStateNormal];
@@ -184,8 +150,8 @@
 
 }
 
-- (void)initPhotoControls
-{
+- (void)initPhotoControls {
+    
     [self setupAlbumbutton];
     
     [btnForCamera setImage:[UIImage imageNamed:@"video_longvideo_btn_shoot"] forState:UIControlStateNormal];
@@ -200,28 +166,24 @@
             break;
         case kTypeCaptureVideo:
         {
-            
             imagePicker.mediaTypes = [[NSArray alloc] initWithObjects:(NSString *)kUTTypeMovie, nil];
             
             isPhotoMode = !isPhotoMode;
             [self hideVideoControllView:isPhotoMode];
             
-            
         }
             break;
         case kTypeCapturePhoto:
         {
-            [btnForVideo setHidden:YES];
+            //[btnForVideo setHidden:YES];
             
         }
         default:
             break;
     }
-
 }
 
-- (void)setupAlbumbutton
-{
+- (void)setupAlbumbutton {
     
     [OMGlobal setCircleView:btnForAlbum borderColor:nil];
     
@@ -285,15 +247,12 @@
         
         NSLog(@"Occured error when get most recent photo");
         
-        
-        
     }];
     
 
 }
 
-- (void)initVideoControls
-{
+- (void)initVideoControls {
     
     
     if (isPhotoMode) {
@@ -318,6 +277,14 @@
     [btnForOk setBackgroundImage:[UIImage imageNamed:@"record_icon_hook_highlighted_bg.png"] forState:UIControlStateHighlighted];
     [btnForOk setImage:[UIImage imageNamed:@"record_icon_hook_normal.png"] forState:UIControlStateNormal];
     [btnForOk addTarget:self action:@selector(pressOKButton) forControlEvents:UIControlEventTouchUpInside];
+    
+    btnForVideo.enabled = NO;
+    btnForVideo.hidden = YES;
+    
+    [btnForVideo setBackgroundImage:[UIImage imageNamed:@"record_icon_hook_normal_bg.png"] forState:UIControlStateNormal];
+    [btnForVideo setBackgroundImage:[UIImage imageNamed:@"record_icon_hook_highlighted_bg.png"] forState:UIControlStateHighlighted];
+    [btnForVideo setImage:[UIImage imageNamed:@"record_icon_hook_normal.png"] forState:UIControlStateNormal];
+    
     //Delete Button
     [btnForDelete setButtonStyle:DeleteButtonStyleDisable];
     [btnForDelete addTarget:self action:@selector(pressDeleteButton) forControlEvents:UIControlEventTouchUpInside];
@@ -328,8 +295,8 @@
     [btnForRecord addTarget:self action:@selector(recordVideo:) forControlEvents:UIControlEventTouchUpInside];
 }
 
-- (void)initRecorder
-{
+- (void)initRecorder {
+    
     self.recorder = [[SBVideoRecorder alloc] init];
     _recorder.delegate = self;
     _recorder.preViewLayer.frame = viewForPreview.bounds;
@@ -345,13 +312,11 @@
     
     btnForFront.enabled = [_recorder isFrontCameraSupported];
     btnForFlash.enabled = _recorder.isTorchSupported;
-
-
-
 }
 
-- (void)initProgressBar
-{
+
+- (void)initProgressBar {
+    
     self.progressBar = [ProgressBar getInstance];
     [SBCaptureToolKit setView:_progressBar toOriginY:(viewForToolbar.frame.size.height + viewForPreview.frame.size.height)];
     
@@ -361,17 +326,15 @@
     [_progressBar setHidden:YES];
 }
 
-- (void)initDeleteButton
-{
+- (void)initDeleteButton {
+    
     if (_isProcessingData) {
         return;
     }
-    
-    
 }
 
-- (void) updateLayoutWithAnimate:(BOOL)animate showProgress:(BOOL)_bool
-{
+- (void) updateLayoutWithAnimate:(BOOL)animate showProgress:(BOOL)_bool {
+    
     if (animate) {
         [self.view setNeedsUpdateConstraints];
         
@@ -408,51 +371,38 @@
 
 //  Hide/Show Video Control Views
 
-- (void)hideVideoControllView:(BOOL)_bool
-{
+- (void)hideVideoControllView:(BOOL)_bool {
 
     if (_bool) {
-        
         constraintForVideoControl.constant = defaultValue;
-        
         [self updateLayoutWithAnimate:YES showProgress:_bool];
-        
-    }
-    else
-    {
+    } else {
         constraintForVideoControl.constant = 0;
         [self updateLayoutWithAnimate:YES showProgress:_bool];
     }
 }
+
 // Take a Photo
-- (void)capturePhoto
-{
+- (void)capturePhoto {
     
-    [_recorder captureStillImage];
-    
+    [_recorder captureStillImage];    
     [MBProgressHUD showMessag:@"Processing..." toView:self.view];
 }
-//Record Video
 
-- (void)recordVideo:(UIButton *)sender
-{
+//Record Video
+- (void)recordVideo:(UIButton *)sender {
     
     if (_recorder.isRecording) {
-        
         [_recorder stopCurrentVideoRecording];
-    
-    }
-    else
-    {
+    } else {
         NSString *filePath = [SBCaptureToolKit getVideoSaveFilePathString];
         [_recorder startRecordingToOutputFileURL:[NSURL fileURLWithPath:filePath]];
-
     }
-  
 }
+
 #pragma mark - Touch Event
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    
 //    if (_isProcessingData) {
 //        return;
 //    }
@@ -488,8 +438,8 @@
 }
 //When Tap Delete Button
 
-- (void)pressDeleteButton
-{
+- (void)pressDeleteButton {
+    
     if (btnForDelete.style == DeleteButtonStyleNormal) {
         [_progressBar setLastProgressToStyle:ProgressBarProgressStyleDelete];
         [btnForDelete setButtonStyle:DeleteButtonStyleDelete];
@@ -507,9 +457,7 @@
 
 //When Tap Ok Button
 
-- (void)pressOKButton
-{
-    
+- (void)pressOKButton {
     
     if (_isProcessingData) {
         return;
@@ -530,16 +478,15 @@
 
 //Delete the last Video
 
-- (void)deleteLastVideo
-{
+- (void)deleteLastVideo {
+    
     if ([_recorder getVideoCount] > 0) {
         [_recorder deleteLastVideo];
     }
 }
 
 // Show PostViewController
-- (void)showPostView:(UIImage *)_image
-{
+- (void)showPostView:(UIImage *)_image {
     
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     UIImage *image = [_image resizedImageToSize:CGSizeMake(POSTIMAGE_SIZE, POSTIMAGE_SIZE)];
@@ -552,7 +499,6 @@
     [postEventVC setUploadOption:uploadOption];
     [postEventVC setCaptureOption:captureOption];
     [postEventVC setCurObj:curObj];
-    
     
     [self.navigationController pushViewController:postEventVC animated:YES];
 
@@ -572,31 +518,33 @@
     
     [self.navigationController pushViewController:postEventVC animated:YES];
 }
+
+
 #pragma mark - UIImagePickerController Delegate
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    
+//    [_recorder stopCurrentVideoRecording];
+//    [_recorder.preViewLayer removeFromSuperlayer];
+    
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     UIImage *image = [info objectForKey:UIImagePickerControllerEditedImage];
+    
+//    _focusRectView.hidden = YES;
+//    [imageViewForPreview setImage:image];
+//    btnForVideo.enabled = YES;
+    
     [MBProgressHUD showMessag:@"Processing..." toView:self.view];
-
     [picker dismissViewControllerAnimated:YES completion:^{
-        
-
-//        [self showPostView:image];
-        
         [self performSelector:@selector(showPostView:) withObject:image afterDelay:0.3f];
-        
-        
     }];
 }
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
-{
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     [picker dismissViewControllerAnimated:YES completion:^{
-        [[UIApplication sharedApplication] setStatusBarHidden:YES                                                      withAnimation:UIStatusBarAnimationNone];
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
 
     }];
 }
@@ -609,13 +557,21 @@
     NSLog(@"Error");
 }
 
-- (void)captureManagerStillImageCaptured:(SBVideoRecorder *)videoRecorder image:(UIImage *)image
-{
-//    [_hud hide:YES];
+- (void)captureManagerStillImageCaptured:(SBVideoRecorder *)videoRecorder image:(UIImage *)image {
+
     self.isProcessingData = NO;
-    [self showPostView:[OMGlobal croppedImage:image]];
     
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     
+    [_recorder stopCurrentVideoRecording];
+    [_recorder.preViewLayer removeFromSuperlayer];
+    
+    _focusRectView.hidden = YES;
+    [imageViewForPreview setImage:image];
+    btnForVideo.enabled = YES;
+    btnForVideo.hidden = NO;
+    
+    //[self showPostView:[OMGlobal croppedImage:image]];
 }
 
 //Record Video
@@ -645,8 +601,6 @@
         [MBProgressHUD showMessag:@"Processing..." toView:self.view];
         [_recorder mergeVideoFiles];
 //        [self showPreviewForVideo:outputFileURL];
-
-
     }
     
 //    [_progressBar startShining];
@@ -657,15 +611,14 @@
 
 }
 
-- (void)videoRecorder:(SBVideoRecorder *)videoRecorder didRecordingToOutPutFileAtURL:(NSURL *)outputFileURL duration:(CGFloat)videoDuration recordedVideosTotalDur:(CGFloat)totalDur
-{
+- (void)videoRecorder:(SBVideoRecorder *)videoRecorder didRecordingToOutPutFileAtURL:(NSURL *)outputFileURL duration:(CGFloat)videoDuration recordedVideosTotalDur:(CGFloat)totalDur {
+    
     [_progressBar setLastProgressToWidth:videoDuration / MAX_VIDEO_DUR * _progressBar.frame.size.width];
     
     btnForOk.enabled = (videoDuration + totalDur >= MIN_VIDEO_DUR);
 }
 
-- (void)videoRecorder:(SBVideoRecorder *)videoRecorder didRemoveVideoFileAtURL:(NSURL *)fileURL totalDur:(CGFloat)totalDur error:(NSError *)error
-{
+- (void)videoRecorder:(SBVideoRecorder *)videoRecorder didRemoveVideoFileAtURL:(NSURL *)fileURL totalDur:(CGFloat)totalDur error:(NSError *)error {
     if (error) {
         NSLog(@": %@", error);
     } else {
@@ -680,18 +633,14 @@
     }
     
     btnForOk.enabled = (totalDur >= MIN_VIDEO_DUR);
-
-
 }
 
-- (void)videoRecorder:(SBVideoRecorder *)videoRecorder didStartRecordingToOutPutFileAtURL:(NSURL *)fileURL
-{
+- (void)videoRecorder:(SBVideoRecorder *)videoRecorder didStartRecordingToOutPutFileAtURL:(NSURL *)fileURL {
+    
     [self.progressBar addProgressView];
     [_progressBar stopShining];
     
 //    [btnForDelete setButtonStyle:DeleteButtonStyleNormal];
-    
-    
     
     lblForTimer.text = [NSString stringWithFormat:@"%02d:%02d",min,second];
     imageViewForRedTimer.hidden = NO;
@@ -871,8 +820,9 @@
         case TAG_PHOTO_BUTTON + 2:
         {
             //Photo mode -> Switch Video or Photo
-            isPhotoMode = !isPhotoMode;
-            [self hideVideoControllView:isPhotoMode];
+//            isPhotoMode = !isPhotoMode;
+//            [self hideVideoControllView:isPhotoMode];
+            [self nextButton];
         }
             break;
         default:
@@ -881,5 +831,9 @@
 }
 
 // Custom Button Actions
+
+- (void)nextButton {
+    [self showPostView:[OMGlobal croppedImage:imageViewForPreview.image]];
+}
 
 @end

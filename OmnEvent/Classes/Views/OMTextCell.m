@@ -250,7 +250,6 @@
     if ([delegate respondsToSelector:@selector(sharePostText:)]) {
         [delegate performSelector:@selector(sharePostText:) withObject:currentObj];
     }
-    
 }
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {

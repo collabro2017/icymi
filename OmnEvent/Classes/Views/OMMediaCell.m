@@ -209,16 +209,6 @@
             _videoPlayerController = nil;
             
         }
-//        else
-//        {
-//            _videoPlayerController = [[PBJVideoPlayerController alloc] init];
-//            _videoPlayerController.delegate = self;
-//            _videoPlayerController.view.frame = imageViewForMedia.frame;
-//            _videoPlayerController.videoPath = videoFile.url;
-//            
-////            [self insertSubview:_videoPlayerController.view belowSubview:btnForVideoPlay];
-//            
-//        }
         
         _videoPlayerController = [[PBJVideoPlayerController alloc] init];
         _videoPlayerController.delegate = self;

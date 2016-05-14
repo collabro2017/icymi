@@ -11,17 +11,13 @@
 #import "SBCaptureDefine.h"
 #import "SBVideoRecorder.h"
 
-
-
 @class DeleteButton;
 
-@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate>
-{
+@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
     
     //Tool Bar
     
     IBOutlet UIView *viewForToolbar;
-    
     
     IBOutlet UIButton *btnForClose;
     IBOutlet UIButton *btnForFlash;
@@ -63,9 +59,6 @@
     UIImagePickerController *imagePicker;
     
     MBProgressHUD *hud;
-    
-
-    
 }
 
 @property (nonatomic, assign) BOOL addVideoMode;
@@ -78,7 +71,5 @@
 - (IBAction)topButtonsAction:(id)sender;
 
 - (IBAction)bottomButtonsAction:(id)sender;
-
-
 
 @end
