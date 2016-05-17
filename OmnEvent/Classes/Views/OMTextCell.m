@@ -128,12 +128,10 @@
     [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
     
     NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
-    NSLog(@"str_date = %@",str_date);
-    
     [lblForTime setText:str_date];
     
+    
     [lblForTitle setText:currentObj[@"title"]];
-
     constraintForHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"description"]];
     
     [lblForDes setText:currentObj[@"description"]];
@@ -270,7 +268,7 @@
         
         NSDictionary *userInfo = @{
                                    @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
-                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y] stringValue],
+                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y+30] stringValue],
                                    @"textFieldHeight": [[NSNumber numberWithFloat:textView.inputAccessoryView.frame.size.height] stringValue]
                                    };
         
@@ -288,6 +286,8 @@
                 currentObj[@"description"] = lblForDes.text;
                 [currentObj saveEventually];
                 
+                NSLog(@"TextCell: Updated the TextPost description");
+                
                 //NSUInteger line_no = [lblForDes.text length] / 28;
                 //constraintForHeight.constant = 16 * line_no;
                 
@@ -304,6 +304,7 @@
                 currentObj[@"title"] = lblForTitle.text;
                 [currentObj saveEventually];
                 
+                NSLog(@"TextCell: Updated the TextPost title");
                 //constraintForTitleHeight.constant = 100;
                 //[self.superview layoutIfNeeded];
             }
@@ -378,33 +379,5 @@
     return YES;
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    
-    //NSUInteger length = [[textField text] length];// - range.length + string.length;
-    
-//    if (textField == lblForDes){
-//        
-//        //constraintForHeight.constant = [OMGlobal heightForCellWithPost:textField.text];
-//        
-//        NSLog(@"-----%lu", length);
-//        
-//        if (length == 29){
-//            
-//            lblForDes.text = [NSString stringWithFormat:@"%@%@", lblForDes.text, @"\n"];
-//            
-//            constraintForHeight.constant = 45;
-//            
-//            [self.superview layoutIfNeeded];
-//            
-//            CGRect frameRect = lblForDes.frame;
-//            frameRect.size.height = 45;
-//            lblForDes.frame = frameRect;
-//            
-//            NSLog(@"here run");
-//        }
-//    }
-    
-    return YES;
-}
 
 @end

@@ -167,7 +167,7 @@
             
         }
     
-        __block OMFeedImageCell *cell = self;
+
         __block PBJVideoPlayerController *controller = _videoPlayerController;
     
     double delayInSeconds = 0.0001f;

@@ -738,7 +738,7 @@
                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Icon-1024.png" translatesAutoresizingMaskIntoConstraints="NO" id="1OT-oJ-JTg">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="folder_icon" translatesAutoresizingMaskIntoConstraints="NO" id="1OT-oJ-JTg">
                                         <rect key="frame" x="159" y="134" width="100" height="100"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F5h-Wx-2Jk">
@@ -780,6 +780,9 @@
                                         <rect key="frame" x="153" y="95" width="97" height="30"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
+                                        <connections>
+                                            <outlet property="delegate" destination="u7v-tS-vfE" id="ZKK-S0-qFg"/>
+                                        </connections>
                                     </textField>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -790,7 +793,7 @@
                                     <constraint firstAttribute="height" constant="30" id="681-PY-FJV"/>
                                     <constraint firstAttribute="width" constant="30" id="fgS-pQ-HoD"/>
                                 </constraints>
-                                <state key="normal" image="barButtonItems-settings-white.png">
+                                <state key="normal" image="btn_setting">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -2814,7 +2817,7 @@
                                                                 <constraint firstAttribute="width" constant="36" id="92s-kl-l17"/>
                                                                 <constraint firstAttribute="height" constant="24" id="j1I-RD-OFA"/>
                                                             </constraints>
-                                                            <state key="normal" image="videoIndicatorAssets-smallVideoGlyph.png">
+                                                            <state key="normal" image="video_indicator">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
                                                         </button>
@@ -2953,7 +2956,7 @@
                                             <constraint firstAttribute="width" constant="20" id="Eyk-GR-Uuc"/>
                                             <constraint firstAttribute="height" constant="20" id="Gcl-oU-qAX"/>
                                         </constraints>
-                                        <state key="normal" backgroundImage="write-icon.png">
+                                        <state key="normal" backgroundImage="write_icon">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
@@ -2981,7 +2984,7 @@
                                             <constraint firstAttribute="width" constant="20" id="Sa1-ba-Q81"/>
                                             <constraint firstAttribute="height" constant="18" id="fI0-vr-vaN"/>
                                         </constraints>
-                                        <state key="normal" image="online_state.png"/>
+                                        <state key="normal" image="online_state"/>
                                         <connections>
                                             <action selector="changeModeAction:" destination="y7e-16-ruc" eventType="touchUpInside" id="x0K-zt-e1M"/>
                                         </connections>
@@ -3059,7 +3062,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6fN-FI-cML">
-                                                    <rect key="frame" x="26" y="56" width="268" height="16"/>
+                                                    <rect key="frame" x="26" y="52" width="268" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="16" id="7Gl-7X-L7F"/>
                                                     </constraints>
@@ -3227,7 +3230,7 @@
                                                 <constraint firstItem="4Z6-jI-hAL" firstAttribute="top" secondItem="ypI-ij-H34" secondAttribute="topMargin" constant="-8" id="Lye-1x-imZ"/>
                                                 <constraint firstItem="Asb-gu-s0H" firstAttribute="leading" secondItem="HU8-a3-jij" secondAttribute="trailing" constant="8" id="OSL-QU-JhN"/>
                                                 <constraint firstItem="37A-tT-xXl" firstAttribute="leading" secondItem="ypI-ij-H34" secondAttribute="leading" id="Pu2-zw-wE5"/>
-                                                <constraint firstItem="eSb-dW-DhO" firstAttribute="top" secondItem="6fN-FI-cML" secondAttribute="bottom" id="TG3-6l-Ozu"/>
+                                                <constraint firstItem="eSb-dW-DhO" firstAttribute="top" secondItem="6fN-FI-cML" secondAttribute="bottom" constant="4" id="TG3-6l-Ozu"/>
                                                 <constraint firstAttribute="trailing" secondItem="F3K-kv-oaJ" secondAttribute="trailing" id="UoL-rc-ijL"/>
                                                 <constraint firstItem="BVw-YG-Scm" firstAttribute="top" secondItem="Asb-gu-s0H" secondAttribute="bottom" constant="4" id="aLg-hf-MPW"/>
                                                 <constraint firstAttribute="bottom" secondItem="F3K-kv-oaJ" secondAttribute="bottom" id="dMx-C5-KNU"/>
@@ -3243,7 +3246,7 @@
                                                 <constraint firstAttribute="trailing" secondItem="37A-tT-xXl" secondAttribute="trailing" id="lTG-B6-zRy"/>
                                                 <constraint firstItem="4Z6-jI-hAL" firstAttribute="leading" secondItem="ypI-ij-H34" secondAttribute="leadingMargin" constant="-8" id="mzB-MU-t7N"/>
                                                 <constraint firstAttribute="bottom" secondItem="37A-tT-xXl" secondAttribute="bottom" id="nCe-Cq-EVE"/>
-                                                <constraint firstItem="6fN-FI-cML" firstAttribute="top" secondItem="BVw-YG-Scm" secondAttribute="bottom" constant="9" id="o0b-Nx-Mvq"/>
+                                                <constraint firstItem="6fN-FI-cML" firstAttribute="top" secondItem="BVw-YG-Scm" secondAttribute="bottom" constant="5" id="o0b-Nx-Mvq"/>
                                                 <constraint firstAttribute="trailing" secondItem="iBi-hm-Mi3" secondAttribute="trailing" constant="26" id="ocO-SK-IDr"/>
                                                 <constraint firstItem="gEP-Kq-wJq" firstAttribute="centerY" secondItem="Asb-gu-s0H" secondAttribute="centerY" id="sRA-0E-iB8"/>
                                                 <constraint firstItem="6fN-FI-cML" firstAttribute="leading" secondItem="ypI-ij-H34" secondAttribute="leadingMargin" constant="18" id="tcm-CL-fdL"/>
@@ -3843,7 +3846,7 @@
                         <outlet property="btnForNetState" destination="7Wf-TZ-Dvr" id="QsU-eR-XY6"/>
                         <outlet property="btnForPhoto" destination="bAQ-hp-kod" id="c1p-SR-2Ay"/>
                         <outlet property="btnForVideo" destination="u20-4n-9kr" id="PT9-4t-sL5"/>
-                        <outlet property="tblForDetailList" destination="Vxp-Dm-FQr" id="b62-pu-EUd"/>
+                        <outlet property="tblForDetailList" destination="Vxp-Dm-FQr" id="UCK-8A-EPE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aVF-ag-bxR" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -4216,7 +4219,7 @@
                                                                 <constraint firstAttribute="height" constant="24" id="6aE-EG-EAM"/>
                                                                 <constraint firstAttribute="width" constant="36" id="aQ1-3e-9jQ"/>
                                                             </constraints>
-                                                            <state key="normal" image="videoIndicatorAssets-smallVideoGlyph.png">
+                                                            <state key="normal" image="video_indicator">
                                                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                             </state>
                                                         </button>
@@ -7647,16 +7650,14 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Icon-1024.png" width="1024" height="1024"/>
         <image name="arrow_" width="226" height="123"/>
         <image name="back-green.png" width="30" height="30"/>
-        <image name="barButtonItems-settings-white.png" width="22" height="22"/>
         <image name="bg_splash" width="320" height="569"/>
         <image name="btn-post.png" width="93" height="28"/>
         <image name="btn_FB" width="280" height="44"/>
-        <image name="btn_add_audio" width="13" height="12"/>
-        <image name="btn_add_photo" width="13" height="13"/>
-        <image name="btn_add_video" width="13" height="13"/>
+        <image name="btn_add_audio" width="20" height="18"/>
+        <image name="btn_add_photo" width="20" height="19"/>
+        <image name="btn_add_video" width="20" height="20"/>
         <image name="btn_back_profile" width="8" height="15"/>
         <image name="btn_comment" width="13" height="12"/>
         <image name="btn_comment_white" width="25" height="25"/>
@@ -7668,6 +7669,7 @@
         <image name="btn_more" width="15" height="4"/>
         <image name="btn_more_white" width="15" height="4"/>
         <image name="btn_register" width="242" height="43"/>
+        <image name="btn_setting" width="22" height="22"/>
         <image name="btn_signin" width="242" height="43"/>
         <image name="btn_signup" width="280" height="44"/>
         <image name="btn_submit" width="242" height="43"/>
@@ -7675,6 +7677,7 @@
         <image name="create-event.png" width="85" height="20"/>
         <image name="done.png" width="130" height="35"/>
         <image name="drop-down.png" width="30" height="30"/>
+        <image name="folder_icon" width="90" height="90"/>
         <image name="grid.png" width="20" height="20"/>
         <image name="icon_arrow_profile" width="8" height="15"/>
         <image name="icon_email" width="17" height="13"/>
@@ -7691,7 +7694,7 @@
         <image name="like.png" width="15" height="15"/>
         <image name="list.png" width="20" height="20"/>
         <image name="mark" width="31" height="37"/>
-        <image name="online_state.png" width="120" height="109"/>
+        <image name="online_state" width="20" height="20"/>
         <image name="share.png" width="15" height="15"/>
         <image name="tab_friend" width="64" height="45"/>
         <image name="tab_friend_selected" width="64" height="45"/>
@@ -7704,7 +7707,7 @@
         <image name="tab_tutorial" width="64" height="45"/>
         <image name="tag.png" width="156" height="37"/>
         <image name="upload-pic.png" width="100" height="100"/>
-        <image name="videoIndicatorAssets-smallVideoGlyph.png" width="36" height="24"/>
-        <image name="write-icon.png" width="15" height="15"/>
+        <image name="video_indicator" width="36" height="24"/>
+        <image name="write_icon" width="15" height="15"/>
     </resources>
 </document>

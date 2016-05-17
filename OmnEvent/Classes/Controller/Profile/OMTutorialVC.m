@@ -11,8 +11,7 @@
 @interface OMTutorialVC ()
 {
     NSString *urlForVideo;
-    
-    MPMoviePlayerViewController *player;
+    MPMoviePlayerViewController *playVC;
 }
 
 
@@ -26,63 +25,56 @@
     [super viewDidLoad];
     
     urlForVideo = [[NSBundle mainBundle] pathForResource:@"tutorial" ofType:@"mp4"];
-
+    
     _videoPlayerController = [[PBJVideoPlayerController alloc] init];
-    
     _videoPlayerController.delegate = self;
-    [_videoPlayerController.view setFrame:viewForGuide.bounds];
+    //[_videoPlayerController.view setFrame:viewForGuide.bounds];
     _videoPlayerController.videoPath = urlForVideo;
-//    [viewForGuide addSubview:_videoPlayerController.view];
-    
-    
-    
-    player = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:urlForVideo]];
-    
-//    [player.view setFrame:viewForGuide.bounds];
-//    [viewForGuide addSubview:player.view];
-    
-    [TABController presentMoviePlayerViewControllerAnimated:player];
-    
-    
-    
-    
-    
+    [_videoPlayerController playFromBeginning];
     
     // Do any additional setup after loading the view.
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-//    [_videoPlayerController playFromBeginning];
-    
+}
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+   
 }
 
 #pragma mark PBJ delegate
 
 - (void)videoPlayerPlaybackDidEnd:(PBJVideoPlayerController *)videoPlayer
 {
-    
+    NSLog(@"delegate log1 === ");
 }
 
 - (void)videoPlayerPlaybackStateDidChange:(PBJVideoPlayerController *)videoPlayer
 {
-    
+    NSLog(@"delegate log2 === ");
 }
 
 - (void)videoPlayerPlaybackWillStartFromBeginning:(PBJVideoPlayerController *)videoPlayer
 {
-    
+    NSLog(@"delegate log3 === ");
 }
 
 - (void)videoPlayerReady:(PBJVideoPlayerController *)videoPlayer
 {
-    
+    NSLog(@"delegate log4 === ");
     
 }
 /*

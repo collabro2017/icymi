@@ -42,7 +42,7 @@
         }
         [arrForComment removeAllObjects];
         [arrForComment addObjectsFromArray:objects];
-        NSLog(@"%@", arrForComment);
+
         [self loadController];
         [tblForComment reloadData];
     }];
@@ -110,10 +110,6 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-//    if (self.isMovingFromParentViewController) {
-//        [self.navigationController setNavigationBarHidden:YES];
-//    }
-   
 }
 
 - (void)didReceiveMemoryWarning
@@ -147,8 +143,8 @@
         }
         [arrForComment removeAllObjects];
         [arrForComment addObjectsFromArray:objects];
-        NSLog(@"%@", arrForComment);
         [tblForComment reloadData];
+        NSLog(@"EventCommentViewController: Loaded eventcomments");
     }];
 }
 
@@ -204,6 +200,8 @@
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadCurrentEventData object:nil];
 //                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadPhotoData object:nil];
+                    
+                    NSLog(@"EventCommentViewController: Updated EventComments");
                     
                 }
                 else if (_error)

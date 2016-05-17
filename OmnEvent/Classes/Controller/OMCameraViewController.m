@@ -36,6 +36,7 @@
     int second;
     int min;
     int hour;
+    
 }
 
 
@@ -84,6 +85,7 @@
     [super viewDidLoad];
     
     isPhotoMode = YES;
+    
     defaultValue = constraintForVideoControl.constant;
     
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
@@ -94,7 +96,7 @@
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     imagePicker.delegate = self;
     imagePicker.allowsEditing = YES;
-    
+   
     
     [self initTopBar];
     [self initPhotoControls];
@@ -102,6 +104,7 @@
     
     [SBCaptureToolKit createVideoFolderIfNotExist];
     [self initProgressBar];
+    
     [self performSelectorOnMainThread:@selector(initRecorder) withObject:nil waitUntilDone:NO];
 }
 
@@ -114,9 +117,21 @@
 - (void)viewWillAppear:(BOOL)animated {
     
     [super viewWillAppear:animated];
+    
+    [self refreshScreen];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
     
+}
+
+- (void)refreshScreen{
+    [GlobalVar getInstance].gIsPhotoPreview = YES;
+    
+    // previewlayer hide and show - Due to place pre-viewlayer for result on Video or Photo camera view.
+    [_recorder.preViewLayer setHidden:NO];
+    btnForVideo.enabled = NO;
+    btnForVideo.hidden = YES;
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -277,6 +292,7 @@
     [btnForOk setBackgroundImage:[UIImage imageNamed:@"record_icon_hook_highlighted_bg.png"] forState:UIControlStateHighlighted];
     [btnForOk setImage:[UIImage imageNamed:@"record_icon_hook_normal.png"] forState:UIControlStateNormal];
     [btnForOk addTarget:self action:@selector(pressOKButton) forControlEvents:UIControlEventTouchUpInside];
+    [btnForOk setHidden:YES];
     
     btnForVideo.enabled = NO;
     btnForVideo.hidden = YES;
@@ -291,7 +307,7 @@
     
     // Record Button
     [btnForRecord setImage:[UIImage imageNamed:@"video_longvideo_btn_shoot.png"] forState:UIControlStateNormal];
-//    btnForRecord.userInteractionEnabled = NO;
+//   btnForRecord.userInteractionEnabled = NO;
     [btnForRecord addTarget:self action:@selector(recordVideo:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -430,11 +446,7 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-//    if (_isProcessingData) {
-//        return;
-//    }
-    
-//    [_recorder stopCurrentVideoRecording];
+
 }
 //When Tap Delete Button
 
@@ -524,19 +536,20 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
-//    [_recorder stopCurrentVideoRecording];
-//    [_recorder.preViewLayer removeFromSuperlayer];
     
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     UIImage *image = [info objectForKey:UIImagePickerControllerEditedImage];
     
-//    _focusRectView.hidden = YES;
-//    [imageViewForPreview setImage:image];
-//    btnForVideo.enabled = YES;
-    
-    [MBProgressHUD showMessag:@"Processing..." toView:self.view];
+     [MBProgressHUD showMessag:@"Processing..." toView:self.view];
+
     [picker dismissViewControllerAnimated:YES completion:^{
-        [self performSelector:@selector(showPostView:) withObject:image afterDelay:0.3f];
+        
+        [_recorder.preViewLayer setHidden:YES];
+        [imageViewForPreview setImage:image];
+        btnForVideo.enabled = YES;
+        btnForVideo.hidden = NO;
+        [GlobalVar getInstance].gIsPhotoPreview = NO;
+        [MBProgressHUD hideHUDForView:self.view animated:NO];
     }];
 }
 
@@ -564,14 +577,15 @@
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     
     [_recorder stopCurrentVideoRecording];
-    [_recorder.preViewLayer removeFromSuperlayer];
+
+    // Hide the previewlayer when get image or video for new Event/Post
+    [_recorder.preViewLayer setHidden:YES];
     
-    _focusRectView.hidden = YES;
+    _focusRectView.hidden = NO;
     [imageViewForPreview setImage:image];
     btnForVideo.enabled = YES;
     btnForVideo.hidden = NO;
-    
-    //[self showPostView:[OMGlobal croppedImage:image]];
+
 }
 
 //Record Video
@@ -600,13 +614,15 @@
         
         [MBProgressHUD showMessag:@"Processing..." toView:self.view];
         [_recorder mergeVideoFiles];
-//        [self showPreviewForVideo:outputFileURL];
+        
     }
     
 //    [_progressBar startShining];
     
 //    if (totalDur >= MAX_VIDEO_DUR) {
 //        [self pressOKButton];
+//        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+//        [self showPreviewForVideo:outputFileURL];
 //    }
 
 }
@@ -803,9 +819,21 @@
     switch (button.tag) {
         case TAG_PHOTO_BUTTON:
         {
+            
             //Capture Action : if camera button -> Photo , else video button //
             if (isPhotoMode) {
-                [self capturePhoto];
+                if([GlobalVar getInstance].gIsPhotoPreview) {
+                    [self capturePhoto];
+                }
+                else
+                {
+                    [_recorder.preViewLayer setHidden:NO];
+                    btnForVideo.enabled = NO;
+                    btnForVideo.hidden = YES;
+                    
+                }
+                [GlobalVar getInstance].gIsPhotoPreview = ![GlobalVar getInstance].gIsPhotoPreview;
+                
             }
         }
             break;
@@ -820,8 +848,8 @@
         case TAG_PHOTO_BUTTON + 2:
         {
             //Photo mode -> Switch Video or Photo
-//            isPhotoMode = !isPhotoMode;
-//            [self hideVideoControllView:isPhotoMode];
+            //isPhotoMode = !isPhotoMode;
+            //[self hideVideoControllView:isPhotoMode];
             [self nextButton];
         }
             break;
@@ -833,6 +861,7 @@
 // Custom Button Actions
 
 - (void)nextButton {
+    
     [self showPostView:[OMGlobal croppedImage:imageViewForPreview.image]];
 }
 

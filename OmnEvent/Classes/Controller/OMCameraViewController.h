@@ -46,13 +46,9 @@
     
     
     IBOutlet UIView *viewForVideoControls;
-    
     IBOutlet UIButton *btnForRecord;
-    
     IBOutlet DeleteButton *btnForDelete;
-    
     IBOutlet UIButton *btnForOk;
-    
     IBOutlet NSLayoutConstraint *constraintForVideoControl;
     //
     
@@ -69,7 +65,6 @@
 @property (nonatomic) PFObject          *curObj;
 
 - (IBAction)topButtonsAction:(id)sender;
-
 - (IBAction)bottomButtonsAction:(id)sender;
 
 @end

@@ -57,7 +57,7 @@
         
         NSDictionary *userInfo = @{
                                    @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
-                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y] stringValue],
+                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y+30] stringValue],
                                    @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
                                    };
         

@@ -67,15 +67,17 @@
     NSUInteger real_parse_data_num;
     NSUInteger offline_data_num;
     NSMutableArray *offlineURLs;
+    
 }
 
+@property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
 
 @property (readwrite, nonatomic, strong) UIRefreshControl *refreshControl;
 
 @end
 
 @implementation OMDetailEventViewController
-@synthesize currentObject, dic;
+@synthesize currentObject, dic, tblForDetailList;
 
 - (void)reload:(__unused id)sender
 {
@@ -83,25 +85,21 @@
     
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
     [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
-    [mainQuery includeKey:@"user"];    
+    [mainQuery includeKey:@"user"];
+    [mainQuery includeKey:@"commentsArray"];
     [mainQuery orderByDescending:@"createdAt"];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        
         [(UIRefreshControl*)sender endRefreshing];
-
         if (error || !objects) {
             return;
         }
         else
         {
             [arrForDetail removeAllObjects];
-            [arrForDetail addObjectsFromArray:objects];
-            
-            real_parse_data_num = objects.count;      
-            
+ 
             OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
-            //[arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
-            
             offline_data_num = appDel.m_offlinePosts.count;
             
             for (NSUInteger i = 0; i < offline_data_num; i ++){
@@ -115,9 +113,8 @@
                 }
             }
             
-            [arrForDetail addObjectsFromArray:objects];
-            
-            [tblForDetailList reloadData];
+           [arrForDetail addObjectsFromArray:objects];
+           [tblForDetailList reloadData];
         }
     }];
 }
@@ -140,33 +137,29 @@
     // Do any additional setup after loading the view.
     
     // Initialize variables
-    
-    arrForDetail = [NSMutableArray array];
-    offlineURLs = [NSMutableArray array];
-    imagePicker = [[UIImagePickerController alloc] init];
+    arrForDetail = [[NSMutableArray alloc] init];
+    offlineURLs  = [[NSMutableArray alloc] init];
+
+    imagePicker  = [[UIImagePickerController alloc] init];
     [imagePicker setDelegate:self];
     isVideoAdd = NO;
     
     is_type = nil;
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadContents:) name:kLoadComponentsData object:is_type];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadContents) name:kLoadComponentsData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCurrentObject) name:kLoadCurrentEventData object:nil];
-    
-    [self loadContents:is_type];
-    
+   
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(firstViewLoad) name:kNotificationFirstDetailViewLoad object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShow:) name:kNotificationKeyboardShow object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHide:) name:kNotificationKeyboardHide object:nil];
     
     editable_flag = NO;
-    //kNotificationKeyboardShow
     currentMediaCell = nil;
     
     [self initializeControls];
+    [self loadContents];
     
-    is_type = nil;
-    
-    [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
+    //[NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
     
 }
 
@@ -256,25 +249,12 @@
     [super viewWillAppear:animated];
     
     [UIApplication sharedApplication].statusBarOrientation = UIInterfaceOrientationPortrait;
-    
     OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-    
-    //Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
-    //NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];   
-    
-    appDel.network_state = [[NSUserDefaults standardUserDefaults] boolForKey:@"network_status"];
-    
+ 
     if (appDel.network_state) {
-        
-        NSLog(@"There IS internet connection");
-        
         UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
-        
     } else {
-        
-        NSLog(@"There IS NO internet connection");
-        
         UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
@@ -283,9 +263,6 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-//    if (self.isMovingFromParentViewController) {
-//        [self.navigationController setNavigationBarHidden:YES];
-//    }
 }
 
 
@@ -313,8 +290,6 @@
     CGPoint contentOffset = tblForDetailList.contentOffset;
     
     contentOffset.y = (pointInTable.y - textFieldHeight);
-    
-    //NSLog(@"============contentOffset is: %@", NSStringFromCGPoint(contentOffset));
     
     [tblForDetailList setContentOffset:contentOffset animated:YES];
 }
@@ -361,15 +336,11 @@
 
 - (void)showPickerView
 {
-    
     [UIView animateWithDuration:0.2f animations:^{
         
         [customPickerView setFrame:CGRectMake(customPickerView.frame.origin.x, [UIScreen mainScreen].bounds.size.height - customPickerView.frame.size.height, customPickerView.frame.size.width, customPickerView.frame.size.height)];
-        
-        
+      
     } completion:^(BOOL finished) {
-        
-        
         
     }];
 }
@@ -377,31 +348,23 @@
 - (void)doneButtonClikedDismissPickerView {
     
     [UIView animateWithDuration:0.2f animations:^{
-        
-        
         [customPickerView setFrame:rectForPickerView];
-        [self loadContents:is_type];
+        [self loadContents];
         
     } completion:^(BOOL finished) {
-        
-        
+
     }];
 }
-
 
 - (void)addRefreshControlToTable
 {
     self.refreshControl = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, tblForDetailList.frame.size.width, 100.0f)];
-    
     [self.refreshControl addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
-    
     [tblForDetailList addSubview:self.refreshControl];
-
 }
 
 - (void)initializeNavBar
 {
-    
     self.title = currentObject[@"eventname"];
     [self.navigationController setNavigationBarHidden:NO];    
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
@@ -423,8 +386,6 @@
     UIButton *inviteButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     
     [inviteButton addTarget:self action:@selector(showInvite) forControlEvents:UIControlEventTouchUpInside];
-//    [inviteButton setImage:[UIImage imageNamed:@"icon_friend"] forState:UIControlStateNormal];
-    
     [inviteButton setBackgroundImage:[UIImage imageNamed:@"icon_friend"] forState:UIControlStateNormal];
     
     BBBadgeBarButtonItem *btnForInvite = [[BBBadgeBarButtonItem alloc] initWithCustomUIButton:inviteButton];
@@ -435,87 +396,112 @@
 - (void)reloadCurrentObject
 {
     [currentObject fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-       
         [tblForDetailList reloadData];
-        
     }];
 }
 
-- (void)loadContents:(NSString* ) postType {
+- (void)loadContents {
+   
+    if(currentObject == nil) return;
     
+    [tblForDetailList setContentOffset:CGPointZero animated:NO];
+
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    [GlobalVar getInstance].isPostLoading = YES;
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
     [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
     
-    if (is_type)
+    if ([is_type isEqualToString:@"text"]
+        || [is_type isEqualToString:@"video"]
+        || [is_type isEqualToString:@"audio"]
+        || [is_type isEqualToString:@"photo"])
+    {
             [mainQuery whereKey:@"postType" equalTo:is_type];
+    }
     
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"commentsArray"];
     [mainQuery orderByDescending:@"createdAt"];
-    
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
         [MBProgressHUD hideHUDForView:self.view animated:YES];
-        
-        if (error || !objects) {
-            return;
-        } else {
-            
-            [arrForDetail removeAllObjects];
-            [offlineURLs removeAllObjects];
-            
-            real_parse_data_num = objects.count;
-            
-            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
-            
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i ++){
-                
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex: offline_data_num - i - 1];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:offline_data_num - i - 1]];
-                }
+        [GlobalVar getInstance].isPostLoading = NO;
+  
+        if (error == nil) {
+            if ([arrForDetail count]) {
+                [arrForDetail removeAllObjects];
             }
             
-            [arrForDetail addObjectsFromArray:objects];
+            if ([offlineURLs count]) {
+                [offlineURLs removeAllObjects];
+            }
             
-            [tblForDetailList reloadData];
+            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
+
+              offline_data_num = appDel.m_offlinePosts.count;
+                
+                for (NSUInteger i = 0; i < offline_data_num; i++ ){
+                    
+                    PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex: offline_data_num - i - 1];
+                    PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
+                    
+                    if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
+                        [arrForDetail addObject:temp_object];
+                        [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:offline_data_num - i - 1]];
+                    }
+                }
+           if([objects count] != 0) [arrForDetail addObjectsFromArray:objects];
+            
+            //dispatch_async(dispatch_get_main_queue(), ^{
+                [tblForDetailList reloadData];
+            
+            //});
+  
         }
-        
     }];
 }
 
-- (void)reloadContents:(NSString* ) postType
+- (void)loadPostList
 {
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
-    [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
-    
-    if (postType)
-        [mainQuery whereKey:@"postType" equalTo:postType];
-    
-    [mainQuery includeKey:@"user"];
-    [mainQuery includeKey:@"commentsArray"];
-    [mainQuery orderByDescending:@"createdAt"];
-    
-    [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (error || !objects) {
-            return;
-        }
-        else
-        {
-            [arrForDetail removeAllObjects];
-            [arrForDetail addObjectsFromArray:objects];
-            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
-            [arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+     for (PFObject *obj in arrForDetail) {
+        if (obj[@"objectId"] == tempObejct[@"objectId"]) {
+            [arrForDetail removeObject:obj];
             [tblForDetailList reloadData];
         }
-    }];
+    }
+   
 }
+//- (void)reloadContents:(NSString* ) postType
+//{
+//    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
+//    [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
+//    
+//    if ([postType isEqualToString:@"text"]
+//        || [postType isEqualToString:@"video"]
+//        || [postType isEqualToString:@"audio"]
+//        || [postType isEqualToString:@"photo"])
+//    {
+//        [mainQuery whereKey:@"postType" equalTo:postType];
+//    }
+//
+//    [mainQuery includeKey:@"user"];
+//    [mainQuery includeKey:@"commentsArray"];
+//    [mainQuery orderByDescending:@"createdAt"];
+//    
+//    [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+//        if (error || !objects) {
+//            return;
+//        }
+//        else
+//        {
+//            [arrForDetail removeAllObjects];
+//            [arrForDetail addObjectsFromArray:objects];
+//            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
+//            [arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+//            [tblForDetailList reloadData];
+//        }
+//    }];
+//}
 
 - (void)backAction
 {
@@ -525,8 +511,6 @@
 - (IBAction)addContentsAction:(id)sender
 {
     UIButton *button = (UIButton *)sender;
-    NSLog(@"%@",currentObject[@"openStatus"]);
-    
     if ([currentObject[@"openStatus"] intValue]) {
         switch (button.tag) {
             case 10:
@@ -538,9 +522,7 @@
             {
                 UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Share Audio" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Record Audio", nil];
                 
-                
                 [actionSheet setTag:kTag_NewAudio];
-                
                 [actionSheet showInView:self.view];
                 
 //                mediaPicker = [[MPMediaPickerController alloc] initWithMediaTypes:MPMediaTypeMusic];
@@ -581,8 +563,7 @@
     
     OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
     
-    
-    NSDate* lastUpdatedate = [NSDate date];
+     NSDate* lastUpdatedate = [NSDate date];
     [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
@@ -642,7 +623,6 @@
                         
                     } else {
                         
-                        //[OMGlobal showAlertTips:@"Uploading Failed." title:nil];
                         NSLog(@"Error ---- Post = %@", error);
                         
                     }
@@ -656,7 +636,6 @@
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-
 - (NSInteger)firstSectionCount:(PFObject *)_obj
 {
     NSInteger rows = 0;
@@ -669,7 +648,6 @@
     //rows += [_obj[@"commenters"] count] > 3 ? 3:[_obj[@"commenters"] count];
     
     rows += [_obj[@"commenters"] count];
-    
     return rows;
 }
 
@@ -807,15 +785,8 @@
 
 - (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-    if (result == MessageComposeResultCancelled) {
-        
-    }
-    
     [controller dismissViewControllerAnimated:YES completion:nil];
 }
-
-
-
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     [controller dismissViewControllerAnimated:YES completion:nil];
@@ -844,9 +815,6 @@
     
     currentObject[@"TagFriends"] = [temp_array objectAtIndex:0];
     currentObject[@"TagFriendAuthorities"] = [temp_array objectAtIndex:1];
-    
-    //NSLog(@"%@",currentObject[@"TagFriends"]);
-    //NSLog(@"%@",currentObject[@"TagFriendAuthorities"]);
     
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         
@@ -976,331 +944,259 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    switch (indexPath.section) {
+    if(indexPath.section == 0) // Even Header Content
+    {
+        if (indexPath.row == 0) {
             
-        case 0:
+            OMDetailHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:kDetailHeaderCell];
+            if (!cell) {
+                cell = [[OMDetailHeaderCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kDetailHeaderCell];
+            }
+            
+            [cell setDelegate:self];
+            [cell setCurrentObj:currentObject];
+            return cell;
+            
+        } else if (indexPath.row == 1) {
+            
+            OMDescriptionCell *cell = [tableView dequeueReusableCellWithIdentifier:kDescriptionCell];
+            
+            if (!cell) {
+                cell = [[OMDescriptionCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kDescriptionCell];
+            }
+            [cell setDelegate:self];
+            [cell setCurrentObj:currentObject];
+            return cell;
+            
+        } else if (indexPath.row > 1 && indexPath.row < [self firstSectionCount:currentObject]) {
+            
+            OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
+            if (!cell) {
+                cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
+            }
+            
+            NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
+            
+            NSString *objectId = [temp objectForKey:@"objectId"];
+            
+            if (objectId == nil){
+                objectId = [[currentObject[@"commenters"] objectAtIndex:indexPath.row - 2] objectId];
+            }
+            
+            [cell setDelegate:self];
+            [cell newsetUser:objectId comment:[currentObject[@"commentsArray"] objectAtIndex:indexPath.row - 2] curObj:currentObject];
+            
+            return cell;
+        }
+    
+    }
+    else // Event Detail Content with Post detail contents
+    {
+        PFObject *tempObj = (PFObject*)[arrForDetail objectAtIndex:indexPath.section - 1];
+     
+        // Post Contents with text type
+        if ([tempObj[@"postType"] isEqualToString:@"text"])
         {
-            
             if (indexPath.row == 0) {
                 
-                OMDetailHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:kDetailHeaderCell];
+                OMTextCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextCell];
                 
-                if (!cell) {
-                    cell = [[OMDetailHeaderCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kDetailHeaderCell];
+                if (cell == nil) {
+                    cell = [[OMTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kTextCell];
                 }
                 
                 [cell setDelegate:self];
-                [cell setCurrentObj:currentObject];
+                [cell setCurrentObj:tempObj];
+                
                 return cell;
                 
-            } else if (indexPath.row == 1) {
+            } else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj]) {
                 
-                OMDescriptionCell *cell = [tableView dequeueReusableCellWithIdentifier:kDescriptionCell];
+                NSMutableArray *arr = [[NSMutableArray alloc]init];
                 
-                if (!cell) {
-                    cell = [[OMDescriptionCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kDescriptionCell];
+                if (tempObj[@"commentsArray"]) {
+                    arr = tempObj[@"commentsArray"];
                 }
-                [cell setDelegate:self];
-                [cell setCurrentObj:currentObject];
-                return cell;
-                
-            } else if (indexPath.row > 1 && indexPath.row < [self firstSectionCount:currentObject]) {
-                
                 OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
+                
                 if (!cell) {
                     cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
                 }
                 
-                //NSLog(@"%@", [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2]);
-                
-                NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
-                
-                //NSLog(@"%@", temp);
-                
-                NSString *objectId = [temp objectForKey:@"objectId"];
-                
-                if (objectId == nil){
-                    objectId = [[currentObject[@"commenters"] objectAtIndex:indexPath.row - 2] objectId];
-                }
-                
                 [cell setDelegate:self];
-                
-                [cell newsetUser:objectId comment:[currentObject[@"commentsArray"] objectAtIndex:indexPath.row - 2] curObj:currentObject];
+                [cell configCell:[tempObj[@"commentsArray"] objectAtIndex:(arr.count - indexPath.row)] EventObject:tempObj[@"targetEvnet"]];
                 
                 return cell;
             }
-            
-            break;
         }
-            
-        default:
+        
+        // Post Contents with Media type
+        else
         {
-            PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];       
-         
-            if ([tempObj[@"postType"] isEqualToString:@"text"])
-            {
-                if (indexPath.row == 0) {
-                    
-                    OMTextCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextCell];
-                    
-                    if (cell == nil) {
-                        cell = [[OMTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kTextCell];
-                    }
-                    
-                    [cell setDelegate:self];
-                    [cell setCurrentObj:tempObj];
-                    
-                    return cell;
-                    
-                } else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj]) {
-                    
-                    NSMutableArray *arr;
-                    
-                    if (tempObj[@"commentsArray"]) {
-                        
-                        arr = tempObj[@"commentsArray"];
-                        
-                    }
-                    else
-                        arr = [NSMutableArray array];
-                    
-                    //NSLog(@"%lu ------,  %lu", (unsigned long)(arr.count - indexPath.row + 1), (unsigned long)indexPath.row);
-                    
-                    OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
-                    
-                    if (!cell) {
-                        cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
-                    }
-                    
-                    [cell setDelegate:self];
-                    [cell configCell:[tempObj[@"commentsArray"] objectAtIndex:(arr.count - indexPath.row)] EventObject:tempObj[@"targetEvnet"]];
-                    
-                    return cell;
+            if (indexPath.row == 0) {
+                
+                OMMediaCell *cell = [tableView dequeueReusableCellWithIdentifier:kMediaCell];
+                
+                if (cell == nil) {
+                    cell = [[OMMediaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kMediaCell];
                 }
+                
+                if (indexPath.section - 1 < offline_data_num){
+                    
+                    cell.file = (PFFile *)tempObj[@"postFile"];
+                    cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - 1];
+                    
+                } else {
+                    cell.file = nil;
+                    cell.offline_url = nil;
+                }
+                
+                [cell setDelegate:self];
+                [cell setCurrentObj:tempObj];
+                
+                [cell setNeedsLayout];
+                [cell layoutIfNeeded];
+                
+                return cell;
             }
-            else
+            else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {
-                if (indexPath.row == 0) {
-                    
-                    OMMediaCell *cell = [tableView dequeueReusableCellWithIdentifier:kMediaCell];
-                    
-                    if (cell == nil) {
-                        cell = [[OMMediaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kMediaCell];
-                    }
-                    
-                    if (indexPath.section - 1 < offline_data_num){
-                        
-                        cell.file = (PFFile *)tempObj[@"postFile"];
-                        cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - 1];
-                        
-                    } else {
-                        cell.file = nil;
-                        cell.offline_url = nil;
-                    }
-                    
-                    [cell setDelegate:self];
-                    [cell setCurrentObj:tempObj];
-                    
-                    [cell setNeedsLayout];
-                    [cell layoutIfNeeded];
-                    
-                    return cell;
+                NSMutableArray *arr = [[NSMutableArray alloc]init];
+                
+                if (tempObj[@"commentsArray"]) {
+                    arr = tempObj[@"commentsArray"];
                 }
-                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
-                {
-                    NSLog(@"%ld",(long)[self cellCount:tempObj]);
-                    NSMutableArray *arr;
-                    
-                    if (tempObj[@"commentsArray"]) {
-                        
-                        arr = tempObj[@"commentsArray"];
-                        
-                    }
-                    else
-                        arr = [NSMutableArray array];
-                    
-                    // NSLog(@"%lu ------,  %lu", (unsigned long)(arr.count - indexPath.row), (long)indexPath.row);
-                    
-                    OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
-                    
-                    if (!cell) {
-                        cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
-                    }
-                    
-                    [cell setDelegate:self];
-                    [cell configCell:[arr objectAtIndex:(arr.count - indexPath.row )] EventObject:tempObj[@"targetEvnet"]];
-                    
-                    return cell;
-                    
+
+                OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
+                
+                if (!cell) {
+                    cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
                 }
+                
+                [cell setDelegate:self];
+                [cell configCell:[arr objectAtIndex:(arr.count - indexPath.row )] EventObject:tempObj[@"targetEvnet"]];
+                
+                return cell;
             }
         }
-            break;
     }
-    
-    return nil;
+  
+   return nil;
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
+    if (section == 0) {
+        return [self firstSectionCount:currentObject];
+    }
+    else
+    {
+        PFObject *tempObj = [arrForDetail objectAtIndex:section - 1];
+        return [self cellCount:tempObj];
+    }
+    return 0;
 }
+
 
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch (indexPath.section) {
-        case 0:
-        {
-        }
-            break;
-            
-        default:
-        {
-            PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
-            
-            
-            if ([tempObj[@"postType"] isEqualToString:@"text"])
-            {
-                return;
-            }
-            else
-            {
-                if (indexPath.row == 0) {
-                    
-                    
-                    OMMediaCell *_cell = (OMMediaCell *)cell;
-                    
-                    if (_cell) {
-                        if ([tempObj[@"postType"] isEqualToString:@"video"])
-                        {
-                            [_cell stopVideo];
-                        }
-                        else
-                            [_cell stopAudio];
-                    }
-                    
-            }
-                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+   if(indexPath.section == 0) {
+   
+   }
+   else
+   {
+       PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
+       if ([tempObj[@"postType"] isEqualToString:@"text"])
+       {
+          return;
+       }
+       else
+       {
+           
+          if (indexPath.row == 0)
+          {
+              OMMediaCell *_cell = (OMMediaCell *)cell;
+              if (_cell)
+              {
+                 if ([tempObj[@"postType"] isEqualToString:@"video"])
                 {
-                    return;
-                    
+                    [_cell stopVideo];
                 }
+                else
+                    [_cell stopAudio];
+              }
                 
-            }
-            
-            
-        }
-            break;
+          }
+          else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+          {
+              return;
+          }
+       }
     }
-
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    switch (indexPath.section) {
-        case 0:
+    if (indexPath.section == 0) {
+       
+        if (indexPath.row == 0) {
+            return tableView.frame.size.width;
+        }
+        else if (indexPath.row == 1)
+        {
+            if (currentObject[@"description"]) {
+                
+                return ([OMGlobal getBoundingOfString:currentObject[@"description"] width:tableView.frame.size.width * 0.9f].height + 20.0f);
+            }
+            return 0;
+        }
+        else
+        {
+            if (indexPath.row > 2)
+                return [OMGlobal heightForCellWithPost:[[currentObject objectForKey:@"commentsArray"] objectAtIndex:(indexPath.row - 2)]] + 30;
+            else
+                return 70;
+        }
+    }
+    else
+    {
+        PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
+        
+        if ([tempObj[@"postType"] isEqualToString:@"text"])
         {
             if (indexPath.row == 0) {
-                return tableView.frame.size.width;
+                
+                return [OMGlobal heightForCellWithPost:tempObj[@"title"]] + 130;
             }
-            else if (indexPath.row == 1)
+            else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {
-                if (currentObject[@"description"]) {
-                    
-                    return ([OMGlobal getBoundingOfString:currentObject[@"description"] width:tableView.frame.size.width * 0.9f].height + 20.0f);
-
-                }
-                return 0;
+                return 180;
             }
-            else
-            {
-                if (indexPath.row > 2)
-                    return [OMGlobal heightForCellWithPost:[[currentObject objectForKey:@"commentsArray"] objectAtIndex:(indexPath.row - 2)]] + 30;
-                else
-                    return 70;
-            }
-            
         }
-            break;
-            
-        default:
+        else
         {
-            
-            PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
-            
-            if ([tempObj[@"postType"] isEqualToString:@"text"])
+            if (indexPath.row == 0) {
+                return 450;
+            }
+            else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {
-                if (indexPath.row == 0) {
-                    
-                    return [OMGlobal heightForCellWithPost:tempObj[@"title"]] + 130;
-                }
-                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
-                {
-                    return 180;
+                NSMutableArray *arr = [[NSMutableArray alloc]init];
+                
+                if (tempObj[@"commentsArray"]) {
+                    arr = tempObj[@"commentsArray"];
                 }
                 
-            }
-            else
-            {
-                if (indexPath.row == 0) {
-                    
-                    return 450;
-                    
-                }
-                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
-                {
-                    
-                    NSLog(@"%ld",(long)[self cellCount:tempObj]);
+                PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
+                NSString* strComments =  _obj[@"Comments"];
 
-                    NSMutableArray *arr;
-                    
-                    if (tempObj[@"commentsArray"]) {
-                        
-                        arr = tempObj[@"commentsArray"];
-                        
-                    }
-                    else
-                        arr = [NSMutableArray array];
-                    
-                    //NSLog(@"%lu ------,  %lu", (unsigned long)(arr.count - indexPath.row), (long)indexPath.row);
-                    
-                    PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
-                    NSString* strComments =  _obj[@"Comments"];
-                    
-                    return [OMGlobal heightForCellWithPost:strComments] + 30;
-                    
-                }
+                return [OMGlobal heightForCellWithPost:strComments] + 30;
                 
             }
-
         }
-            break;
     }
-
     return 50;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-
-    switch (section) {
-        case 0:
-        {
-            return [self firstSectionCount:currentObject];
-        }
-            break;
-            
-        default:
-        {
-            PFObject *tempObj = [arrForDetail objectAtIndex:section - 1];
-
-            return [self cellCount:tempObj];
-
-        }
-            break;
-    }
-    return 0;
 }
 
 
@@ -1332,7 +1228,6 @@
     }
     
     PFUser *user = (PFUser *)_obj[@"user"];
-    NSLog(@"%@----%@",user,[PFUser currentUser]);
     
     if ([user.objectId isEqualToString:USER.objectId]) {
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram",@"Add to Folder", status, @"Delete", @"Export to PDF", @"Report", nil];
@@ -1344,30 +1239,28 @@
     }
     
     [shareAction1 showInView:self.view];
-    
     shareAction1.tag = kTag_EventShare;;
 
 }
 
 - (void)sharePost:(UITableViewCell *)_cell {
     
+    if(_cell == nil) return;
+    
     currentMediaCell = _cell;
     OMMediaCell* _tmpCell = (OMMediaCell*)_cell;
-    
-    //NSLog(@"----_tmpCell-------%@", _tmpCell.currentObj);
-    
     PFObject* _obj = _tmpCell.currentObj;
+    tempObejct = _obj;
+    currentCellOfflineUrl = _tmpCell.offline_url;
     
     UIActionSheet *shareAction1 = nil;
     
     postImgView = [[UIImageView alloc] init];
     PFFile *file = (PFFile *)_obj[@"thumbImage"];
     [postImgView setImageWithURL:[NSURL URLWithString:file.url]];
-    tempObejct = _obj;
+  
     PFUser *user = (PFUser *)_obj[@"user"];
-    
-    NSLog(@"%@----%@", user, [PFUser currentUser]);
-
+ 
     if ([user.objectId isEqualToString:USER.objectId]) {
         
         shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Use this as thumbnail", @"Delete", @"Report", nil];
@@ -1385,13 +1278,6 @@
 
 - (void)sharePostText:(PFObject *) _obj{
     
-    //currentMediaCell = _cell;
-    //OMTextCell* _tmpCell = (OMTextCell*)_cell;
-    
-    //NSLog(@"----_tmpCell-------%@", _tmpCell.currentObj);
-    
-    //PFObject* _obj = _tmpCell.currentObj;
-    
     UIActionSheet *shareAction1 = nil;
     
     postImgView = [[UIImageView alloc] init];
@@ -1399,8 +1285,6 @@
     [postImgView setImageWithURL:[NSURL URLWithString:file.url]];
     tempObejct = _obj;
     PFUser *user = (PFUser *)_obj[@"user"];
-    
-    NSLog(@"%@----%@", user, [PFUser currentUser]);
     
     if ([user.objectId isEqualToString:USER.objectId]) {
         
@@ -1621,12 +1505,13 @@
                 case 4:
                 {
                     PFUser *user = (PFUser *)currentObject[@"user"];
-                    NSLog(@"%@----%@",user,[PFUser currentUser]);
-                    
                     if ([user.objectId isEqualToString:USER.objectId])
                         [self tagFolders];
                     else
+                    {
+                      
                         [self exportToPDF];
+                    }
                 }
                     break;
                 case 6:
@@ -1637,8 +1522,6 @@
                 case 5:
                 {
                     PFUser *user = (PFUser *)currentObject[@"user"];
-                    NSLog(@"%@----%@",user,[PFUser currentUser]);
-                    
                     if ([user.objectId isEqualToString:USER.objectId]) {
                         
                         NSInteger status;
@@ -1654,7 +1537,7 @@
                         
                         [currentObject saveEventually:^(BOOL succeeded, NSError *error) {
                             if (succeeded) {
-                                //                            [self loadData];
+                                // [self loadData];
                             }
                         }];
 
@@ -1858,7 +1741,9 @@
         previewController.modalPresentationStyle = UIModalPresentationFormSheet;
     }
 
-    [self presentViewController:previewController animated:YES completion:nil];
+    [self presentViewController:previewController animated:YES completion:^{
+        
+    }];
 }
 
 -(NSString*)getPDFFilePath
@@ -1918,7 +1803,6 @@
 }
 
 // delete Event
-
 - (void)deleteEvent
 {
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Are you sure?" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Cancel", nil];
@@ -1930,6 +1814,7 @@
 //delete Feed Action
 - (void)deleteFeed
 {
+    
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Are you sure?" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:@"Cancel", nil];
     
     [alertView setTag:kTag_Share];
@@ -2047,7 +1932,7 @@
 }
 
 #pragma mark UIAlertView
-
+// deletefeed result
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     
@@ -2055,26 +1940,53 @@
         switch (buttonIndex) {
             case 0:
             {
-                MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
                 
-                [self.view addSubview:hud];
+                [MBProgressHUD showMessag:@"Deleting..." toView:self.view];
+                OMAppDelegate * appDel = [UIApplication sharedApplication].delegate;
                 
-                [hud setLabelText:@"Deleting..."];
-                [hud show:YES];
-                [tempObejct deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    [hud hide:YES];
-                    if (succeeded) {
-                        
-                        [self loadContents:is_type];
-                    }
-                }];
+                // In Case Online Mode
+                if(appDel.network_state)
+                {
+                    
+                    [tempObejct deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        if (error == nil) {
+                            [self loadContents];
+                        }
+                    }];
+                }
+                // In Case Offline Mode
+                else
+                {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    NSInteger index = -1;
+                     if([appDel.m_offlinePosts count]!= 0 && currentCellOfflineUrl != nil)
+                     {
+                         index = [appDel.m_offlinePosts indexOfObject:tempObejct];
+                        [appDel.m_offlinePosts removeObject:tempObejct];
+                         
+                         if ([tempObejct[@"postType"] isEqualToString:@"video"]) {
+                            
+                             if(index != -1)
+                                 [appDel.m_offlinePostURLs removeObjectAtIndex:index];
+                         }
+                         [self loadContents];
+                         
+                     }
+                     else if([arrForDetail count] != 0 && currentCellOfflineUrl == nil)
+                     {
+                        [tempObejct deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                            [MBProgressHUD hideHUDForView:self.view animated:YES];
+                            if (error == nil) {
+                                [self loadContents];
+                            }
+                        }];
+                     }
+                    
+                }
             }
                 break;
-            case 1:
-            {
                 
-            }
-                break;
             default:
                 break;
         }
@@ -2088,11 +2000,12 @@
                 MBProgressHUD *hud = [[MBProgressHUD alloc] initWithView:self.view];
                 
                 [self.view addSubview:hud];
-                
                 [hud setLabelText:@"Deleting..."];
                 [hud show:YES];
+                
                 [currentObject deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     [hud hide:YES];
+                    
                     if (succeeded) {
                         
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
@@ -2104,11 +2017,7 @@
                 }];
             }
                 break;
-            case 1:
-            {
-                
-            }
-                break;
+
             default:
                 break;
         }

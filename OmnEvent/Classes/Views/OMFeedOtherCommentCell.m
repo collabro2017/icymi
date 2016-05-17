@@ -75,13 +75,13 @@
     _constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:_currentObj[@"Comments"]];
     [_lblForDes setText:_currentObj[@"Comments"]];
     [_lblForUsername setText:_currentUser.username];
+    
     //******************
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
     [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
     
     NSString *str_date = [dateFormat stringFromDate:_currentObj.createdAt];
-    NSLog(@"str_date = %@",str_date);
     [_lblForTime setText:str_date];
     
 }
@@ -113,14 +113,14 @@
         }
         _constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:_currentObj[@"Comments"]];
         [_lblForDes setText:_currentObj[@"Comments"]];
+        
         //******************
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
         [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
         
         NSString *str_date = [dateFormat stringFromDate:_currentObj.createdAt];
-        NSLog(@"str_date = %@",str_date);
-        [_lblForTime setText:str_date];       
+        [_lblForTime setText:str_date];
         
     }];
 }

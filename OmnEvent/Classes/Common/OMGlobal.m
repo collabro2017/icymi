@@ -7,11 +7,31 @@
 //
 
 #import "OMGlobal.h"
+
 #import "UIImageView+AFNetworking.h"
 #import "UIImage+Resize.h"
 #import "UIImage+Crop.h"
 
+
+@implementation GlobalVar
+
+static GlobalVar *_instance = nil;
+
++(GlobalVar*)getInstance
+{
+    @synchronized(self) {
+        if (_instance == nil) {
+            _instance = [[GlobalVar alloc] init];
+        }
+    }
+    return _instance;
+}
+
+@end
+
 @implementation OMGlobal
+
+
 
 + (void)setLogInUserDefault
 {
@@ -102,9 +122,8 @@
     __block UIActivityIndicatorView *indicator = activities;
     
     [_displayImgView setImageWithURLRequest:request placeholderImage:[UIImage imageNamed:@"avatar.png"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        NSLog(@"Success!");
-        [indicator stopAnimating];
         
+        [indicator stopAnimating];
         [_feedImgView setImage:image];
         
         [indicator removeFromSuperview];

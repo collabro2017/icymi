@@ -14,7 +14,7 @@
     
     NSMutableArray *arrForDetail;
     
-    IBOutlet UITableView *tblForDetailList;   
+    
     
     IBOutlet UIButton *btnForPhoto;
     
@@ -30,6 +30,7 @@
     NSData *audioDataToPlay;
     
     PFObject *tempObejct;
+    NSURL *currentCellOfflineUrl;
 
     UITableViewCell* currentMediaCell;
     

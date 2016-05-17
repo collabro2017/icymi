@@ -14,7 +14,7 @@
 #import "OMPostEventViewController.h"
 #import "OMRecordAudioViewController.h"
 #import "OMMyProfileViewController.h"
-
+#import "OMTutorialVC.h"
 
 #define RED     13.0f/255.0f
 #define BLUE    178.0f/255.0f
@@ -192,12 +192,6 @@
     
     urlForVideo = [[NSBundle mainBundle] pathForResource:@"tutorial" ofType:@"mp4"];
     
-    player = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:urlForVideo]];
-    
-    
-
-    
-    
     
     //////
     _viewControllersByIdentifier = [NSMutableDictionary dictionary];
@@ -243,6 +237,38 @@
 
     
     [USER fetchIfNeeded];
+    
+    player = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:urlForVideo]];
+    [[NSNotificationCenter defaultCenter] removeObserver:player
+                                                    name:MPMoviePlayerPlaybackDidFinishNotification
+                                                  object:player.moviePlayer];
+    
+    // Register this class as an observer instead
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(movieFinishedCallback:)
+                                                 name:MPMoviePlayerPlaybackDidFinishNotification
+                                               object:player.moviePlayer];
+
+}
+
+- (void)movieFinishedCallback:(NSNotification*)aNotification
+{
+    // Obtain the reason why the movie playback finished
+    NSNumber *finishReason = [[aNotification userInfo] objectForKey:MPMoviePlayerPlaybackDidFinishReasonUserInfoKey];
+    
+    // Dismiss the view controller ONLY when the reason is not "playback ended"
+    if ([finishReason intValue] != MPMovieFinishReasonPlaybackEnded)
+    {
+        MPMoviePlayerController *moviePlayer = [aNotification object];
+        
+        // Remove this class from the observers
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:MPMoviePlayerPlaybackDidFinishNotification
+                                                      object:moviePlayer];
+        
+        // Dismiss the view controller
+        [self dismissMoviePlayerViewControllerAnimated];
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -259,8 +285,6 @@
                 
                 [imageViewForAvatar setImageWithURL:[NSURL URLWithString:avatarFile.url]];
             }
-            
-            
         }
         else if ([USER[@"loginType"] isEqualToString:@"facebook"])
         {
@@ -268,9 +292,7 @@
             [imageViewForAvatar setImageWithURL:[NSURL URLWithString:USER[@"profileURL"]]];
 
         }
-
     }
-    
 }
 
 - (BOOL) shouldAutorotate
@@ -376,7 +398,6 @@
 
 
 - (IBAction)showTutorialVideoAction:(id)sender {
-    
     [TABController presentMoviePlayerViewControllerAnimated:player];
 }
 @end

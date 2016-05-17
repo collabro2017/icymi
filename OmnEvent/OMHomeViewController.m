@@ -57,18 +57,16 @@
     [(UIRefreshControl*)sender beginRefreshing];
     // Display data from Local Datastore —> RETURN & update TableView
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
-    //[mainQuery fromLocalDatastore];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
+    
+    [mainQuery includeKey:@"likeUserArray"];//???
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         [(UIRefreshControl*)sender endRefreshing];
 
         if (objects == nil || [objects count] == 0) {
-            
-            //[OMGlobal showAlertTips:@"You have had not any Event yet. Please post new one." title:nil];
-            //[self postNewEvent];
             
             return;
         }
@@ -113,8 +111,6 @@
     is_grid = YES;
     commentLoaded = NO;
 
-    NSLog(@"%@",currentUser.objectId);
-    
     arrForFeed = [NSMutableArray array];
     arrForTagFriends = [NSMutableArray array];
     arrForComments = [NSMutableArray array];
@@ -123,7 +119,7 @@
     UIButton *changeModeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     
     [changeModeButton addTarget:self action:@selector(changeMode:) forControlEvents:UIControlEventTouchUpInside];
-    [changeModeButton setImage:[UIImage imageNamed:@"display"] forState:UIControlStateNormal];
+    [changeModeButton setImage:[UIImage imageNamed:@"btn_display"] forState:UIControlStateNormal];
     UIBarButtonItem *negativeSpacer1 = [[UIBarButtonItem alloc]
                                         initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
                                         target:nil action:nil];
@@ -158,7 +154,7 @@
 //    [collectionViewForFeed addGestureRecognizer:pangesture2];
     
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadData) name:kLoadFeedData object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFeedData) name:kLoadFeedData object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedPush:) name:kReceivedNotification object:nil];
     
@@ -205,7 +201,7 @@
             i++;
         }
         
-        [collectionViewForFeed reloadData];        
+        [collectionViewForFeed reloadData];
     }
 }
 
@@ -264,39 +260,36 @@
     }];
 }
 
-- (void)loadData {
+- (void)loadFeedData {
     
+    
+    [GlobalVar getInstance].isEventLoading = YES;
     arrForFirstArray = [NSMutableArray array];
-    
     [MBProgressHUD showMessag:@"Loading..." toView:self.view];
     
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"likeUserArray"];
+    //[mainQuery setLimit:12];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        //[MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [GlobalVar getInstance].isEventLoading = NO;
         
-        if (error) {
-            
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-            NSLog(@"Error : Local Query %@ %@", [mainQuery parseClassName], error);
-            
-            return;
-            
-        } else {
-            
+        if (error == nil)
+        {
             if ([objects count] == 0) {
-                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 NSLog(@"No Data : Local Query : %@", [mainQuery parseClassName]);
                 return;
             }
             
-            [arrForFeed removeAllObjects];
+            if([arrForFeed count] != 0) [arrForFeed removeAllObjects];
+            //[arrForFeed addObjectsFromArray:objects];
+            //[collectionViewForFeed reloadData];
+            
             arrForFirstArray = [objects copy];
-            
             process_number = 0;
-            
             [self newProcessBadge];
         }
     }];
@@ -312,12 +305,6 @@
     
     if ([temp_obj[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] ) {
         
-        /*
-        if ([temp_obj[@"TagFriends"] containsObject:currentUser.objectId]) {
-            
-        } else {
-            
-        }*/
         
         OMSocialEvent *eventObj = (OMSocialEvent *)temp_obj;
         
@@ -345,17 +332,7 @@
         [temp_mainQuery includeKey:@"user"];
         [temp_mainQuery includeKey:@"commentsArray"];
         [temp_mainQuery orderByDescending:@"createdAt"];
-        
-//        if (lastLoadTime){
-//            //[temp_mainQuery whereKey:@"updateAt" greaterThanOrEqualTo:lastLoadTime];
-//            
-//            if ([temp_obj.objectId isEqualToString:@"BYdwjvIL76"]) {
-//                NSLog(@"--------last load time  key : ----%@", lastLoadTime_Key);
-//                NSLog(@"--------last load time : ---------%@", lastLoadTime);
-//            }
-//            
-//        }
-        
+       
         [temp_mainQuery findObjectsInBackgroundWithBlock:^(NSArray *sub_objects, NSError *error) {
             
             if (error || !sub_objects) {
@@ -392,10 +369,10 @@
 
             }
             
-            if (is_grid) {
+            if(process_number % 7 == 0)
+            {
                 [collectionViewForFeed reloadData];
-            } else {
-                [tblForEventFeed reloadData];
+                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             }
             
             if (process_number < arrForFirstArray.count){
@@ -410,9 +387,21 @@
                 [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                
+                if (is_grid) {
+                [collectionViewForFeed reloadData];
+                } else {
+                    [tblForEventFeed reloadData];
+                }
+
             }
         }];
     } else {
+        
+        if(process_number % 7 == 0)
+        {
+            [collectionViewForFeed reloadData];
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        }
         
         if (process_number < arrForFirstArray.count){
             
@@ -425,7 +414,11 @@
             NSDate* lastUpdatedate = [NSDate date];
             [[NSUserDefaults standardUserDefaults] setObject:lastUpdatedate forKey:@"lastUpdateLocalDatastore"];
             [[NSUserDefaults standardUserDefaults] synchronize];
-            
+            if (is_grid) {
+            [collectionViewForFeed reloadData];
+            } else {
+                [tblForEventFeed reloadData];
+            }
         }
     }
 }
@@ -950,7 +943,7 @@
                 
                 [currentObject saveEventually:^(BOOL succeeded, NSError *error) {
                     if (succeeded) {
-                        [self loadData];
+                        [self loadFeedData];
                     }
                 }];
             }
@@ -1103,7 +1096,7 @@
                 [hud hide:YES];
                 if (succeeded) {
                     
-                    [self loadData];
+                    [self loadFeedData];
                 }
             }];
         }
