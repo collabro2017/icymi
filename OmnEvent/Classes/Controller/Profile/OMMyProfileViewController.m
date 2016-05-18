@@ -27,7 +27,7 @@ typedef enum {
 } TableRows;
 
 BOOL refresh_require;
-@interface OMMyProfileViewController ()<UITableViewDataSource,UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface OMMyProfileViewController ()<UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate>
 {
     
     NSMutableArray *arrForPhoto;
@@ -62,6 +62,7 @@ BOOL refresh_require;
     NSArray *arr        = [[NSBundle mainBundle] loadNibNamed:@"OMCustomProfileInfoView" owner:self options:nil];
     avatarView          = [arr lastObject];
     [avatarView setDelegate:self];
+    
 //    [avatarView setUser:USER];
     
     [tblForProfile addTwitterCoverWithImage:[UIImage imageNamed:@"cover.png"] withTopView:nil withBottomView:avatarView];
@@ -73,6 +74,7 @@ BOOL refresh_require;
     [self initializeFolderView];
     
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadEvents) name:kLoadProfileData object:nil];
+
     
     [self loadEvents];
     [self loadFolders];
@@ -84,12 +86,15 @@ BOOL refresh_require;
     imagePicker.allowsEditing = NO;
     
     isShowSetting = NO;
-
+    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (void)dealloc{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -109,9 +114,6 @@ BOOL refresh_require;
     {
         [btnForBack setHidden:YES];
     }
-//    [self loadPhotos];
-//    [self loadEvents];
-//    [self loadFollowings];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -125,9 +127,8 @@ BOOL refresh_require;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(touchedLayer)];
     [viewForLayer setUserInteractionEnabled:YES];
     [viewForLayer addGestureRecognizer:tapGesture];
-    //    viewForPopup.alpha = 0.0f;
-    viewForPopup.transform = CGAffineTransformMakeScale(0.0, 0.0);
     
+    viewForPopup.transform = CGAffineTransformMakeScale(0.0, 0.0);
     [viewForPopup setHidden:NO];
     
     viewForPopup.layer.cornerRadius = 4.0f;
@@ -142,12 +143,12 @@ BOOL refresh_require;
     [viewForLayer setUserInteractionEnabled:YES];
     [viewForLayer addGestureRecognizer:tapGesture];
     //    viewForPopup.alpha = 0.0f;*/
+    
     viewForCreateFolder.transform = CGAffineTransformMakeScale(0.0, 0.0);
-    
     [viewForCreateFolder setHidden:NO];
-    
     viewForCreateFolder.layer.cornerRadius = 4.0f;
     viewForCreateFolder.layer.masksToBounds = YES;
+    
     
 }
 
@@ -701,7 +702,7 @@ BOOL refresh_require;
             break;
         case TableRowsEventofFolder:
         {
-            int nEventCount = [arrForEventofFolder count];
+            int nEventCount = (int)[arrForEventofFolder count];
             if (nEventCount > 0)
             {
                 OMDetailEventViewController *detailEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailEventVC"];
@@ -775,6 +776,15 @@ BOOL refresh_require;
 
 - (IBAction)createFolderAction:(id)sender {
     
+    NSString *tempStr = _m_lblFolderName.text;
+    tempStr = [tempStr stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    if([tempStr isEqualToString:@""] || tempStr.length == 0)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Warning" message:@"You must input a folder's name." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
     _isFolderCreating = NO;
     [self hideFolderViewPopup];
     imagePicker.navigationBar.tintColor = [UIColor whiteColor];
@@ -810,12 +820,9 @@ BOOL refresh_require;
 - (IBAction)changeFolderImage:(id)sender {
     
     [_m_lblFolderName resignFirstResponder];
-    //[self presentViewController:imagePicker animated:YES completion:nil];
-    
+
     [self addChildViewController:imagePicker];
-    
     [imagePicker didMoveToParentViewController:self];
-    
     [self.view addSubview:imagePicker.view];
     
     OMAppDelegate *appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
@@ -827,9 +834,17 @@ BOOL refresh_require;
 - (void) backToFolder
 {
     is_type = TableRowsFavorite;
-    
     [tblForProfile reloadData];
 }
+
+#pragma mark - UITextField Controller Delegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
 #pragma mark - UIImagePickerController Delegate
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info

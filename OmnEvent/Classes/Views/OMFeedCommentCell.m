@@ -182,14 +182,13 @@
                 
                 if (lblForDes.enabled){
                     
-                    //[MBProgressHUD showHUDAddedTo:self.superview animated:YES];
                     PFQuery *query = [PFQuery queryWithClassName:@"EventComment"];
                     [query whereKey:@"targetEvent" equalTo:currentObj];
                     [query whereKey:@"Commenter" equalTo:currentUser];
                     [query whereKey:@"Comments" equalTo:_comment];
                     
                     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-                        //[MBProgressHUD hideHUDForView:self.superview animated:YES];
+ 
                         if ([objects count] == 0 || !objects) {
                             return;
                         }
@@ -197,7 +196,7 @@
                         
                         [currentUser fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                             if (!error) {
-                                NSLog(@"%@",currentUser.username);
+                                
                                 if ([currentUser[@"loginType"] isEqualToString:@"email"]) {
                                     PFFile *avatarFile = (PFFile *)currentUser[@"ProfileImage"];
                                     if (avatarFile) {
@@ -238,7 +237,7 @@
                     [currentUser fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                         if (!error) {
                             
-                            NSLog(@"%@",currentUser.username);
+                            
                             if ([currentUser[@"loginType"] isEqualToString:@"email"]) {
                                 PFFile *avatarFile = (PFFile *)currentUser[@"ProfileImage"];
                                 if (avatarFile) {
@@ -285,13 +284,13 @@
     constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"Comments"]];
     [lblForDes setText:currentObj[@"Comments"]];
     [lblForUsername setText:currentUser.username];
+    
     //******************
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
     [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
     
     NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
-    NSLog(@"str_date = %@",str_date);
     [lblForTime setText:str_date];
     
 }
@@ -362,17 +361,16 @@
             {
                 [OMGlobal setImageURLWithAsync:currentUser[@"profileURL"] positionView:self displayImgView:imageViewForProfile];
             }
-
         }
+        
         constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"Comments"]];
         [lblForDes setText:currentObj[@"Comments"]];
+        
         //******************
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
         [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
-        
         NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
-        NSLog(@"str_date = %@",str_date);
         [lblForTime setText:str_date];
         
     }];
@@ -385,13 +383,13 @@
         beforeDescription = lblForDes.text;
         
         if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-            //NSLog(@" UITableView---");
+            
             
             CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];        
             
             NSDictionary *userInfo = @{
                                        @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
-                                       @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y] stringValue],
+                                       @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y+30] stringValue],
                                        @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
                                        };
             
@@ -408,6 +406,7 @@
             
             if (event_flag){
                 
+                // In Case User comments
                 currentCommentObj[@"Comments"] = lblForDes.text;
                 
                 NSMutableArray *tempArray = [[NSMutableArray alloc] init];
@@ -428,7 +427,7 @@
                             [MBProgressHUD hideAllHUDsForView:self.superview animated:YES];
                             
                             if (_succeeded) {
-                                NSLog(@"Successful Save");
+                                NSLog(@"EventCommentCell: Updated the Comments and descriptions");
                                 
                                 [lblForDes resignFirstResponder];
                                 
@@ -454,9 +453,14 @@
                     }
                     
                 }];
-            } else {
+            }
+            
+            // Others comments
+            else
+            {
                 currentObj[@"Comments"] = lblForDes.text;
                 [currentObj saveEventually];
+                NSLog(@"EventCommentCell: Updated other comments");
                 
                 [lblForDes resignFirstResponder];
                 
@@ -471,6 +475,23 @@
                     [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
                 }
             }
+        }
+        else
+        {
+            [lblForDes resignFirstResponder];
+            
+            if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+                CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
+                
+                NSDictionary *userInfo = @{
+                                           @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
+                                           @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]
+                                           };
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
+            }
+
+       
         }
     }
     

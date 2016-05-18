@@ -109,6 +109,13 @@
     }];
 }
 
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [timer invalidate];
+    [timerRange invalidate];
+    
+}
 - (void)initializeAudioRecorder {
     
     fileName = [NSString stringWithFormat:@"%@.wav",[NSDate date]];
@@ -301,7 +308,7 @@
         NSString *strForTime = [NSString stringWithFormat:@"%02d:%02d:%02d",ticks/3600,(ticks%3600)/60,(ticks%3600)%60];
         [lblForRecordTime setText:strForTime];
         
-        if (ticks == 10) {
+        if (ticks == 10 && isRecording) {
             
             [self stopRecording];
             

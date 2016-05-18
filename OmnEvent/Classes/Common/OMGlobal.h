@@ -56,3 +56,14 @@ typedef enum {
 + (void)removeImage:(NSString *)fileName;
 
 @end
+
+
+@interface GlobalVar : NSObject
+
+@property (nonatomic) BOOL gIsPhotoPreview;
+@property (nonatomic) BOOL isPostLoading;
+@property (nonatomic) BOOL isEventLoading;
+
++(GlobalVar*)getInstance;
+
+@end

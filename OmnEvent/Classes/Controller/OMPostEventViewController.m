@@ -33,9 +33,10 @@
     NSString *city;
     NSString *state;
     CLPlacemark *placeMark;
-    
-    
     NSMutableArray *arrForTaggedFriend;
+    
+    NSMutableArray *arrEventLookedFlags;
+    NSMutableArray *arrPostLookedFlags;
 }
 
 @property (nonatomic, strong) CLLocationManager *locationManager;
@@ -89,7 +90,10 @@
     self.title = @"Share To";
     
     [self initializeLocationManager];
+    
     arrForTaggedFriend = [NSMutableArray array];
+    arrEventLookedFlags = [NSMutableArray array];
+    arrPostLookedFlags = [NSMutableArray array];
     
     imagePicker = [[UIImagePickerController alloc] init];
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
@@ -108,6 +112,16 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)makeDicArray
+{
+    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+    for (NSString *objId in arrForTaggedFriend) {
+        [dic setValue:[NSNumber numberWithInt:1] forKey:objId];
+        [arrEventLookedFlags addObject:dic];
+    }
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -139,10 +153,6 @@
             {
                 [imageViewForPostImage setImage:_imageForPost];
                 mediaData = UIImageJPEGRepresentation(_imageForPost, 0.9f);
-                
-            }
-            else
-            {
                 
             }
             
@@ -216,21 +226,13 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated
-
 {
-    
     [super viewWillDisappear:animated];
-    
-    
-    
     if (self.isMovingFromParentViewController)
-        
     {
-        
         [self.navigationController setNavigationBarHidden:YES];
-        
     }
-    
+    [self.locationManager stopUpdatingLocation];
 }
 
 - (void)initializeLocationManager
@@ -259,14 +261,11 @@
     if (_outPutURL) {
         
         [OMGlobal removeImage:_outPutURL.path];
-        
-        
     }
     
     switch (captureOption) {
         case kTypeCaptureAudio:
         {
-            
             [self.navigationController popViewControllerAnimated:YES];
         }
             break;
@@ -305,9 +304,18 @@
     
     [MBProgressHUD showMessag:@"Uploading..." toView:self.view];
     
+    // New Create Event and Uploading...
+    
     switch (uploadOption) {
         case kTypeUploadEvent:
         {
+            
+            NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
+            for (NSString *objId in arrForTaggedFriend) {
+                [dic setValue:[NSNumber numberWithInt:1] forKey:objId];
+                [arrEventLookedFlags addObject:dic];
+            }
+
             PFObject *post = [PFObject objectWithClassName:@"Event"];
             PFUser *currentUser = [PFUser currentUser];
             
@@ -319,6 +327,7 @@
             post[@"TagFriends"] = arrForTaggedFriend;
             post[@"country"] = lblForLocation.text;
             post[@"postType"] = _postType;
+            //post[@"EventLookedFlags"] = arrEventLookedFlags;
             
             //image upload
             
@@ -407,6 +416,8 @@
             
         }
             break;
+            
+        // New Post Content Create and Uploading...
         case kTypeUploadPost:
         {
             PFObject *post = [PFObject objectWithClassName:@"Post"];
@@ -469,6 +480,7 @@
             
             
             //Request a background execution task to allow us to finish uploading the photo even if the app is background
+            
             self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
                 [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
             }];
@@ -483,11 +495,9 @@
                             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                             if (succeeded) {
                                 NSLog(@"Success ---- Post");
+                                
                                 if (_outPutURL) {
-                                    
-                                    [OMGlobal removeImage:_outPutURL.path];
-                                    
-                                    
+                                   [OMGlobal removeImage:_outPutURL.path];
                                 }
                                 
                                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
@@ -510,16 +520,15 @@
             }
             else
             {
-                //Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
-                //NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
                 
                 OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
                 
                 if (!appDel.network_state)  {
                     
-                    NSLog(@"There IS NO internet connection");
+                    NSLog(@"Is Offline Mode");
                     
                     [appDel.m_offlinePosts addObject:post];
+                   
                     
                     if (_outPutURL != nil){
                         [appDel.m_offlinePostURLs addObject:_outPutURL];
@@ -533,7 +542,7 @@
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
 
                 } else {
-                    NSLog(@"There IS internet connection");
+                    NSLog(@"Is Online Mode");
                     
                     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
@@ -720,16 +729,9 @@
 
 #pragma mark - UITextView Delegate
 
-- (void)textViewDidBeginEditing:(UITextView *)textView
-{
-    
-}
-
 - (void)textViewDidChange:(UITextView *)textView
 {
     if (![textView hasText]) {
-        
-        //        [lblForPlaceholder setHidden:NO];
         
         [UIView animateWithDuration:0.15f animations:^{
             [lblForPlaceholder setHidden:NO];

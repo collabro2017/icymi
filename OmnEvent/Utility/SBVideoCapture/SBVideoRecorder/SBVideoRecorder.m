@@ -576,7 +576,7 @@
 - (void) captureStillImage
 {
     
-    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+//    AVCaptureDevice *device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
     
 //    if ([device hasTorch] && _flashOn)
 //    {

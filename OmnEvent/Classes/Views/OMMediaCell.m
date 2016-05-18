@@ -65,9 +65,6 @@
     NSMutableArray *arrForTagFriends = eventObj[@"TagFriends"];
     NSMutableArray *arrForTagFriendAuthorities = eventObj[@"TagFriendAuthorities"];
     
-    NSLog(@"-------- userid %@", eventUser.objectId);
-    NSLog(@"-------- self_userid %@", self_user.objectId);
-    
     if (![eventUser.objectId isEqualToString:self_user.objectId]){
         
         NSString *AuthorityValue = @"";
@@ -141,7 +138,6 @@
     [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
 
     NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
-    NSLog(@"str_date = %@",str_date);
     [lblForTimer setText:str_date];
 
     //*******************
@@ -149,16 +145,15 @@
     [lblForTitle setText:currentObj[@"title"]];
     [lblForDes setText:currentObj[@"description"]];
     
-    constraintForDescription.constant = [OMGlobal getBoundingOfString:currentObj[@"description"] width:lblForDes.frame.size.width].height + 20;
+    constraintForDescription.constant = [OMGlobal getBoundingOfString:currentObj[@"description"] width:lblForDes.frame.size.width].height + 40;
     
-    constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:lblForTitle.frame.size.width].height + 20;
-
+    constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:lblForTitle.frame.size.width].height;
+    
     [lblForLocation setText:currentObj[@"country"]];
     
     // Display image
     
     if (imageViewForMedia.image) {
-        
         imageViewForMedia.image = nil;
     }
     
@@ -186,15 +181,12 @@
     
     }
 
-//    [_btnForVideo setHidden:YES];
     [_videoPlayerController.view setHidden:YES];
     
     PFFile *postImgFile = (PFFile *)currentObj[@"thumbImage"];
     
     if (postImgFile) {
         [imageViewForMedia setImageWithURL:[NSURL URLWithString:postImgFile.url] placeholderImage:nil];
-    } else {
-       
     }
     
     if ([currentObj[@"postType"] isEqualToString:@"video"]) {
@@ -212,18 +204,17 @@
         
         _videoPlayerController = [[PBJVideoPlayerController alloc] init];
         _videoPlayerController.delegate = self;
+        
         _videoPlayerController.view.frame = imageViewForMedia.frame;
+        [self insertSubview:_videoPlayerController.view aboveSubview:imageViewForMedia];
         
         _videoPlayerController.videoPath = videoFile.url;
-        
         if (_file != nil && _offline_url){
             NSString *urlString = [_offline_url absoluteString];
             _videoPlayerController.videoPath = urlString;            
         }
         
-        [self insertSubview:_videoPlayerController.view aboveSubview:imageViewForMedia];
-        
-        _playButton = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"play.png"]];
+        _playButton = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"btn_video_play"]];
         _playButton.center = imageViewForMedia.center;
         [self addSubview:_playButton];
         [self bringSubviewToFront:_playButton];
@@ -254,8 +245,6 @@
         
     } else if ([currentObj[@"postType"] isEqualToString:@"photo"]) {
         
-        //[_btnForVideo setHidden:YES];
-        
         [_videoPlayerController.view setHidden:YES];
         
         if (_videoPlayerController.view) {
@@ -273,9 +262,7 @@
             PFFile *postFile = (PFFile *)currentObj[@"postFile"];
             
             if (postFile) {
-                
                 [imageViewForMedia setImageWithURL:[NSURL URLWithString:postFile.url]];
-                
             }
         }
         
@@ -575,7 +562,7 @@
 - (IBAction)moreAction:(id)sender {
     
     if ([delegate respondsToSelector:@selector(sharePost:)]) {
-        //[delegate performSelector:@selector(sharePost:) withObject:currentObj];
+        
         [delegate performSelector:@selector(sharePost:) withObject:self];
     }
 
@@ -626,13 +613,11 @@
     }
     
     if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-        //NSLog(@" UITableView---");
-        
         CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
         
         NSDictionary *userInfo = @{
                                    @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
-                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y] stringValue],
+                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y + 40] stringValue],
                                    @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
                                    };
         
@@ -646,6 +631,8 @@
         if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
             currentObj[@"title"] = lblForTitle.text;
             [currentObj saveEventually];
+            
+            NSLog(@"Media Cell: Add and Change Post content title");
         }
         
         [lblForTitle resignFirstResponder];
@@ -656,6 +643,7 @@
         if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
             currentObj[@"description"] = lblForDes.text;
             [currentObj saveEventually];
+            NSLog(@"Media Cell: Add and Change Post content Description");
         }
         
         [lblForDes resignFirstResponder];

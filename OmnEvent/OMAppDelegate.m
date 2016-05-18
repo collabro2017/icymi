@@ -29,7 +29,6 @@
 #define PARSE_APP_ID      @"fXthztgrwB3gdmQ5TNGL4DVNRzaZJWgoeIBH6lVD"
 #define CLIENT_KEY  @"CCSj4mz2TxK2lVJxARaFPaKSj8btTG3loZhtg9II"
 
-static BOOL logedOut;
 
 @implementation OMAppDelegate
 
@@ -41,6 +40,15 @@ static BOOL logedOut;
     
     self.logOut = NO;
     m_fLoadingPostView = NO;
+    _network_state = YES;
+    
+    [GlobalVar getInstance].isPostLoading = YES;
+    [GlobalVar getInstance].isEventLoading = NO;
+    
+    if([[NSUserDefaults standardUserDefaults] objectForKey:@"network_status"])
+    {
+        _network_state = [[NSUserDefaults standardUserDefaults] boolForKey:@"network_status"];
+    }
     
     //Parse  Setting
     
@@ -144,30 +152,30 @@ static BOOL logedOut;
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     
     [FBAppCall handleDidBecomeActiveWithSession:[PFFacebookUtils session]];
-//    if (application.applicationIconBadgeNumber != 0) {
-//        application.applicationIconBadgeNumber = 0;
-//    }
-    
     PFInstallation *installation = [PFInstallation currentInstallation];
 
-    
-    
     if (installation.badge != 0) {
-        
         installation.badge = 0;
         [installation saveEventually];
-
-    }   
+    }
     
     PFUser *currentUser = [PFUser currentUser];
     if ([[NSUserDefaults standardUserDefaults] boolForKey:LOG_IN] && currentUser ) {
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
+        if(![GlobalVar getInstance].isEventLoading)
+            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
+        if(![GlobalVar getInstance].isPostLoading)
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+        }
+        
         [installation setObject:USER forKey:@"user"];
         [installation setObject:USER.objectId forKey:@"userID"];
         [installation saveEventually];        
         
-    }else{
+    }
+    else
+    {
         
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
         

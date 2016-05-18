@@ -169,8 +169,6 @@
                     
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                     
-                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
-                    
                     if ([APP_DELEGATE logOut])
                     {
                         
