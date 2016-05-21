@@ -34,6 +34,7 @@
     arrForFolder = [NSMutableArray array];
     cellSelected = [NSMutableArray array];
     arrForSelectedFolder = [NSMutableArray array];
+    
     // Do any additional setup after loading the view.
     
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
@@ -86,19 +87,15 @@
     [mainQ findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
-        if (objects == nil || [objects count] == 0) {
-            return ;
-        }
-        if (!error) {
+        if (error == nil) {
             [arrForFolder removeAllObjects];
-            
-            for (PFObject *obj in objects) {
-                
-                [arrForFolder addObject:obj];
-                
-            }
-            
+            [arrForFolder addObjectsFromArray:objects];
             [tblForFolderList reloadData];
+            NSLog(@"TagFolderVC: Load Folders Success!");
+        }
+        else
+        {
+            NSLog(@"TagFolderVC: Load Folders Error: %@", error.description);
         }
         
     }];    

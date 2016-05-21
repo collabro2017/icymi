@@ -72,9 +72,26 @@
         
         if (![beforeDescription isEqualToString:lblForDescription.text] && lblForDescription.text.length > 0){
             _currentObj[@"description"] = lblForDescription.text;
-            [_currentObj saveEventually];
+            // for badge processing in here
+            
+                //for badge
+                NSMutableArray * arrPostLookedFlags = [NSMutableArray array];
+                arrPostLookedFlags = [_currentObj[@"TagFriends"] mutableCopy];
+                PFUser *eventUser = _currentObj[@"user"];
+                
+                if(![eventUser.objectId isEqualToString:USER.objectId])
+                {
+                    [arrPostLookedFlags addObject:eventUser.objectId];
+                    if ([arrPostLookedFlags containsObject:USER.objectId]) {
+                        [arrPostLookedFlags removeObject:USER.objectId];
+                    }
+                }
+                _currentObj[@"eventBadgeFlag"] = arrPostLookedFlags;
+                NSLog(@"Badge for description change");
+           
+                [_currentObj saveEventually];
+
         }
-        
         [lblForDescription resignFirstResponder];
     }
     

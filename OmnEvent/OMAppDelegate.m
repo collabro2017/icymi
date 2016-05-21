@@ -127,6 +127,9 @@
     
     _m_offlinePosts = [[NSMutableArray alloc] init];
     _m_offlinePostURLs = [[NSMutableArray alloc] init];
+    
+    [GlobalVar getInstance].gArrEventList = [[NSMutableArray alloc] init];
+    
     return YES;
 }
 
@@ -166,7 +169,7 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
         if(![GlobalVar getInstance].isPostLoading)
         {
-            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+            //[[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
         }
         
         [installation setObject:USER forKey:@"user"];
@@ -264,7 +267,7 @@
 - (void)handlePush:(NSDictionary *)launchOptions {
     
     // If the app was launched in response to a push notification, we'll handle the payload here
-    NSDictionary *remoteNotificationPayload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    //NSDictionary *remoteNotificationPayload = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     //    if (remoteNotificationPayload) {
     //        [[NSNotificationCenter defaultCenter] postNotificationName:PAPAppDelegateApplicationDidReceiveRemoteNotification object:nil userInfo:remoteNotificationPayload];
     //

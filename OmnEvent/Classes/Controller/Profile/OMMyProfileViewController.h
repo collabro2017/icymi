@@ -32,6 +32,7 @@ extern BOOL refresh_require;
     BOOL isShowSetting;
     
     int nCurrentFolderIdx;
+    NSInteger currentSegIndex;
 }
 
 @property (assign, nonatomic) UIBackgroundTaskIdentifier fileUploadBackgroundTaskId;

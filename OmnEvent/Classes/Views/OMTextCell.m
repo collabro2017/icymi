@@ -7,9 +7,10 @@
 //
 
 #import "OMTextCell.h"
+#import "OMSocialEvent.h"
 
 @implementation OMTextCell
-@synthesize user,currentObj,delegate, beforeTitle, beforeDescription;
+@synthesize user,currentObj,delegate, beforeTitle, beforeDescription, curEventIndex;
 
 - (void)awakeFromNib {
     // Initialization code
@@ -18,7 +19,8 @@
     lblForTitle.delegate = self;
     lblForDes.delegate = self;
     
-    constraintForHeight.constant = 100;   
+    constraintForHeight.constant = 100;
+    curEventIndex = [GlobalVar getInstance].gEventIndex;
     
     [self.superview layoutIfNeeded];
 }
@@ -33,8 +35,6 @@
 {
     currentObj = obj;
     
-    NSLog(@"-------here run-------%@", currentObj);
-    
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showDetailPage:)];
     gesture.numberOfTapsRequired = 1;
     
@@ -44,6 +44,36 @@
     
     PFUser *eventUser = eventObj[@"user"];
     PFUser *self_user = [PFUser currentUser];
+    
+    // for badge processing
+    if(curEventIndex  >= 0)
+    {
+        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
+        
+        if (socialTemp.badgeCount > 0 ) {
+            OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
+            if(currentObj != nil)
+            {
+                NSMutableArray *temp = [[NSMutableArray alloc] init];
+                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
+                
+                if ([temp containsObject:self_user.objectId])
+                {
+                    [temp removeObject:self_user.objectId];
+                    currentObj[@"usersBadgeFlag"] = temp;
+                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if(error == nil)
+                        {
+                            NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
+                        }
+                    }];
+                    
+                    if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
+                    [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
+                }
+            }
+        }
+    }
     
     NSMutableArray *arrForTagFriends = eventObj[@"TagFriends"];
     NSMutableArray *arrForTagFriendAuthorities = eventObj[@"TagFriendAuthorities"];

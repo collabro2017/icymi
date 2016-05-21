@@ -12,7 +12,7 @@
     NSUInteger comment_number;
     BOOL event_flag;
 }
-@synthesize beforeDescription, currentObj, currentUser, currentCommentObj;
+@synthesize beforeDescription, currentObj, currentUser, currentCommentObj, commentObj;
 
 - (void)awakeFromNib {
     // Initialization code
@@ -128,11 +128,14 @@
         }
     }];
 }
-
-- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj
+// for event
+- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj commentType:(NSInteger)curType
 {
     [lblForDes sizeToFit];
     [lblForTime setHidden:YES];
+    
+    currentType = curType;
+   // currentType = kTypeEventComment;
     
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo:user];
@@ -295,9 +298,20 @@
     
 }
 
-- (void)configCell:(PFObject *)tempObj EventObject:(PFObject *) eventObject{
-    
+// for post comment cell
+- (void)configCell:(PFObject *)tempObj EventObject:(PFObject *) eventObject commentType:(NSInteger)curType
+{
+
+    currentType = curType;
+    //currentType = kTypePostComment;
     currentObj = tempObj;
+    
+    arrEventTagFriends = [NSMutableArray array];
+    if(eventObject != nil)
+    {
+        arrEventTagFriends = [eventObject[@"TagFriends"] mutableCopy];
+    }
+    
     //comment_number = -1;
     event_flag = NO;
     
@@ -376,6 +390,99 @@
     }];
 }
 
+- (void)configPostCell:(PFObject *)comObj PostObject:(PFObject*)postObj EventObject:(PFObject *)eventObject CommentType:(NSInteger)curType
+{
+    currentType = curType;
+    //currentType = kTypePostComment;
+    
+    currentObj = postObj;
+    commentObj = comObj;
+    
+    arrEventTagFriends = [NSMutableArray array];
+    if(eventObject != nil)
+    {
+        arrEventTagFriends = [eventObject[@"TagFriends"] mutableCopy];
+    }
+    
+    //comment_number = -1;
+    event_flag = NO;
+    
+    currentUser = commentObj[@"Commenter"];
+    
+    PFUser *self_user = [PFUser currentUser];
+    
+    if (![currentUser.objectId isEqualToString:self_user.objectId]){
+        
+        NSMutableArray *arrForTagFriends = eventObject[@"TagFriends"];
+        NSMutableArray *arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
+        
+        NSString *AuthorityValue = @"";
+        
+        if (arrForTagFriendAuthorities != nil){
+            
+            for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
+                if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
+                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
+                    break;
+                }
+            }
+            
+            if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
+                lblForDes.enabled = YES;
+                
+            } else {
+                lblForDes.enabled = NO;
+                
+            }
+            
+        } else {
+            
+            if ([arrForTagFriends containsObject:self_user.objectId]){
+                lblForDes.enabled = YES;
+                
+            } else {
+                lblForDes.enabled = NO;
+            }
+        }
+        
+        lblForDes.enabled = NO;
+    } else {
+        lblForDes.enabled = YES;
+    }
+    
+    [currentUser fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+        
+        if (!error) {
+            
+            [lblForUsername setText:currentUser.username];
+            
+            if ([currentUser[@"loginType"] isEqualToString:@"email"]) {
+                PFFile *avatarFile = (PFFile *)currentUser[@"ProfileImage"];
+                if (avatarFile) {
+                    [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForProfile];
+                }
+                
+            }
+            else if ([currentUser[@"loginType"] isEqualToString:@"facebook"])
+            {
+                [OMGlobal setImageURLWithAsync:currentUser[@"profileURL"] positionView:self displayImgView:imageViewForProfile];
+            }
+        }
+        
+        constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:commentObj[@"Comments"]];
+        [lblForDes setText:commentObj[@"Comments"]];
+        
+        //******************
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
+        [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
+        NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
+        [lblForTime setText:str_date];
+        
+    }];
+
+}
+
 -(void)textFieldDidBeginEditing:(UITextField *)textField {
     
     if (textField == lblForDes)
@@ -429,6 +536,27 @@
                             if (_succeeded) {
                                 NSLog(@"EventCommentCell: Updated the Comments and descriptions");
                                 
+                                // Let's add badge feature in here.
+                                //for badge
+                                if(currentType == kTypeEventComment)
+                                {
+                                    NSMutableArray * arrPostLookedFlags = [NSMutableArray array];
+                                    arrPostLookedFlags = [currentObj[@"TagFriends"] mutableCopy];
+                                    PFUser *eventUser = currentObj[@"user"];
+                                    
+                                    if(![eventUser.objectId isEqualToString:USER.objectId])
+                                    {
+                                        [arrPostLookedFlags addObject:eventUser.objectId];
+                                        if ([arrPostLookedFlags containsObject:USER.objectId]) {
+                                            [arrPostLookedFlags removeObject:USER.objectId];
+                                        }
+                                    }
+                                    currentObj[@"eventBadgeFlag"] = arrPostLookedFlags;
+                                    NSLog(@"Badge for description of Event change");
+                                    [currentObj saveInBackground];
+
+                                }
+
                                 [lblForDes resignFirstResponder];
                                 
                                 if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
@@ -458,9 +586,28 @@
             // Others comments
             else
             {
-                currentObj[@"Comments"] = lblForDes.text;
-                [currentObj saveEventually];
-                NSLog(@"EventCommentCell: Updated other comments");
+                commentObj[@"Comments"] = lblForDes.text;
+                [commentObj saveEventually:^(BOOL succeeded, NSError * _Nullable error) {
+                     NSLog(@"EventCommentCell: Updated other comments");
+                    
+                    // Let's add badge feature in here.
+                    if (currentType == kTypePostComment)
+                    {
+                        PFUser *eventUser = currentObj[@"user"];
+                        
+                        if(![eventUser.objectId isEqualToString:USER.objectId])
+                        {
+                            [arrEventTagFriends addObject:eventUser.objectId];
+                            if ([arrEventTagFriends containsObject:USER.objectId]) {
+                                [arrEventTagFriends removeObject:USER.objectId];
+                            }
+                        }
+                        currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+                        [currentObj saveEventually];
+                        NSLog(@"Badge for comments of Post changed");
+                        
+                    }
+                }];
                 
                 [lblForDes resignFirstResponder];
                 

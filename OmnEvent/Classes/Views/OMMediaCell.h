@@ -69,6 +69,7 @@
 @property (strong, nonatomic) PFUser   *user;
 @property (strong, nonatomic) PFFile   *file;
 @property (strong, nonatomic) NSURL    *offline_url;
+@property (nonatomic) NSInteger curEventIndex;
 
 @property (strong, nonatomic) NSString *beforeTitle;
 @property (strong, nonatomic) NSString *beforeDescription;

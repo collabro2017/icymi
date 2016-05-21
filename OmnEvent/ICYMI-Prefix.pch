@@ -79,10 +79,12 @@
 #define  kLoadCurrentPhotoData  @"loadCurrentPhotoData"
 
 #define  kLoadComponentsData    @"loadComponentsData"
+#define  kLoadEventDataWithGlobal @"reloadEventWithGlobal"
 
 #define  kLoadSearchData        @"loadSearchData"
 #define  kLoadFriendData        @"loadFriendData"
 #define  kLoadProfileData       @"loadProfileData"
+#define  kLoadFolderData        @"loadFolderData"
 
 #define  kReceivedNotification  @"receivedNotification"
 #define  kNotificationFirstViewLoad     @"kNotificationFirstViewLoad"
@@ -126,7 +128,6 @@
 //Current User ObjectId
 
 #define         kIDOfCurrentUser            [PFUser currentUser].objectId
-
 #define         USER                        [PFUser currentUser]
 
 // Bio Default Text

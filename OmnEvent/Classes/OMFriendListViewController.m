@@ -76,8 +76,7 @@
             {
                 [arrForFriend removeAllObjects];
                 for (PFObject *obj in objects) {
-                    
-                    NSLog(@"%@",[obj objectForKey:@"FromUser"]);
+                   
                     PFUser *user = (PFUser *)[obj objectForKey:@"FromUser"];
                     if ([user.objectId isEqualToString:kIDOfCurrentUser]) {                        
                         

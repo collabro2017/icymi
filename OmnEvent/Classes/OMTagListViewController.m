@@ -120,21 +120,13 @@
             return ;
         }
         if (!error) {
-            [arrForFriend removeAllObjects];
             
-            NSLog(@"object = %@", objects);
+            [arrForFriend removeAllObjects];
             for (PFObject *obj in objects) {
-                
-                NSLog(@"friend === %@", obj);
-                
                 if (obj[@"ToUser"])
                     [arrForFriend addObject:obj[@"ToUser"]];
-
             }
 
-            
-//            [arrForFriend addObjectsFromArray:objects];
-            
             [tblForFriendList reloadData];
         }
         

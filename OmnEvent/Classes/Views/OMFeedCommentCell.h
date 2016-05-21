@@ -18,22 +18,14 @@
     IBOutlet UITextField *lblForDes;
     IBOutlet NSLayoutConstraint *constraintForCommentHeight;
     
+    NSInteger currentType;
+    NSMutableArray *arrEventTagFriends;
+    
 }
-
-//@property (strong, nonatomic) IBOutlet UIImageView *imageViewForProfile;
-//
-//@property (strong, nonatomic) IBOutlet UILabel *lblForUsername;
-//
-////@property (strong, nonatomic) IBOutlet UILabel *lblForDes;
-//
-//@property (strong, nonatomic) IBOutlet UITextField *lblForDes;
-//
-//@property (strong, nonatomic) IBOutlet UILabel *lblForTime;
-//
-//@property (strong, nonatomic) IBOutlet NSLayoutConstraint *constraintForCommentHeight;
 
 @property (strong, nonatomic) id delegate;
 @property (strong, nonatomic) PFObject *currentObj;
+@property (strong, nonatomic) PFObject *commentObj;
 @property (strong, nonatomic) PFUser *currentUser;
 @property (strong, nonatomic) PFObject *currentCommentObj;
 
@@ -42,11 +34,14 @@
 //Event
 - (void)setUser:(PFUser *)user comment:(NSString *)_comment curObj:(PFObject *)_obj number:(NSUInteger)_number;
 
-- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj;
+- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj commentType:(NSInteger)curType;
 
 // Comment
 - (void)configurateCell:(PFObject *)tempObj;
 //Post
-- (void)configCell:(PFObject *)tempObj EventObject:(PFObject *) eventObject;
+- (void)configCell:(PFObject *)tempObj EventObject:(PFObject *) eventObject commentType:(NSInteger)curType;
 
+// newly
+
+- (void)configPostCell:(PFObject *)comObj PostObject:(PFObject*) postObj EventObject:(PFObject *) eventObject CommentType:(NSInteger)curType;
 @end

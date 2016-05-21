@@ -17,6 +17,9 @@
 #import "OMProfileInfoCell.h"
 #import "OMFolderListCell.h"
 #import "UIImage+Resize.h"
+
+#import "OMSocialEvent.h"
+
 typedef enum {
     
     TableRowsEvent = 0,
@@ -45,6 +48,8 @@ BOOL refresh_require;
 
 @implementation OMMyProfileViewController
 @synthesize is_type,targetUser;
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -55,7 +60,8 @@ BOOL refresh_require;
     arrForFollowings    = [NSMutableArray array];
     arrForFolders       = [NSMutableArray array];
     arrForEventofFolder = [NSMutableArray array];
-    [self.navigationController setNavigationBarHidden:YES];
+    
+    //[self.navigationController setNavigationBarHidden:YES];
     // Do any additional setup after loading the view.
     
     
@@ -63,29 +69,30 @@ BOOL refresh_require;
     avatarView          = [arr lastObject];
     [avatarView setDelegate:self];
     
-//    [avatarView setUser:USER];
-    
     [tblForProfile addTwitterCoverWithImage:[UIImage imageNamed:@"cover.png"] withTopView:nil withBottomView:avatarView];
     tblForProfile.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tblForProfile.frame.size.width, CHTwitterCoverViewHeight + 93)];
     
-    targetUser = USER;
-    
-    [self initializePopupView];
-    [self initializeFolderView];
-    
-     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadEvents) name:kLoadProfileData object:nil];
-
-    
-    [self loadEvents];
-    [self loadFolders];
+    currentSegIndex = is_type;
     _isFolderCreating = NO;
+    isShowSetting = NO;
+    
     
     imagePicker = [[UIImagePickerController alloc] init];
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     imagePicker.delegate = self;
     imagePicker.allowsEditing = NO;
+    [_m_FolderImgView setImage:[UIImage imageNamed:@"folder_icon"]];
     
-    isShowSetting = NO;
+    [self initializePopupView];
+    [self initializeFolderView];
+    
+    [self loadEvents];
+    [self loadFolders];
+
+    // Registering notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadEvents) name:kLoadProfileData object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFolders) name:kLoadFolderData object:nil];
     
 }
 
@@ -93,32 +100,21 @@ BOOL refresh_require;
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (void)dealloc{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [avatarView setUser:USER];
     targetUser = USER;
-
-
+    
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     
     if (_isPushed) {
-        
         [btnForBack setHidden:NO];
     }
     else
     {
         [btnForBack setHidden:YES];
     }
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
     
 }
 
@@ -170,8 +166,7 @@ BOOL refresh_require;
     } completion:^(BOOL finished) {
         
         if (!_isFolderCreating) [viewForLayer setHidden:YES];
-        
-    }];
+   }];
     
 }
 - (void)hideFolderViewPopup
@@ -179,10 +174,11 @@ BOOL refresh_require;
     [UIView animateWithDuration:.2f delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveEaseInOut animations:^{
         viewForCreateFolder.transform = CGAffineTransformMakeScale(0.0001, 0.0001);
         viewForCreateFolder.userInteractionEnabled = NO;
+        
     } completion:^(BOOL finished) {
         
         [viewForLayer setHidden:YES];
-        
+        [_m_FolderImgView setImage:[UIImage imageNamed:@"folder_icon"]];
     }];
     
 }
@@ -194,7 +190,7 @@ BOOL refresh_require;
     PFQuery *innerQuery = [PFUser query];
     [innerQuery whereKey:@"user" equalTo:[PFUser currentUser]];
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
-    //    [mainQuery whereKey:@"createdAt" greaterThanOrEqualTo:[OMGlobal getFirstDayOfThisMonth]];
+    //[mainQuery whereKey:@"createdAt" greaterThanOrEqualTo:[OMGlobal getFirstDayOfThisMonth]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery whereKey:@"user" equalTo:[PFUser currentUser]];
@@ -204,17 +200,16 @@ BOOL refresh_require;
         
         if (objects == nil || [objects count] == 0) {
             
-            //            [OMGlobal showAlertTips:@"You have had not any following yet. Please post new one." title:nil];
+            // [OMGlobal showAlertTips:@"You have had not any following yet. Please post new one." title:nil];
             
             
             return;
         }
         if (!error) {
-            //            [arrForEvent removeAllObjects];
+            //[arrForEvent removeAllObjects];
             [arrForPhoto removeAllObjects];
-            
             [arrForPhoto addObjectsFromArray:objects];
-            //            [tblForProfile reloadData];
+            // [tblForProfile reloadData];
         }
     }];
     
@@ -222,28 +217,30 @@ BOOL refresh_require;
 
 - (void)loadEvents
 {
+    NSLog(@"Running by notification center...");
+    
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];    
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
     //[mainQuery fromLocalDatastore];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery whereKey:@"user" equalTo:USER];
+    //[mainQuery includeKey:@"postedObjects"];
+    
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
-        if (objects == nil || [objects count] == 0) {
-            
-            //            [OMGlobal showAlertTips:@"You have had not any following yet. Please post new one." title:nil];
-            
-            
-            return;
-        }
-        if (!error) {
+        if (error == nil) {
+            NSLog(@"My Event load - Success!");
             [arrForEvent removeAllObjects];
-            //            [arrForPhoto removeAllObjects];
-            
+            //[arrForPhoto removeAllObjects];
+
             [arrForEvent addObjectsFromArray:objects];
             [tblForProfile reloadData];
+        }
+        else
+        {
+            NSLog(@"My Event load - error: %@", error.description);
         }
     }];
     
@@ -252,6 +249,7 @@ BOOL refresh_require;
 - (void)loadFolders
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
     PFQuery *queryForFolders = [PFQuery queryWithClassName:@"Folder"];
     [queryForFolders orderByDescending:@"createdAt"];
     [queryForFolders includeKey:@"Owner"];
@@ -259,33 +257,34 @@ BOOL refresh_require;
     [queryForFolders findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
-        if (objects == nil || [objects count] == 0) {
+        if (error == nil) {
+//            NSMutableArray *tempFolderArray = [NSMutableArray array];
+//            
+//            for (PFObject* pfFolder in objects)
+//            {
+//                BOOL isExist = false;
+//                
+//                for(PFObject* pfExist in arrForFolders)
+//                    if ([pfFolder.objectId isEqualToString:pfExist.objectId])
+//                    {
+//                        isExist = true;
+//                        break;
+//                    }
+//                
+//                if (!isExist)
+//                    [tempFolderArray addObject:pfFolder];
+//                
+//            }
             
-            //[OMGlobal showAlertTips:@"You have had not any folder yet. Please create new one." title:nil];
-            
-            return;
-        }
-        if (!error) {
-            NSMutableArray *tempFolderArray = [NSMutableArray array];
-            
-            for (PFObject* pfFolder in objects)
-            {
-                BOOL isExist = false;
-                
-                for(PFObject* pfExist in arrForFolders)
-                    if ([pfFolder.objectId isEqualToString:pfExist.objectId])
-                    {
-                        isExist = true;
-                        break;
-                    }
-                
-                if (!isExist)
-                    [tempFolderArray addObject:pfFolder];
-                
-            }
             [arrForFolders removeAllObjects];
-            [arrForFolders addObjectsFromArray:tempFolderArray];
+            [arrForFolders addObjectsFromArray:objects];
             [tblForProfile reloadData];
+            
+            NSLog(@"Load Folders Success: %i", (int)[arrForFolders count]);
+        }
+        else
+        {
+            NSLog(@"Load Folders Error: %@", error.description);
         }
     }];
     
@@ -360,9 +359,7 @@ BOOL refresh_require;
 - (void)follow:(PFUser *)_user
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    
-    
-    
+   
     if ([arrForFollowers count] > 0) {
         PFObject *object = [arrForFollowers objectAtIndex:0];
         
@@ -395,24 +392,16 @@ BOOL refresh_require;
 
 - (void)changeType:(NSNumber*)_type
 {
-    is_type = [_type integerValue];
+    //is_type = [_type integerValue];
+    currentSegIndex = [_type integerValue];
     
     [tblForProfile reloadData];
-//    [tblForProfile beginUpdates];
+//  [tblForProfile beginUpdates];
 //    
 //    [tblForProfile reloadSections:[NSIndexSet indexSetWithIndex:2] withRowAnimation:UITableViewRowAnimationAutomatic];
 //    [tblForProfile endUpdates];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 #pragma mark - UITableViewDataSource
 
@@ -425,7 +414,7 @@ BOOL refresh_require;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch ((TableRows)is_type) {
+    switch ((TableRows)currentSegIndex) {
         case TableRowsEvent:
         {
             OMEventListCell *cell = [tableView dequeueReusableCellWithIdentifier:kEventListCell];
@@ -450,11 +439,9 @@ BOOL refresh_require;
                 
             }
             [cell setDelegate: self];
-            
             [cell setUser:USER];
             
             return cell;
-            
             
         }
             break;
@@ -467,6 +454,7 @@ BOOL refresh_require;
             }
             
             [cell setDelegate:self];
+            [cell setFolderType:kTypeOwner];
             [cell setObject:[arrForFolders objectAtIndex:indexPath.row]];
             
             return cell;
@@ -498,7 +486,7 @@ BOOL refresh_require;
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    switch ((TableRows)is_type) {
+    switch ((TableRows)currentSegIndex) {
         case TableRowsEvent:
             return nil;
             break;
@@ -556,7 +544,7 @@ BOOL refresh_require;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    switch ((TableRows)is_type) {
+    switch ((TableRows)currentSegIndex) {
         case TableRowsEvent:
             return 0;
             break;
@@ -579,10 +567,9 @@ BOOL refresh_require;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
-    switch ((TableRows)is_type) {
+    switch ((TableRows)currentSegIndex) {
         case TableRowsEvent:
         {
-            
             return arrForEvent.count;
         }
             break;
@@ -611,7 +598,7 @@ BOOL refresh_require;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch ((TableRows)is_type) {
+    switch ((TableRows) currentSegIndex) {
         case TableRowsEvent:
         {
             
@@ -643,13 +630,17 @@ BOOL refresh_require;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    switch ((TableRows)is_type) {
+    switch ((TableRows) currentSegIndex) {
         case TableRowsEvent:
         {
             OMDetailEventViewController *detailEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailEventVC"];
             
-            [detailEventVC setCurrentObject:[arrForEvent objectAtIndex:indexPath.row]];
+            PFObject *selectedObj = [arrForEvent objectAtIndex:indexPath.row];
+            OMSocialEvent *socialObj = (OMSocialEvent*)selectedObj;
+            socialObj.badgeCount = 0;
             
+            [GlobalVar getInstance].gEventIndex = -1;
+            [detailEventVC setCurrentObject:socialObj];
             [self.navigationController pushViewController:detailEventVC animated:YES];
 
         }
@@ -671,28 +662,18 @@ BOOL refresh_require;
                 for( NSString* eventID in eventIDs)
                 {
                     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+                    
                     //[mainQuery fromLocalDatastore];
                     [mainQuery orderByDescending:@"createdAt"];
                     [mainQuery includeKey:@"user"];
                     [mainQuery whereKey:@"objectId" equalTo:eventID];
                     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
                         
-                        if (objects == nil || [objects count] == 0) {
-                            
-                            //            [OMGlobal showAlertTips:@"You have had not any following yet. Please post new one." title:nil];
-                            
-                            
-                            return;
-                        }
-                        if (!error) {
-                            
+                        if (error == nil) {
+                            if([objects count] == 0) return;
                             [arrForEventofFolder addObjectsFromArray:objects];
-                            
-                            is_type = TableRowsEventofFolder;
-                            
+                            currentSegIndex = TableRowsEventofFolder;
                             [tblForProfile reloadData];
-                            
-
                         }
                     }];
                 }
@@ -707,6 +688,7 @@ BOOL refresh_require;
             {
                 OMDetailEventViewController *detailEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailEventVC"];
             
+                [GlobalVar getInstance].gEventIndex = -1;
                 [detailEventVC setCurrentObject:[arrForEventofFolder objectAtIndex:indexPath.row]];
             
                 [self.navigationController pushViewController:detailEventVC animated:YES];
@@ -722,7 +704,6 @@ BOOL refresh_require;
     
     if (!isShowSetting)
     {
-    
         [viewForLayer setHidden:NO];
     
     
@@ -738,11 +719,7 @@ BOOL refresh_require;
         
         [self hidePopup];
     }
-    
-    
-    ////
-    
-    
+   
 }
 
 - (IBAction)backAction:(id)sender {
@@ -758,7 +735,6 @@ BOOL refresh_require;
 }
 
 - (IBAction)profileAction:(id)sender {
-    
     
     OMAppDelegate *appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
     FTTabBarController *tab = [appDel tabBarController];
@@ -801,7 +777,6 @@ BOOL refresh_require;
 }
 
 #pragma mark add Folder
-
 - (void)addFolder
 {
     _isFolderCreating = YES;
@@ -815,7 +790,6 @@ BOOL refresh_require;
     }];
     
 }
-
 
 - (IBAction)changeFolderImage:(id)sender {
     
@@ -833,7 +807,7 @@ BOOL refresh_require;
 
 - (void) backToFolder
 {
-    is_type = TableRowsFavorite;
+    currentSegIndex = TableRowsFavorite;
     [tblForProfile reloadData];
 }
 

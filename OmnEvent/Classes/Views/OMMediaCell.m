@@ -7,9 +7,13 @@
 //
 
 #import "OMMediaCell.h"
+#import "OMSocialEvent.h"
 
 @implementation OMMediaCell
-@synthesize user,delegate,currentObj, imageViewForMedia, beforeTitle, beforeDescription;
+{
+    NSInteger curIndex;
+}
+@synthesize user,delegate,currentObj, imageViewForMedia, beforeTitle, beforeDescription, curEventIndex;
 
 - (void)awakeFromNib {
     // Initialization code
@@ -18,6 +22,8 @@
     
     lblForTitle.delegate = self;
     lblForDes.delegate = self;
+    curEventIndex = [GlobalVar getInstance].gEventIndex;
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -59,8 +65,40 @@
     
     PFObject *eventObj = currentObj[@"targetEvent"];
     
+    
     PFUser *eventUser = eventObj[@"user"];
     PFUser *self_user = [PFUser currentUser];
+
+    // for badge processing
+    NSLog(@"------Current Index-----%ld", curEventIndex);
+    if(curEventIndex >= 0)
+    {
+        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex ];
+        
+        if (socialTemp.badgeCount > 0) {
+            OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
+            if(currentObj != nil)
+            {
+                NSMutableArray *temp = [[NSMutableArray alloc] init];
+                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
+                
+                if ([temp containsObject:self_user.objectId])
+                {
+                    [temp removeObject:self_user.objectId];
+                    currentObj[@"usersBadgeFlag"] = temp;
+                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if(error == nil)
+                        {
+                            NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
+                        }
+                    }];
+                    if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
+                    [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
+                }
+            }
+        }
+    }
+   
     
     NSMutableArray *arrForTagFriends = eventObj[@"TagFriends"];
     NSMutableArray *arrForTagFriendAuthorities = eventObj[@"TagFriendAuthorities"];
