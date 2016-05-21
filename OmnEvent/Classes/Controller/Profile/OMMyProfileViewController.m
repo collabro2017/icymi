@@ -94,12 +94,21 @@ BOOL refresh_require;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFolders) name:kLoadFolderData object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(thirdViewLoad) name:kNotificationForthDetailViewLoad object:nil];
+
+    
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (void) thirdViewLoad
+{
+     [self.navigationController popViewControllerAnimated:YES];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];

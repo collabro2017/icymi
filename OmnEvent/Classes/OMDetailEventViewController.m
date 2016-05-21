@@ -167,15 +167,6 @@
     
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-    // Processing dismiss after push with this DetailEventViewController. // for me
-    //[self.navigationController popViewControllerAnimated:YES];
-    
-}
-
 
 - (void)firstViewLoad {
     

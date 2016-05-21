@@ -164,10 +164,14 @@
 
 //Notification Methods
 
-// Standard Events for new account users. This will be showed when only new account is opened the app at first.
 - (void)firstViewLoad {
-    //[self.navigationController popToRootViewControllerAnimated:YES];
-    
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    //[self.navigationController popViewControllerAnimated:YES];
+}
+
+// Standard Events for new account users. This will be showed when only new account is opened the app at first.
+- (void) standardEventLoad
+{
     [MBProgressHUD showMessag:@"Loading..." toView:self.view];
     
     // class StandardEvent : this will have special Event Table.
@@ -197,8 +201,8 @@
             else [tblForEventFeed reloadData];
         }
     }];
-}
 
+}
 - (void)showBadge:(NSNotification *)_notification {
     
     NSDictionary *userInfo = _notification.userInfo;
@@ -241,7 +245,8 @@
     [super viewWillAppear:animated];
     
     NSLog(@"Event count && Event Global count = %ld, %ld",
-          [arrForFeed count],[[GlobalVar getInstance].gArrEventList count]);
+    [arrForFeed count],[[GlobalVar getInstance].gArrEventList count]);
+    
  }
 
 - (void)viewDidAppear:(BOOL)animated {

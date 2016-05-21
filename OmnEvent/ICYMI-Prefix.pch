@@ -90,6 +90,9 @@
 #define  kNotificationFirstViewLoad     @"kNotificationFirstViewLoad"
 #define  kNotificationFirstDetailViewLoad     @"kNotificationFirstDetailViewLoad"
 
+#define  kNotificationForthDetailViewLoad   @"kNotificationForthDetailViewLoad"
+
+
 #define  kNotificationKeyboardShow     @"kNotificationKeyboardShow"
 #define  kNotificationKeyboardHide     @"kNotificationKeyboardHide"
 

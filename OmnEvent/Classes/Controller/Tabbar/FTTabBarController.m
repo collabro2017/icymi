@@ -71,7 +71,9 @@
     else
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFirstDetailViewLoad object:nil];
+        
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationForthDetailViewLoad object:nil];
     
 }
 
