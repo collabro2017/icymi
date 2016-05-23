@@ -43,6 +43,8 @@
 @property (nonatomic, retain) UIDocumentInteractionController *dic;
 @property (assign, nonatomic) UIBackgroundTaskIdentifier fileUploadBackgroundTaskId;
 @property (nonatomic, strong) PFObject *currentObject;
+@property (nonatomic, strong) NSMutableArray *arrTagedFriends;
+@property (nonatomic) NSInteger curEventIndex;
 
 - (IBAction)addContentsAction:(id)sender;
 

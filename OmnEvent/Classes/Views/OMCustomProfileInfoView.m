@@ -16,13 +16,8 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect {
     // Drawing code
-    
     [OMGlobal setCircleView:_imageViewForAvatar borderColor:[UIColor whiteColor]];
-    
-    
-
 }
-
 
 - (void)setUserInfo:(NSString *)_avatarUrl name:(NSString *)_name location:(NSString *)_location
 {

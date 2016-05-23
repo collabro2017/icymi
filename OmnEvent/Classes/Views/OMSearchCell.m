@@ -37,8 +37,6 @@
         [btnForVideo setHidden:YES];
     }
     
-    //NSLog(@"-------_currentObj.badgeCount cell------------%lu", _currentObj.badgeCount);
-    
     if (_currentObj.badgeCount == 0) {
         
         [lblForBadge setHidden:YES];
@@ -47,9 +45,13 @@
         [lblForBadge setText:[NSString stringWithFormat:@"%lu",(long)_currentObj.badgeCount]];
     }
     [lblForTitle setText:_currentObj[@"eventname"]];
-    user = _currentObj[@"user"];
     
-    [lblForUsername setText:user.username];
+    user = _currentObj[@"user"];
+    if (user != nil) {
+        [lblForUsername setText:user.username];
+    }
+    
+    
 }
 
 @end

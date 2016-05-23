@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 
+
+#define BADGE_TEST
+
 typedef enum {
     
     kTypeUploadEvent = 0,
@@ -25,6 +28,20 @@ typedef enum {
     kTypeCaptureText
     
 }kTypeCapture;
+
+typedef enum{
+
+    kTypeOwner,
+    kTypeCoporate,
+    
+}kTypeFolderView;
+
+typedef enum {
+    
+    kTypeEventComment,
+    kTypePostComment,
+    
+}kTypeCommentCell;
 
 typedef enum {
     
@@ -63,6 +80,8 @@ typedef enum {
 @property (nonatomic) BOOL gIsPhotoPreview;
 @property (nonatomic) BOOL isPostLoading;
 @property (nonatomic) BOOL isEventLoading;
+@property (strong, nonatomic) NSMutableArray *gArrEventList;
+@property (nonatomic) NSInteger gEventIndex;
 
 +(GlobalVar*)getInstance;
 

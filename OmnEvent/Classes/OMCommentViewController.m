@@ -203,6 +203,22 @@
             [currentObject setObject:arrForCommentObject forKey:@"commentsArray"];
             
             
+            // for badge
+            PFUser *eventUser = currentObject[@"user"];
+            NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+            PFObject *eventObj = currentObject[@"targetEvent"];
+            arrEventTagFriends = eventObj[@"TagFriends"];
+            if(![eventUser.objectId isEqualToString:USER.objectId])
+            {
+                [arrEventTagFriends addObject:eventUser.objectId];
+                if ([arrEventTagFriends containsObject:USER.objectId]) {
+                    [arrEventTagFriends removeObject:USER.objectId];
+                }
+            }
+            
+            currentObject[@"usersBadgeFlag"] = arrEventTagFriends;
+            NSLog(@"Badge for comments of Post Added");
+
             [currentObject saveInBackgroundWithBlock:^(BOOL _succeeded, NSError *_error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 
@@ -213,6 +229,8 @@
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
 //                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadCurrentEventData object:nil];
+                    
+                    
                 }
                 else if (_error)
                 {

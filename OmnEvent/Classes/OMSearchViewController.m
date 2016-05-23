@@ -109,6 +109,8 @@
     if (![searchBarForEvent isDescendantOfView:self.view]) {
         [self.view addSubview:searchBarForEvent];
     }
+    
+    
 
 }
 

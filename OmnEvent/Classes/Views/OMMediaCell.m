@@ -7,9 +7,13 @@
 //
 
 #import "OMMediaCell.h"
+#import "OMSocialEvent.h"
 
 @implementation OMMediaCell
-@synthesize user,delegate,currentObj, imageViewForMedia, beforeTitle, beforeDescription;
+{
+    NSInteger curIndex;
+}
+@synthesize user,delegate,currentObj, imageViewForMedia, beforeTitle, beforeDescription, curEventIndex;
 
 - (void)awakeFromNib {
     // Initialization code
@@ -18,6 +22,8 @@
     
     lblForTitle.delegate = self;
     lblForDes.delegate = self;
+    curEventIndex = [GlobalVar getInstance].gEventIndex;
+    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -59,8 +65,40 @@
     
     PFObject *eventObj = currentObj[@"targetEvent"];
     
+    
     PFUser *eventUser = eventObj[@"user"];
     PFUser *self_user = [PFUser currentUser];
+
+    // for badge processing
+    NSLog(@"------Current Index-----%ld", curEventIndex);
+    if(curEventIndex >= 0)
+    {
+        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex ];
+        
+        if (socialTemp.badgeCount > 0) {
+            OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
+            if(currentObj != nil)
+            {
+                NSMutableArray *temp = [[NSMutableArray alloc] init];
+                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
+                
+                if ([temp containsObject:self_user.objectId])
+                {
+                    [temp removeObject:self_user.objectId];
+                    currentObj[@"usersBadgeFlag"] = temp;
+                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if(error == nil)
+                        {
+                            NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
+                        }
+                    }];
+                    if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
+                    [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
+                }
+            }
+        }
+    }
+   
     
     NSMutableArray *arrForTagFriends = eventObj[@"TagFriends"];
     NSMutableArray *arrForTagFriendAuthorities = eventObj[@"TagFriendAuthorities"];
@@ -69,7 +107,7 @@
         
         NSString *AuthorityValue = @"";
         
-        if (arrForTagFriendAuthorities != nil){
+        if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] != 0){
             
             for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                 if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
@@ -630,9 +668,32 @@
     if (textField == lblForTitle) {
         if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
             currentObj[@"title"] = lblForTitle.text;
-            [currentObj saveEventually];
+            
             
             NSLog(@"Media Cell: Add and Change Post content title");
+            
+            // for badge
+            PFUser *eventUser = currentObj[@"user"];
+            NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+            PFObject *eventObj = currentObj[@"targetEvent"];
+            arrEventTagFriends = eventObj[@"TagFriends"];
+            if(![eventUser.objectId isEqualToString:USER.objectId])
+            {
+                [arrEventTagFriends addObject:eventUser.objectId];
+                if ([arrEventTagFriends containsObject:USER.objectId]) {
+                    [arrEventTagFriends removeObject:USER.objectId];
+                }
+            }
+            
+            currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+            NSLog(@"Badge for comments of Post Added");
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            if(appDel.network_state)
+            {
+                [currentObj saveInBackground];
+            }
+            
         }
         
         [lblForTitle resignFirstResponder];
@@ -642,8 +703,31 @@
         
         if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
             currentObj[@"description"] = lblForDes.text;
-            [currentObj saveEventually];
+            
             NSLog(@"Media Cell: Add and Change Post content Description");
+            
+            // for badge
+            PFUser *eventUser = currentObj[@"user"];
+            NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+            PFObject *eventObj = currentObj[@"targetEvent"];
+            arrEventTagFriends = eventObj[@"TagFriends"];
+            if(![eventUser.objectId isEqualToString:USER.objectId])
+            {
+                [arrEventTagFriends addObject:eventUser.objectId];
+                if ([arrEventTagFriends containsObject:USER.objectId]) {
+                    [arrEventTagFriends removeObject:USER.objectId];
+                }
+            }
+            
+            currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+           
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            if(appDel.network_state)
+            {
+                 NSLog(@"Badge for comments of Post Added");
+                [currentObj saveInBackground];
+            }
         }
         
         [lblForDes resignFirstResponder];

@@ -54,6 +54,11 @@
     [self loadFollowings];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+}
 
 - (void)didReceiveMemoryWarning
 {
@@ -97,6 +102,8 @@
 
 - (void)loadEvents
 {
+    
+    
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     PFQuery *innerQuery = [PFUser query];
@@ -104,11 +111,11 @@
     
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
     //[mainQuery fromLocalDatastore];
-    //    [mainQuery whereKey:@"createdAt" greaterThanOrEqualTo:[OMGlobal getFirstDayOfThisMonth]];
+    // [mainQuery whereKey:@"createdAt" greaterThanOrEqualTo:[OMGlobal getFirstDayOfThisMonth]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery whereKey:@"user" equalTo:targetUser];
-//    [mainQuery whereKey:@"PostType" equalTo:@"event"];
+//  [mainQuery whereKey:@"PostType" equalTo:@"event"];
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
@@ -284,7 +291,7 @@
             [cell setDelegate:self];
             [cell setUser:currentUser];
             
-            //            [cell setObject:[arrForFeed objectAtIndex:indexPath.row]];
+            // [cell setObject:[arrForFeed objectAtIndex:indexPath.row]];
             
             return cell;
             
@@ -387,16 +394,5 @@
     }
     return 0;
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

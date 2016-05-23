@@ -16,5 +16,6 @@
 }
 @property (nonatomic, strong) id delegate;
 @property (nonatomic, strong) PFObject *object;
+@property (nonatomic, readwrite) kTypeFolderView folderType;
 
 @end

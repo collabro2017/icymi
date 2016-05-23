@@ -47,7 +47,7 @@
 
 
 @property (nonatomic, strong) PFObject *curObj;
-@property (nonatomic) kTypeUpload      uploadOption;
+@property (nonatomic) kTypeUpload       uploadOption;
 @property (nonatomic) kTypeCapture      captureOption;
 @property (nonatomic) kTypeRecord       audioOption;
 @end

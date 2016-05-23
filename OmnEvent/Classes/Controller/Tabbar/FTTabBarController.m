@@ -71,7 +71,9 @@
     else
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationFirstDetailViewLoad object:nil];
+        
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationForthDetailViewLoad object:nil];
     
 }
 
@@ -359,10 +361,10 @@
         
         if ([segue.identifier isEqualToString:@"kIdentifierProfile"]) {
             
-            //            [[NSNotificationCenter defaultCenter] postNotificationName:kGetProfileInfoNotification object:nil];
+            // [[NSNotificationCenter defaultCenter] postNotificationName:kGetProfileInfoNotification object:nil];
             
             UINavigationController *nav = (UINavigationController *)self.currentViewController;
-            //            MyProfileViewController *otherVC = (MyProfileViewController *) nav.topViewController;
+            //MyProfileViewController *otherVC = (MyProfileViewController *) nav.topViewController;
             
             OMMyProfileViewController *myProfileVC = (OMMyProfileViewController *)nav.topViewController;
             myProfileVC.is_type = 0;

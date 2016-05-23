@@ -190,6 +190,7 @@
             [arrForCommentContents addObject:str];
             [currentObject setObject:arrForCommentUsers forKey:@"commenters"];
             [currentObject setObject:arrForCommentContents forKey:@"commentsArray"];
+            
             [currentObject saveInBackgroundWithBlock:^(BOOL _succeeded, NSError *_error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
 
@@ -202,6 +203,27 @@
 //                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadPhotoData object:nil];
                     
                     NSLog(@"EventCommentViewController: Updated EventComments");
+                    // for badge
+                    NSMutableArray * arrPostLookedFlags = [NSMutableArray array];
+                    arrPostLookedFlags = [currentObject[@"TagFriends"] mutableCopy];
+                    PFUser *eventUser = currentObject[@"user"];
+                    
+                    if(![eventUser.objectId isEqualToString:USER.objectId])
+                    {
+                        [arrPostLookedFlags addObject:eventUser.objectId];
+                        if ([arrPostLookedFlags containsObject:USER.objectId]) {
+                            [arrPostLookedFlags removeObject:USER.objectId];
+                        }
+                    }
+                    
+                    currentObject[@"eventBadgeFlag"] = arrPostLookedFlags;
+                    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                    if(appDel.network_state)
+                    {
+                        NSLog(@"Badge for event comments of Post Added");
+                        [currentObject saveInBackground];
+                    }
+                    
                     
                 }
                 else if (_error)

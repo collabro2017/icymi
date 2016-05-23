@@ -29,5 +29,6 @@
 @property (nonatomic, assign)NSInteger               badgeCount;
 @property (nonatomic, assign)NSDate                 *updateAt;
 @property (nonatomic, assign)NSDate                 *loadTimeAt;
+@property (nonatomic, assign)NSMutableArray         *postedObjects;
 
 @end

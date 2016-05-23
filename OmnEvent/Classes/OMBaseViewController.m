@@ -85,7 +85,7 @@
     [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
     
     ////
-    UIButton *inviteButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
+    UIButton *inviteButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
 
     [inviteButton addTarget:self action:@selector(showInvite) forControlEvents:UIControlEventTouchUpInside];
 //    [inviteButton setImage:[UIImage imageNamed:@"icon_friend"] forState:UIControlStateNormal];
@@ -94,7 +94,7 @@
     
     btnForInvite = [[BBBadgeBarButtonItem alloc] initWithCustomUIButton:inviteButton];
     
-    UIButton *customButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
+    UIButton *customButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     
     [customButton addTarget:self action:@selector(showMessageView) forControlEvents:UIControlEventTouchUpInside];
     [customButton setBackgroundImage:[UIImage imageNamed:@"icon_bell"] forState:UIControlStateNormal];
@@ -102,14 +102,14 @@
     barButton = [[BBBadgeBarButtonItem alloc] initWithCustomUIButton:customButton];
 //    barButton.badgeValue = @"2";
     
-    PFInstallation *curIn = [PFInstallation currentInstallation];
+//    PFInstallation *curIn = [PFInstallation currentInstallation];
 //    barButton.badgeValue = [NSString stringWithFormat:@"%ld",(long)[curIn badge]];
     barButton.badgeOriginX = 10;
     barButton.badgeOriginY = -9;
     
     //////
     
-    UIButton *searchButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
+    UIButton *searchButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     
     [searchButton addTarget:self action:@selector(newEventPostAction) forControlEvents:UIControlEventTouchUpInside];
     [searchButton setBackgroundImage:[UIImage imageNamed:@"icon_newpost"] forState:UIControlStateNormal];
@@ -134,7 +134,7 @@
 {
     NSDictionary *dic = [_notification userInfo];
     NSLog(@"%@", [dic objectForKey:@"count"]);
-    NSString *count = [((NSNumber *)[dic objectForKey:@"count"]) stringValue];
+//    NSString *count = [((NSNumber *)[dic objectForKey:@"count"]) stringValue];
 //    barButton.badgeValue = codunt;
 }
 

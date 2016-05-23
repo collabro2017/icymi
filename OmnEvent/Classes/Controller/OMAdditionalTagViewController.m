@@ -161,9 +161,7 @@
                     [arrForFriend addObject:obj[@"ToUser"]];
                 
             }
-            
-            
-            //            [arrForFriend addObjectsFromArray:objects];
+            // [arrForFriend addObjectsFromArray:objects];
             
             [tblForTagFriend reloadData];
         }
@@ -185,7 +183,7 @@
 
 - (void)doneButtonClikedDismissPickerView {
     
-    if (AuthorityValue == nil){
+    if (AuthorityValue == nil || [AuthorityValue isEqualToString:@""]){
         AuthorityValue = @"Full";
     }
     
@@ -266,7 +264,12 @@
         
         for (NSUInteger i = 0; i < arrForTaggedFriend.count ; i++){
             if ([user.objectId isEqualToString:[arrForTaggedFriend objectAtIndex:i]]){
-                [arrForTaggedFriendAuthorities removeObjectAtIndex:i];
+                
+                if([arrForTaggedFriendAuthorities count] > i)
+                {
+                    [arrForTaggedFriendAuthorities removeObjectAtIndex:i];
+                }
+                
                 break;
             }
         }

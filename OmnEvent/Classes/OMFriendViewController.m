@@ -314,6 +314,7 @@
     [super viewWillAppear:animated];
     
     [self reload:nil];
+    
 }
 
 - (void)loadFriendsData:(NSString *)text

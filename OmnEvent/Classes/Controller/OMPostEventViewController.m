@@ -34,8 +34,10 @@
     NSString *state;
     CLPlacemark *placeMark;
     NSMutableArray *arrForTaggedFriend;
+    NSMutableArray *arrForTaggedFriendAuthor;
     
-    NSMutableArray *arrEventLookedFlags;
+    NSMutableArray *arrCurTaggedFriends;
+    
     NSMutableArray *arrPostLookedFlags;
 }
 
@@ -92,7 +94,15 @@
     [self initializeLocationManager];
     
     arrForTaggedFriend = [NSMutableArray array];
-    arrEventLookedFlags = [NSMutableArray array];
+    arrForTaggedFriendAuthor = [NSMutableArray array];
+    
+    arrCurTaggedFriends = [[NSMutableArray alloc] init];
+    
+    if([curObj[@"TagFriends"] count] > 0)
+    {
+        arrCurTaggedFriends = [curObj[@"TagFriends"] mutableCopy];
+    }
+    
     arrPostLookedFlags = [NSMutableArray array];
     
     imagePicker = [[UIImagePickerController alloc] init];
@@ -112,16 +122,6 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)makeDicArray
-{
-    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
-    for (NSString *objId in arrForTaggedFriend) {
-        [dic setValue:[NSNumber numberWithInt:1] forKey:objId];
-        [arrEventLookedFlags addObject:dic];
-    }
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -310,12 +310,6 @@
         case kTypeUploadEvent:
         {
             
-            NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
-            for (NSString *objId in arrForTaggedFriend) {
-                [dic setValue:[NSNumber numberWithInt:1] forKey:objId];
-                [arrEventLookedFlags addObject:dic];
-            }
-
             PFObject *post = [PFObject objectWithClassName:@"Event"];
             PFUser *currentUser = [PFUser currentUser];
             
@@ -325,10 +319,13 @@
             post[@"description"] = textViewForDescription.text;
             post[@"openStatus"] = [NSNumber numberWithInteger:1];
             post[@"TagFriends"] = arrForTaggedFriend;
+            post[@"TagFriendAuthorities"] = arrForTaggedFriendAuthor;
             post[@"country"] = lblForLocation.text;
             post[@"postType"] = _postType;
-            //post[@"EventLookedFlags"] = arrEventLookedFlags;
             
+            //for badge
+            post[@"eventBadgeFlag"] = arrForTaggedFriend;
+ 
             //image upload
             
             if ([_postType isEqualToString:@"video"]) {
@@ -373,6 +370,7 @@
                                 [self sendPushToTaggedFriends:post];
                                 
                                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
+                                [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
                                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                             }
                             else
@@ -397,13 +395,11 @@
                         if (_outPutURL) {
                             
                             [OMGlobal removeImage:_outPutURL.path];
-                            
-                            
-                        }
+                       }
                         [self sendPushToTaggedFriends:post];
                         
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
-                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
                         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     }
                     else
@@ -418,15 +414,32 @@
             break;
             
         // New Post Content Create and Uploading...
+            
         case kTypeUploadPost:
         {
+
+            
             PFObject *post = [PFObject objectWithClassName:@"Post"];
             
-            post[@"user"] = USER;
-            post[@"targetEvent"] = curObj;
+            post[@"user"]           = USER;
+            post[@"targetEvent"]    = curObj; // Event obj
             post[@"title"]          = lblForTitle.text;
             post[@"description"]    = textViewForDescription.text;
-            post[@"country"] = lblForLocation.text;
+            post[@"country"]        = lblForLocation.text;
+            
+            //for badge
+            arrPostLookedFlags = [arrCurTaggedFriends mutableCopy];
+            PFUser *eventUser = curObj[@"user"];
+            if(![eventUser.objectId isEqualToString:USER.objectId])
+            {
+                [arrPostLookedFlags addObject:eventUser.objectId];
+                if ([arrPostLookedFlags containsObject:USER.objectId]) {
+                    [arrPostLookedFlags removeObject:USER.objectId];
+                }
+            }
+            
+            NSLog(@"PostEventVC: Tagged Friend = %@", arrPostLookedFlags);
+            if([arrPostLookedFlags count] > 0) post[@"usersBadgeFlag"] = arrPostLookedFlags;
 
             switch (captureOption) {
                 case kTypeCapturePhoto:
@@ -479,22 +492,35 @@
             }
             
             
+            
+            
             //Request a background execution task to allow us to finish uploading the photo even if the app is background
             
             self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
                 [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
             }];
             
-            BOOL enable_location = NO;
+            BOOL enable_location = NO;//[CLLocationManager locationServicesEnabled];
             
             if (enable_location) {
                 [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
                     if (!error) {
                         post[@"location"] = geoPoint;
+                        
                         [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                             if (succeeded) {
+                               
                                 NSLog(@"Success ---- Post");
+                                
+                                // add one Post on Event postedObject field: for badge
+                                if(![curObj[@"postedObjects"] containsObject:post])
+                                {
+                                    [curObj addObject:post forKey:@"postedObjects"];
+                                    [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                                        if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");
+                                    }];
+                                }
                                 
                                 if (_outPutURL) {
                                    [OMGlobal removeImage:_outPutURL.path];
@@ -523,7 +549,8 @@
                 
                 OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
                 
-                if (!appDel.network_state)  {
+                if (!appDel.network_state) {
+                    
                     
                     NSLog(@"Is Offline Mode");
                     
@@ -542,24 +569,33 @@
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
 
                 } else {
-                    NSLog(@"Is Online Mode");
                     
+                    NSLog(@"Is Online Mode");
                     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                         if (succeeded) {
                             NSLog(@"Success ---- Post");
+                            
+                            // add one Post on Event postedObject field: for badge
+                           
+                            if(![curObj[@"postedObjects"] containsObject:post])
+                            {
+                                [curObj addObject:post forKey:@"postedObjects"];
+                                [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                                    if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");
+                                }];
+                            }
+                            
                             if (_outPutURL) {
                                 [OMGlobal removeImage:_outPutURL.path];
                             }
+                            
                             [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                                
                                 [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-                                
                             }];
                             
                             [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                             [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
-                            
                         }
                         else
                         {
@@ -582,7 +618,17 @@
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         if (succeeded) {
             NSLog(@"Success ---- Post");
-            if (_outPutURL) {
+            
+            // add one Post on Event postedObjects field: for badge
+            if(![curObj[@"postedObjects"] containsObject:_post])
+            {
+                [curObj addObject:_post forKey:@"postedObjects"];
+                [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");
+                }];
+            }
+
+           if (_outPutURL) {
                 
                 [OMGlobal removeImage:_outPutURL.path];
                 
@@ -611,10 +657,19 @@
 
 #pragma mark - Delegate
 
+// Event tagged Friend add
 - (void)selectedCells:(OMTagListViewController *)fsCategoryVC didFinished:(NSMutableArray *)_dict
 {
     [fsCategoryVC.navigationController dismissViewControllerAnimated:YES completion:^{
         arrForTaggedFriend = [_dict copy];
+        
+        int i = 0;
+        [arrForTaggedFriendAuthor removeAllObjects];
+        while (i < [arrForTaggedFriend count] ) {
+            [arrForTaggedFriendAuthor addObject:@"Full"];
+            i++;
+        }
+        
     }];
 }
 

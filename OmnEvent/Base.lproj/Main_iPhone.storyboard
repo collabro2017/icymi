@@ -112,6 +112,7 @@
                                         </state>
                                         <state key="selected" backgroundImage="tab_friend_selected"/>
                                         <connections>
+                                            <action selector="tabBarAction:" destination="mIQ-Ad-mgQ" eventType="touchUpInside" id="QdO-Ok-fbD"/>
                                             <segue destination="3vM-mn-W0l" kind="custom" identifier="kIdentifierFriend" customClass="MMNavigationSegue" id="mr4-hb-3l3"/>
                                         </connections>
                                     </button>

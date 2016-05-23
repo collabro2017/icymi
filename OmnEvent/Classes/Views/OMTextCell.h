@@ -65,6 +65,7 @@
 @property (strong, nonatomic) id delegate;
 @property (strong, nonatomic) PFObject *currentObj;
 @property (strong, nonatomic) PFUser   *user;
+@property (nonatomic) NSInteger curEventIndex;
 
 @property (strong, nonatomic) NSString *beforeTitle;
 @property (strong, nonatomic) NSString *beforeDescription;
