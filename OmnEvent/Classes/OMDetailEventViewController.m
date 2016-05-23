@@ -69,6 +69,10 @@
     NSUInteger offline_data_num;
     NSMutableArray *offlineURLs;
     
+    NSTimer *autoRefreshTimer;
+    
+    NSMutableArray *arrPrevTagFriends;
+    
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
@@ -140,12 +144,13 @@
     // Initialize variables
     arrForDetail = [[NSMutableArray alloc] init];
     offlineURLs  = [[NSMutableArray alloc] init];
+    arrPrevTagFriends = [[NSMutableArray alloc] init];
 
     imagePicker  = [[UIImagePickerController alloc] init];
     [imagePicker setDelegate:self];
     isVideoAdd = NO;
     
-    is_type = nil;
+    is_type = @"";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadContents) name:kLoadComponentsData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCurrentObject) name:kLoadCurrentEventData object:nil];
@@ -162,14 +167,22 @@
     
     // DetailEvent contents Loading...
     [self loadContents];
+    arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
     
-    //[NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
+    
+    
     
 }
 
-
-- (void)firstViewLoad {
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [autoRefreshTimer invalidate];
+    autoRefreshTimer = nil;
+    NSLog(@"Auto Refresh timer - stoped!");
     
+}
+- (void)firstViewLoad {
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
@@ -187,6 +200,9 @@
         UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
+    
+    autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
+   
 }
 
 - (void)didReceiveMemoryWarning
@@ -374,16 +390,54 @@
             if([objects count] > 0) [arrForDetail addObjectsFromArray:objects];
             
             // Current Test feature. lets check these again.
-            currentObject[@"postedObjects"] = arrForDetail;
-            [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                if(error == nil) NSLog(@"DetailEventVC: added Post objs on postedObjects on Event");
-            }];
+            PFUser *eventUser = currentObject[@"user"];
+            if([eventUser.objectId isEqualToString: USER.objectId] && appDel.network_state)
+            {
+                currentObject[@"postedObjects"] = arrForDetail;
+                [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    if(error == nil) NSLog(@"DetailEventVC: added Post objs on postedObjects on Event");
+                }];
+            }
             
            [tblForDetailList reloadData];
             
         }
     }];
 }
+
+- (void)reloadContents
+{
+    NSLog(@"Auto Refresh Progressing...");
+    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
+    [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
+
+    if ([is_type isEqualToString:@"text"]
+        || [is_type isEqualToString:@"video"]
+        || [is_type isEqualToString:@"audio"]
+        || [is_type isEqualToString:@"photo"])
+    {
+        [mainQuery whereKey:@"postType" equalTo:is_type];
+    }
+
+    [mainQuery includeKey:@"user"];
+    [mainQuery includeKey:@"commentsArray"];
+    [mainQuery orderByDescending:@"createdAt"];
+
+    [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error || !objects) {
+            return;
+        }
+        else
+        {
+            [arrForDetail removeAllObjects];
+            [arrForDetail addObjectsFromArray:objects];
+            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
+            [arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+            [tblForDetailList reloadData];
+        }
+    }];
+}
+
 
 - (void)backAction
 {
@@ -533,8 +587,11 @@
     rows += 1;
     //Comments
     //rows += [_obj[@"commenters"] count] > 3 ? 3:[_obj[@"commenters"] count];
-    if(_obj[@"commenters"] != nil)
-        rows += [_obj[@"commenters"] count];
+    if(_obj[@"commenters"] != nil && [_obj[@"commenters"] count] > 0)
+       if(_obj[@"commentsArray"] !=nil && [_obj[@"commentsArray"] count] > 0)
+           //if(rows + [_obj[@"commenters"] count] <= [_obj[@"commentsArray"] count])
+               rows += [_obj[@"commenters"] count];
+    
     return rows;
 }
 
@@ -542,13 +599,15 @@
 {
     NSInteger rows = 0;
     //Header
-    rows += 1;
+    if(_obj != nil)
+        rows += 1;
     //Comments
     //rows += [_obj[@"commentsUsers"] count] > 3 ? 3:[_obj[@"commentsUsers"] count];
-    if(_obj[@"commentsUsers"] != nil )
-    {
-        rows += [_obj[@"commentsUsers"] count];
-    }
+    if(_obj[@"commentsUsers"] != nil && [_obj[@"commentsUsers"] count] > 0)
+        if (_obj[@"commentsArray"] != nil && [_obj[@"commentsArray"] count] >0 )
+            if(rows + [_obj[@"commentsUsers"] count] <= [_obj[@"commentsArray"] count])
+                rows += [_obj[@"commentsUsers"] count];
+    
     return rows;
 }
 - (void)showInvite
@@ -568,7 +627,9 @@
     
     PFUser *postUser = currentObject[@"user"];
     
-    if ([arrForTaggedFriend containsObject:USER.objectId] || [postUser.objectId isEqualToString:USER.objectId]) {
+    //if ([arrForTaggedFriend containsObject:USER.objectId] || [postUser.objectId isEqualToString:USER.objectId])
+    if ([postUser.objectId isEqualToString:USER.objectId])
+    {
         
         OMAdditionalTagViewController *tagListVC = [self.storyboard instantiateViewControllerWithIdentifier:@"AdditionalTagVC"];
         tagListVC.delegate = self;
@@ -689,84 +750,103 @@
 {
     [tagVC.navigationController dismissViewControllerAnimated:YES completion:^{
         
-        [self addTagFriends:(NSMutableArray *)_dict];
+        [self addTagFriends:_dict];
     }];
 }
 
-//
+// In case to change the Tag for Friends.
 - (void)addTagFriends:(NSMutableArray *)_dict {
     
     NSMutableArray *temp_array = [NSMutableArray array];
     temp_array = [_dict copy];
     
-    NSMutableArray *arrCurTagFriends = [NSMutableArray array];
-    arrCurTagFriends = [currentObject[@"TagFriends"] mutableCopy];
-    
-    NSMutableArray *arrLastTagFriends = [NSMutableArray array];
-    arrLastTagFriends = [temp_array objectAtIndex:0];
+    NSMutableArray *arrChangedTagFriends = [NSMutableArray array];
+    arrChangedTagFriends = [[temp_array objectAtIndex:0] mutableCopy];
     
     NSMutableArray *arrAdds = [NSMutableArray array];
     NSMutableArray *arrDels = [NSMutableArray array];
     
     // for badge
-    for (NSString *addId in arrLastTagFriends) {
-        if(![arrCurTagFriends containsObject:addId]) {
-            [arrAdds addObject:addId];
+    if([arrPrevTagFriends count] > 0)
+    {
+        // If exist the new friends?
+        for (NSString *addId in arrChangedTagFriends) {
+            
+            if(![arrPrevTagFriends containsObject:addId]) {
+                [arrAdds addObject:addId];
+            }
+        }
+        
+        for (NSString *deledtedId in arrPrevTagFriends) {
+            if (![arrChangedTagFriends containsObject:deledtedId]) {
+                [arrDels addObject:deledtedId];
+            }
         }
     }
-    for (NSString *deledtedId in arrCurTagFriends) {
-        if (![arrLastTagFriends containsObject:deledtedId]) {
-            [arrDels addObject:deledtedId];
-        }
+    else
+    {
+        [arrAdds addObjectsFromArray:arrChangedTagFriends];
     }
     
-    currentObject[@"TagFriends"] = arrLastTagFriends;
+    
+    currentObject[@"TagFriends"] = [temp_array objectAtIndex:0];
     currentObject[@"TagFriendAuthorities"] = [temp_array objectAtIndex:1];
     
     
-    // Event Badge Processing...
+    // Event Badge Processing...for badge
     if([currentObject[@"eventBadgeFlag"] count] > 0)
     {
         for (NSString *temp in arrDels) {
             if ([currentObject[@"eventBadgeFlag"] containsObject:temp]) {
-                [currentObject removeObject:temp forKey:@"@eventBadgeFlag"];
+                [currentObject removeObject:temp forKey:@"eventBadgeFlag"];
             }
         }
+        
         for (NSString *temp in arrAdds) {
             if (![currentObject[@"eventBadgeFlag"] containsObject:temp]) {
-                [currentObject addObject:temp forKey:@"@eventBadgeFlag"];
+                [currentObject addObject:temp forKey:@"eventBadgeFlag"];
             }
         }
     }
+    else
+    {
+        [currentObject addObjectsFromArray:arrAdds forKey:@"eventBadgeFlag"];
+    }
+    NSLog(@"Newly added friends: %@", arrAdds);
+    NSLog(@"Deleted friends: %@", arrDels);
     
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
+        if(error) NSLog(@"Event updated for tag: %@", error.description);
         if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an eventBadgeFlage of Event Fields");
         
-        //[OMPushServiceManager sharedInstance] sendGroupInviteNotification:<#(NSString *)#> groupId:<#(NSString *)#> userList:<#(NSMutableArray *)#>
+        //[OMPushServiceManager sharedInstance] sendGroupInviteNotification:(NSString *) groupId:(NSString *) userList:(NSMutableArray *)
+        
+        // Post Badge Processing...//for badge
+        /*
+        for (PFObject *postObj in currentObject[@"postedObjects"]) {
+            if(![postObj isEqual:[NSNull null]] && postObj != nil)
+            {
+                for (NSString *temp in arrDels) {
+                    if ([postObj[@"usersBadgeFlag"] containsObject:temp]) {
+                        [postObj removeObject:temp forKey:@"@usersBadgeFlag"];
+                    }
+                }
+                for (NSString *temp in arrAdds) {
+                    if (![postObj[@"usersBadgeFlag"] containsObject:temp]) {
+                        [postObj addObject:temp forKey:@"@usersBadgeFlag"];
+                    }
+                }
+            }
+            [postObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an usersBadgeFlag of Posts");
+            }];
+        }
+         */
+
+        
         
     }];
     
-    // Post Badge Processing...//for badge
-
-    for (PFObject *postObj in currentObject[@"postedObjects"]) {
-        if(![postObj isEqual:[NSNull null]] && postObj != nil)
-        {
-            for (NSString *temp in arrDels) {
-                if ([postObj[@"usersBadgeFlag"] containsObject:temp]) {
-                    [postObj removeObject:temp forKey:@"@usersBadgeFlag"];
-                }
-            }
-            for (NSString *temp in arrAdds) {
-                if (![postObj[@"usersBadgeFlag"] containsObject:temp]) {
-                    [postObj addObject:temp forKey:@"@usersBadgeFlag"];
-                }
-            }
-        }
-        [postObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-            if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an usersBadgeFlag of Posts");
-        }];
-    }
 }
 
 
@@ -921,6 +1001,7 @@
                 cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
             }
             
+            
             NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
             NSString *objectId = [temp objectForKey:@"objectId"];
             if (objectId == nil){
@@ -936,99 +1017,107 @@
     }
     else // Event Detail Content with Post detail contents
     {
-        PFObject *tempObj = (PFObject*)[arrForDetail objectAtIndex:indexPath.section - 1];
-     
-        // Post Contents with text type
-        if ([tempObj[@"postType"] isEqualToString:@"text"])
+        
+        if([arrForDetail count] > 0)
         {
-            if (indexPath.row == 0) {
-                
-                OMTextCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextCell];
-                
-                if (cell == nil) {
-                    cell = [[OMTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kTextCell];
+            PFObject *tempObj;
+            
+            tempObj = (PFObject*)[arrForDetail objectAtIndex:indexPath.section - 1];
+            
+            // Post Contents with text type
+            if ([tempObj[@"postType"] isEqualToString:@"text"])
+            {
+                if (indexPath.row == 0) {
+                    
+                    OMTextCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextCell];
+                    
+                    if (cell == nil) {
+                        cell = [[OMTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kTextCell];
+                    }
+                    
+                    [cell setDelegate:self];
+                    [cell setCurEventIndex:curEventIndex];
+                    [cell setCurrentObj:tempObj];
+                    
+                    return cell;
+                    
+                } else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj]) {
+                    
+                    NSMutableArray *arr = [[NSMutableArray alloc]init];
+                    
+                    if (tempObj[@"commentsArray"] != nil && [tempObj[@"commentsArray"] count] > 0 ) {
+                        arr = tempObj[@"commentsArray"];
+                    }
+                    OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
+                    
+                    if (!cell) {
+                        cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
+                    }
+                    
+                    [cell setDelegate:self];
+                    
+                    //[cell configCell:[tempObj[@"commentsArray"] objectAtIndex:(arr.count - indexPath.row)] EventObject:tempObj[@"targetEvnet"] commentType:kTypePostComment];
+                    [cell configPostCell:[arr objectAtIndex:(arr.count - indexPath.row)] PostObject:tempObj EventObject:tempObj[@"targetEvent"] CommentType:kTypePostComment];
+                    
+                    
+                    return cell;
                 }
-                
-                [cell setDelegate:self];
-                [cell setCurEventIndex:curEventIndex];
-                [cell setCurrentObj:tempObj];
-                
-                return cell;
-                
-            } else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj]) {
-                
-                NSMutableArray *arr = [[NSMutableArray alloc]init];
-                
-                if (![tempObj[@"commentsArray"] isEqual:[NSNull null]]) {
-                    arr = tempObj[@"commentsArray"];
-                }
-                OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
-                
-                if (!cell) {
-                    cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
-                }
-                
-                [cell setDelegate:self];
-                
-                //[cell configCell:[tempObj[@"commentsArray"] objectAtIndex:(arr.count - indexPath.row)] EventObject:tempObj[@"targetEvnet"] commentType:kTypePostComment];
-                [cell configPostCell:[arr objectAtIndex:(arr.count - indexPath.row)] PostObject:tempObj EventObject:tempObj[@"targetEvent"] CommentType:kTypePostComment];
-                
-                
-                return cell;
             }
+            
+            // Post Contents with Media type
+            else
+            {
+                if (indexPath.row == 0) {
+                    
+                    OMMediaCell *cell = [tableView dequeueReusableCellWithIdentifier:kMediaCell];
+                    
+                    if (cell == nil) {
+                        cell = [[OMMediaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kMediaCell];
+                    }
+                    
+                    if (indexPath.section - 1 < offline_data_num){
+                        
+                        cell.file = (PFFile *)tempObj[@"postFile"];
+                        cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - 1];
+                        
+                    } else {
+                        cell.file = nil;
+                        cell.offline_url = nil;
+                    }
+                    
+                    [cell setDelegate:self];
+                    [cell setCurrentObj:tempObj];
+                    [cell setCurEventIndex: curEventIndex];
+                    
+                    [cell setNeedsLayout];
+                    [cell layoutIfNeeded];
+                    
+                    return cell;
+                }
+                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+                {
+                    NSMutableArray *arr = [[NSMutableArray alloc]init];
+                    
+                    if (tempObj[@"commentsArray"] != nil && [tempObj[@"commentsArray"] count] > 0) {
+                        arr = tempObj[@"commentsArray"];
+                    }
+                    
+                    OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
+                    
+                    if (!cell) {
+                        cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
+                    }
+                    
+                    [cell setDelegate:self];
+                    //[cell configCell:[arr objectAtIndex:(arr.count - indexPath.row )] EventObject:tempObj[@"targetEvnet"]commentType:kTypePostComment];
+                    [cell configPostCell:[arr objectAtIndex:(arr.count - indexPath.row)] PostObject:tempObj EventObject:tempObj[@"targetEvent"] CommentType:kTypePostComment];
+                    
+                    return cell;
+                }
+            }
+
         }
         
-        // Post Contents with Media type
-        else
-        {
-            if (indexPath.row == 0) {
-                
-                OMMediaCell *cell = [tableView dequeueReusableCellWithIdentifier:kMediaCell];
-                
-                if (cell == nil) {
-                    cell = [[OMMediaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kMediaCell];
-                }
-                
-                if (indexPath.section - 1 < offline_data_num){
-                    
-                    cell.file = (PFFile *)tempObj[@"postFile"];
-                    cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - 1];
-                    
-                } else {
-                    cell.file = nil;
-                    cell.offline_url = nil;
-                }
-                
-                [cell setDelegate:self];
-                [cell setCurrentObj:tempObj];
-                [cell setCurEventIndex: curEventIndex];
-               
-                [cell setNeedsLayout];
-                [cell layoutIfNeeded];
-                
-                return cell;
-            }
-            else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
-            {
-                NSMutableArray *arr = [[NSMutableArray alloc]init];
-                
-                if (![tempObj[@"commentsArray"] isEqual:[NSNull null]]) {
-                    arr = tempObj[@"commentsArray"];
-                }
-
-                OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
-                
-                if (!cell) {
-                    cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
-                }
-                
-                [cell setDelegate:self];
-                //[cell configCell:[arr objectAtIndex:(arr.count - indexPath.row )] EventObject:tempObj[@"targetEvnet"]commentType:kTypePostComment];
-                [cell configPostCell:[arr objectAtIndex:(arr.count - indexPath.row)] PostObject:tempObj EventObject:tempObj[@"targetEvent"] CommentType:kTypePostComment];
-                
-                return cell;
-            }
-        }
     }
   
    return nil;
@@ -1935,15 +2024,23 @@
                         if (error == nil) {
                             [self loadContents];
                             
-                            
-                            // badge feature processing after deleting one Post :for badge
-                            if([currentObject[@"postedObjects"] containsObject:tempObejct])
+                            PFUser *eventUser = currentObject[@"user"];
+                            if([eventUser.objectId isEqualToString: USER.objectId] && appDel.network_state)
                             {
-                                [currentObject[@"postedObjects"] removeObject:tempObejct];
-                                [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                                    if(error == nil) NSLog(@"DetailEventVC:Badge Processing - remove from one PostObj on Event Field");
-                                }];
+                               
                             }
+                            else
+                            {
+                                // badge feature processing after deleting one Post :for badge
+                                if([currentObject[@"postedObjects"] containsObject:tempObejct])
+                                {
+                                    [currentObject[@"postedObjects"] removeObject:tempObejct];
+                                    [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                                        if(error == nil) NSLog(@"DetailEventVC:Badge Processing - remove from one PostObj on Event Field");
+                                    }];
+                                }
+                            }
+                           
                            
                             
                         }
@@ -1975,6 +2072,7 @@
                             if (error == nil) {
                                 
                                 [self loadContents];
+                                
                                 
                                 if([currentObject[@"postedObjects"] containsObject:tempObejct])
                                 {
@@ -2224,7 +2322,7 @@
     pdfURL = nil;
 }
 
-#pragma mark Newwork connecting Check - help
+#pragma mark Newwork connecting Check - help and Auto refresh features
 -(void) callAfterSixtySecond:(NSTimer*) t {
     
     OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
@@ -2248,56 +2346,39 @@
         //        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
     
-    /*=========================previous try===========================================
-     
-     NSLog(@"red");
-     
      if (!editable_flag){
      
-     [self reloadContents:is_type];
+         [self reloadContents];
+         
+         if (networkStatus != NotReachable)
+         {
+             OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
      
-     Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
-     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
-     if (networkStatus == NotReachable) {
-     NSLog(@"There IS NO internet connection");
+             for(PFObject* post in appDel.m_offlinePosts)
+             {
+                 //Request a background execution task to allow us to finish uploading the photo even if the app is background
+                 self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+                 }];
      
-     } else {
+                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                     if (succeeded) {
+                         NSLog(@"Auto Refresh with offline mode:Post Success!");
      
-     NSLog(@"There IS internet connection");
-     OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-     
-     for(PFObject* post in appDel.m_offlinePosts)
-     {
-     //Request a background execution task to allow us to finish uploading the photo even if the app is background
-     self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-     }];
-     
-     
-     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-     if (succeeded) {
-     NSLog(@"Success ---- Post");
-     
-     [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-     
-     [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-     [appDel.m_offlinePosts removeObject:post];
-     
-     }];
-     
+                         [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                             [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
+                             [appDel.m_offlinePosts removeObject:post];
+                         }];
+                     }
+                     else
+                     {
+                         NSLog(@"Post Error = %@", error.description);
+                     }
+                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+                 }];
+             }
+         }
      }
-     else
-     {
-     //[OMGlobal showAlertTips:@"Uploading Failed." title:nil];
-     NSLog(@"Error ---- Post = %@", error);
-     
-     }
-     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-     }];
-     }
-     }
-     }==============================================================================================================*/
 }
 
 

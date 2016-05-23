@@ -34,9 +34,10 @@
     NSString *state;
     CLPlacemark *placeMark;
     NSMutableArray *arrForTaggedFriend;
+    NSMutableArray *arrForTaggedFriendAuthor;
+    
     NSMutableArray *arrCurTaggedFriends;
     
-    NSMutableArray *arrEventLookedFlags;
     NSMutableArray *arrPostLookedFlags;
 }
 
@@ -93,6 +94,7 @@
     [self initializeLocationManager];
     
     arrForTaggedFriend = [NSMutableArray array];
+    arrForTaggedFriendAuthor = [NSMutableArray array];
     
     arrCurTaggedFriends = [[NSMutableArray alloc] init];
     
@@ -101,7 +103,6 @@
         arrCurTaggedFriends = [curObj[@"TagFriends"] mutableCopy];
     }
     
-    arrEventLookedFlags = [NSMutableArray array];
     arrPostLookedFlags = [NSMutableArray array];
     
     imagePicker = [[UIImagePickerController alloc] init];
@@ -121,16 +122,6 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)makeDicArray
-{
-    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
-    for (NSString *objId in arrForTaggedFriend) {
-        [dic setValue:[NSNumber numberWithInt:1] forKey:objId];
-        [arrEventLookedFlags addObject:dic];
-    }
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -328,6 +319,7 @@
             post[@"description"] = textViewForDescription.text;
             post[@"openStatus"] = [NSNumber numberWithInteger:1];
             post[@"TagFriends"] = arrForTaggedFriend;
+            post[@"TagFriendAuthorities"] = arrForTaggedFriendAuthor;
             post[@"country"] = lblForLocation.text;
             post[@"postType"] = _postType;
             
@@ -670,6 +662,14 @@
 {
     [fsCategoryVC.navigationController dismissViewControllerAnimated:YES completion:^{
         arrForTaggedFriend = [_dict copy];
+        
+        int i = 0;
+        [arrForTaggedFriendAuthor removeAllObjects];
+        while (i < [arrForTaggedFriend count] ) {
+            [arrForTaggedFriendAuthor addObject:@"Full"];
+            i++;
+        }
+        
     }];
 }
 

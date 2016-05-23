@@ -314,9 +314,29 @@
         {
             if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
                 currentObj[@"description"] = lblForDes.text;
-                [currentObj saveEventually];
                 
-                NSLog(@"TextCell: Updated the TextPost description");
+                // for badge
+                PFUser *eventUser = currentObj[@"user"];
+                NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+                PFObject *eventObj = currentObj[@"targetEvent"];
+                arrEventTagFriends = eventObj[@"TagFriends"];
+                if(![eventUser.objectId isEqualToString:USER.objectId])
+                {
+                    [arrEventTagFriends addObject:eventUser.objectId];
+                    if ([arrEventTagFriends containsObject:USER.objectId]) {
+                        [arrEventTagFriends removeObject:USER.objectId];
+                    }
+                }
+                
+                currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+                
+                OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                if(appDel.network_state)
+                {
+                    NSLog(@"Badge for description of Post Added");
+                    [currentObj saveInBackground];
+                }
+                
                 
                 //NSUInteger line_no = [lblForDes.text length] / 28;
                 //constraintForHeight.constant = 16 * line_no;
@@ -332,9 +352,28 @@
             
             if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
                 currentObj[@"title"] = lblForTitle.text;
-                [currentObj saveEventually];
                 
-                NSLog(@"TextCell: Updated the TextPost title");
+                // for badge
+                PFUser *eventUser = currentObj[@"user"];
+                NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+                PFObject *eventObj = currentObj[@"targetEvent"];
+                arrEventTagFriends = eventObj[@"TagFriends"];
+                if(![eventUser.objectId isEqualToString:USER.objectId])
+                {
+                    [arrEventTagFriends addObject:eventUser.objectId];
+                    if ([arrEventTagFriends containsObject:USER.objectId]) {
+                        [arrEventTagFriends removeObject:USER.objectId];
+                    }
+                }
+                
+                currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+                
+                OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                if(appDel.network_state)
+                {
+                    NSLog(@"Badge for title of Post Added");
+                    [currentObj saveInBackground];
+                }
                 //constraintForTitleHeight.constant = 100;
                 //[self.superview layoutIfNeeded];
             }

@@ -93,6 +93,9 @@
     [doneToolBar sizeToFit];
     
     [custominvitationPickerView addSubview:doneToolBar];
+    
+    //[self.navigationController.view addSubview:custominvitationPickerView];
+    
 }
 
 - (void)done:(id)sender

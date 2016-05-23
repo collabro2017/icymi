@@ -202,6 +202,8 @@
             [currentObject setObject:arrForCommentUsers forKey:@"commentsUsers"];
             [currentObject setObject:arrForCommentObject forKey:@"commentsArray"];
             
+            
+            // for badge
             PFUser *eventUser = currentObject[@"user"];
             NSMutableArray *arrEventTagFriends = [NSMutableArray array];
             PFObject *eventObj = currentObject[@"targetEvent"];

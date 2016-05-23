@@ -552,8 +552,13 @@
                                         }
                                     }
                                     currentObj[@"eventBadgeFlag"] = arrPostLookedFlags;
-                                    NSLog(@"Badge for description of Event change");
-                                    [currentObj saveInBackground];
+                                    
+                                    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                                    if(appDel.network_state)
+                                    {
+                                        NSLog(@"Badge for description for event of Post Added");
+                                        [currentObj saveInBackground];
+                                    }
 
                                 }
 
@@ -587,7 +592,7 @@
             else
             {
                 commentObj[@"Comments"] = lblForDes.text;
-                [commentObj saveEventually:^(BOOL succeeded, NSError * _Nullable error) {
+                [commentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                      NSLog(@"EventCommentCell: Updated other comments");
                     
                     // Let's add badge feature in here.
@@ -603,8 +608,12 @@
                             }
                         }
                         currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
-                        [currentObj saveEventually];
-                        NSLog(@"Badge for comments of Post changed");
+                        OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                        if(appDel.network_state)
+                        {
+                            NSLog(@"Badge for comments of Post Added");
+                            [currentObj saveEventually];
+                        }
                         
                     }
                 }];

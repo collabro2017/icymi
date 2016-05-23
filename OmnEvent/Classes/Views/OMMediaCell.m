@@ -107,7 +107,7 @@
         
         NSString *AuthorityValue = @"";
         
-        if (arrForTagFriendAuthorities != nil){
+        if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] != 0){
             
             for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                 if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
@@ -668,9 +668,32 @@
     if (textField == lblForTitle) {
         if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
             currentObj[@"title"] = lblForTitle.text;
-            [currentObj saveEventually];
+            
             
             NSLog(@"Media Cell: Add and Change Post content title");
+            
+            // for badge
+            PFUser *eventUser = currentObj[@"user"];
+            NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+            PFObject *eventObj = currentObj[@"targetEvent"];
+            arrEventTagFriends = eventObj[@"TagFriends"];
+            if(![eventUser.objectId isEqualToString:USER.objectId])
+            {
+                [arrEventTagFriends addObject:eventUser.objectId];
+                if ([arrEventTagFriends containsObject:USER.objectId]) {
+                    [arrEventTagFriends removeObject:USER.objectId];
+                }
+            }
+            
+            currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+            NSLog(@"Badge for comments of Post Added");
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            if(appDel.network_state)
+            {
+                [currentObj saveInBackground];
+            }
+            
         }
         
         [lblForTitle resignFirstResponder];
@@ -680,8 +703,31 @@
         
         if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
             currentObj[@"description"] = lblForDes.text;
-            [currentObj saveEventually];
+            
             NSLog(@"Media Cell: Add and Change Post content Description");
+            
+            // for badge
+            PFUser *eventUser = currentObj[@"user"];
+            NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+            PFObject *eventObj = currentObj[@"targetEvent"];
+            arrEventTagFriends = eventObj[@"TagFriends"];
+            if(![eventUser.objectId isEqualToString:USER.objectId])
+            {
+                [arrEventTagFriends addObject:eventUser.objectId];
+                if ([arrEventTagFriends containsObject:USER.objectId]) {
+                    [arrEventTagFriends removeObject:USER.objectId];
+                }
+            }
+            
+            currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+           
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            if(appDel.network_state)
+            {
+                 NSLog(@"Badge for comments of Post Added");
+                [currentObj saveInBackground];
+            }
         }
         
         [lblForDes resignFirstResponder];

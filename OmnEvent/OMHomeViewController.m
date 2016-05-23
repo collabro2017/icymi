@@ -356,22 +356,27 @@
     for( OMSocialEvent *eventObj in arrForFirstArray)
     {
         NSInteger postBadgeCount = 0;
-        for (PFObject *postObj in eventObj[@"postedObjects"])
+        
+        if(eventObj[@"postedObject"] != nil && [eventObj[@"postedObject"] count] > 0)
         {
-            if(postObj != nil)
+            for (PFObject *postObj in eventObj[@"postedObjects"])
             {
-               if(postObj[@"usersBadgeFlag"] && [postObj[@"usersBadgeFlag"] count] > 0)
+                if(postObj != nil)
                 {
-                    for(NSString *userId in postObj[@"usersBadgeFlag"])
+                    if(postObj[@"usersBadgeFlag"] && [postObj[@"usersBadgeFlag"] count] > 0)
                     {
-                        if ([userId isEqualToString:currentUser.objectId]) {
-                            postBadgeCount++;
+                        for(NSString *userId in postObj[@"usersBadgeFlag"])
+                        {
+                            if ([userId isEqualToString:currentUser.objectId]) {
+                                postBadgeCount++;
+                            }
                         }
                     }
                 }
             }
+
         }
-        eventObj.badgeCount = postBadgeCount;
+            eventObj.badgeCount = postBadgeCount;
         
         if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId]) {
              eventObj.badgeCount += 1;
@@ -545,7 +550,7 @@
     [arrForTags addObjectsFromArray:currentObject[@"TagFriends"]];
     [arrForTags addObjectsFromArray:_dict];
     [currentObject setObject:arrForTags forKey:@"TagFriends"];
-    [currentObject saveEventually];
+    [currentObject saveInBackground];
 }
 
 //Cell Count

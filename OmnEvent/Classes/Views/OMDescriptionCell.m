@@ -86,10 +86,12 @@
                         [arrPostLookedFlags removeObject:USER.objectId];
                     }
                 }
-                _currentObj[@"eventBadgeFlag"] = arrPostLookedFlags;
-                NSLog(@"Badge for description change");
-           
-                [_currentObj saveEventually];
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            if(appDel.network_state)
+            {
+                NSLog(@"Badge for event desription of Post Added");
+                [_currentObj saveInBackground];
+            }
 
         }
         [lblForDescription resignFirstResponder];

@@ -183,7 +183,7 @@
 
 - (void)doneButtonClikedDismissPickerView {
     
-    if (AuthorityValue == nil){
+    if (AuthorityValue == nil || [AuthorityValue isEqualToString:@""]){
         AuthorityValue = @"Full";
     }
     

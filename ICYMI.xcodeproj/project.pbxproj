@@ -496,7 +496,6 @@
 		3EC765AE1AC9557600A3F1F5 /* MBProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3EC765AA1AC9557600A3F1F5 /* MBProgressHUD.bundle */; };
 		3EC765AF1AC9557600A3F1F5 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC765AC1AC9557600A3F1F5 /* MBProgressHUD.m */; };
 		6C9CA1C41B4664DB00806F96 /* OMTutorialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C9CA1C31B4664DB00806F96 /* OMTutorialVC.m */; };
-		6C9CA1C91B46697100806F96 /* tutorial.mpg in Resources */ = {isa = PBXBuildFile; fileRef = 6C9CA1C81B46697100806F96 /* tutorial.mpg */; };
 		6C9CA1CB1B46743F00806F96 /* tutorial.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 6C9CA1CA1B46743F00806F96 /* tutorial.mp4 */; };
 		6CD6E7681B5B3F650074578C /* OMSocialEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CD6E7671B5B3F650074578C /* OMSocialEvent.m */; };
 		8FE63D6D1CE70416002907FB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE63D6B1CE70416002907FB /* Default-568h@2x.png */; };
@@ -1186,7 +1185,6 @@
 		3EC765AC1AC9557600A3F1F5 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
 		6C9CA1C21B4664DB00806F96 /* OMTutorialVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMTutorialVC.h; path = Controller/Profile/OMTutorialVC.h; sourceTree = "<group>"; };
 		6C9CA1C31B4664DB00806F96 /* OMTutorialVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMTutorialVC.m; path = Controller/Profile/OMTutorialVC.m; sourceTree = "<group>"; };
-		6C9CA1C81B46697100806F96 /* tutorial.mpg */ = {isa = PBXFileReference; lastKnownFileType = video.mpeg; path = tutorial.mpg; sourceTree = "<group>"; };
 		6C9CA1CA1B46743F00806F96 /* tutorial.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = tutorial.mp4; sourceTree = "<group>"; };
 		6CD6E7661B5B3F650074578C /* OMSocialEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSocialEvent.h; sourceTree = "<group>"; };
 		6CD6E7671B5B3F650074578C /* OMSocialEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSocialEvent.m; sourceTree = "<group>"; };
@@ -2354,7 +2352,6 @@
 			isa = PBXGroup;
 			children = (
 				6C9CA1CA1B46743F00806F96 /* tutorial.mp4 */,
-				6C9CA1C81B46697100806F96 /* tutorial.mpg */,
 			);
 			path = Video;
 			sourceTree = "<group>";
@@ -2659,7 +2656,6 @@
 				3EB66CBE1AB6186700E90054 /* record_progressbar_front.png in Resources */,
 				3CC69195199FBE350064B4D0 /* FK.png in Resources */,
 				3EB66CD11AB6186700E90054 /* video_longvideo_btn_shoot@2x.png in Resources */,
-				6C9CA1C91B46697100806F96 /* tutorial.mpg in Resources */,
 				3CC69235199FBE350064B4D0 /* US.png in Resources */,
 				3CC6917A199FBE350064B4D0 /* CI.png in Resources */,
 				3CC69222199FBE350064B4D0 /* TC.png in Resources */,
