@@ -17,8 +17,10 @@
     IBOutlet UILabel *lblForUsername;
     
     
+    IBOutlet UILabel *lblForNewEvent;
     IBOutlet UILabel *lblForBadge;
     IBOutlet UIButton *btnForVideo;
+   
     
 }
 

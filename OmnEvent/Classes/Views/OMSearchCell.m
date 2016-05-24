@@ -44,6 +44,14 @@
         [lblForBadge setHidden:NO];
         [lblForBadge setText:[NSString stringWithFormat:@"%lu",(long)_currentObj.badgeCount]];
     }
+    
+    if (_currentObj.badgeNewEvent == 0) {
+        
+        [lblForNewEvent setHidden:YES];
+    } else {
+        [lblForNewEvent setHidden:NO];
+    }
+    
     [lblForTitle setText:_currentObj[@"eventname"]];
     
     user = _currentObj[@"user"];

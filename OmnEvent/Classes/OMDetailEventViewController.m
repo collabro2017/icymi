@@ -87,7 +87,7 @@
 - (void)reload:(__unused id)sender
 {
     [(UIRefreshControl*)sender beginRefreshing];
-    
+    editable_flag = YES;
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
     [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
     [mainQuery includeKey:@"user"];
@@ -96,6 +96,7 @@
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
+        editable_flag = NO;
         [(UIRefreshControl*)sender endRefreshing];
         if (error || !objects) {
             return;
@@ -342,7 +343,7 @@
 - (void)loadContents {
    
     if(currentObject == nil) return;
-    
+    editable_flag = YES;
     [tblForDetailList setContentOffset:CGPointZero animated:NO];
 
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -366,6 +367,7 @@
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         [GlobalVar getInstance].isPostLoading = NO;
+        editable_flag = NO;
   
         if (error == nil) {
             
@@ -538,7 +540,7 @@
             [btnForNetState setImage:btnImage forState:UIControlStateNormal];
             
             for(PFObject* post in appDel.m_offlinePosts){
-                
+                editable_flag = YES;
                 //Request a background execution task to allow us to finish uploading the photo even if the app is background
                 self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
@@ -548,6 +550,7 @@
                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                    editable_flag = NO;
                     if (succeeded) {
                         NSLog(@"Success ---- Post");
                         
@@ -814,8 +817,10 @@
     }
     NSLog(@"Newly added friends: %@", arrAdds);
     NSLog(@"Deleted friends: %@", arrDels);
-    
+    editable_flag = YES;
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        
+        editable_flag = NO;
         if(error) NSLog(@"Event updated for tag: %@", error.description);
         if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an eventBadgeFlage of Event Fields");
         
@@ -2019,8 +2024,10 @@
                 // In Case Online Mode
                 if(appDel.network_state)
                 {
+                    editable_flag = YES;
                     [tempObejct deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                         [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        editable_flag = NO;
                         if (error == nil) {
                             [self loadContents];
                             
@@ -2040,9 +2047,6 @@
                                     }];
                                 }
                             }
-                           
-                           
-                            
                         }
                     }];
                 }
@@ -2067,8 +2071,10 @@
                      }
                      else if([arrForDetail count] != 0 && currentCellOfflineUrl == nil)
                      {
+                         editable_flag = YES;
                         [tempObejct deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                             [MBProgressHUD hideHUDForView:self.view animated:YES];
+                            editable_flag = NO;
                             if (error == nil) {
                                 
                                 [self loadContents];
@@ -2105,10 +2111,10 @@
                 [hud setLabelText:@"Deleting..."];
                 [hud show:YES];
                 
-                
+                editable_flag = YES;
                 [currentObject deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     [hud hide:YES];
-                    
+                    editable_flag = NO;
                     if (succeeded) {
                         
                         // for me
@@ -2346,7 +2352,7 @@
         //        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
     
-     if (!editable_flag){
+     if (!editable_flag || ![GlobalVar getInstance].isPosting){
      
          [self reloadContents];
          
@@ -2379,6 +2385,10 @@
              }
          }
      }
+    else
+    {
+        NSLog(@"Stepped Auto Refreshing due to in posting!!");
+    }
 }
 
 

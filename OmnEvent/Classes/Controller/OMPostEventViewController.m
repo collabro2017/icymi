@@ -418,6 +418,7 @@
         case kTypeUploadPost:
         {
 
+            [GlobalVar getInstance].isPosting = YES;
             
             PFObject *post = [PFObject objectWithClassName:@"Post"];
             
@@ -500,7 +501,7 @@
                 [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
             }];
             
-            BOOL enable_location = NO;//[CLLocationManager locationServicesEnabled];
+            BOOL enable_location = [CLLocationManager locationServicesEnabled];
             
             if (enable_location) {
                 [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
@@ -509,6 +510,7 @@
                         
                         [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                            [GlobalVar getInstance].isPosting = NO;
                             if (succeeded) {
                                
                                 NSLog(@"Success ---- Post");
@@ -571,8 +573,11 @@
                 } else {
                     
                     NSLog(@"Is Online Mode");
+                    [GlobalVar getInstance].isPosting = YES;
                     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                        
+                        [GlobalVar getInstance].isPosting = NO;
                         if (succeeded) {
                             NSLog(@"Success ---- Post");
                             

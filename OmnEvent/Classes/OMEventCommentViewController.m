@@ -141,6 +141,7 @@
         if ([objects count] == 0 || !objects) {
             return;
         }
+        
         [arrForComment removeAllObjects];
         [arrForComment addObjectsFromArray:objects];
         [tblForComment reloadData];
