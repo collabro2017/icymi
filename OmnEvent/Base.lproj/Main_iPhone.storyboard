@@ -4235,16 +4235,28 @@
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="*" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oEI-d5-LDY">
+                                                            <rect key="frame" x="135" y="8" width="16" height="16"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="16" id="7qf-fN-JBt"/>
+                                                                <constraint firstAttribute="height" constant="16" id="fzg-6C-S3f"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
                                                         <constraint firstItem="Bgb-Os-E7X" firstAttribute="top" secondItem="aFv-Rj-ahs" secondAttribute="top" constant="8" id="0dq-AP-ojX"/>
                                                         <constraint firstItem="hax-Ww-hIa" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" constant="8" id="2oT-RK-eHj"/>
                                                         <constraint firstItem="GaR-ls-ueh" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" id="AYJ-bW-nn0"/>
+                                                        <constraint firstItem="oEI-d5-LDY" firstAttribute="top" secondItem="aFv-Rj-ahs" secondAttribute="top" constant="8" id="BQF-TT-acl"/>
                                                         <constraint firstItem="VFx-DZ-TF0" firstAttribute="top" secondItem="hax-Ww-hIa" secondAttribute="bottom" constant="1" id="Bdk-jc-c1Q"/>
                                                         <constraint firstAttribute="trailing" secondItem="Bgb-Os-E7X" secondAttribute="trailing" constant="8" id="Cpr-Lc-SAR"/>
                                                         <constraint firstAttribute="bottom" secondItem="VxJ-Mu-jLW" secondAttribute="bottom" id="Fkz-wq-uWe"/>
                                                         <constraint firstItem="VFx-DZ-TF0" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" constant="8" id="MR9-6A-szt"/>
+                                                        <constraint firstAttribute="trailing" secondItem="oEI-d5-LDY" secondAttribute="trailing" constant="8" id="TcP-mU-DhS"/>
                                                         <constraint firstAttribute="bottom" secondItem="GaR-ls-ueh" secondAttribute="bottom" id="UTV-KV-8em"/>
                                                         <constraint firstItem="Ga8-nh-Qd7" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" constant="8" id="X8H-09-wDz"/>
                                                         <constraint firstAttribute="trailing" secondItem="GaR-ls-ueh" secondAttribute="trailing" id="Z6w-sv-eUj"/>
@@ -4270,6 +4282,7 @@
                                             <outlet property="btnForVideo" destination="Bgb-Os-E7X" id="Eza-UU-7Ev"/>
                                             <outlet property="imageViewForBG" destination="GaR-ls-ueh" id="PUC-2s-cQf"/>
                                             <outlet property="lblForBadge" destination="Ga8-nh-Qd7" id="nx6-qj-LEY"/>
+                                            <outlet property="lblForNewEvent" destination="oEI-d5-LDY" id="faP-MV-ZC9"/>
                                             <outlet property="lblForTitle" destination="hax-Ww-hIa" id="7ZV-lh-aAD"/>
                                             <outlet property="lblForUsername" destination="VFx-DZ-TF0" id="Stz-ym-V65"/>
                                         </connections>

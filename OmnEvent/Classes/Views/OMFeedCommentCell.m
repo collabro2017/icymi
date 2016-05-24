@@ -134,8 +134,8 @@
     [lblForDes sizeToFit];
     [lblForTime setHidden:YES];
     
-    currentType = curType;
-   // currentType = kTypeEventComment;
+    //currentType = curType;
+    currentType = kTypeEventComment;
     
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo:user];
@@ -159,7 +159,7 @@
                 
                 NSString *AuthorityValue = @"";
                 
-                if (arrForTagFriendAuthorities != nil){
+                if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] > 0){
                     
                     for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                         if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){

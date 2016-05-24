@@ -378,8 +378,9 @@
         }
             eventObj.badgeCount = postBadgeCount;
         
-        if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId]) {
-             eventObj.badgeCount += 1;
+        if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId])
+        {
+             eventObj.badgeNewEvent = 1;
         }
         [arrForFeed addObject:eventObj];
     }
@@ -613,7 +614,7 @@
         // Event Badge processing...
         if([event[@"eventBadgeFlag"] containsObject:currentUser.objectId])
         {
-            if(event.badgeCount >= 1) event.badgeCount -= 1;
+            if(event.badgeNewEvent >= 1) event.badgeNewEvent = 0;
             [event removeObject:currentUser.objectId forKey:@"eventBadgeFlag"];
             [event saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                 if(error == nil) NSLog(@"DetailEventVC: Event Badge remove when open Detail view...");

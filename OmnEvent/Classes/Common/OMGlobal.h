@@ -82,6 +82,7 @@ typedef enum {
 @property (nonatomic) BOOL isEventLoading;
 @property (strong, nonatomic) NSMutableArray *gArrEventList;
 @property (nonatomic) NSInteger gEventIndex;
+@property (nonatomic) BOOL isPosting;
 
 +(GlobalVar*)getInstance;
 
