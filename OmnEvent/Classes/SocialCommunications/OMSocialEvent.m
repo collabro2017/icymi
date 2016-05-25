@@ -13,7 +13,7 @@
 
 @dynamic TagFriends,thumbImage,totalCount,user,username,likers,likeUserArray,commentsArray,country,postImage,postType,description,eventname,locationData,openStatus,commenters, updateAt, postedObjects;
 
-@synthesize badgeCount, loadTimeAt;
+@synthesize badgeCount,badgeNewEvent, loadTimeAt;
 
 
 + (NSString *)parseClassName

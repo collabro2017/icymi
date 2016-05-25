@@ -83,10 +83,6 @@
                     if (user != nil && user.username != nil) {
                         [arrForFeed addObject:socialtempObj];
                     }
-                    else
-                    {
-                        NSLog(@"missing user obj == %@", socialtempObj);
-                    }
                 }
               }
             
@@ -103,6 +99,7 @@
     [super viewDidLoad];
     
     currentUser = [PFUser currentUser];
+    NSLog(@"current user object id = %@", currentUser.objectId);
     is_grid = YES;
     commentLoaded = NO;
 
@@ -311,6 +308,8 @@
             if([arrForFeed count] != 0) [arrForFeed removeAllObjects];
             for (PFObject *obj in objects) {
                 
+                if((NSNull*)obj == [NSNull null]) NSLog(@"-- have one null obj --");
+                
                 OMSocialEvent * socialtempObj = (OMSocialEvent*) obj;
                 PFUser *user = socialtempObj[@"user"];
                 
@@ -356,33 +355,43 @@
     for( OMSocialEvent *eventObj in arrForFirstArray)
     {
         NSInteger postBadgeCount = 0;
-        
-        if(eventObj[@"postedObject"] != nil && [eventObj[@"postedObject"] count] > 0)
-        {
-            for (PFObject *postObj in eventObj[@"postedObjects"])
+       
+        if(eventObj[@"postedObjects"] != nil && [eventObj[@"postedObjects"] count] > 0)
             {
-                if(postObj != nil)
+                for (PFObject *postObj in eventObj[@"postedObjects"])
                 {
-                    if(postObj[@"usersBadgeFlag"] && [postObj[@"usersBadgeFlag"] count] > 0)
+                    if((NSNull*)postObj != [NSNull null])
                     {
-                        for(NSString *userId in postObj[@"usersBadgeFlag"])
+                    
+                       if(postObj[@"usersBadgeFlag"] && [postObj[@"usersBadgeFlag"] count] > 0)
                         {
-                            if ([userId isEqualToString:currentUser.objectId]) {
-                                postBadgeCount++;
+                            for(NSString *userId in postObj[@"usersBadgeFlag"])
+                            {
+                                if ([userId isEqualToString:currentUser.objectId]) {
+                                    postBadgeCount++;
+                                }
                             }
                         }
                     }
+                    else
+                    {
+                        NSLog(@" -- this object has one <null> obj --");
+                    }
+                    
+                }
+
+            }
+        
+            eventObj.badgeCount = postBadgeCount;
+            if(eventObj[@"eventBadgeFlag"] != nil && [eventObj[@"eventBadgeFlag"] count] > 0)
+            {
+                if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId])
+                {
+                     eventObj.badgeNewEvent = 1;
                 }
             }
-
-        }
-            eventObj.badgeCount = postBadgeCount;
+            [arrForFeed addObject:eventObj];
         
-        if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId])
-        {
-             eventObj.badgeNewEvent = 1;
-        }
-        [arrForFeed addObject:eventObj];
     }
     
     [[GlobalVar getInstance].gArrEventList removeAllObjects];
