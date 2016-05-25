@@ -607,10 +607,11 @@
     //Comments
     //rows += [_obj[@"commentsUsers"] count] > 3 ? 3:[_obj[@"commentsUsers"] count];
     if(_obj[@"commentsUsers"] != nil && [_obj[@"commentsUsers"] count] > 0)
-        if (_obj[@"commentsArray"] != nil && [_obj[@"commentsArray"] count] >0 )
-            if(rows + [_obj[@"commentsUsers"] count] <= [_obj[@"commentsArray"] count])
-                rows += [_obj[@"commentsUsers"] count];
-    
+        if (_obj[@"commentsArray"] != nil && [_obj[@"commentsArray"] count] > 0 )
+            //if(rows + [_obj[@"commentsUsers"] count] <= [_obj[@"commentsArray"] count])
+        {
+            rows += [_obj[@"commentsUsers"] count];
+        }
     return rows;
 }
 - (void)showInvite

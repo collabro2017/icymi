@@ -99,19 +99,29 @@
         }
     }
    
+    NSMutableArray *arrForTagFriends = [NSMutableArray array];
+    NSMutableArray *arrForTagFriendAuthorities  = [NSMutableArray array];
     
-    NSMutableArray *arrForTagFriends = eventObj[@"TagFriends"];
-    NSMutableArray *arrForTagFriendAuthorities = eventObj[@"TagFriendAuthorities"];
+    if(eventObj[@"TagFriends"] != nil && [eventObj[@"TagFriends"] count] > 0)
+    {
+        arrForTagFriends = eventObj[@"TagFriends"];
+    }
+    if(eventObj[@"TagFriendAuthorities"] != nil && [eventObj[@"TagFriendAuthorities"] count] > 0)
+    {
+        arrForTagFriendAuthorities = eventObj[@"TagFriendAuthorities"];
+    }
     
     if (![eventUser.objectId isEqualToString:self_user.objectId]){
         
         NSString *AuthorityValue = @"";
         
-        if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] != 0){
+        if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] > 0){
             
             for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                 if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
-                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
+                    if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
+                        AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
+                    
                     break;
                 }
             }

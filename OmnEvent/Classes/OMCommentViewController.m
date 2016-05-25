@@ -207,7 +207,7 @@
             PFUser *eventUser = currentObject[@"user"];
             NSMutableArray *arrEventTagFriends = [NSMutableArray array];
             PFObject *eventObj = currentObject[@"targetEvent"];
-            arrEventTagFriends = eventObj[@"TagFriends"];
+            arrEventTagFriends = [eventObj[@"TagFriends"] mutableCopy];
             if(![eventUser.objectId isEqualToString:USER.objectId])
             {
                 [arrEventTagFriends addObject:eventUser.objectId];

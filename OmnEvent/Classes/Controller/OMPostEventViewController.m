@@ -501,7 +501,7 @@
                 [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
             }];
             
-            BOOL enable_location = [CLLocationManager locationServicesEnabled];
+            BOOL enable_location = NO;//[CLLocationManager locationServicesEnabled];
             
             if (enable_location) {
                 [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
@@ -577,7 +577,7 @@
                     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                         
-                        [GlobalVar getInstance].isPosting = NO;
+                        
                         if (succeeded) {
                             NSLog(@"Success ---- Post");
                             
@@ -587,8 +587,13 @@
                             {
                                 [curObj addObject:post forKey:@"postedObjects"];
                                 [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                                    [GlobalVar getInstance].isPosting = NO;
                                     if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");
                                 }];
+                            }
+                            else
+                            {
+                                [GlobalVar getInstance].isPosting = NO;
                             }
                             
                             if (_outPutURL) {
@@ -604,6 +609,7 @@
                         }
                         else
                         {
+                            [GlobalVar getInstance].isPosting = NO;
                             [OMGlobal showAlertTips:@"Uploading Failed." title:nil];
                         }
                         [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
