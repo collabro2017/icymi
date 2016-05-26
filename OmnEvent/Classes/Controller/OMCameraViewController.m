@@ -57,31 +57,8 @@
 @implementation OMCameraViewController
 @synthesize uploadOption,captureOption,curObj;
 
-// Timer Methods
-
--(void)incrementTime:(id)obj {
-    
-    second ++;
-    
-    if (second== 11) {
-        second = 0;
-        
-        [_recorder stopCurrentVideoRecording];
-        return;
-        
-    }
-    lblForTimer.text = [NSString stringWithFormat:@"%02d:%02d", min,second];
-    [self performSelector:@selector(incrementTime:) withObject:nil afterDelay:1.0];
-    
-}
-
--(void)animateRecordView {
-    
-    imageViewForRedTimer.hidden = !imageViewForRedTimer.hidden ;
-    [self performSelector:@selector(animateRecordView) withObject:nil afterDelay:0.5];
-}
-
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
     
     isPhotoMode = YES;
@@ -89,15 +66,12 @@
     defaultValue = constraintForVideoControl.constant;
     
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
-    // Do any additional setup after loading the view.
-    
     
     imagePicker = [[UIImagePickerController alloc] init];
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     imagePicker.delegate = self;
     imagePicker.allowsEditing = YES;
    
-    
     [self initTopBar];
     [self initPhotoControls];
     [self initVideoControls];
@@ -121,22 +95,16 @@
     [self refreshScreen];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
-    
 }
 
 - (void)refreshScreen{
-    [GlobalVar getInstance].gIsPhotoPreview = YES;
-    
     // previewlayer hide and show - Due to place pre-viewlayer for result on Video or Photo camera view.
+    
+    [GlobalVar getInstance].gIsPhotoPreview = YES;
     [_recorder.preViewLayer setHidden:NO];
+    
     btnForVideo.enabled = NO;
     btnForVideo.hidden = YES;
-
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    
-    [super viewDidAppear:animated];
 }
 
 - (void)initTopBar {
@@ -169,7 +137,10 @@
     
     [self setupAlbumbutton];
     
+    // photo camera button
     [btnForCamera setImage:[UIImage imageNamed:@"video_longvideo_btn_shoot"] forState:UIControlStateNormal];
+    
+    // video button
     [btnForVideo setImage:[UIImage imageNamed:@"g_tabbar_ic_video_down"] forState:UIControlStateNormal];
     
     switch (captureOption) {
@@ -307,7 +278,6 @@
     
     // Record Button
     [btnForRecord setImage:[UIImage imageNamed:@"video_longvideo_btn_shoot.png"] forState:UIControlStateNormal];
-//   btnForRecord.userInteractionEnabled = NO;
     [btnForRecord addTarget:self action:@selector(recordVideo:) forControlEvents:UIControlEventTouchUpInside];
 }
 
@@ -439,7 +409,7 @@
 //    
     touchPoint = [touch locationInView:self.view];
     if (CGRectContainsPoint(_recorder.preViewLayer.frame, touchPoint)) {
-        [self showFocusRectAtPoint:touchPoint];
+        //[self showFocusRectAtPoint:touchPoint];
         [_recorder focusInPoint:touchPoint];
     }
 }
@@ -567,7 +537,7 @@
 
 - (void)captureManager:(SBVideoRecorder *)videoRecorder didFailWithError:(NSError *)error
 {
-    NSLog(@"Error");
+    NSLog(@"Video Recoder Error!");
 }
 
 - (void)captureManagerStillImageCaptured:(SBVideoRecorder *)videoRecorder image:(UIImage *)image {
@@ -638,7 +608,7 @@
     if (error) {
         NSLog(@": %@", error);
     } else {
-        NSLog(@"++++++++++++++file URL++++++++++++++++++ %@", fileURL);
+        NSLog(@"file URL: %@", fileURL);
         NSLog(@": %f", totalDur);
     }
     
@@ -681,7 +651,7 @@
     return NO;
 }
 
-- (NSUInteger)supportedInterfaceOrientations
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return UIInterfaceOrientationMaskPortrait;
 }
@@ -718,15 +688,6 @@
     }];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (IBAction)topButtonsAction:(id)sender {
     
@@ -822,6 +783,7 @@
             
             //Capture Action : if camera button -> Photo , else video button //
             if (isPhotoMode) {
+                
                 if([GlobalVar getInstance].gIsPhotoPreview) {
                     [self capturePhoto];
                 }
@@ -864,5 +826,32 @@
     
     [self showPostView:[OMGlobal croppedImage:imageViewForPreview.image]];
 }
+
+#pragma mark - helper functions
+// Timer Methods
+
+-(void)incrementTime:(id)obj {
+    
+    second ++;
+    
+    if (second== 11) {
+        second = 0;
+        
+        [_recorder stopCurrentVideoRecording];
+        return;
+        
+    }
+    lblForTimer.text = [NSString stringWithFormat:@"%02d:%02d", min,second];
+    [self performSelector:@selector(incrementTime:) withObject:nil afterDelay:1.0];
+    
+}
+
+-(void)animateRecordView {
+    
+    imageViewForRedTimer.hidden = !imageViewForRedTimer.hidden ;
+    [self performSelector:@selector(animateRecordView) withObject:nil afterDelay:0.5];
+}
+
+
 
 @end

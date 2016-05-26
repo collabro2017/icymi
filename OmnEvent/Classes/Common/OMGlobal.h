@@ -9,9 +9,6 @@
 #import <Foundation/Foundation.h>
 
 
-
-#define BADGE_TEST
-
 typedef enum {
     
     kTypeUploadEvent = 0,

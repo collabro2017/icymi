@@ -26,11 +26,10 @@
     //Camera View
     
     IBOutlet UIView *viewForPreview;
-    
     IBOutlet UIImageView *imageViewForPreview;
-    
     IBOutlet UILabel *lblForTimer;
-    // Bottom Bar
+    
+    //Bottom Bar
     
     IBOutlet UIImageView *imageViewForRedTimer;
     IBOutlet UIView *viewForBottomBar;
