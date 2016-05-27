@@ -50,8 +50,8 @@
 - (void)stopCurrentVideoRecording;
 - (void)startRecordingToOutputFileURL:(NSURL *)fileURL;
 
-- (void)deleteLastVideo;//
-- (void)deleteAllVideo;//
+- (void)deleteLastVideo; //
+- (void)deleteAllVideo;  //
 - (NSUInteger)getVideoCount;
 
 - (void)mergeVideoFiles;

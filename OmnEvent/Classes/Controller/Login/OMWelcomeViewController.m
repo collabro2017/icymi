@@ -9,7 +9,9 @@
 #import "OMWelcomeViewController.h"
 
 @interface OMWelcomeViewController ()
-
+{
+    PFUser *newUser;
+}
 @end
 
 @implementation OMWelcomeViewController
@@ -17,6 +19,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    //Google Sign In
+    [GIDSignIn sharedInstance].shouldFetchBasicProfile = YES;
+    [GIDSignIn sharedInstance].delegate = self;
+
+    //PFUser init
+    newUser = [PFUser user];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,26 +38,13 @@
     [super viewWillAppear:animated];
     if ([[FBSession activeSession] isOpen])
     {
-        //Session is open
         NSLog(@"Session opened");
     }
-    else
-    {
-        
-    }
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (IBAction)loginWithFBAction:(id)sender {
+    
+    [MBProgressHUD showMessag:@"LogIn..." toView:self.view];
     
     NSArray *arrForPermission = @[@"email",@"user_friends"];
     
@@ -57,6 +53,8 @@
     [[FBSession activeSession] closeAndClearTokenInformation];
     
     [PFFacebookUtils logInWithPermissions:arrForPermission block:^(PFUser *user, NSError *error) {
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         
         if (!user) {
             if (!error) {
@@ -187,5 +185,205 @@
         }];
     }
 }
+
+// SignUp and SignIn with gmail
+
+- (void)registerWithGoogleMail:(GIDGoogleUser *)googleUser
+{
+    
+    NSString *userEmail;
+    NSString *userName;
+    NSString *userPassword;
+    NSString *loginType;
+    NSURL *profileUrl;
+    
+    userName = googleUser.profile.name;
+    userEmail = googleUser.profile.email;
+    
+    userPassword = GMAIL_SIGNIN_KEY;
+    loginType = @"gmail";
+    
+    // In Case with profile Image
+    if(googleUser.profile.hasImage)
+    {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+
+        NSUInteger dimension = round(300 * [[UIScreen mainScreen] scale]);
+        profileUrl = [googleUser.profile imageURLWithDimension:dimension];
+        
+        // fetch profile image from URL
+        NSURLRequest *userURLRequest = [NSURLRequest requestWithURL:profileUrl cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.0f];
+        [NSURLConnection sendAsynchronousRequest:userURLRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+            
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            if(connectionError == nil){
+                
+                PFFile *profilePicture = [PFFile fileWithName:@"avatar.jpg" data:data];
+                newUser[@"ProfileImage"] = profilePicture;
+                
+                [newUser setUsername:userName];
+                [newUser setEmail:userEmail];
+                [newUser setPassword:userPassword];
+                newUser[@"loginType"] = loginType;
+                newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
+                
+                [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+                
+                // SignUp with gmail information on Parse
+                [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                    
+                    if (succeeded) {
+                        PFInstallation *installation = [PFInstallation currentInstallation];
+                        [installation setObject:newUser forKey:@"user"];
+                        [installation setObject:newUser.objectId forKey:@"userID"];
+                        [installation saveEventually];
+                        [OMGlobal setLogInUserDefault];
+                        
+                        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                    }
+                    else
+                    {
+                        [OMGlobal showAlertTips:[error localizedDescription] title:@"Failed to Sign Up!"];
+                        
+                    }
+                }];
+            }else{
+                [OMGlobal showAlertTips:connectionError.localizedDescription title:@"SignUp with Gmail"];
+            }
+        }];
+    }
+    
+    // In Case with no profile Image
+    else
+    {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        
+        [newUser setUsername:userName];
+        [newUser setEmail:userEmail];
+        [newUser setPassword:userPassword];
+        newUser[@"loginType"] = loginType;
+        newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
+        // SignUp with gmail information on Parse
+        [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+            
+            if (succeeded) {
+                PFInstallation *installation = [PFInstallation currentInstallation];
+                [installation setObject:newUser forKey:@"user"];
+                [installation setObject:newUser.objectId forKey:@"userID"];
+                [installation saveEventually];
+                [OMGlobal setLogInUserDefault];
+                
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+            }
+            else
+            {
+                [OMGlobal showAlertTips:[error localizedDescription] title:@"Failed to Sign Up!"];
+                
+            }
+        }];
+    }
+}
+
+
+- (void)signInwithGoogleMail:(GIDGoogleUser*)googleUser
+{
+
+    NSString *userName = googleUser.profile.name;
+    NSString *userEmail = googleUser.profile.email;
+    NSString *userPassword = GMAIL_SIGNIN_KEY;
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"email" equalTo:userEmail];
+    
+    [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+
+        if (error) {
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+            [OMGlobal showAlertTips:error.localizedDescription title:@"Google SignIn"];
+            return;
+        }
+        
+        if([objects count] == 0)
+        {
+            //In Case New Account with this google user
+            [self registerWithGoogleMail:googleUser];
+            return;
+        }
+        
+        PFUser *user = (PFUser *)objects[0];
+        
+        if ([user objectForKey:@"Status"])
+        {
+            BOOL status = [[user objectForKey:@"Status"] boolValue];
+            if (!status)
+            {
+                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                [OMGlobal showAlertTips:@"Your account is suspended." title:@"Oops!"];
+                return;
+            }
+        }
+        
+        [PFUser logInWithUsernameInBackground:userName password:userPassword block:^(PFUser *user, NSError *error) {
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+            
+            if (user) {
+                
+                [user fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    
+                    if(error)
+                    {
+                        NSLog(@"Fetch error with current User");
+                    }
+                    PFInstallation *installation = [PFInstallation currentInstallation];
+                    [installation setObject:user forKey:@"user"];
+                    [installation setObject:user.objectId forKey:@"userID"];
+                    [installation saveEventually];
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
+                    
+                    if ([APP_DELEGATE logOut]) {
+                        
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
+                    }
+                    
+                    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+                        [APP_DELEGATE setLogOut:NO];
+                        [OMGlobal setLogInUserDefault];
+                    }];
+                    
+                }];
+            }
+            else
+            {
+                [OMGlobal showAlertTips:error.localizedDescription title:@"Google SignIn"];
+            }
+        }];
+    }];
+    
+
+}
+
+#pragma mark - Google Signin Delegate
+
+- (void) signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error
+{
+    if(!user) [OMGlobal showAlertTips:error.localizedDescription title:@"SignIn with Gmail"];
+    [self signInwithGoogleMail:user];
+    
+    [[GIDSignIn sharedInstance] signOut];
+}
+
+- (void) signIn:(GIDSignIn *)signIn didDisconnectWithUser:(GIDGoogleUser *)user withError:(NSError *)error
+{
+    NSLog(@"GoogleSignIn Delegate: gmail SignIn disConnected");
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
+}
+
 
 @end

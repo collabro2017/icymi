@@ -6465,16 +6465,33 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ib3-lw-A4b" userLabel="preview">
                                 <rect key="frame" x="0.0" y="40" width="320" height="320"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ahN-51-vVc">
+                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lrv-P4-zqU">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
-                                    </imageView>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ahN-51-vVc">
+                                                <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="320" id="IGp-jt-ZAY"/>
+                                                    <constraint firstAttribute="width" constant="320" id="bY6-FI-nKh"/>
+                                                </constraints>
+                                            </imageView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="ahN-51-vVc" secondAttribute="trailing" id="889-lk-ZnR"/>
+                                            <constraint firstAttribute="height" constant="320" id="OSk-VT-G6v"/>
+                                            <constraint firstAttribute="bottom" secondItem="ahN-51-vVc" secondAttribute="bottom" id="PyM-eV-9xq"/>
+                                            <constraint firstAttribute="width" constant="320" id="Ti1-El-h8t"/>
+                                            <constraint firstItem="ahN-51-vVc" firstAttribute="leading" secondItem="lrv-P4-zqU" secondAttribute="leading" id="WHB-sq-YFn"/>
+                                            <constraint firstItem="ahN-51-vVc" firstAttribute="top" secondItem="lrv-P4-zqU" secondAttribute="top" id="u3W-Pn-sit"/>
+                                        </constraints>
+                                    </scrollView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="ahN-51-vVc" secondAttribute="bottom" id="2nV-Ef-UCK"/>
-                                    <constraint firstItem="ahN-51-vVc" firstAttribute="top" secondItem="ib3-lw-A4b" secondAttribute="top" id="L1A-hA-ZL2"/>
-                                    <constraint firstItem="ahN-51-vVc" firstAttribute="leading" secondItem="ib3-lw-A4b" secondAttribute="leading" id="Vdi-qb-Cye"/>
-                                    <constraint firstAttribute="trailing" secondItem="ahN-51-vVc" secondAttribute="trailing" id="nrH-9k-vbR"/>
+                                    <constraint firstAttribute="trailing" secondItem="lrv-P4-zqU" secondAttribute="trailing" id="PCv-Zg-qo2"/>
+                                    <constraint firstItem="lrv-P4-zqU" firstAttribute="top" secondItem="ib3-lw-A4b" secondAttribute="top" id="jYo-rr-VME"/>
+                                    <constraint firstAttribute="bottom" secondItem="lrv-P4-zqU" secondAttribute="bottom" id="pyI-d8-yxe"/>
+                                    <constraint firstItem="lrv-P4-zqU" firstAttribute="leading" secondItem="ib3-lw-A4b" secondAttribute="leading" id="rAe-HV-PAH"/>
                                     <constraint firstAttribute="width" secondItem="ib3-lw-A4b" secondAttribute="height" multiplier="1:1" id="wjP-3x-kLB"/>
                                 </constraints>
                             </view>
@@ -6700,6 +6717,7 @@
                         <outlet property="imageViewForPreview" destination="ahN-51-vVc" id="Xu7-cH-igQ"/>
                         <outlet property="imageViewForRedTimer" destination="1ky-gS-s6Y" id="hDN-bJ-LtC"/>
                         <outlet property="lblForTimer" destination="RnA-wY-B7R" id="uvM-33-7A7"/>
+                        <outlet property="scrollViewForPreview" destination="lrv-P4-zqU" id="gZS-1M-R8w"/>
                         <outlet property="viewForBottomBar" destination="bic-2s-Xcu" id="CAH-wr-oGh"/>
                         <outlet property="viewForPreview" destination="ib3-lw-A4b" id="3jB-Kv-h0h"/>
                         <outlet property="viewForToolbar" destination="tec-cT-ckd" id="EKp-2t-5Rr"/>

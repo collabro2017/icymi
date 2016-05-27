@@ -57,6 +57,7 @@
 @implementation OMCameraViewController
 @synthesize uploadOption,captureOption,curObj;
 
+
 - (void)viewDidLoad {
     
     [super viewDidLoad];
@@ -80,6 +81,22 @@
     [self initProgressBar];
     
     [self performSelectorOnMainThread:@selector(initRecorder) withObject:nil waitUntilDone:NO];
+    
+    
+    // for photo editing
+    scrollViewForPreview.delegate = self;
+    
+    UITapGestureRecognizer *doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(scrollViewDoubleTapped:)];
+    doubleTapRecognizer.numberOfTapsRequired = 2;
+    doubleTapRecognizer.numberOfTouchesRequired = 1;
+    [scrollViewForPreview addGestureRecognizer:doubleTapRecognizer];
+    
+    UITapGestureRecognizer *twoFingerTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(scrollViewTwoFingerTapped:)];
+    twoFingerTapRecognizer.numberOfTapsRequired = 1;
+    twoFingerTapRecognizer.numberOfTouchesRequired = 2;
+    [scrollViewForPreview addGestureRecognizer:twoFingerTapRecognizer];
+
+   
 }
 
 - (void)didReceiveMemoryWarning {
@@ -94,8 +111,116 @@
     
     [self refreshScreen];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+}
+
+// for photo editing -------------
+
+- (void)sendImageOnEditViewWithScroll:(UIImage*) image
+{
+    imageViewForPreview.image = image;
+    imageViewForPreview.frame = CGRectMake(0, 0, 320, 320);
+    
+    scrollViewForPreview.zoomScale = 1.0f;
+    scrollViewForPreview.minimumZoomScale = 1.0f;
+    scrollViewForPreview.maximumZoomScale = 10.0f;
+    scrollViewForPreview.contentSize = CGSizeMake(320, 320);
+    
+    [self centerScrollViewContents];
     
 }
+
+- (void) initScrollFrame
+{
+    CGRect scrollViewFrame = scrollViewForPreview.frame;
+    CGFloat scaleWidth = scrollViewFrame.size.width / scrollViewForPreview.contentSize.width;
+    CGFloat scaleHeight = scrollViewFrame.size.height / scrollViewForPreview.contentSize.height;
+    CGFloat minScale = MIN(scaleWidth, scaleHeight);
+    
+    scrollViewForPreview.minimumZoomScale = minScale;
+    scrollViewForPreview.maximumZoomScale = 1.0f;
+    scrollViewForPreview.zoomScale = minScale;
+    
+    [self centerScrollViewContents];
+}
+
+- (void)centerScrollViewContents {
+    CGSize boundsSize = scrollViewForPreview.bounds.size;
+    CGRect contentsFrame = imageViewForPreview.frame;
+    
+    if (contentsFrame.size.width < boundsSize.width) {
+        contentsFrame.origin.x = (boundsSize.width - contentsFrame.size.width) / 2.0f;
+    } else {
+        contentsFrame.origin.x = 0.0f;
+    }
+    
+    if (contentsFrame.size.height < boundsSize.height) {
+        contentsFrame.origin.y = (boundsSize.height - contentsFrame.size.height) / 2.0f;
+    } else {
+        contentsFrame.origin.y = 0.0f;
+    }
+    
+    imageViewForPreview.frame = contentsFrame;
+}
+
+- (UIImage*)cropImageFromScroll:(UIScrollView *)scrollview
+{
+    
+    CGSize pageSize = scrollview.frame.size;
+    UIGraphicsBeginImageContext(pageSize);
+    CGContextRef resizedContext = UIGraphicsGetCurrentContext();
+    int offsetX = -1*scrollview.contentOffset.x;
+    int offsetY = -1*scrollview.contentOffset.y;
+    CGContextTranslateCTM(resizedContext, offsetX, offsetY);
+    [scrollViewForPreview.layer renderInContext:resizedContext];
+    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    UIImageWriteToSavedPhotosAlbum(viewImage, nil, nil, nil);
+    
+    return viewImage;
+}
+
+#pragma mark - UITapGuesture Selector
+
+- (void)scrollViewDoubleTapped:(UITapGestureRecognizer*)recognizer {
+    // Get the location within the image view where we tapped
+    CGPoint pointInView = [recognizer locationInView:imageViewForPreview];
+    
+    // Get a zoom scale that's zoomed in slightly, capped at the maximum zoom scale specified by the scroll view
+    CGFloat newZoomScale = scrollViewForPreview.zoomScale * 1.5f;
+    newZoomScale = MIN(newZoomScale, scrollViewForPreview.maximumZoomScale);
+    
+    // Figure out the rect we want to zoom to, then zoom to it
+    CGSize scrollViewSize = scrollViewForPreview.bounds.size;
+    
+    CGFloat w = scrollViewSize.width / newZoomScale;
+    CGFloat h = scrollViewSize.height / newZoomScale;
+    CGFloat x = pointInView.x - (w / 2.0f);
+    CGFloat y = pointInView.y - (h / 2.0f);
+    
+    CGRect rectToZoomTo = CGRectMake(x, y, w, h);
+    
+    [scrollViewForPreview zoomToRect:rectToZoomTo animated:YES];
+    
+}
+
+- (void)scrollViewTwoFingerTapped:(UITapGestureRecognizer*)recognizer {
+    CGFloat newZoomScale = scrollViewForPreview.zoomScale / 1.5f;
+    newZoomScale = MAX(newZoomScale, scrollViewForPreview.minimumZoomScale);
+    [scrollViewForPreview setZoomScale:newZoomScale animated:YES];
+}
+
+#pragma mark - ScrollView Delegate
+
+- (UIView*)viewForZoomingInScrollView:(UIScrollView *)scrollView {
+    // Return the view that we want to zoom
+    return imageViewForPreview;
+}
+
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView {
+    // The scroll view has zoomed, so we need to re-center the contents
+    [self centerScrollViewContents];
+}
+//-------------------------------
 
 - (void)refreshScreen{
     // previewlayer hide and show - Due to place pre-viewlayer for result on Video or Photo camera view.
@@ -105,6 +230,7 @@
     
     btnForVideo.enabled = NO;
     btnForVideo.hidden = YES;
+    btnForOk.enabled = NO;
 }
 
 - (void)initTopBar {
@@ -263,7 +389,7 @@
     [btnForOk setBackgroundImage:[UIImage imageNamed:@"record_icon_hook_highlighted_bg.png"] forState:UIControlStateHighlighted];
     [btnForOk setImage:[UIImage imageNamed:@"record_icon_hook_normal.png"] forState:UIControlStateNormal];
     [btnForOk addTarget:self action:@selector(pressOKButton) forControlEvents:UIControlEventTouchUpInside];
-    [btnForOk setHidden:YES];
+    
     
     btnForVideo.enabled = NO;
     btnForVideo.hidden = YES;
@@ -378,9 +504,12 @@
 //Record Video
 - (void)recordVideo:(UIButton *)sender {
     
+    
     if (_recorder.isRecording) {
+        
         [_recorder stopCurrentVideoRecording];
     } else {
+        [_progressBar startShining];
         NSString *filePath = [SBCaptureToolKit getVideoSaveFilePathString];
         [_recorder startRecordingToOutputFileURL:[NSURL fileURLWithPath:filePath]];
     }
@@ -438,16 +567,13 @@
 }
 
 //When Tap Ok Button
-
 - (void)pressOKButton {
     
-    if (_isProcessingData) {
-        return;
-    }
-    
-    self.isProcessingData = YES;
-    
+    [_progressBar stopShining];
+    [_progressBar setLastProgressToWidth:0];
     [_recorder stopCurrentVideoRecording];
+    [MBProgressHUD showMessag:@"Processing..." toView:self.view];
+    [_recorder mergeVideoFiles];
 }
 
 //Delete all video
@@ -515,7 +641,11 @@
     [picker dismissViewControllerAnimated:YES completion:^{
         
         [_recorder.preViewLayer setHidden:YES];
-        [imageViewForPreview setImage:image];
+        
+        //[imageViewForPreview setImage:image];
+        // for photo editing
+        [self sendImageOnEditViewWithScroll:image];
+        
         btnForVideo.enabled = YES;
         btnForVideo.hidden = NO;
         [GlobalVar getInstance].gIsPhotoPreview = NO;
@@ -537,7 +667,7 @@
 
 - (void)captureManager:(SBVideoRecorder *)videoRecorder didFailWithError:(NSError *)error
 {
-    NSLog(@"Video Recoder Error!");
+    NSLog(@"Video Recording Error!");
 }
 
 - (void)captureManagerStillImageCaptured:(SBVideoRecorder *)videoRecorder image:(UIImage *)image {
@@ -552,7 +682,11 @@
     [_recorder.preViewLayer setHidden:YES];
     
     _focusRectView.hidden = NO;
-    [imageViewForPreview setImage:image];
+    
+    //[imageViewForPreview setImage:image];
+    // for phote editing
+    [self sendImageOnEditViewWithScroll:image];
+    
     btnForVideo.enabled = YES;
     btnForVideo.hidden = NO;
 
@@ -562,16 +696,15 @@
 
 - (void)videoRecorder:(SBVideoRecorder *)videoRecorder didFinishMergingVideosToOutPutFileAtURL:(NSURL *)outputFileURL
 {
-    
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     [self showPreviewForVideo:outputFileURL];
 }
 
 - (void)videoRecorder:(SBVideoRecorder *)videoRecorder didFinishRecordingToOutPutFileAtURL:(NSURL *)outputFileURL duration:(CGFloat)videoDuration totalDur:(CGFloat)totalDur error:(NSError *)error
 {
-    if (error) {
-    } else {
-        NSLog(@" %@", outputFileURL);
+    
+    if (!error)
+    {
         
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(incrementTime:) object:nil];
         [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(animateRecordView) object:nil];
@@ -579,38 +712,30 @@
         second = 0;
         min = 0;
         hour = 0;
-        //        imageViewForRedTimer.hidden = YES;
+        
         lblForTimer.text = [NSString stringWithFormat:@"%02d:%02d", min,second];
         
-        [MBProgressHUD showMessag:@"Processing..." toView:self.view];
-        [_recorder mergeVideoFiles];
-        
-    }
-    
-//    [_progressBar startShining];
-    
-//    if (totalDur >= MAX_VIDEO_DUR) {
-//        [self pressOKButton];
-//        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-//        [self showPreviewForVideo:outputFileURL];
-//    }
+        [_progressBar stopShining];
+        [_progressBar setLastProgressToWidth:0];
 
+        if(videoDuration > MIN_VIDEO_DUR && videoDuration < MAX_VIDEO_DUR)
+        {
+            [_recorder stopCurrentVideoRecording];
+        }
+        if(videoDuration >= MAX_VIDEO_DUR)
+        {
+            [self pressOKButton];
+        }
+    }
 }
 
 - (void)videoRecorder:(SBVideoRecorder *)videoRecorder didRecordingToOutPutFileAtURL:(NSURL *)outputFileURL duration:(CGFloat)videoDuration recordedVideosTotalDur:(CGFloat)totalDur {
     
     [_progressBar setLastProgressToWidth:videoDuration / MAX_VIDEO_DUR * _progressBar.frame.size.width];
-    
     btnForOk.enabled = (videoDuration + totalDur >= MIN_VIDEO_DUR);
 }
 
 - (void)videoRecorder:(SBVideoRecorder *)videoRecorder didRemoveVideoFileAtURL:(NSURL *)fileURL totalDur:(CGFloat)totalDur error:(NSError *)error {
-    if (error) {
-        NSLog(@": %@", error);
-    } else {
-        NSLog(@"file URL: %@", fileURL);
-        NSLog(@": %f", totalDur);
-    }
     
     if ([_recorder getVideoCount] > 0) {
         [btnForDelete setStyle:DeleteButtonStyleNormal];
@@ -624,9 +749,8 @@
 - (void)videoRecorder:(SBVideoRecorder *)videoRecorder didStartRecordingToOutPutFileAtURL:(NSURL *)fileURL {
     
     [self.progressBar addProgressView];
-    [_progressBar stopShining];
     
-//    [btnForDelete setButtonStyle:DeleteButtonStyleNormal];
+//  [btnForDelete setButtonStyle:DeleteButtonStyleNormal];
     
     lblForTimer.text = [NSString stringWithFormat:@"%02d:%02d",min,second];
     imageViewForRedTimer.hidden = NO;
@@ -725,6 +849,7 @@
                     break;
                 case kTypeCaptureVideo:
                 {
+                    if(_recorder.isRecording) [_recorder stopCurrentVideoRecording];
                     [self.navigationController dismissViewControllerAnimated:YES completion:^{
                     }];
                 }
@@ -824,7 +949,8 @@
 
 - (void)nextButton {
     
-    [self showPostView:[OMGlobal croppedImage:imageViewForPreview.image]];
+    //[self showPostView:[OMGlobal croppedImage:imageViewForPreview.image]];
+    [self showPostView:[self cropImageFromScroll:scrollViewForPreview]];
 }
 
 #pragma mark - helper functions
@@ -834,13 +960,19 @@
     
     second ++;
     
-    if (second== 11) {
+    if(second > MIN_VIDEO_DUR)
+    {
+        btnForOk.enabled = YES;
+    }
+    
+    if (second >= MAX_VIDEO_DUR) {
         second = 0;
         
         [_recorder stopCurrentVideoRecording];
         return;
-        
     }
+    
+    
     lblForTimer.text = [NSString stringWithFormat:@"%02d:%02d", min,second];
     [self performSelector:@selector(incrementTime:) withObject:nil afterDelay:1.0];
     

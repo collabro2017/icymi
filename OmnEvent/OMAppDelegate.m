@@ -27,7 +27,7 @@
 
 //////   Real
 #define PARSE_APP_ID      @"fXthztgrwB3gdmQ5TNGL4DVNRzaZJWgoeIBH6lVD"
-#define CLIENT_KEY  @"CCSj4mz2TxK2lVJxARaFPaKSj8btTG3loZhtg9II"
+#define CLIENT_KEY        @"CCSj4mz2TxK2lVJxARaFPaKSj8btTG3loZhtg9II"
 
 
 @implementation OMAppDelegate
@@ -74,7 +74,11 @@
         installation.badge = 0;
         [installation saveInBackground];
         
-    }   
+    }
+    
+    //Google Email Login
+    
+    [GIDSignIn sharedInstance].clientID = KEY_GOOGLE_CLIENTID;
     
     //Enable public read access by default, with any newly created PFObjects belonging to the current user
     
@@ -193,9 +197,33 @@
     }
 }
 
+// For iOS 8.0 and Older
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication withSession:[PFFacebookUtils session]];
+    BOOL googleSigInFlag = [[GIDSignIn sharedInstance] handleURL:url
+                                              sourceApplication:sourceApplication
+                                                     annotation:annotation];
+    
+    BOOL facebookSigInFlag = [FBAppCall handleOpenURL:url
+                                    sourceApplication:sourceApplication
+                                          withSession:[PFFacebookUtils session]];
+    
+    return googleSigInFlag || facebookSigInFlag;
+}
+// For iOS 8.0 and new
+- (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)url
+            options:(NSDictionary *)options {
+    
+    BOOL googleSignInFlag = [[GIDSignIn sharedInstance] handleURL:url
+                                                sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                                                       annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+
+    BOOL facebookSigInFlag = [FBAppCall handleOpenURL:url
+                                    sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                                          withSession:[PFFacebookUtils session]];
+
+    return googleSignInFlag || facebookSigInFlag;
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

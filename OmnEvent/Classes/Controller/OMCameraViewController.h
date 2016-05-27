@@ -13,7 +13,7 @@
 
 @class DeleteButton;
 
-@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate> {
+@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate> {
     
     //Tool Bar
     
@@ -28,6 +28,9 @@
     IBOutlet UIView *viewForPreview;
     IBOutlet UIImageView *imageViewForPreview;
     IBOutlet UILabel *lblForTimer;
+    
+    // for photo editing
+    IBOutlet UIScrollView *scrollViewForPreview;
     
     //Bottom Bar
     

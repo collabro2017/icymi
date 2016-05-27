@@ -19,7 +19,7 @@
 
 #define VIDEO_FOLDER @"videos"
 
-#define MIN_VIDEO_DUR 2.0f
-#define MAX_VIDEO_DUR 10.0f
+//#define MIN_VIDEO_DUR 10.0f
+//#define MAX_VIDEO_DUR 60.0f
 
 #endif

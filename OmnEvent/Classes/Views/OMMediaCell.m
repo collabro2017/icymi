@@ -8,6 +8,9 @@
 
 #import "OMMediaCell.h"
 #import "OMSocialEvent.h"
+#import "FTWCache.h"
+#import "NSString+MD5.h"
+
 
 @implementation OMMediaCell
 {
@@ -48,6 +51,11 @@
     
 }
 
+- (void)delayChangeTextColor:(NSTimer*)dt
+{
+    [lblForTimer setTextColor:HEXCOLOR(0x6F7179FF)];
+}
+
 - (void)setCurrentObj:(PFObject *)obj {
     
     currentObj = obj;
@@ -69,35 +77,6 @@
     PFUser *eventUser = eventObj[@"user"];
     PFUser *self_user = [PFUser currentUser];
 
-    // for badge processing
-    NSLog(@"------Current Index-----%ld", curEventIndex);
-    if(curEventIndex >= 0)
-    {
-        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex ];
-        
-        if (socialTemp.badgeCount > 0) {
-            OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
-            if(currentObj != nil)
-            {
-                NSMutableArray *temp = [[NSMutableArray alloc] init];
-                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
-                
-                if ([temp containsObject:self_user.objectId])
-                {
-                    [temp removeObject:self_user.objectId];
-                    currentObj[@"usersBadgeFlag"] = temp;
-                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                        if(error == nil)
-                        {
-                            NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
-                        }
-                    }];
-                    if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
-                    [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
-                }
-            }
-        }
-    }
    
     NSMutableArray *arrForTagFriends = [NSMutableArray array];
     NSMutableArray *arrForTagFriendAuthorities  = [NSMutableArray array];
@@ -187,8 +166,12 @@
 
     NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
     [lblForTimer setText:str_date];
+    
+    [lblForTimer setTextColor:HEXCOLOR(0x6F7179FF)];
 
     //*******************
+    
+    
     
     [lblForTitle setText:currentObj[@"title"]];
     [lblForDes setText:currentObj[@"description"]];
@@ -198,6 +181,45 @@
     constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:lblForTitle.frame.size.width].height;
     
     [lblForLocation setText:currentObj[@"country"]];
+    
+    
+    // for badge processing
+    NSLog(@"------Current Index-----%ld", curEventIndex);
+    if(curEventIndex >= 0)
+    {
+        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex ];
+        
+        if (socialTemp.badgeCount > 0) {
+            
+            [lblForTimer setTextColor:[UIColor redColor]];
+            
+            OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
+            if(currentObj != nil)
+            {
+                NSMutableArray *temp = [[NSMutableArray alloc] init];
+                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
+                
+                if ([temp containsObject:self_user.objectId])
+                {
+                    [temp removeObject:self_user.objectId];
+                    currentObj[@"usersBadgeFlag"] = temp;
+                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if(error == nil)
+                        {
+                            NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
+                            [NSTimer scheduledTimerWithTimeInterval: 2.0 target: self selector: @selector(delayChangeTextColor:) userInfo: nil repeats: NO];
+                        }
+                    }];
+                    
+                    if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
+                    [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
+                }
+            }
+        }
+    }
+
+    
+    
     
     // Display image
     
@@ -459,23 +481,26 @@
         case PBJVideoPlayerPlaybackStateStopped:
         {
             [btnForVideoPlay setHidden:NO];
+            [GlobalVar getInstance].isPosting = NO;
 
         }
             break;
         case PBJVideoPlayerPlaybackStatePlaying:
         {
             [btnForVideoPlay setHidden:YES];
+            [GlobalVar getInstance].isPosting = YES;
         }
             break;
         case PBJVideoPlayerPlaybackStatePaused:
         {
             [btnForVideoPlay setHidden:NO];
+            [GlobalVar getInstance].isPosting = NO;
 
         }
             break;
         case PBJVideoPlayerPlaybackStateFailed:
         {
-            
+            [GlobalVar getInstance].isPosting = NO;
         }
             break;
         default:
@@ -485,12 +510,15 @@
 
 - (void)playAudio {
     
+    [GlobalVar getInstance].isPosting = YES;
     if (audioPlayer.isPlaying || [[btnForPlay imageForState:UIControlStateNormal] isEqual:[UIImage imageNamed:@"btn_pauseaudio"]]) {
         
         [audioPlayer stop];
         [btnForPlay setImage:[UIImage imageNamed:@"btn_playaudio"] forState:UIControlStateNormal];
         [eq stop];
         [eq setHidden:YES];
+        
+        [GlobalVar getInstance].isPosting = NO;
         
     } else {
         
@@ -499,12 +527,12 @@
         if (audioFile) {
             
             NSData *fetchedData = nil;
-            
             if (audioFile.url != nil){
                 fetchedData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:audioFile.url]];
             } else {
                 fetchedData = audioFile.getData;
             }
+            
             
             if (audioPlayer) {
                 [audioPlayer stop]; //data is an iVar holding any existing playing music
@@ -512,6 +540,31 @@
             }
             
             audioPlayer = [[AVAudioPlayer alloc] initWithData:fetchedData error:nil];
+           
+            /* 
+            // Cached Data tried for Speed....
+            NSString *key = [audioFile.url MD5Hash];
+            NSData *fetchedData = [FTWCache objectForKey:key];
+            if(fetchedData)
+            {
+                audioPlayer = [[AVAudioPlayer alloc] initWithData:fetchedData error:nil];
+            }
+            else
+            {
+                NSData *data;
+                if (audioFile.url != nil){
+                    data = [NSData dataWithContentsOfURL:[NSURL URLWithString:audioFile.url]];
+                }
+                else{
+                    data = audioFile.getData;
+                }
+                [FTWCache setObject:data forKey:key];
+                audioPlayer = [[AVAudioPlayer alloc] initWithData:data error:nil];
+                NSLog(@"Cached Data loading....");
+            }
+             */
+            
+          
             audioPlayer.delegate = self;
             [audioPlayer play];
             
@@ -539,6 +592,7 @@
         [btnForPlay setImage:[UIImage imageNamed:@"play_button"] forState:UIControlStateNormal];
         [eq stop];
         [eq setHidden:YES];
+        [GlobalVar getInstance].isPosting = NO;
     }
 }
 
@@ -624,17 +678,20 @@
             [btnForVideoPlay setHidden:YES];
             
             [_videoPlayerController playFromBeginning];
+           
             
         }
             break;
         case PBJVideoPlayerPlaybackStatePlaying:
         {
+           
             [btnForVideoPlay setHidden:NO];
             [_videoPlayerController pause];
         }
             break;
         case PBJVideoPlayerPlaybackStatePaused:
         {
+            
             [btnForVideoPlay setHidden:YES];
             [_videoPlayerController playFromCurrentTime];
             
