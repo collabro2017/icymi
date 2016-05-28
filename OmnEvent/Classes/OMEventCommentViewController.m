@@ -231,7 +231,7 @@
                 {
                     [OMGlobal showAlertTips:error.localizedDescription title:@"Oops!"];
                     
-                    [commentObject deleteEventually];
+                    [commentObject deleteInBackground];
                 }
             }];
             

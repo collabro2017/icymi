@@ -484,7 +484,6 @@
 		3EC317E21ABE1A1B00541D39 /* MMNavigationSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC317E01ABE1A1B00541D39 /* MMNavigationSegue.m */; };
 		3EC57A7E1AB999F9005BDE7C /* PBJVision.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC57A7B1AB999F9005BDE7C /* PBJVision.m */; };
 		3EC57A7F1AB999F9005BDE7C /* PBJVisionUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 3EC57A7D1AB999F9005BDE7C /* PBJVisionUtilities.m */; };
-		3EC625201AB3604700F3F36B /* FBAudienceNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC625191AB3604700F3F36B /* FBAudienceNetwork.framework */; };
 		3EC625211AB3604700F3F36B /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC6251A1AB3604700F3F36B /* Parse.framework */; };
 		3EC625221AB3604700F3F36B /* ParseCrashReporting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC6251B1AB3604700F3F36B /* ParseCrashReporting.framework */; };
 		3EC625241AB3604700F3F36B /* ParseUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EC6251D1AB3604700F3F36B /* ParseUI.framework */; };
@@ -498,6 +497,15 @@
 		6C9CA1C41B4664DB00806F96 /* OMTutorialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C9CA1C31B4664DB00806F96 /* OMTutorialVC.m */; };
 		6C9CA1CB1B46743F00806F96 /* tutorial.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 6C9CA1CA1B46743F00806F96 /* tutorial.mp4 */; };
 		6CD6E7681B5B3F650074578C /* OMSocialEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CD6E7671B5B3F650074578C /* OMSocialEvent.m */; };
+		8F18CABA1CF78E90005021BB /* FTWCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F18CAB71CF78E90005021BB /* FTWCache.m */; };
+		8F18CABB1CF78E90005021BB /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F18CAB91CF78E90005021BB /* NSString+MD5.m */; };
+		8F18CAC61CF8246B005021BB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAC51CF8246B005021BB /* AddressBook.framework */; };
+		8F18CAD61CF82700005021BB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAD51CF82700005021BB /* libz.tbd */; };
+		8F18CAD91CF8294E005021BB /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAC71CF82474005021BB /* SafariServices.framework */; };
+		8F1BE51E1CF8BD45008E9D73 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1BE51D1CF8BD45008E9D73 /* Bolts.framework */; };
+		8F1BE5201CF8E04C008E9D73 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */; };
+		8F1BE52D1CF96E5E008E9D73 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */; };
+		8F1BE52E1CF96E5E008E9D73 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */; };
 		8F3A27FA1CF602A800999200 /* FUTURAL.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E41CF602A800999200 /* FUTURAL.TTF */; };
 		8F3A27FB1CF602A800999200 /* FUTURALI.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E51CF602A800999200 /* FUTURALI.TTF */; };
 		8F3A27FC1CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */; };
@@ -537,7 +545,6 @@
 		A9A944561AD2835A00ECD958 /* OMChangeTypeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9A944551AD2835A00ECD958 /* OMChangeTypeCell.m */; };
 		A9A944591AD2879E00ECD958 /* OMEventListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9A944581AD2879E00ECD958 /* OMEventListCell.m */; };
 		A9ACFF0B1AD7AC6600500360 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A9ACFF0A1AD7AC6600500360 /* libstdc++.6.dylib */; };
-		A9ACFF0D1AD7AFD600500360 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9ACFF0C1AD7AFD500500360 /* Bolts.framework */; };
 		A9AEACFC1ADC16030069C08A /* OMLikersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9AEACFB1ADC16030069C08A /* OMLikersViewController.m */; };
 		A9AEACFF1ADC3C3C0069C08A /* OMProfileInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9AEACFE1ADC3C3C0069C08A /* OMProfileInfoCell.m */; };
 		A9AEAD021ADC5A790069C08A /* OMPushServiceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A9AEAD011ADC5A790069C08A /* OMPushServiceManager.m */; };
@@ -1166,7 +1173,6 @@
 		3EC57A7B1AB999F9005BDE7C /* PBJVision.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBJVision.m; sourceTree = "<group>"; };
 		3EC57A7C1AB999F9005BDE7C /* PBJVisionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PBJVisionUtilities.h; sourceTree = "<group>"; };
 		3EC57A7D1AB999F9005BDE7C /* PBJVisionUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PBJVisionUtilities.m; sourceTree = "<group>"; };
-		3EC625191AB3604700F3F36B /* FBAudienceNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBAudienceNetwork.framework; sourceTree = "<group>"; };
 		3EC6251A1AB3604700F3F36B /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		3EC6251B1AB3604700F3F36B /* ParseCrashReporting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseCrashReporting.framework; sourceTree = "<group>"; };
 		3EC6251D1AB3604700F3F36B /* ParseUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseUI.framework; sourceTree = "<group>"; };
@@ -1188,6 +1194,17 @@
 		6C9CA1CA1B46743F00806F96 /* tutorial.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = tutorial.mp4; sourceTree = "<group>"; };
 		6CD6E7661B5B3F650074578C /* OMSocialEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSocialEvent.h; sourceTree = "<group>"; };
 		6CD6E7671B5B3F650074578C /* OMSocialEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSocialEvent.m; sourceTree = "<group>"; };
+		8F18CAB61CF78E90005021BB /* FTWCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTWCache.h; sourceTree = "<group>"; };
+		8F18CAB71CF78E90005021BB /* FTWCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTWCache.m; sourceTree = "<group>"; };
+		8F18CAB81CF78E90005021BB /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
+		8F18CAB91CF78E90005021BB /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
+		8F18CAC51CF8246B005021BB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
+		8F18CAC71CF82474005021BB /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
+		8F18CAD51CF82700005021BB /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		8F1BE51D1CF8BD45008E9D73 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
+		8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleSignIn.bundle; sourceTree = "<group>"; };
+		8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
 		8F3A27E41CF602A800999200 /* FUTURAL.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURAL.TTF; sourceTree = "<group>"; };
 		8F3A27E51CF602A800999200 /* FUTURALI.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURALI.TTF; sourceTree = "<group>"; };
 		8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HELVETICA NEUE CE 75 BOLD.TTF"; sourceTree = "<group>"; };
@@ -1241,7 +1258,6 @@
 		A9A944571AD2879E00ECD958 /* OMEventListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMEventListCell.h; sourceTree = "<group>"; };
 		A9A944581AD2879E00ECD958 /* OMEventListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMEventListCell.m; sourceTree = "<group>"; };
 		A9ACFF0A1AD7AC6600500360 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "usr/lib/libstdc++.6.dylib"; sourceTree = SDKROOT; };
-		A9ACFF0C1AD7AFD500500360 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
 		A9AEACFA1ADC16030069C08A /* OMLikersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMLikersViewController.h; path = Controller/OMLikersViewController.h; sourceTree = "<group>"; };
 		A9AEACFB1ADC16030069C08A /* OMLikersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMLikersViewController.m; path = Controller/OMLikersViewController.m; sourceTree = "<group>"; };
 		A9AEACFD1ADC3C3C0069C08A /* OMProfileInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMProfileInfoCell.h; sourceTree = "<group>"; };
@@ -1271,6 +1287,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F18CAD91CF8294E005021BB /* SafariServices.framework in Frameworks */,
+				8F18CAD61CF82700005021BB /* libz.tbd in Frameworks */,
+				8F18CAC61CF8246B005021BB /* AddressBook.framework in Frameworks */,
 				3C5E7EEB19766B9F000550F6 /* SystemConfiguration.framework in Frameworks */,
 				E4B0BA8D1C3E09C600F6CCB9 /* CoreText.framework in Frameworks */,
 				3C5E7E85197628DF000550F6 /* CoreGraphics.framework in Frameworks */,
@@ -1280,12 +1299,13 @@
 				3CD567E2199AE92600EC44A5 /* Twitter.framework in Frameworks */,
 				1F39C80E1B3ADA8B00FA9FCE /* FacebookSDK.framework in Frameworks */,
 				3CD567E0199AE91E00EC44A5 /* MessageUI.framework in Frameworks */,
+				8F1BE51E1CF8BD45008E9D73 /* Bolts.framework in Frameworks */,
 				3C5E7EDD19766B9F000550F6 /* Accounts.framework in Frameworks */,
+				8F1BE52E1CF96E5E008E9D73 /* GoogleSignIn.framework in Frameworks */,
 				3C5E7EDE19766B9F000550F6 /* AdSupport.framework in Frameworks */,
 				3C5E7EDF19766B9F000550F6 /* AssetsLibrary.framework in Frameworks */,
 				3C5E7EE019766B9F000550F6 /* AudioToolbox.framework in Frameworks */,
 				3C5E7EE119766B9F000550F6 /* AVFoundation.framework in Frameworks */,
-				A9ACFF0D1AD7AFD600500360 /* Bolts.framework in Frameworks */,
 				3C5E7EE219766B9F000550F6 /* CFNetwork.framework in Frameworks */,
 				3EC625241AB3604700F3F36B /* ParseUI.framework in Frameworks */,
 				3C5E7EE319766B9F000550F6 /* CoreLocation.framework in Frameworks */,
@@ -1298,7 +1318,6 @@
 				3C5E7EE919766B9F000550F6 /* Social.framework in Frameworks */,
 				3C5E7EEA19766B9F000550F6 /* StoreKit.framework in Frameworks */,
 				E43C88021C8E735200FE77FF /* Crittercism.framework in Frameworks */,
-				3EC625201AB3604700F3F36B /* FBAudienceNetwork.framework in Frameworks */,
 				1F39C80C1B3A898000FA9FCE /* ParseFacebookUtils.framework in Frameworks */,
 				3C5E7E87197628DF000550F6 /* UIKit.framework in Frameworks */,
 				3EC625211AB3604700F3F36B /* Parse.framework in Frameworks */,
@@ -1645,6 +1664,9 @@
 		3C5E7E81197628DF000550F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F18CAD51CF82700005021BB /* libz.tbd */,
+				8F18CAC71CF82474005021BB /* SafariServices.framework */,
+				8F18CAC51CF8246B005021BB /* AddressBook.framework */,
 				E4B0BA8C1C3E09C600F6CCB9 /* CoreText.framework */,
 				E4B0BA8A1C3D116300F6CCB9 /* CoreData.framework */,
 				A9ACFF0A1AD7AC6600500360 /* libstdc++.6.dylib */,
@@ -1694,6 +1716,7 @@
 		3C5E7E89197628DF000550F6 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */,
 				3C5E7E8A197628DF000550F6 /* ICYMI-Info.plist */,
 				3C5E7E8B197628DF000550F6 /* InfoPlist.strings */,
 				3C5E7E8E197628DF000550F6 /* main.m */,
@@ -1723,6 +1746,7 @@
 		3C5E7EC0197651E3000550F6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				3C0A5C431978FB37009AEC85 /* SocialCommunications */,
 				3C12844B1978D6C400EB7744 /* Common */,
 				6C9CA1C11B46641C00806F96 /* Guide */,
 				3EB718EB1ABF54690050E2D2 /* Feed */,
@@ -1733,19 +1757,9 @@
 				3C3D713D199A6BF500DBD54E /* SlideMenu */,
 				3C3D713C199A6BD100DBD54E /* HomeGroup */,
 				3C0283B2198951D600EA3864 /* Views */,
+				8F18CABC1CF82205005021BB /* OthersController */,
 				3C3D713B199A6BC200DBD54E /* LogIn */,
-				3CB78B581978F2F000D12B34 /* OMNewPostViewController.h */,
-				3CB78B591978F2F000D12B34 /* OMNewPostViewController.m */,
-				3C4059B9198B8EA50024C1AD /* OMPreviewPhotoViewController.h */,
-				3C4059BA198B8EA50024C1AD /* OMPreviewPhotoViewController.m */,
-				3C0283C2198973FC00EA3864 /* OMPhotoViewController.h */,
-				3C0283C3198973FC00EA3864 /* OMPhotoViewController.m */,
-				3CB78B5B1978F30A00D12B34 /* OMEventListViewController.h */,
-				3CB78B5C1978F30A00D12B34 /* OMEventListViewController.m */,
-				3C02922F197F5C2E0007ECCD /* OMAddFriendViewController.h */,
-				3C029230197F5C2E0007ECCD /* OMAddFriendViewController.m */,
 				3C1284441978C8E800EB7744 /* Cells */,
-				3C0A5C431978FB37009AEC85 /* SocialCommunications */,
 				A9E986E71B2241D900B1BB92 /* OMPrivacyVC.h */,
 				A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */,
 			);
@@ -1755,6 +1769,7 @@
 		3C5E7EC1197651E3000550F6 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				8F18CAB51CF78E90005021BB /* FTWCache */,
 				E42F747B1C8ACEC20008CC38 /* Reachability */,
 				E4B0BA8E1C3E0FA100F6CCB9 /* PDFRenderer */,
 				0A8E1E711B8725DB0043A6BA /* Vertigo */,
@@ -2315,11 +2330,12 @@
 		3EC625161AB3604700F3F36B /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */,
+				8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */,
+				8F1BE51D1CF8BD45008E9D73 /* Bolts.framework */,
 				E43C88011C8E735200FE77FF /* Crittercism.framework */,
 				1F39C80D1B3ADA8B00FA9FCE /* FacebookSDK.framework */,
 				1F39C80B1B3A898000FA9FCE /* ParseFacebookUtils.framework */,
-				A9ACFF0C1AD7AFD500500360 /* Bolts.framework */,
-				3EC625191AB3604700F3F36B /* FBAudienceNetwork.framework */,
 				3EC6251A1AB3604700F3F36B /* Parse.framework */,
 				3EC6251B1AB3604700F3F36B /* ParseCrashReporting.framework */,
 				3EC6251D1AB3604700F3F36B /* ParseUI.framework */,
@@ -2354,6 +2370,34 @@
 				6C9CA1CA1B46743F00806F96 /* tutorial.mp4 */,
 			);
 			path = Video;
+			sourceTree = "<group>";
+		};
+		8F18CAB51CF78E90005021BB /* FTWCache */ = {
+			isa = PBXGroup;
+			children = (
+				8F18CAB61CF78E90005021BB /* FTWCache.h */,
+				8F18CAB71CF78E90005021BB /* FTWCache.m */,
+				8F18CAB81CF78E90005021BB /* NSString+MD5.h */,
+				8F18CAB91CF78E90005021BB /* NSString+MD5.m */,
+			);
+			path = FTWCache;
+			sourceTree = "<group>";
+		};
+		8F18CABC1CF82205005021BB /* OthersController */ = {
+			isa = PBXGroup;
+			children = (
+				3CB78B581978F2F000D12B34 /* OMNewPostViewController.h */,
+				3CB78B591978F2F000D12B34 /* OMNewPostViewController.m */,
+				3C4059B9198B8EA50024C1AD /* OMPreviewPhotoViewController.h */,
+				3C4059BA198B8EA50024C1AD /* OMPreviewPhotoViewController.m */,
+				3C0283C2198973FC00EA3864 /* OMPhotoViewController.h */,
+				3C0283C3198973FC00EA3864 /* OMPhotoViewController.m */,
+				3CB78B5B1978F30A00D12B34 /* OMEventListViewController.h */,
+				3CB78B5C1978F30A00D12B34 /* OMEventListViewController.m */,
+				3C02922F197F5C2E0007ECCD /* OMAddFriendViewController.h */,
+				3C029230197F5C2E0007ECCD /* OMAddFriendViewController.m */,
+			);
+			name = OthersController;
 			sourceTree = "<group>";
 		};
 		8F3A27E31CF602A800999200 /* Font */ = {
@@ -2498,6 +2542,7 @@
 				3CC691A2199FBE350064B4D0 /* GL.png in Resources */,
 				3CC69201199FBE350064B4D0 /* PL.png in Resources */,
 				3EB66C971AB6186700E90054 /* record_close_disable@2x.png in Resources */,
+				8F1BE5201CF8E04C008E9D73 /* GoogleService-Info.plist in Resources */,
 				8F3A28021CF602A800999200 /* Roboto-Bold.ttf in Resources */,
 				3CC69176199FBE350064B4D0 /* CD.png in Resources */,
 				3EB66CC51AB6186700E90054 /* record_tool_normal@2x.png in Resources */,
@@ -2754,6 +2799,7 @@
 				3CC691C5199FBE350064B4D0 /* KM.png in Resources */,
 				3CC691BC199FBE350064B4D0 /* IT.png in Resources */,
 				3CC6918D199FBE350064B4D0 /* EE.png in Resources */,
+				8F1BE52D1CF96E5E008E9D73 /* GoogleSignIn.bundle in Resources */,
 				3CC691EF199FBE350064B4D0 /* NC.png in Resources */,
 				3CC691FB199FBE350064B4D0 /* PA.png in Resources */,
 				3CC69196199FBE350064B4D0 /* FM.png in Resources */,
@@ -2945,6 +2991,7 @@
 				3EABA90D1AB893B900EBD7B0 /* OMChangePasswordViewController.m in Sources */,
 				3EC57A7F1AB999F9005BDE7C /* PBJVisionUtilities.m in Sources */,
 				3C3402521979290D00AFC3BC /* UIRefreshControl+AFNetworking.m in Sources */,
+				8F18CABA1CF78E90005021BB /* FTWCache.m in Sources */,
 				3EB66CD41AB6186700E90054 /* SBVideoRecorder.m in Sources */,
 				3C2EE60F1981758D00733EED /* OMMiddleCell.m in Sources */,
 				3C34024A1979290D00AFC3BC /* AFURLResponseSerialization.m in Sources */,
@@ -2999,6 +3046,7 @@
 				3C4D1F3B1987A298001622B7 /* SlideNavigationContorllerAnimatorScale.m in Sources */,
 				A9193FC71AD0F74A00692A50 /* OMDetailHeaderCell.m in Sources */,
 				3C4D1F411987A298001622B7 /* SlideNavigationController.m in Sources */,
+				8F18CABB1CF78E90005021BB /* NSString+MD5.m in Sources */,
 				0AB87A6D1B81FFBB009EC78B /* UzysGroupPickerView.m in Sources */,
 				0AB87A6C1B81FFBB009EC78B /* UzysAssetsViewCell.m in Sources */,
 				3C3402491979290D00AFC3BC /* AFURLRequestSerialization.m in Sources */,
@@ -3139,6 +3187,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Library",
+					..,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
@@ -3146,7 +3195,7 @@
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-Objc";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
 				PROVISIONING_PROFILE = "dc278ddf-0ce8-4b1c-8471-ebb6f041e803";
@@ -3166,6 +3215,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Library",
+					..,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
@@ -3173,7 +3223,7 @@
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "-Objc";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
 				PROVISIONING_PROFILE = "1461bcb3-545a-4e5b-aaee-171218c378eb";

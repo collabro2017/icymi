@@ -40,7 +40,7 @@
     [lblForUsername setText:user.username];
 
     
-//    if ([user[@"loginType"] isEqualToString:@"email"]) {
+//    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
 //        PFFile *profileImgFile = (PFFile *)user[@"ProfileImage"];
 //        
 //        if (profileImgFile) {
@@ -54,7 +54,7 @@
 //        [lblForUsername setText:user[@"Name"]];
 //    }
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];

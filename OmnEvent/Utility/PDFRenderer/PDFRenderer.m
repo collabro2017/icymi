@@ -88,7 +88,7 @@
     PFObject *currentObj = obj;
     PFUser* user = currentObj[@"user"];
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         
@@ -195,8 +195,8 @@
         
         [commenter fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
             if (!error) {
-                NSLog(@"%@",commenter.username);
-                if ([commenter[@"loginType"] isEqualToString:@"email"]) {
+               
+                if ([commenter[@"loginType"] isEqualToString:@"email"] || [commenter[@"loginType"] isEqualToString:@"gmail"]) {
                     PFFile *avatarFile = (PFFile *)commenter[@"ProfileImage"];
                     if (avatarFile) {
                         UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];
@@ -267,7 +267,7 @@
     int nCurrOffset = nCurrentOffset;
     float rScale = 612.0f / 320;
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];
@@ -465,7 +465,7 @@
     }
     //
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         
@@ -572,9 +572,9 @@
                         
                         PFUser *temp_commenter = (PFUser *)objects[0];
                         
-                        NSLog(@"%@",temp_commenter.username);
                         
-                        if ([temp_commenter[@"loginType"] isEqualToString:@"email"]) {
+                        
+                        if ([temp_commenter[@"loginType"] isEqualToString:@"email"] || [temp_commenter[@"loginType"] isEqualToString:@"gmail"]) {
                             
                             PFFile *avatarFile = (PFFile *)temp_commenter[@"ProfileImage"];
                             
@@ -622,7 +622,7 @@
                         
                         NSLog(@"%@",commenter.username);
                         
-                        if ([commenter[@"loginType"] isEqualToString:@"email"]) {
+                        if ([commenter[@"loginType"] isEqualToString:@"email"] || [commenter[@"loginType"] isEqualToString:@"gmail"]) {
                             PFFile *avatarFile = (PFFile *)commenter[@"ProfileImage"];
                             if (avatarFile) {
                                 UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];

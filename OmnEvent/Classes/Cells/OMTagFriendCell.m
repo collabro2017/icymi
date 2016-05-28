@@ -43,7 +43,7 @@
 
 //    user = object[@"Commenter"];
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];
@@ -57,7 +57,7 @@
 
     
     
-//    if ([user[@"loginType"] isEqualToString:@"email"]) {
+//    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
 //        PFFile *profileImgFile = (PFFile *)object[@"ProfileImage"];
 //        
 //        if (profileImgFile) {

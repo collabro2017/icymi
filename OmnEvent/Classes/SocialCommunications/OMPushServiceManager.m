@@ -36,6 +36,8 @@
     
 //    [innerQuery whereKey:@"objectId" containedIn:userList];
     
+    
+    
     PFQuery *query = [PFInstallation query];
     [query whereKey:@"userID" containedIn:userList];
     PFPush *push = [[PFPush alloc] init];

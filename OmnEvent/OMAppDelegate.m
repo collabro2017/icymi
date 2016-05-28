@@ -19,6 +19,7 @@
 #import "OMSocialEvent.h"
 #import <Crittercism/Crittercism.h>
 
+#import <GoogleSignIn/GoogleSignIn.h>
 
 // Test
 
@@ -27,8 +28,7 @@
 
 //////   Real
 #define PARSE_APP_ID      @"fXthztgrwB3gdmQ5TNGL4DVNRzaZJWgoeIBH6lVD"
-#define CLIENT_KEY  @"CCSj4mz2TxK2lVJxARaFPaKSj8btTG3loZhtg9II"
-
+#define CLIENT_KEY        @"CCSj4mz2TxK2lVJxARaFPaKSj8btTG3loZhtg9II"
 
 @implementation OMAppDelegate
 
@@ -74,7 +74,12 @@
         installation.badge = 0;
         [installation saveInBackground];
         
-    }   
+    }
+    
+    //Google Email Login
+    
+    [GIDSignIn sharedInstance].clientID = KEY_GOOGLE_CLIENTID;
+    //[GIDSignIn sharedInstance].delegate = self;
     
     //Enable public read access by default, with any newly created PFObjects belonging to the current user
     
@@ -193,10 +198,41 @@
     }
 }
 
+// For iOS 8.0 and Older
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    return [FBAppCall handleOpenURL:url sourceApplication:sourceApplication withSession:[PFFacebookUtils session]];
+   // for temporatly - unknown issue
+    if([[url absoluteString] containsString:@"denied"]
+       && [[url absoluteString] containsString:@"com.googleusercontent.apps"])
+    {
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"HideMBProgressView" object:nil];
+        return NO;
+    }
+    BOOL googleSignInFlag = [[GIDSignIn sharedInstance] handleURL:url
+                                              sourceApplication:sourceApplication
+                                                     annotation:annotation];
+    
+    BOOL facebookSignInFlag = [FBAppCall handleOpenURL:url
+                                    sourceApplication:sourceApplication
+                                          withSession:[PFFacebookUtils session]];
+    
+    return facebookSignInFlag || googleSignInFlag;
 }
+//// For iOS 8.0 and new
+//- (BOOL)application:(UIApplication *)app
+//            openURL:(NSURL *)url
+//            options:(NSDictionary *)options {
+//    
+//    BOOL googleSignInFlag = [[GIDSignIn sharedInstance] handleURL:url
+//                                                sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+//                                                       annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+//
+//    BOOL facebookSigInFlag = [FBAppCall handleOpenURL:url
+//                                    sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+//                                          withSession:[PFFacebookUtils session]];
+//
+//    return googleSignInFlag || facebookSigInFlag;
+//}
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
@@ -250,8 +286,6 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
-    //NSLog(@"-------notification received --------%@", userInfo);
-    
     if ([userInfo objectForKey:@"request"]) {
         [[NSNotificationCenter defaultCenter] postNotificationName:kShowBadgeOnEvent object:nil userInfo:userInfo];
     }

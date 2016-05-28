@@ -23,6 +23,7 @@
     
     int              count;
     int              ticks;
+    int              limitedRecord;
     BOOL             isRecording;
     
     NSString        *fileName;
@@ -37,8 +38,14 @@
 
 - (void)useAudio {
     
-    recordedData = [NSData dataWithContentsOfURL:outputFileURL];
     
+    if( limitedRecord < MIN_AUDIO_DUR )
+    {
+        [OMGlobal showAlertTips:[NSString stringWithFormat:@"Record length needs over %is.", (int)MIN_AUDIO_DUR] title:@"Alert"];
+        return;
+    }
+    
+    recordedData = [NSData dataWithContentsOfURL:outputFileURL];
     if (recordedData) {
         
         OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
@@ -66,6 +73,7 @@
     isRecording = NO;
     ticks = 0;
     count = 0;
+    limitedRecord = 0;
     
     [lblForRecordTime setHidden:YES];
     
@@ -188,9 +196,6 @@
             isRecording = YES;
         }
         
-        if (isRecording) {
-            NSMutableArray *images = [[NSMutableArray alloc] init];
-        }
         
     } else {
         
@@ -277,10 +282,10 @@
     [audioRecorder updateMeters];
     NSLog(@"Average input: %f Peak input: %f", [audioRecorder averagePowerForChannel:0], [audioRecorder peakPowerForChannel:0]);
     
-    float linear = pow (10, [audioRecorder peakPowerForChannel:0] / 20);
-    NSLog(@"linear===%f",linear);
+    //float linear = pow (10, [audioRecorder peakPowerForChannel:0] / 20);
+    //NSLog(@"linear===%f",linear);
     float linear1 = pow (10, [audioRecorder averagePowerForChannel:0] / 20);
-    NSLog(@"linear1===%f",linear1);
+    //NSLog(@"linear1===%f",linear1);
     
     if (linear1>0.03) {
         
@@ -291,11 +296,13 @@
     }
     //Pitch =linear1;
     NSLog(@"Pitch==%f",Pitch);
-    viewForStatus.value = Pitch;//linear1+.30;
-    float minutes = floor(audioRecorder.currentTime/60);
-    float seconds = audioRecorder.currentTime - (minutes * 60);
     
-    NSString *time = [NSString stringWithFormat:@"%0.0f.%0.0f",minutes, seconds];
+    viewForStatus.value = Pitch;//linear1+.30;
+    
+    //float minutes = floor(audioRecorder.currentTime/60);
+    //float seconds = audioRecorder.currentTime - (minutes * 60);
+    
+    //NSString *time = [NSString stringWithFormat:@"%0.0f.%0.0f",minutes, seconds];
     NSLog(@"recording");
     
 }
@@ -305,13 +312,13 @@
     if (audioRecorder.recording) {
         
         ticks++;
-        NSString *strForTime = [NSString stringWithFormat:@"%02d:%02d:%02d",ticks/3600,(ticks%3600)/60,(ticks%3600)%60];
+        limitedRecord = ticks;
+        NSString *strForTime = [NSString stringWithFormat:@"%02d:%02d:%02d",ticks/3600,(ticks%3600)/60,(ticks%3600) % 60];
         [lblForRecordTime setText:strForTime];
         
-        if (ticks == 10 && isRecording) {
+        if (ticks >= MAX_AUDIO_DUR && isRecording) {
             
             [self stopRecording];
-            
             [self useAudio];
         }
     }

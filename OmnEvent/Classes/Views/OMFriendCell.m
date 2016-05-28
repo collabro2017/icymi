@@ -92,7 +92,7 @@
     
     if (user[@"Location"] != NULL) [lblForLocation setText:user[@"Location"]];
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];
@@ -168,7 +168,7 @@
     _currentObj = obj;
     user = (PFUser *)_currentObj;
     [lblForUsername setText:user.username];
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];
@@ -192,7 +192,7 @@
 
     [lblForUsername setText:user.username];
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];

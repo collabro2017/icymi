@@ -31,8 +31,8 @@
     
     [_currentUser fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if (!error) {
-            NSLog(@"%@",_currentUser.username);
-            if ([_currentUser[@"loginType"] isEqualToString:@"email"]) {
+            
+            if ([_currentUser[@"loginType"] isEqualToString:@"email"] || [_currentUser[@"loginType"] isEqualToString:@"gmail"]) {
                 PFFile *avatarFile = (PFFile *)_currentUser[@"ProfileImage"];
                 if (avatarFile) {
                     [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:_imageViewForProfile];
@@ -59,7 +59,7 @@
     
     _currentUser = _currentObj[@"Commenter"];
     
-    if ([_currentUser[@"loginType"] isEqualToString:@"email"]) {
+    if ([_currentUser[@"loginType"] isEqualToString:@"email"] || [_currentUser[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)_currentUser[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:_imageViewForProfile];
@@ -98,7 +98,7 @@
             
             [_lblForUsername setText:_currentUser.username];
             
-            if ([_currentUser[@"loginType"] isEqualToString:@"email"]) {
+            if ([_currentUser[@"loginType"] isEqualToString:@"email"] || [_currentUser[@"loginType"] isEqualToString:@"gmail"]) {
                 PFFile *avatarFile = (PFFile *)_currentUser[@"ProfileImage"];
                 if (avatarFile) {
                     [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:_imageViewForProfile];

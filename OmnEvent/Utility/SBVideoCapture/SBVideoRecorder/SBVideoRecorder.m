@@ -162,12 +162,16 @@
     self.countDurTimer = nil;
 }
 
+- (void)outMediaFile:(NSURL*)filePath
+{
+ 
+}
 
-/*!
- */
+
 - (void)mergeAndExportVideosAtFileURLs:(NSArray *)fileURLArray
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+       
         NSError *error = nil;
         
         CGSize renderSize = CGSizeMake(0, 0);
@@ -183,7 +187,7 @@
         NSMutableArray *assetArray = [[NSMutableArray alloc] init];
         for (NSURL *fileURL in fileURLArray) {
             AVAsset *asset = [AVAsset assetWithURL:fileURL];
-            
+
             if (!asset) {
                 continue;
             }
@@ -200,15 +204,25 @@
         CGFloat renderW = MIN(renderSize.width, renderSize.height);
         
         for (int i = 0; i < [assetArray count] && i < [assetTrackArray count]; i++) {
+          
             
-            AVAsset *asset = [assetArray objectAtIndex:i];
+            AVAsset *asset = (AVAsset*)[assetArray objectAtIndex:i];
             AVAssetTrack *assetTrack = [assetTrackArray objectAtIndex:i];
             
-            AVMutableCompositionTrack *audioTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
-            [audioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration)
-                                ofTrack:[[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0]
-                                 atTime:totalDuration
-                                  error:nil];
+            if ([[asset tracksWithMediaType:AVMediaTypeAudio] count] > 0)
+            {
+                AVMutableCompositionTrack *audioTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeAudio preferredTrackID:kCMPersistentTrackID_Invalid];
+                
+                [audioTrack insertTimeRange:CMTimeRangeMake(kCMTimeZero, asset.duration)
+                                    ofTrack:[[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0]
+                                     atTime:totalDuration
+                                      error:&error];
+            }
+            else
+            {
+                NSLog(@"There is not audio file");
+            }
+            
             
             AVMutableCompositionTrack *videoTrack = [mixComposition addMutableTrackWithMediaType:AVMediaTypeVideo preferredTrackID:kCMPersistentTrackID_Invalid];
             
@@ -226,7 +240,9 @@
             rate = renderW / MIN(assetTrack.naturalSize.width, assetTrack.naturalSize.height);
             
             CGAffineTransform layerTransform = CGAffineTransformMake(assetTrack.preferredTransform.a, assetTrack.preferredTransform.b, assetTrack.preferredTransform.c, assetTrack.preferredTransform.d, assetTrack.preferredTransform.tx * rate, assetTrack.preferredTransform.ty * rate);
+            
             layerTransform = CGAffineTransformConcat(layerTransform, CGAffineTransformMake(1, 0, 0, 1, 0, -(assetTrack.naturalSize.width - assetTrack.naturalSize.height) / 2.0));//
+            
             layerTransform = CGAffineTransformScale(layerTransform, rate, rate);//
             
             [layerInstruciton setTransform:layerTransform atTime:kCMTimeZero];
@@ -248,7 +264,7 @@
         mainCompositionInst.frameDuration = CMTimeMake(1, 30);
         mainCompositionInst.renderSize = CGSizeMake(renderW, renderW);
         
-        AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition presetName:AVAssetExportPresetMediumQuality];
+        AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:mixComposition presetName:AVAssetExportPresetMediumQuality];//AVAssetExportPresetMediumQuality
         exporter.videoComposition = mainCompositionInst;
         exporter.outputURL = mergeFileURL;
         exporter.outputFileType = AVFileTypeMPEG4;
@@ -263,6 +279,10 @@
     });
 }
 
+- (void)makeOutPutAVData:(NSURL*) fileURLPath
+{
+    
+}
 - (AVCaptureDevice *)getCameraDevice:(BOOL)isFront
 {
     NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
@@ -476,10 +496,9 @@
 - (void)startRecordingToOutputFileURL:(NSURL *)fileURL
 {
     if (_totalVideoDur >= MAX_VIDEO_DUR) {
-        NSLog(@"");
         return;
     }
-    
+    _movieFileOutput.movieFragmentInterval = CMTimeMake(MAX_VIDEO_DUR + 1, 1);
     [_movieFileOutput startRecordingToOutputFileURL:fileURL recordingDelegate:self];
 }
 
@@ -555,12 +574,16 @@
 
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error
 {
-    self.totalVideoDur += _currentVideoDur;
+    self.totalVideoDur = 0;
     
     if (!error) {
         SBVideoData *data = [[SBVideoData alloc] init];
         data.duration = _currentVideoDur;
-        data.fileURL = outputFileURL;        
+        data.fileURL = outputFileURL;
+        
+        // This will make one Record file from Camera.
+        [_videoFileDataArray removeAllObjects];
+        // Always this is added on empty array.
         [_videoFileDataArray addObject:data];
     }
     

@@ -278,7 +278,7 @@
     [super viewDidAppear:animated];
     
     if (USER) {
-        if ([USER[@"loginType"] isEqualToString:@"email"]) {
+        if ([USER[@"loginType"] isEqualToString:@"email"] || [USER[@"loginType"] isEqualToString:@"gmail"]) {
             
             
             PFFile *avatarFile = (PFFile *)USER[@"ProfileImage"];

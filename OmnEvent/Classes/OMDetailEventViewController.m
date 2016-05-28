@@ -87,7 +87,7 @@
 - (void)reload:(__unused id)sender
 {
     [(UIRefreshControl*)sender beginRefreshing];
-    editable_flag = YES;
+    [GlobalVar getInstance].isPosting = YES;
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
     [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
     [mainQuery includeKey:@"user"];
@@ -96,7 +96,7 @@
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        editable_flag = NO;
+        [GlobalVar getInstance].isPosting = NO;
         [(UIRefreshControl*)sender endRefreshing];
         if (error || !objects) {
             return;
@@ -160,7 +160,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShow:) name:kNotificationKeyboardShow object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHide:) name:kNotificationKeyboardHide object:nil];
     
-    editable_flag = NO;
+    [GlobalVar getInstance].isPosting = NO;
     currentMediaCell = nil;
     curEventIndex = [GlobalVar getInstance].gEventIndex;
     
@@ -169,9 +169,7 @@
     // DetailEvent contents Loading...
     [self loadContents];
     arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
-    
-    
-    
+  
     
 }
 
@@ -214,7 +212,7 @@
 
 - (void)keyboardShow:(NSNotification *)notification {
     
-    editable_flag = YES;
+    [GlobalVar getInstance].isPosting = YES;
     
     NSDictionary *messageInfo = [notification userInfo];
     
@@ -248,7 +246,7 @@
     
     [tblForDetailList scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:TRUE];
     
-    editable_flag = NO;
+    [GlobalVar getInstance].isPosting = NO;
 }
 
 - (void)initializeControls {
@@ -343,7 +341,7 @@
 - (void)loadContents {
    
     if(currentObject == nil) return;
-    editable_flag = YES;
+    [GlobalVar getInstance].isPosting = YES;
     [tblForDetailList setContentOffset:CGPointZero animated:NO];
 
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
@@ -366,8 +364,9 @@
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
         [GlobalVar getInstance].isPostLoading = NO;
-        editable_flag = NO;
+        [GlobalVar getInstance].isPosting = NO;
   
         if (error == nil) {
             
@@ -540,7 +539,7 @@
             [btnForNetState setImage:btnImage forState:UIControlStateNormal];
             
             for(PFObject* post in appDel.m_offlinePosts){
-                editable_flag = YES;
+                [GlobalVar getInstance].isPosting = YES;
                 //Request a background execution task to allow us to finish uploading the photo even if the app is background
                 self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
@@ -550,7 +549,7 @@
                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                    editable_flag = NO;
+                    [GlobalVar getInstance].isPosting = NO;
                     if (succeeded) {
                         NSLog(@"Success ---- Post");
                         
@@ -818,10 +817,10 @@
     }
     NSLog(@"Newly added friends: %@", arrAdds);
     NSLog(@"Deleted friends: %@", arrDels);
-    editable_flag = YES;
+    [GlobalVar getInstance].isPosting = YES;
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
         
-        editable_flag = NO;
+        [GlobalVar getInstance].isPosting = NO;
         if(error) NSLog(@"Event updated for tag: %@", error.description);
         if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an eventBadgeFlage of Event Fields");
         
@@ -1009,6 +1008,7 @@
             
             
             NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
+            
             NSString *objectId = [temp objectForKey:@"objectId"];
             if (objectId == nil){
                 objectId = [[currentObject[@"commenters"] objectAtIndex:indexPath.row - 2] objectId];
@@ -2025,10 +2025,10 @@
                 // In Case Online Mode
                 if(appDel.network_state)
                 {
-                    editable_flag = YES;
+                    [GlobalVar getInstance].isPosting = YES;
                     [tempObejct deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                         [MBProgressHUD hideHUDForView:self.view animated:YES];
-                        editable_flag = NO;
+                        [GlobalVar getInstance].isPosting = NO;
                         if (error == nil) {
                             [self loadContents];
                             
@@ -2072,10 +2072,10 @@
                      }
                      else if([arrForDetail count] != 0 && currentCellOfflineUrl == nil)
                      {
-                         editable_flag = YES;
+                         [GlobalVar getInstance].isPosting = YES;
                         [tempObejct deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                             [MBProgressHUD hideHUDForView:self.view animated:YES];
-                            editable_flag = NO;
+                            [GlobalVar getInstance].isPosting = NO;
                             if (error == nil) {
                                 
                                 [self loadContents];
@@ -2112,10 +2112,10 @@
                 [hud setLabelText:@"Deleting..."];
                 [hud show:YES];
                 
-                editable_flag = YES;
+                [GlobalVar getInstance].isPosting = YES;
                 [currentObject deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     [hud hide:YES];
-                    editable_flag = NO;
+                    [GlobalVar getInstance].isPosting = NO;
                     if (succeeded) {
                         
                         // for me
@@ -2353,7 +2353,7 @@
         //        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
     
-     if (!editable_flag || ![GlobalVar getInstance].isPosting){
+     if (![GlobalVar getInstance].isPosting){
      
          [self reloadContents];
          

@@ -38,7 +38,7 @@
     currentUser = [PFUser currentUser];
     [btnForDone setHidden:YES];
 
-//    [countryPicker setHidden:YES];
+//  [countryPicker setHidden:YES];
     pickerFrame = countryPicker.frame;
     [countryPicker setFrame:CGRectMake(0, 568, 320, 162)];
     countryPicker.tag = 20;
@@ -52,7 +52,7 @@
     txtForCountry.delegate = self;
     txtForGender.delegate = self;
     
-//    [btnForDone setFrame:CGRectMake(self.view.frame.size.width - btnForDone.frame.size.width + 20,  , <#CGFloat width#>, <#CGFloat height#>)]
+
     // Do any additional setup after loading the view.
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
@@ -78,7 +78,7 @@
     currentUser[@"Gender"] = lblForGender.text;
     
     
-    // Name , Gender, Age, City, State, Postal Code, Email , Profile Photo;
+// Name , Gender, Age, City, State, Postal Code, Email , Profile Photo;
     
 //    currentUser[@"Age"]
     
@@ -122,16 +122,6 @@
     lblForCountry.text = name;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (IBAction)countrySelectAction:(id)sender {
     

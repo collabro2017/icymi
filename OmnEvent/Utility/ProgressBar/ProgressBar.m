@@ -17,7 +17,7 @@
 #define BAR_RED_COLOR color(224, 66, 39, 1)
 #define BAR_BG_COLOR color(38, 38, 38, 1)
 
-#define BAR_MIN_W 80
+#define BAR_MIN_W 60
 
 #define BG_COLOR color(11, 11, 11, 1)
 
@@ -106,6 +106,7 @@
 #pragma mark - method
 - (void)startShining
 {
+    
     self.shiningTimer = [NSTimer scheduledTimerWithTimeInterval:TIMER_INTERVAL target:self selector:@selector(onTimer:) userInfo:nil repeats:YES];
 }
 
@@ -114,10 +115,19 @@
     [_shiningTimer invalidate];
     self.shiningTimer = nil;
     _progressIndicator.alpha = 1;
+    
+    for (UIView *bgView in _progressViewArray) {
+        [bgView removeFromSuperview];
+    }
+    [_progressViewArray removeAllObjects];
+    [self refreshIndicatorPosition];
+    
 }
 
 - (void)addProgressView
 {
+    
+    
     UIView *lastProgressView = [_progressViewArray lastObject];
     CGFloat newProgressX = 0.0f;
     

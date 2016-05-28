@@ -8,9 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
+#define HEXCOLOR(c) [UIColor colorWithRed:((c>>24)&0xFF)/255.0 green:((c>>16)&0xFF)/255.0 blue:((c>>8)&0xFF)/255.0 alpha:((c)&0xFF)/255.0]
 
+#define MIN_VIDEO_DUR 10
+#define MAX_VIDEO_DUR 60
 
-#define BADGE_TEST
+#define MIN_AUDIO_DUR 10
+#define MAX_AUDIO_DUR 60
+
+#define KEY_GOOGLE_CLIENTID @"374815263085-i2261314k94v2gchsm60lqvfktu88qee.apps.googleusercontent.com"
+#define GMAIL_SIGNIN_KEY        @"icymi.social.event!" //password
+
 
 typedef enum {
     

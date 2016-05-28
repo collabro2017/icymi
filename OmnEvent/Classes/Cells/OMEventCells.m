@@ -87,7 +87,7 @@
 
     //display avatar image
         
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];
@@ -390,7 +390,7 @@
     [user fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
         if (!error) {
             NSLog(@"%@",user.username);
-            if ([user[@"loginType"] isEqualToString:@"email"]) {
+            if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
                 PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
                 if (avatarFile) {
                     [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];

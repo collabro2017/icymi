@@ -172,7 +172,7 @@
 - (void)displayUserInfo
 {
     
-    if ([USER[@"loginType"] isEqualToString:@"email"]) {
+    if ([USER[@"loginType"] isEqualToString:@"email"] || [USER[@"loginType"] isEqualToString:@"gmail"]) {
         
         PFFile *avatarFile = (PFFile *)USER[@"ProfileImage"];
         
@@ -282,13 +282,12 @@
     USER[@"country"] = txtForCountry.text;
     USER[@"phone"] = txtForPhonenumber.text;
     USER[@"visibility"] = txtForVisiblity.text;
-    USER[@"Query"] = pfSelQuery.objectId;
+    if(pfSelQuery != nil) USER[@"Query"] =  pfSelQuery.objectId;
     USER[@"Answer"] = txtForAnswer.text;
     
     if (changedAvatarImage) {
         
-        PFFile *avatarPhoto = [PFFile fileWithData:UIImageJPEGRepresentation(changedAvatarImage, 0.8)];
-        
+        PFFile *avatarPhoto = [PFFile fileWithName:@"avatar.jpg" data:UIImageJPEGRepresentation(changedAvatarImage, 0.7)];
         USER[@"ProfileImage"] = avatarPhoto;
     }
     

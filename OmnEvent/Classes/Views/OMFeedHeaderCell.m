@@ -46,7 +46,7 @@
         _imageViewForProfile.image = nil;
     }
 
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         
         
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
