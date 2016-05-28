@@ -571,8 +571,18 @@
     
     [_progressBar stopShining];
     [_progressBar setLastProgressToWidth:0];
-    [_recorder stopCurrentVideoRecording];
+
+    if (_recorder.isRecording) {
+        [_recorder stopCurrentVideoRecording];
+    }
+    
     [MBProgressHUD showMessag:@"Processing..." toView:self.view];
+    [NSTimer scheduledTimerWithTimeInterval: 2.0 target: self selector: @selector(mergeProcessWithDelay) userInfo: nil repeats: NO];
+    
+}
+// Added some delay to protect the crash when processing just with recorded Video
+- (void) mergeProcessWithDelay
+{
     [_recorder mergeVideoFiles];
 }
 
@@ -720,7 +730,8 @@
 
         if(videoDuration > MIN_VIDEO_DUR && videoDuration < MAX_VIDEO_DUR)
         {
-            [_recorder stopCurrentVideoRecording];
+            if(_recorder.isRecording)
+                [_recorder stopCurrentVideoRecording];
         }
         if(videoDuration >= MAX_VIDEO_DUR)
         {
