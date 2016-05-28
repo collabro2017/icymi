@@ -364,6 +364,7 @@
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
         [GlobalVar getInstance].isPostLoading = NO;
         [GlobalVar getInstance].isPosting = NO;
   

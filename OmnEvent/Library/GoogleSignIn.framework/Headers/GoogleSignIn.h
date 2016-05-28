@@ -1,7 +1,7 @@
 //
 //  GoogleSignIn.h
 //
-//  Copyright 2016 Google Inc.
+//  Copyright 2015 Google Inc.
 //
 
 #ifndef GOOGLESIGNIN_H
@@ -12,5 +12,6 @@
 #import "GIDProfileData.h"
 #import "GIDSignIn.h"
 #import "GIDSignInButton.h"
+#import "UIViewController+SignIn.h"
 
 #endif

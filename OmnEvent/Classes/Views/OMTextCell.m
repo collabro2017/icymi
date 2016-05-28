@@ -45,37 +45,6 @@
     PFUser *eventUser = eventObj[@"user"];
     PFUser *self_user = [PFUser currentUser];
     
-    // for badge processing
-    if(curEventIndex  >= 0)
-    {
-        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
-        
-        if (socialTemp.badgeCount > 0 ) {
-            OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
-            if(currentObj != nil)
-            {
-                NSMutableArray *temp = [[NSMutableArray alloc] init];
-                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
-                
-                if ([temp containsObject:self_user.objectId])
-                {
-                    [temp removeObject:self_user.objectId];
-                    currentObj[@"usersBadgeFlag"] = temp;
-                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                        if(error == nil)
-                        {
-                            NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
-                        }
-                    }];
-                    
-                    if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
-                    [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
-                }
-            }
-        }
-    }
-    
-    
     NSMutableArray *arrForTagFriends = [NSMutableArray array];
     NSMutableArray *arrForTagFriendAuthorities  = [NSMutableArray array];
     
@@ -137,7 +106,7 @@
     
     //Display avatar image
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         
         if (imageViewForAvatar.image) {
             imageViewForAvatar.image = nil;
@@ -168,12 +137,45 @@
     
     NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
     [lblForTime setText:str_date];
-    
+    [lblForTime setTextColor:HEXCOLOR(0x6F7179FF)];
     
     [lblForTitle setText:currentObj[@"title"]];
     constraintForHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"description"]];
     
     [lblForDes setText:currentObj[@"description"]];
+    
+    // for badge processing
+    if(curEventIndex  >= 0)
+    {
+        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
+        
+        if (socialTemp.badgeCount > 0 ) {
+            
+            [lblForTime setTextColor:HEXCOLOR(0xFF0000FF)];
+            OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
+            if(currentObj != nil)
+            {
+                NSMutableArray *temp = [[NSMutableArray alloc] init];
+                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
+                
+                if ([temp containsObject:self_user.objectId])
+                {
+                    [temp removeObject:self_user.objectId];
+                    currentObj[@"usersBadgeFlag"] = temp;
+                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if(error == nil)
+                        {
+                            NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
+                        }
+                    }];
+                    
+                    if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
+                    [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
+                }
+            }
+        }
+    }
+
     
     // Display image
     

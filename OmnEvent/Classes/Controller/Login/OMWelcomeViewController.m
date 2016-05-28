@@ -23,9 +23,12 @@
     //Google Sign In
     [GIDSignIn sharedInstance].shouldFetchBasicProfile = YES;
     [GIDSignIn sharedInstance].delegate = self;
+    [GIDSignIn sharedInstance].uiDelegate = self;
 
     //PFUser init
     newUser = [PFUser user];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideMBProgressView) name:@"HideMBProgressView" object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -44,7 +47,7 @@
 
 - (IBAction)loginWithFBAction:(id)sender {
     
-    [MBProgressHUD showMessag:@"LogIn..." toView:self.view];
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     NSArray *arrForPermission = @[@"email",@"user_friends"];
     
@@ -187,6 +190,15 @@
 }
 
 // SignUp and SignIn with gmail
+- (IBAction)signInWithGmail:(id)sender {
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    [[GIDSignIn sharedInstance] signIn];
+}
+
+- (void)hideMBProgressView
+{
+    [MBProgressHUD hideHUDForView:self.view animated:NO];
+}
 
 - (void)registerWithGoogleMail:(GIDGoogleUser *)googleUser
 {
@@ -206,9 +218,7 @@
     // In Case with profile Image
     if(googleUser.profile.hasImage)
     {
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-
-        NSUInteger dimension = round(300 * [[UIScreen mainScreen] scale]);
+        NSUInteger dimension = round(200 * [[UIScreen mainScreen] scale]);
         profileUrl = [googleUser.profile imageURLWithDimension:dimension];
         
         // fetch profile image from URL
@@ -224,8 +234,9 @@
                 [newUser setUsername:userName];
                 [newUser setEmail:userEmail];
                 [newUser setPassword:userPassword];
+                newUser[@"name"] = userName;
                 newUser[@"loginType"] = loginType;
-                newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
+                //newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
                 
                 [MBProgressHUD showHUDAddedTo:self.view animated:YES];
                 
@@ -234,6 +245,9 @@
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     
                     if (succeeded) {
+                        
+                        NSLog(@"Login success with profile Image");
+                        
                         PFInstallation *installation = [PFInstallation currentInstallation];
                         [installation setObject:newUser forKey:@"user"];
                         [installation setObject:newUser.objectId forKey:@"userID"];
@@ -257,19 +271,23 @@
     // In Case with no profile Image
     else
     {
-        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
         
         [newUser setUsername:userName];
         [newUser setEmail:userEmail];
         [newUser setPassword:userPassword];
+        newUser[@"name"] = userName;
         newUser[@"loginType"] = loginType;
-        newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
+        //newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
+        
         // SignUp with gmail information on Parse
         [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             
             if (succeeded) {
+                
+                 NSLog(@"Login success with No profile Image");
+                
                 PFInstallation *installation = [PFInstallation currentInstallation];
                 [installation setObject:newUser forKey:@"user"];
                 [installation setObject:newUser.objectId forKey:@"userID"];
@@ -294,8 +312,7 @@
     NSString *userName = googleUser.profile.name;
     NSString *userEmail = googleUser.profile.email;
     NSString *userPassword = GMAIL_SIGNIN_KEY;
-    
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+   
     PFQuery *query = [PFUser query];
     [query whereKey:@"email" equalTo:userEmail];
     
@@ -374,16 +391,30 @@
 - (void) signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
     if(!user) [OMGlobal showAlertTips:error.localizedDescription title:@"SignIn with Gmail"];
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
     [self signInwithGoogleMail:user];
     
-    [[GIDSignIn sharedInstance] signOut];
+    NSLog(@"SignIn From Google...");
+    //[[GIDSignIn sharedInstance] signOut];
 }
 
 - (void) signIn:(GIDSignIn *)signIn didDisconnectWithUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
     NSLog(@"GoogleSignIn Delegate: gmail SignIn disConnected");
-    [MBProgressHUD hideHUDForView:self.view animated:YES];
+    //[MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
+#pragma mark - GoogleUI Signin Delegate
+- (void)signIn:(GIDSignIn *)signIn dismissViewController:(UIViewController *)viewController
+{
+    //[MBProgressHUD hideHUDForView:self.view animated:YES];
+    NSLog(@"Google SignIn ViewController dismiss...");
+}
+
+- (void)presentSignInViewController:(UIViewController *)viewController {
+    //[[self navigationController] pushViewController:viewController animated:YES];
+}
 
 @end

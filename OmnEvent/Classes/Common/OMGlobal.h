@@ -16,8 +16,8 @@
 #define MIN_AUDIO_DUR 10
 #define MAX_AUDIO_DUR 60
 
-#define KEY_GOOGLE_CLIENTID     @""
-#define GMAIL_SIGNIN_KEY        @"icymi.social.event!"
+#define KEY_GOOGLE_CLIENTID @"374815263085-i2261314k94v2gchsm60lqvfktu88qee.apps.googleusercontent.com"
+#define GMAIL_SIGNIN_KEY        @"icymi.social.event!" //password
 
 
 typedef enum {

@@ -52,7 +52,7 @@
     lblForUsername.text = currentUser.username;
     //display avatar image
     [OMGlobal setCircleView:imageViewForProfile borderColor:[UIColor greenColor]];
-    if ([currentUser[@"loginType"] isEqualToString:@"email"]) {
+    if ([currentUser[@"loginType"] isEqualToString:@"email"] || [currentUser[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)currentUser[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:imageViewForProfile displayImgView:imageViewForProfile];

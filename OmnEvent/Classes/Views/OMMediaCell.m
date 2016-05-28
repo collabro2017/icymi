@@ -133,7 +133,7 @@
     
     //Display avatar image
     
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         
         if (imageViewForAvatar.image) {
             imageViewForAvatar.image = nil;
@@ -187,7 +187,7 @@
     NSLog(@"------Current Index-----%ld", curEventIndex);
     if(curEventIndex >= 0)
     {
-        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex ];
+        OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
         
         if (socialTemp.badgeCount > 0) {
             

@@ -51,7 +51,7 @@
         [_segmentControlForType setTitle:@"Info" forSegmentAtIndex:1];
         
     }
-    if ([user[@"loginType"] isEqualToString:@"email"]) {
+    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             

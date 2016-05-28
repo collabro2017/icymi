@@ -200,39 +200,19 @@
     }];
 
 }
+
 - (void)showBadge:(NSNotification *)_notification {
-    
     NSDictionary *userInfo = _notification.userInfo;
-    
-    //NSLog(@"------------notification receive now-----------------%@", userInfo);
-    
     if ([userInfo objectForKey:@"request"]) {
         
         NSString *idOfTargetEvent = [userInfo objectForKey:@"request"];
-        
-        int i = 0;
         for (OMSocialEvent *event in arrForFeed) {
-
             if ([event.objectId isEqualToString:idOfTargetEvent]) {
-                
-                event.badgeCount++;
-                
-//                NSIndexPath *reloadIndexPath = [NSIndexPath indexPathForItem:i inSection:0];
-//                
-//                [collectionViewForFeed performBatchUpdates:^{
-//                    [collectionViewForFeed reloadItemsAtIndexPaths:[NSArray arrayWithObject:reloadIndexPath]];
-//                } completion:^(BOOL finished) {
-//                    
-//                    
-//                    NSLog(@"CollectionView reloaded");
-//                    
-//                }];
-//
-//                return;
+                PFUser *eventuser = event[@"user"];
+                if(![eventuser.objectId isEqualToString:currentUser.objectId])
+                    event.badgeNewEvent = 1;
             }
-            i++;
         }
-        
         [collectionViewForFeed reloadData];
     }
 }

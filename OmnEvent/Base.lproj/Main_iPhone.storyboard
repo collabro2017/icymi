@@ -4611,7 +4611,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pMC-YM-EXS" userLabel="login">
-                                <rect key="frame" x="22" y="398" width="278" height="41"/>
+                                <rect key="frame" x="22" y="348" width="278" height="41"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <state key="normal" image="btn_login">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -4621,7 +4621,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="W8u-nc-x3E" userLabel="signup">
-                                <rect key="frame" x="22" y="451" width="278" height="41"/>
+                                <rect key="frame" x="22" y="401" width="278" height="41"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <state key="normal" image="btn_signup">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -4631,7 +4631,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="x9a-ft-0f6" userLabel="facebook">
-                                <rect key="frame" x="22" y="504" width="278" height="41"/>
+                                <rect key="frame" x="22" y="454" width="278" height="41"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="x9a-ft-0f6" secondAttribute="height" multiplier="278:41" id="5Kf-T2-IBK"/>
@@ -4643,12 +4643,31 @@
                                     <action selector="loginWithFBAction:" destination="8i6-9X-Rdt" eventType="touchUpInside" id="UXi-1X-t2o"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RRL-EO-8Pb">
+                                <rect key="frame" x="21" y="506" width="278" height="41"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="41" id="AHw-HX-2k3"/>
+                                    <constraint firstAttribute="width" constant="278" id="szR-Su-h5W"/>
+                                </constraints>
+                                <state key="normal" image="btn_google">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="signInWithGmail:" destination="8i6-9X-Rdt" eventType="touchUpInside" id="5oI-hr-ise"/>
+                                </connections>
+                            </button>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lbl_logo" translatesAutoresizingMaskIntoConstraints="NO" id="uDX-Xs-62g">
                                 <rect key="frame" x="64" y="158" width="193" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="EwJ-XP-gzK"/>
                                 </constraints>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Connect with Google" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TAD-E8-uee">
+                                <rect key="frame" x="71" y="516" width="192" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -4661,15 +4680,17 @@
                             <constraint firstItem="x9a-ft-0f6" firstAttribute="top" secondItem="W8u-nc-x3E" secondAttribute="bottom" constant="12" id="Pud-N9-7Tv"/>
                             <constraint firstItem="W8u-nc-x3E" firstAttribute="top" secondItem="pMC-YM-EXS" secondAttribute="bottom" constant="12" id="SuV-dK-Nrs"/>
                             <constraint firstItem="x9a-ft-0f6" firstAttribute="leading" secondItem="rOI-4e-5pH" secondAttribute="leadingMargin" constant="6" id="Ybp-4O-DGV"/>
-                            <constraint firstItem="N4e-wV-WLo" firstAttribute="top" secondItem="x9a-ft-0f6" secondAttribute="bottom" constant="23" id="a6A-Sg-gUM"/>
                             <constraint firstItem="Tvu-vF-fLw" firstAttribute="leading" secondItem="rOI-4e-5pH" secondAttribute="leadingMargin" constant="-16" id="aUp-0l-NXm"/>
                             <constraint firstItem="uDX-Xs-62g" firstAttribute="top" secondItem="Xrj-dX-EB7" secondAttribute="bottom" constant="138" id="bpi-E8-7VE"/>
                             <constraint firstItem="N4e-wV-WLo" firstAttribute="top" secondItem="Tvu-vF-fLw" secondAttribute="bottom" id="dfK-tY-NNA"/>
+                            <constraint firstAttribute="bottom" secondItem="RRL-EO-8Pb" secondAttribute="bottom" constant="21" id="eEb-3s-UFg"/>
                             <constraint firstItem="Tvu-vF-fLw" firstAttribute="top" secondItem="Xrj-dX-EB7" secondAttribute="bottom" constant="-20" id="elT-pL-kGk"/>
                             <constraint firstItem="x9a-ft-0f6" firstAttribute="centerX" secondItem="W8u-nc-x3E" secondAttribute="centerX" id="epG-rX-cyH"/>
                             <constraint firstItem="x9a-ft-0f6" firstAttribute="width" secondItem="W8u-nc-x3E" secondAttribute="width" id="fmy-9t-T5v"/>
                             <constraint firstAttribute="trailingMargin" secondItem="x9a-ft-0f6" secondAttribute="trailing" constant="4" id="gF6-hw-nLG"/>
+                            <constraint firstItem="RRL-EO-8Pb" firstAttribute="top" secondItem="x9a-ft-0f6" secondAttribute="bottom" constant="11" id="iNA-kn-tay"/>
                             <constraint firstItem="uDX-Xs-62g" firstAttribute="leading" secondItem="rOI-4e-5pH" secondAttribute="leadingMargin" constant="48" id="slz-Y8-kMA"/>
+                            <constraint firstItem="RRL-EO-8Pb" firstAttribute="centerX" secondItem="rOI-4e-5pH" secondAttribute="centerX" id="wIR-kQ-e6i"/>
                         </constraints>
                     </view>
                     <connections>
@@ -7695,6 +7716,7 @@
         <image name="btn_comment_white" width="25" height="25"/>
         <image name="btn_filter" width="13" height="13"/>
         <image name="btn_friend" width="16" height="14"/>
+        <image name="btn_google" width="280" height="44"/>
         <image name="btn_like_selected" width="13" height="12"/>
         <image name="btn_like_white" width="25" height="25"/>
         <image name="btn_login" width="280" height="44"/>

@@ -499,12 +499,13 @@
 		6CD6E7681B5B3F650074578C /* OMSocialEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CD6E7671B5B3F650074578C /* OMSocialEvent.m */; };
 		8F18CABA1CF78E90005021BB /* FTWCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F18CAB71CF78E90005021BB /* FTWCache.m */; };
 		8F18CABB1CF78E90005021BB /* NSString+MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 8F18CAB91CF78E90005021BB /* NSString+MD5.m */; };
-		8F18CAC31CF822EC005021BB /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8F18CAC11CF822EC005021BB /* GoogleSignIn.bundle */; };
-		8F18CAC41CF822EC005021BB /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAC21CF822EC005021BB /* GoogleSignIn.framework */; };
 		8F18CAC61CF8246B005021BB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAC51CF8246B005021BB /* AddressBook.framework */; };
 		8F18CAD61CF82700005021BB /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAD51CF82700005021BB /* libz.tbd */; };
-		8F18CAD81CF827A2005021BB /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAD71CF827A2005021BB /* Bolts.framework */; };
 		8F18CAD91CF8294E005021BB /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F18CAC71CF82474005021BB /* SafariServices.framework */; };
+		8F1BE51E1CF8BD45008E9D73 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1BE51D1CF8BD45008E9D73 /* Bolts.framework */; };
+		8F1BE5201CF8E04C008E9D73 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */; };
+		8F1BE52D1CF96E5E008E9D73 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */; };
+		8F1BE52E1CF96E5E008E9D73 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */; };
 		8F3A27FA1CF602A800999200 /* FUTURAL.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E41CF602A800999200 /* FUTURAL.TTF */; };
 		8F3A27FB1CF602A800999200 /* FUTURALI.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E51CF602A800999200 /* FUTURALI.TTF */; };
 		8F3A27FC1CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */; };
@@ -1197,12 +1198,13 @@
 		8F18CAB71CF78E90005021BB /* FTWCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTWCache.m; sourceTree = "<group>"; };
 		8F18CAB81CF78E90005021BB /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
 		8F18CAB91CF78E90005021BB /* NSString+MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+MD5.m"; sourceTree = "<group>"; };
-		8F18CAC11CF822EC005021BB /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleSignIn.bundle; path = OmnEvent/Library/GoogleSignIn.bundle; sourceTree = "<group>"; };
-		8F18CAC21CF822EC005021BB /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleSignIn.framework; path = OmnEvent/Library/GoogleSignIn.framework; sourceTree = "<group>"; };
 		8F18CAC51CF8246B005021BB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		8F18CAC71CF82474005021BB /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		8F18CAD51CF82700005021BB /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		8F18CAD71CF827A2005021BB /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
+		8F1BE51D1CF8BD45008E9D73 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
+		8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleSignIn.bundle; sourceTree = "<group>"; };
+		8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
 		8F3A27E41CF602A800999200 /* FUTURAL.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURAL.TTF; sourceTree = "<group>"; };
 		8F3A27E51CF602A800999200 /* FUTURALI.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURALI.TTF; sourceTree = "<group>"; };
 		8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HELVETICA NEUE CE 75 BOLD.TTF"; sourceTree = "<group>"; };
@@ -1297,12 +1299,12 @@
 				3CD567E2199AE92600EC44A5 /* Twitter.framework in Frameworks */,
 				1F39C80E1B3ADA8B00FA9FCE /* FacebookSDK.framework in Frameworks */,
 				3CD567E0199AE91E00EC44A5 /* MessageUI.framework in Frameworks */,
+				8F1BE51E1CF8BD45008E9D73 /* Bolts.framework in Frameworks */,
 				3C5E7EDD19766B9F000550F6 /* Accounts.framework in Frameworks */,
+				8F1BE52E1CF96E5E008E9D73 /* GoogleSignIn.framework in Frameworks */,
 				3C5E7EDE19766B9F000550F6 /* AdSupport.framework in Frameworks */,
 				3C5E7EDF19766B9F000550F6 /* AssetsLibrary.framework in Frameworks */,
-				8F18CAD81CF827A2005021BB /* Bolts.framework in Frameworks */,
 				3C5E7EE019766B9F000550F6 /* AudioToolbox.framework in Frameworks */,
-				8F18CAC41CF822EC005021BB /* GoogleSignIn.framework in Frameworks */,
 				3C5E7EE119766B9F000550F6 /* AVFoundation.framework in Frameworks */,
 				3C5E7EE219766B9F000550F6 /* CFNetwork.framework in Frameworks */,
 				3EC625241AB3604700F3F36B /* ParseUI.framework in Frameworks */,
@@ -1665,8 +1667,6 @@
 				8F18CAD51CF82700005021BB /* libz.tbd */,
 				8F18CAC71CF82474005021BB /* SafariServices.framework */,
 				8F18CAC51CF8246B005021BB /* AddressBook.framework */,
-				8F18CAC11CF822EC005021BB /* GoogleSignIn.bundle */,
-				8F18CAC21CF822EC005021BB /* GoogleSignIn.framework */,
 				E4B0BA8C1C3E09C600F6CCB9 /* CoreText.framework */,
 				E4B0BA8A1C3D116300F6CCB9 /* CoreData.framework */,
 				A9ACFF0A1AD7AC6600500360 /* libstdc++.6.dylib */,
@@ -1716,6 +1716,7 @@
 		3C5E7E89197628DF000550F6 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */,
 				3C5E7E8A197628DF000550F6 /* ICYMI-Info.plist */,
 				3C5E7E8B197628DF000550F6 /* InfoPlist.strings */,
 				3C5E7E8E197628DF000550F6 /* main.m */,
@@ -1745,6 +1746,7 @@
 		3C5E7EC0197651E3000550F6 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				3C0A5C431978FB37009AEC85 /* SocialCommunications */,
 				3C12844B1978D6C400EB7744 /* Common */,
 				6C9CA1C11B46641C00806F96 /* Guide */,
 				3EB718EB1ABF54690050E2D2 /* Feed */,
@@ -1758,7 +1760,6 @@
 				8F18CABC1CF82205005021BB /* OthersController */,
 				3C3D713B199A6BC200DBD54E /* LogIn */,
 				3C1284441978C8E800EB7744 /* Cells */,
-				3C0A5C431978FB37009AEC85 /* SocialCommunications */,
 				A9E986E71B2241D900B1BB92 /* OMPrivacyVC.h */,
 				A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */,
 			);
@@ -2329,7 +2330,9 @@
 		3EC625161AB3604700F3F36B /* Library */ = {
 			isa = PBXGroup;
 			children = (
-				8F18CAD71CF827A2005021BB /* Bolts.framework */,
+				8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */,
+				8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */,
+				8F1BE51D1CF8BD45008E9D73 /* Bolts.framework */,
 				E43C88011C8E735200FE77FF /* Crittercism.framework */,
 				1F39C80D1B3ADA8B00FA9FCE /* FacebookSDK.framework */,
 				1F39C80B1B3A898000FA9FCE /* ParseFacebookUtils.framework */,
@@ -2539,6 +2542,7 @@
 				3CC691A2199FBE350064B4D0 /* GL.png in Resources */,
 				3CC69201199FBE350064B4D0 /* PL.png in Resources */,
 				3EB66C971AB6186700E90054 /* record_close_disable@2x.png in Resources */,
+				8F1BE5201CF8E04C008E9D73 /* GoogleService-Info.plist in Resources */,
 				8F3A28021CF602A800999200 /* Roboto-Bold.ttf in Resources */,
 				3CC69176199FBE350064B4D0 /* CD.png in Resources */,
 				3EB66CC51AB6186700E90054 /* record_tool_normal@2x.png in Resources */,
@@ -2763,7 +2767,6 @@
 				3CC69167199FBE350064B4D0 /* BH.png in Resources */,
 				3CC691AD199FBE350064B4D0 /* HK.png in Resources */,
 				3CC6915B199FBE350064B4D0 /* AS.png in Resources */,
-				8F18CAC31CF822EC005021BB /* GoogleSignIn.bundle in Resources */,
 				3CC691CF199FBE350064B4D0 /* LI.png in Resources */,
 				3CC69190199FBE350064B4D0 /* ER.png in Resources */,
 				3CC6916E199FBE350064B4D0 /* BS.png in Resources */,
@@ -2796,6 +2799,7 @@
 				3CC691C5199FBE350064B4D0 /* KM.png in Resources */,
 				3CC691BC199FBE350064B4D0 /* IT.png in Resources */,
 				3CC6918D199FBE350064B4D0 /* EE.png in Resources */,
+				8F1BE52D1CF96E5E008E9D73 /* GoogleSignIn.bundle in Resources */,
 				3CC691EF199FBE350064B4D0 /* NC.png in Resources */,
 				3CC691FB199FBE350064B4D0 /* PA.png in Resources */,
 				3CC69196199FBE350064B4D0 /* FM.png in Resources */,
@@ -3183,6 +3187,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Library",
+					..,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
@@ -3190,7 +3195,7 @@
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "-Objc";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
 				PROVISIONING_PROFILE = "a60d992c-90d2-4bf4-9733-4509cf162fcc";
@@ -3210,6 +3215,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Library",
+					..,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
@@ -3217,7 +3223,7 @@
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "-Objc";
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
 				PROVISIONING_PROFILE = "1461bcb3-545a-4e5b-aaee-171218c378eb";

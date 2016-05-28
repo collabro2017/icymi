@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OMWelcomeViewController : UIViewController<GIDSignInDelegate>{
+@interface OMWelcomeViewController : UIViewController<GIDSignInDelegate, GIDSignInUIDelegate>{
     
     IBOutlet UIButton *btnForLogin;
     
