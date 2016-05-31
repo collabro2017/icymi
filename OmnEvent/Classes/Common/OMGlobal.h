@@ -19,6 +19,7 @@
 #define KEY_GOOGLE_CLIENTID @"374815263085-i2261314k94v2gchsm60lqvfktu88qee.apps.googleusercontent.com"
 #define GMAIL_SIGNIN_KEY        @"icymi.social.event!" //password
 
+#define ADMIN_USER_NAME  @"Coline Witt"
 
 typedef enum {
     

@@ -2388,7 +2388,7 @@
      }
     else
     {
-        NSLog(@"Stepped Auto Refreshing due to in posting!!");
+        NSLog(@"Skipped Auto Refreshing due to in posting!!");
     }
 }
 

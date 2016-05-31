@@ -176,6 +176,7 @@
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFolderData object:nil];
                     }
                     
                     [self.navigationController dismissViewControllerAnimated:YES completion:^{
@@ -367,6 +368,7 @@
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFolderData object:nil];
                     }
                     
                     [self.navigationController dismissViewControllerAnimated:YES completion:^{

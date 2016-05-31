@@ -31,5 +31,6 @@
 @property (nonatomic, assign)NSDate                 *loadTimeAt;
 @property (nonatomic, assign)NSMutableArray         *postedObjects;
 @property (nonatomic, assign)NSInteger              badgeNewEvent;
+@property (nonatomic, assign)NSInteger              badgeNotifier;
 
 @end

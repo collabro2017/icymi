@@ -226,6 +226,7 @@
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFolderData object:nil];
                     }
                     
                     [self.navigationController dismissViewControllerAnimated:YES completion:^{
@@ -235,22 +236,6 @@
                     }];
 
                 }];
-                
-                NSLog(@"%@",user);
-                
-                
-                
-                //                if (![[user objectForKey:@"emailVerified"] boolValue]) {//
-                //                        [OMGlobal showAlertTips:@"You must verify your email address to login." title:nil];
-                //                        return;
-                //                }
-                //                else
-                //                {
-                
-                
-                //                }
-                
-                
             }
             else
             {
