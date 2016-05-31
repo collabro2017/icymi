@@ -166,13 +166,12 @@
 - (void)showInvite
 {
     
+    //[self inviteFriendsForApp];
+    
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Invite People" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Invite via Email" otherButtonTitles:@"Invite via SMS", nil];
     
     [actionSheet setTag:1000];
-    
     [actionSheet showInView:self.view];
-    
-    
     
 }
 
@@ -187,6 +186,7 @@
             case 0:
             {
                 [self inviteViaEmail];
+                
             }
                 break;
             case 1:
@@ -267,22 +267,51 @@
     [controller dismissViewControllerAnimated:YES completion:nil];
 }
 
-
-
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
 {
     [controller dismissViewControllerAnimated:YES completion:nil];
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+#pragma mark - UIActivityViewController - Sharing with this App link and User
+
+- (void) inviteFriendsForApp
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    //-- set strings and URLs
+    NSString *textObject = @"Enjoy ICYMI App!";
+    NSString *urlString = [NSString stringWithFormat:@"http://apple.co/1ftcr3n"];
+    
+    NSURL *url = [NSURL URLWithString:urlString];
+    
+    NSArray *activityItems = [NSArray arrayWithObjects:textObject, url,  nil];
+    
+    //-- initialising the activity view controller
+    UIActivityViewController *avc = [[UIActivityViewController alloc]
+                                     initWithActivityItems:activityItems
+                                     applicationActivities:nil];
+    
+    
+    avc.excludedActivityTypes = @[UIActivityTypePostToWeibo,
+                                  UIActivityTypeAssignToContact,
+                                  UIActivityTypeCopyToPasteboard ];
+    
+    
+    //-- define the activity view completion handler
+    avc.completionHandler = ^(NSString *activityType, BOOL completed){
+        
+        if (completed) {
+            // NSLog(@"Selected activity was performed.");
+        } else {
+            if (activityType == NULL) {
+                //   NSLog(@"User dismissed the view controller without making a selection.");
+            } else {
+                //  NSLog(@"Activity was not performed.");
+            }
+        }
+    };
+    
+    [TABController presentViewController:avc animated:YES completion:nil];
+
 }
-*/
 
 - (BOOL)slideNavigationControllerShouldDisplayLeftMenu
 {

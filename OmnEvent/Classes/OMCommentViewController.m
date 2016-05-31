@@ -38,9 +38,10 @@
         if ([objects count] == 0 || !objects) {
             return;
         }
+        
         [arrForComment removeAllObjects];
         [arrForComment addObjectsFromArray:objects];
-        NSLog(@"%@", arrForComment);
+        
         [self loadController];
         [tblForComment reloadData];
         
@@ -148,9 +149,33 @@
             return;
         }
         [arrForComment removeAllObjects];
+        
+        
+        /*
+        NSMutableArray *commentUsersTemp = [NSMutableArray array];
+        if(currentObject[@"commentsUsers"] != nil && [currentObject[@"commentsUsers"] count] > 0 )
+        {
+            for (PFUser *user in currentObject[@"commentsUsers"]) {
+                [commentUsersTemp addObject:user[@"objectId"]];
+            }
+        }
+       
+        for (PFObject *commentObj in objects)
+        {
+            PFUser *commentUser = commentObj[@"Commenter"];
+            for(NSString *objId in commentUsersTemp)
+            {
+                if([objId isEqualToString:commentUser.objectId])
+                {
+                    [arrForComment addObject:commentObj];
+                    break;
+                }
+            }
+        }
+       */
         [arrForComment addObjectsFromArray:objects];
-        NSLog(@"%@", arrForComment);
-        [tblForComment reloadData];    
+        
+        [tblForComment reloadData];
         
     }];
 }
@@ -188,9 +213,9 @@
     
     PFObject *commentObject = [PFObject objectWithClassName:@"Comments"];
     
-    commentObject[@"Commenter"] = USER;
+    commentObject[@"Commenter"] = currentUser;
     
-    NSLog(@"%@",currentObject.objectId);
+    NSLog(@"comment input on commentVC: %@",currentObject.objectId);
     commentObject[@"postMedia"] = currentObject;
     commentObject[@"Comments"] = str;
     [commentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
@@ -204,16 +229,20 @@
             
             
             // for badge
-            PFUser *eventUser = currentObject[@"user"];
+            
             NSMutableArray *arrEventTagFriends = [NSMutableArray array];
             PFObject *eventObj = currentObject[@"targetEvent"];
             arrEventTagFriends = [eventObj[@"TagFriends"] mutableCopy];
-            if(![eventUser.objectId isEqualToString:USER.objectId])
+            PFUser *eventUser = eventObj[@"user"];
+            
+            NSLog(@"Current user == %@", currentUser.objectId);
+            if(![eventUser.objectId isEqualToString:currentUser.objectId])
             {
                 [arrEventTagFriends addObject:eventUser.objectId];
-                if ([arrEventTagFriends containsObject:USER.objectId]) {
-                    [arrEventTagFriends removeObject:USER.objectId];
-                }
+               
+            }
+            if ([arrEventTagFriends containsObject:currentUser.objectId]) {
+                [arrEventTagFriends removeObject:currentUser.objectId];
             }
             
             currentObject[@"usersBadgeFlag"] = arrEventTagFriends;
@@ -228,13 +257,14 @@
                     
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
-//                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadCurrentEventData object:nil];
+//                  [[NSNotificationCenter defaultCenter] postNotificationName:kLoadCurrentEventData object:nil];
                     
                     
                 }
                 else if (_error)
                 {
-                    [OMGlobal showAlertTips:error.localizedDescription title:@"Oops!"];
+                    //[OMGlobal showAlertTips:_error.localizedDescription title:@"Oops!"];
+                    NSLog(@"comment Error: %@", _error.localizedDescription);
                     [commentObject deleteEventually];
                 }
 
@@ -242,7 +272,9 @@
                    }
         else if (error)
         {
-            [OMGlobal showAlertTips:error.localizedDescription title:@"Oops!"];
+            //[OMGlobal showAlertTips:error.localizedDescription title:@"Oops!"];
+            NSLog(@"comment Error: %@", error.localizedDescription);
+            [commentObject deleteEventually];
         }
         
     }];

@@ -32,18 +32,12 @@
     [(UIRefreshControl*)sender beginRefreshing];
     
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
-    //[mainQuery fromLocalDatastore];
-//        [mainQuery whereKey:@"createdAt" greaterThanOrEqualTo:[OMGlobal getFirstDayOfThisMonth]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
-//    [mainQuery whereKey:@"user" equalTo:[PFUser currentUser]];
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         [(UIRefreshControl*)sender endRefreshing];
         if (objects == nil || [objects count] == 0) {
-            
-//            [self postNewEvent];
-            
             return;
         }
         if (!error) {
@@ -66,12 +60,9 @@
     arrForSearchEvents = [NSMutableArray array];
     arrForSearchData = [NSMutableArray array];
     
-    //
-    
-    
-    if (!self.refreshControl) {
-        self.refreshControl                  = [UIRefreshControl new];
-//        self.refreshControl.tintColor        = [UIColor whiteColor];
+    if (!self.refreshControl)
+    {
+        self.refreshControl = [UIRefreshControl new];
         [self.refreshControl addTarget:self
                                 action:@selector(reload:)
                       forControlEvents:UIControlEventValueChanged];
@@ -82,7 +73,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadSearchData) name:kLoadSearchData object:nil];
     [self loadSearchData];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -98,19 +88,17 @@
     if (!searchBarForEvent) {
         self.searchBarBoundsY = self.navigationController.navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height;
         searchBarForEvent = [[UISearchBar alloc]initWithFrame:CGRectMake(0,self.searchBarBoundsY, [UIScreen mainScreen].bounds.size.width, 44)];
-//        self.searchBar.searchBarStyle       = UISearchBarStyleMinimal;
-//        self.searchBar.tintColor            = [UIColor whiteColor];
-//        self.searchBar.barTintColor         = [UIColor whiteColor];
-        searchBarForEvent.delegate             = self;
-        searchBarForEvent.placeholder          = @"Search";
-//        [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
+//      self.searchBar.searchBarStyle       = UISearchBarStyleMinimal;
+//      self.searchBar.tintColor            = [UIColor whiteColor];
+//      self.searchBar.barTintColor         = [UIColor whiteColor];
+        searchBarForEvent.delegate          = self;
+        searchBarForEvent.placeholder       = @"Search";
+//      [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[UIColor whiteColor]];
     }
     
     if (![searchBarForEvent isDescendantOfView:self.view]) {
         [self.view addSubview:searchBarForEvent];
     }
-    
-    
 
 }
 
@@ -227,75 +215,35 @@
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
-    //[mainQuery fromLocalDatastore];
-    //        [mainQuery whereKey:@"createdAt" greaterThanOrEqualTo:[OMGlobal getFirstDayOfThisMonth]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
-    //    [mainQuery whereKey:@"user" equalTo:[PFUser currentUser]];
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         
         if (objects == nil || [objects count] == 0) {
-            
             [OMGlobal showAlertTips:@"You have had not any Event yet. Please post new one." title:nil];
-            //            [self postNewEvent];
-            
             return;
         }
         if (!error) {
             [arrForSearchEvents removeAllObjects];
-            
             [arrForSearchEvents addObjectsFromArray:objects];
-            
-//            for (PFObject *object in objects) {
-//                PFUser *user = (PFUser *)object[@"user"];
-////                if ([object[@"TagFriends"] containsObject:currentUser.objectId] || [user.objectId isEqualToString:currentUser.objectId] ) {
-////                    
-////                    if ([object[@"TagFriends"] containsObject:currentUser.objectId]) {
-////                        NSLog(@"user was tagged.");
-////                    }
-////                    else
-////                    {
-////                        NSLog(@"user is me.");
-////                    }
-////                    [arrForFeed addObject:object];
-////                    //                    [arrForFeed addObjectsFromArray:objects];
-////                    
-////                }
-//                
-//                
-            }
+        }
             [collectionViewForSearch reloadData];
-            
     }];
-
 }
 
 - (void)SearchData:(NSString *)searchStr
 {
     
 }
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 #pragma mark -  <UICollectionViewDelegateFlowLayout>
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView
                         layout:(UICollectionViewLayout*)collectionViewLayout
         insetForSectionAtIndex:(NSInteger)section{
     return UIEdgeInsetsMake(searchBarForEvent.frame.size.height, 0, 0, 0);
 }
-//- (CGSize)collectionView:(UICollectionView *)collectionView
-//                  layout:(UICollectionViewLayout*)collectionViewLayout
-//  sizeForItemAtIndexPath:(NSIndexPath *)indexPath{
-//    CGFloat cellLeg = (collectionViewForSearch.frame.size.width/2) - 5;
-//    return CGSizeMake(cellLeg,cellLeg);;
-//}
+
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
     if ([searchBarForEvent isFirstResponder]) {
@@ -336,7 +284,7 @@
     
     OMSearchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kSearchCell forIndexPath:indexPath];
     [cell setDelegate:self];
-    [cell setCurrentObj:obj];
+    [cell setCurrentObj:(OMSocialEvent*)obj];
     return cell;
 }
 
@@ -367,7 +315,6 @@
         curObject = [arrForSearchEvents  objectAtIndex:indexPath.item];
 
     }
-
     
     NSMutableArray *arrForTagFriends = curObject[@"TagFriends"];
     if (!arrForTagFriends) {
@@ -375,20 +322,13 @@
         arrForTagFriends = [NSMutableArray array];
     }else{
         
-        if ([arrForTagFriends containsObject:USER.objectId] || [((PFUser *)curObject[@"user"]).objectId isEqualToString:USER.objectId]) {
-            
-            
+        if ([arrForTagFriends containsObject:USER.objectId] || [((PFUser *)curObject[@"user"]).objectId isEqualToString:USER.objectId])
+        {
             [detailEventVC setCurrentObject:curObject];
-            
             [self.navigationController pushViewController:detailEventVC animated:YES];
             
         }
-
-        
     }
-    
-    
-    
-    
+   
 }
 @end

@@ -636,8 +636,8 @@
 		3C1284461978C90500EB7744 /* OMEventCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMEventCell.m; sourceTree = "<group>"; };
 		3C1284481978D17E00EB7744 /* OMSignUpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSignUpViewController.h; sourceTree = "<group>"; };
 		3C1284491978D17E00EB7744 /* OMSignUpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSignUpViewController.m; sourceTree = "<group>"; };
-		3C12844C1978D6DD00EB7744 /* OMGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMGlobal.h; sourceTree = "<group>"; };
-		3C12844D1978D6DD00EB7744 /* OMGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMGlobal.m; sourceTree = "<group>"; };
+		3C12844C1978D6DD00EB7744 /* OMGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMGlobal.h; path = Classes/Common/OMGlobal.h; sourceTree = "<group>"; };
+		3C12844D1978D6DD00EB7744 /* OMGlobal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMGlobal.m; path = Classes/Common/OMGlobal.m; sourceTree = "<group>"; };
 		3C12844F1978D82B00EB7744 /* MHTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHTextField.h; sourceTree = "<group>"; };
 		3C1284501978D82B00EB7744 /* MHTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHTextField.m; sourceTree = "<group>"; };
 		3C27C8EA198E93E900998DD4 /* OMProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMProfileViewController.h; sourceTree = "<group>"; };
@@ -1464,15 +1464,6 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
-		3C12844B1978D6C400EB7744 /* Common */ = {
-			isa = PBXGroup;
-			children = (
-				3C12844C1978D6DD00EB7744 /* OMGlobal.h */,
-				3C12844D1978D6DD00EB7744 /* OMGlobal.m */,
-			);
-			path = Common;
-			sourceTree = "<group>";
-		};
 		3C34021D1979290D00AFC3BC /* AFNetworking */ = {
 			isa = PBXGroup;
 			children = (
@@ -1703,6 +1694,8 @@
 				3EC625161AB3604700F3F36B /* Library */,
 				3C5E7E91197628DF000550F6 /* OMAppDelegate.h */,
 				3C5E7E92197628DF000550F6 /* OMAppDelegate.m */,
+				3C12844C1978D6DD00EB7744 /* OMGlobal.h */,
+				3C12844D1978D6DD00EB7744 /* OMGlobal.m */,
 				3C5E7E94197628DF000550F6 /* Main_iPhone.storyboard */,
 				3C5E7E97197628DF000550F6 /* Main_iPad.storyboard */,
 				3C5E7EC0197651E3000550F6 /* Classes */,
@@ -1747,7 +1740,6 @@
 			isa = PBXGroup;
 			children = (
 				3C0A5C431978FB37009AEC85 /* SocialCommunications */,
-				3C12844B1978D6C400EB7744 /* Common */,
 				6C9CA1C11B46641C00806F96 /* Guide */,
 				3EB718EB1ABF54690050E2D2 /* Feed */,
 				3EC317DC1ABE1A1B00541D39 /* Tabbar */,

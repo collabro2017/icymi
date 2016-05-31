@@ -172,6 +172,8 @@
                     if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
                     [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
                 }
+                
+                //[[NSNotificationCenter defaultCenter] postNotificationName:kLoadEventDataWithGlobal object:nil];
             }
         }
     }

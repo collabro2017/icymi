@@ -209,12 +209,13 @@
                     arrPostLookedFlags = [currentObject[@"TagFriends"] mutableCopy];
                     PFUser *eventUser = currentObject[@"user"];
                     
-                    if(![eventUser.objectId isEqualToString:USER.objectId])
+                    if(![eventUser.objectId isEqualToString:currentUser.objectId])
                     {
                         [arrPostLookedFlags addObject:eventUser.objectId];
-                        if ([arrPostLookedFlags containsObject:USER.objectId]) {
-                            [arrPostLookedFlags removeObject:USER.objectId];
-                        }
+                        
+                    }
+                    if ([arrPostLookedFlags containsObject:currentUser.objectId]) {
+                        [arrPostLookedFlags removeObject:currentUser.objectId];
                     }
                     
                     currentObject[@"eventBadgeFlag"] = arrPostLookedFlags;

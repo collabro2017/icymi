@@ -265,7 +265,7 @@
     
     if ([userInfo objectForKey:@"request"]) {
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kShowBadgeOnEvent object:nil userInfo:userInfo];
+       // [[NSNotificationCenter defaultCenter] postNotificationName:kShowBadgeOnEvent object:nil userInfo:userInfo];
         
     }
     

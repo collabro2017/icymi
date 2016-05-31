@@ -169,14 +169,29 @@
 // Standard Events for new account users. This will be showed when only new account is opened the app at first.
 - (void) standardEventLoad
 {
+    
     [MBProgressHUD showMessag:@"Loading..." toView:self.view];
     
     // class StandardEvent : this will have special Event Table.
-    
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"StandardEvent"];
+    PFQuery *query = [PFUser query];
+    [query whereKey:@"username" equalTo:ADMIN_USER_NAME];
+    PFUser *standUser = (PFUser*)[query getFirstObject];
+
+    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
+    
+    if(standUser != nil){
+        [mainQuery whereKey:@"user" equalTo:standUser];
+    }
+    else
+    {
+        if (is_grid) [collectionViewForFeed reloadData];
+        else [tblForEventFeed reloadData];
+        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        return;
+    }
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
@@ -203,6 +218,7 @@
 
 - (void)showBadge:(NSNotification *)_notification {
     NSDictionary *userInfo = _notification.userInfo;
+    
     if ([userInfo objectForKey:@"request"]) {
         
         NSString *idOfTargetEvent = [userInfo objectForKey:@"request"];
@@ -210,10 +226,12 @@
             if ([event.objectId isEqualToString:idOfTargetEvent]) {
                 PFUser *eventuser = event[@"user"];
                 if(![eventuser.objectId isEqualToString:currentUser.objectId])
-                    event.badgeNewEvent = 1;
+                {
+                    event.badgeNotifier = 1;
+                }
             }
         }
-        [collectionViewForFeed reloadData];
+       [collectionViewForFeed reloadData];
     }
 }
 
@@ -263,13 +281,17 @@
     [GlobalVar getInstance].isEventLoading = YES;
     
     arrForFirstArray = [NSMutableArray array];
+    
+    if([[NSUserDefaults standardUserDefaults] objectForKey:@"NewAccountUser"])
+    {
+        [self standardEventLoad];
+    }
     [MBProgressHUD showMessag:@"Loading..." toView:self.view];
     
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
     
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
-    //[mainQuery includeKey:@"likeUserArray"];
     [mainQuery includeKey:@"postedObjects"];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
@@ -349,6 +371,7 @@
                             {
                                 if ([userId isEqualToString:currentUser.objectId]) {
                                     postBadgeCount++;
+                                    NSLog(@"---found badge count----%i",(int) postBadgeCount);
                                 }
                             }
                         }
@@ -599,17 +622,17 @@
         
         
         event.loadTimeAt = lastLoadTime;
+        if(event.badgeNewEvent >= 1) event.badgeNewEvent = 0;
+        if(event.badgeNotifier >= 1) event.badgeNotifier = 0;
         
         // Event Badge processing...
         if([event[@"eventBadgeFlag"] containsObject:currentUser.objectId])
         {
-            if(event.badgeNewEvent >= 1) event.badgeNewEvent = 0;
             [event removeObject:currentUser.objectId forKey:@"eventBadgeFlag"];
             [event saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                 if(error == nil) NSLog(@"DetailEventVC: Event Badge remove when open Detail view...");
             }];
         }
-        
         
         [arrForFeed replaceObjectAtIndex:indexPath.item withObject:event];
         [collectionViewForFeed reloadData];
@@ -920,8 +943,6 @@
     PFFile *file = (PFFile *)_obj[@"thumbImage"];
     [postImgView setImageWithURL:[NSURL URLWithString:file.url]];
     currentObject = _obj;
-    NSLog(@"%@",_obj[@"openStatus"]);
-    
     
     if ([_obj[@"openStatus"] intValue] == 1) {
         status = @"Close";
@@ -932,7 +953,7 @@
     }
     
     PFUser *user = (PFUser *)_obj[@"user"];
-    NSLog(@"%@----%@",user,[PFUser currentUser]);
+    if(user == nil) return;
     
     if ([user.objectId isEqualToString:currentUser.objectId]) {
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram",status,@"Delete", @"Report", nil];
@@ -1081,13 +1102,9 @@
         [mailView setSubject:currentObject[@"eventname"]];
         [mailView setMessageBody:[NSString stringWithFormat:@"You are invited to join ICYMI and %@ by %@!", currentObject[@"eventname"], USER.username ] isHTML:YES];
         
-        //        UIImage *newImage = self.detail_imgView.image;
-        
         NSData *attachmentData = UIImageJPEGRepresentation(postImgView.image, 1.0);
         [mailView addAttachmentData:attachmentData mimeType:@"image/jpeg" fileName:@"image.jpg"];
         [TABController presentViewController:mailView animated:YES completion:nil];
-        //        [mailView release];
-        
     }
     
 }

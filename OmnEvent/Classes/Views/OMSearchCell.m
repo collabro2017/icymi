@@ -40,10 +40,18 @@
     if (_currentObj.badgeCount == 0) {
         
         [lblForBadge setHidden:YES];
+        
+        if(_currentObj.badgeNotifier > 0)
+        {
+            [lblForBadge setHidden:NO];
+            [lblForBadge setText:[NSString stringWithFormat:@"%lu",(long)_currentObj.badgeNotifier]];
+        }
+        
     } else {
         [lblForBadge setHidden:NO];
         [lblForBadge setText:[NSString stringWithFormat:@"%lu",(long)_currentObj.badgeCount]];
     }
+    
     
     if (_currentObj.badgeNewEvent == 0) {
         
