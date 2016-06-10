@@ -413,8 +413,18 @@
     
     if (![currentUser.objectId isEqualToString:self_user.objectId]){
         
-        NSMutableArray *arrForTagFriends = eventObject[@"TagFriends"];
-        NSMutableArray *arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
+        NSMutableArray *arrForTagFriends = [NSMutableArray array];
+        NSMutableArray *arrForTagFriendAuthorities = [NSMutableArray array];
+        
+        if(eventObject[@"TagFriends"] != nil && [eventObject[@"TagFriends"] count] > 0)
+        {
+            arrForTagFriends = eventObject[@"TagFriends"];
+        }
+        if(eventObject[@"TagFriendAuthorities"] != nil && [eventObject[@"TagFriendAuthorities"] count] > 0)
+        {
+            arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
+        }
+
         
         NSString *AuthorityValue = @"";
         
@@ -422,10 +432,13 @@
             
             for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                 if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
-                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
+                    if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
+                        AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
+                    
                     break;
                 }
             }
+
             
             if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
                 lblForDes.enabled = YES;
