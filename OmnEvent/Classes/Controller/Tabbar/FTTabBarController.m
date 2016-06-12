@@ -191,6 +191,7 @@
 {
     [super viewDidLoad];
     
+    self.contraintWidthTabbar.constant = IS_IPAD? 414 : SCREEN_WIDTH;
     
     urlForVideo = [[NSBundle mainBundle] pathForResource:@"tutorial" ofType:@"mp4"];
     

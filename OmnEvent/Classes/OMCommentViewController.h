@@ -18,5 +18,6 @@
 
 @property (nonatomic, strong)    PFObject *currentObject;
 
+@property (weak, nonatomic) IBOutlet UIView *viewSent;
 
 @end

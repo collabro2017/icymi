@@ -1430,7 +1430,7 @@
     OMMediaCell* tmpCell = (OMMediaCell* )_cell;
     viewController = [[TGRImageViewController alloc] initWithImage:tmpCell.imageViewForMedia.image];
     viewController.transitioningDelegate = self;
-    
+    viewController.view.frame = CGRectMake(0, 0, SCREEN_WIDTH_ROTATED, SCREEN_HEIGHT_ROTATED);
     [TABController presentViewController:viewController animated:YES completion:nil];
 }
 

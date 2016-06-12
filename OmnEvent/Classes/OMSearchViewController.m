@@ -53,6 +53,18 @@
     
 }
 
+-(void)viewWillLayoutSubviews{
+    if (IS_IPAD) {
+        CGRect frame = self.searchBarForEvent.frame;
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+            self.searchBarForEvent.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH, frame.size.height);
+        }else{
+            self.searchBarForEvent.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_HEIGHT, frame.size.height);
+        }
+    }
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -241,7 +253,11 @@
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView
                         layout:(UICollectionViewLayout*)collectionViewLayout
         insetForSectionAtIndex:(NSInteger)section{
-    return UIEdgeInsetsMake(searchBarForEvent.frame.size.height, 0, 0, 0);
+    if (IS_IPAD) {
+        return UIEdgeInsetsMake(searchBarForEvent.frame.size.height + 20, 20, 20, 20);
+    }else{
+        return UIEdgeInsetsMake(searchBarForEvent.frame.size.height, 0, 0, 0);
+    }
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset

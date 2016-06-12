@@ -35,7 +35,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.1058961750588-viun9933lc3k7vuld3eq6rpmqf8n7usb</string>
+				<string>com.googleusercontent.apps.374815263085-i2261314k94v2gchsm60lqvfktu88qee</string>
 			</array>
 		</dict>
 	</array>
@@ -108,8 +108,6 @@
 	</array>
 	<key>UIMainStoryboardFile</key>
 	<string>Main_iPhone</string>
-	<key>UIMainStoryboardFile~ipad</key>
-	<string>Main_iPad</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

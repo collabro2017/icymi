@@ -12,6 +12,9 @@
 {
     PFUser *newUser;
 }
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contraintBottom;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contraintMiddle;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contraintLogoRight;
 @end
 
 @implementation OMWelcomeViewController
@@ -29,6 +32,21 @@
     newUser = [PFUser user];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideMBProgressView) name:@"HideMBProgressView" object:nil];
+}
+
+-(void)viewWillLayoutSubviews{
+    if (IS_IPAD) {
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+            self.contraintBottom.constant = 150;
+            self.contraintMiddle.constant = 150;
+            self.contraintLogoRight.constant = 250;
+        }else{
+            self.contraintBottom.constant = 350;
+            self.contraintMiddle.constant = 150;
+            self.contraintLogoRight.constant = 150;
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning {
