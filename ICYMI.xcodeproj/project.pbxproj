@@ -3180,8 +3180,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: GMO RUNSYSTEM JSC";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: GMO RUNSYSTEM JSC";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3198,13 +3198,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-<<<<<<< HEAD
-				PROVISIONING_PROFILE = "cd8f6dde-d473-4433-bccc-b8f8550b8d5a";
-				TARGETED_DEVICE_FAMILY = 1;
-=======
-				PROVISIONING_PROFILE = "6c7e0cc9-10db-4a82-8649-3e040a95415d";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
->>>>>>> 0715deabc9ac6cc1bfed802abc36026dc9c8c583
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -3213,8 +3208,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: GMO RUNSYSTEM JSC";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: GMO RUNSYSTEM JSC";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COMPRESS_PNG_FILES = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3231,13 +3226,8 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-<<<<<<< HEAD
-				PROVISIONING_PROFILE = "aa908a52-0271-4897-8e5b-aaa6765cea1a";
-				TARGETED_DEVICE_FAMILY = 1;
-=======
-				PROVISIONING_PROFILE = "6c7e0cc9-10db-4a82-8649-3e040a95415d";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
->>>>>>> 0715deabc9ac6cc1bfed802abc36026dc9c8c583
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
