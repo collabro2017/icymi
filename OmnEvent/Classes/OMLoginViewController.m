@@ -37,13 +37,15 @@
 
 //    [self initTxtFields];
     // Do any additional setup after loading the view.
-    
+    if (IS_IPAD) {
+        self.containtLeft.constant = 150;
+    }
     
     
     tempValue = constraintForHeight.constant;
     //Registering for keyboard Notification
     
-    
+
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];

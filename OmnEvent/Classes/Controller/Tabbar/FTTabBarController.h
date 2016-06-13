@@ -43,6 +43,7 @@
 @property (nonatomic, strong) UIViewController *oldViewController;
 @property (nonatomic, strong) IBOutletCollection(UIButton) NSArray *tabBarButtons;
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contraintWidthTabbar;
 
 - (IBAction)tabBarAction:(id)sender;
 

@@ -18,7 +18,7 @@
         
         self.backgroundColor = [UIColor grayColor];
         
-        self.frame = CGRectMake(0, CGRectGetMinY(frame), 320, CGRectGetHeight(frame));
+        self.frame = CGRectMake(0, CGRectGetMinY(frame), CGRectGetWidth(frame), CGRectGetHeight(frame));
         
         self.textField.tag = 10000;
         self.sendBtn.tag = 10001;

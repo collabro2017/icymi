@@ -27,6 +27,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    if (IS_IPAD) {
+        self.containtLeft.constant = 150;
+    }
 }
 
 - (void)didReceiveMemoryWarning

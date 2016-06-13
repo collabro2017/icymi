@@ -69,7 +69,15 @@ BOOL refresh_require;
     avatarView          = [arr lastObject];
     [avatarView setDelegate:self];
     
-    [tblForProfile addTwitterCoverWithImage:[UIImage imageNamed:@"cover.png"] withTopView:nil withBottomView:avatarView];
+    NSString *imageName;
+    
+    if (IS_IPAD) {
+        imageName = @"cover_ipad.png";
+    }else{
+        imageName = @"cover.png";
+    }
+    
+    [tblForProfile addTwitterCoverWithImage:[UIImage imageNamed:imageName] withTopView:nil withBottomView:avatarView];
     tblForProfile.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tblForProfile.frame.size.width, CHTwitterCoverViewHeight + 93)];
     
     currentSegIndex = is_type;
@@ -97,6 +105,18 @@ BOOL refresh_require;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(thirdViewLoad) name:kNotificationForthDetailViewLoad object:nil];
 
     
+}
+
+-(void)viewWillLayoutSubviews{
+    if (IS_IPAD) {
+        CGRect frame = avatarView.segmentControlForType.frame;
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+            avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH - frame.origin.x * 2, frame.size.height);
+        }else{
+            avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_HEIGHT - frame.origin.x * 2, frame.size.height);
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning {

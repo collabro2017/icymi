@@ -27,6 +27,7 @@
     
 }
 
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *containtLeft;
 
 - (IBAction)signInAction:(id)sender;
 

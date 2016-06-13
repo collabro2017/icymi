@@ -1,21 +1,28 @@
 {
-  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2",
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "5ADBE369931E515D76E3E06F45168ACDA742F9C2",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
     "DC4732A8D0CC983CF520085D709B6EC073C35DBF" : 0,
-    "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2" : 0
+    "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2" : 0,
+    "5ADBE369931E515D76E3E06F45168ACDA742F9C2" : 0
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "05C815B6-21AD-4782-BD95-485F4D368E84",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
     "DC4732A8D0CC983CF520085D709B6EC073C35DBF" : "New",
-    "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2" : "icymi\/"
+    "EA4EB47B7621B1785DDBC9A3FA0708BD65DAFBF2" : "icymi\/",
+    "5ADBE369931E515D76E3E06F45168ACDA742F9C2" : "freshappflyer\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "ICYMI",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
   "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ICYMI.xcodeproj",
   "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/bangll\/freshappflyer.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "5ADBE369931E515D76E3E06F45168ACDA742F9C2"
+    },
     {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/olander1985\/collabro_new.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",

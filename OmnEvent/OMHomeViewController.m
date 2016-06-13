@@ -648,6 +648,18 @@
     }
 }
 
+- (UIEdgeInsets)collectionView:(UICollectionView *) collectionView
+                        layout:(UICollectionViewLayout *) collectionViewLayout
+        insetForSectionAtIndex:(NSInteger) section {
+    
+    if (IS_IPAD) {
+        return UIEdgeInsetsMake(20, 20, 0, 0);
+    }else{
+        return UIEdgeInsetsMake(1, 0, 0, 0);
+    }
+}
+
+
 // don't use this function now
 - (void) postBadgeProcess
 {

@@ -22,6 +22,8 @@
 		0AB87A6E1B81FFBB009EC78B /* UzysGroupPickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AB87A641B81FFBB009EC78B /* UzysGroupPickerViewController.m */; };
 		0AB87A6F1B81FFBB009EC78B /* UzysGroupViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AB87A661B81FFBB009EC78B /* UzysGroupViewCell.m */; };
 		0AB87A701B81FFBB009EC78B /* UzysWrapperPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AB87A681B81FFBB009EC78B /* UzysWrapperPickerController.m */; };
+		0B0F5C391D0CA97D00138CBE /* cover_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 0B0F5C371D0CA97D00138CBE /* cover_ipad.png */; };
+		0B0F5C3A1D0CA97D00138CBE /* cover_ipad@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0B0F5C381D0CA97D00138CBE /* cover_ipad@2x.png */; };
 		1F39C80C1B3A898000FA9FCE /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F39C80B1B3A898000FA9FCE /* ParseFacebookUtils.framework */; };
 		1F39C80E1B3ADA8B00FA9FCE /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F39C80D1B3ADA8B00FA9FCE /* FacebookSDK.framework */; };
 		3C0283AD198929EC00EA3864 /* OMEventCells.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0283AC198929EC00EA3864 /* OMEventCells.xib */; };
@@ -589,6 +591,8 @@
 		0AB87A661B81FFBB009EC78B /* UzysGroupViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UzysGroupViewCell.m; path = CustomPhotoLibrary/UzysGroupViewCell.m; sourceTree = "<group>"; };
 		0AB87A671B81FFBB009EC78B /* UzysWrapperPickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UzysWrapperPickerController.h; path = CustomPhotoLibrary/UzysWrapperPickerController.h; sourceTree = "<group>"; };
 		0AB87A681B81FFBB009EC78B /* UzysWrapperPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UzysWrapperPickerController.m; path = CustomPhotoLibrary/UzysWrapperPickerController.m; sourceTree = "<group>"; };
+		0B0F5C371D0CA97D00138CBE /* cover_ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cover_ipad.png; sourceTree = "<group>"; };
+		0B0F5C381D0CA97D00138CBE /* cover_ipad@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cover_ipad@2x.png"; sourceTree = "<group>"; };
 		1F39C80B1B3A898000FA9FCE /* ParseFacebookUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseFacebookUtils.framework; sourceTree = "<group>"; };
 		1F39C80D1B3ADA8B00FA9FCE /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		3C0283AC198929EC00EA3864 /* OMEventCells.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OMEventCells.xib; sourceTree = "<group>"; };
@@ -2076,6 +2080,8 @@
 		3E5611BE1AC494C500505444 /* TwitterCover */ = {
 			isa = PBXGroup;
 			children = (
+				0B0F5C371D0CA97D00138CBE /* cover_ipad.png */,
+				0B0F5C381D0CA97D00138CBE /* cover_ipad@2x.png */,
 				3E5611BF1AC494C500505444 /* cover.png */,
 				3E5611C01AC494C500505444 /* cover@2x.png */,
 				3E5611C11AC494C500505444 /* UIScrollView+TwitterCover.h */,
@@ -2736,6 +2742,7 @@
 				3CC691AE199FBE350064B4D0 /* HM.png in Resources */,
 				3EB66CBA1AB6186700E90054 /* record_lensflip_highlighted.png in Resources */,
 				3EB66C981AB6186700E90054 /* record_close_highlighted.png in Resources */,
+				0B0F5C3A1D0CA97D00138CBE /* cover_ipad@2x.png in Resources */,
 				3CC69154199FBE350064B4D0 /* AI.png in Resources */,
 				3CC6918F199FBE350064B4D0 /* EH.png in Resources */,
 				3CC691B1199FBE350064B4D0 /* HT.png in Resources */,
@@ -2845,6 +2852,7 @@
 				3CC69212199FBE350064B4D0 /* SD.png in Resources */,
 				3CC69209199FBE350064B4D0 /* QA.png in Resources */,
 				3CC691D5199FBE350064B4D0 /* LV.png in Resources */,
+				0B0F5C391D0CA97D00138CBE /* cover_ipad.png in Resources */,
 				3CC691BB199FBE350064B4D0 /* IS.png in Resources */,
 				3EB66CC91AB6186700E90054 /* vedio_nav_btn_back_nor@2x.png in Resources */,
 				3CC6917F199FBE350064B4D0 /* CO.png in Resources */,
@@ -3172,8 +3180,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: GMO RUNSYSTEM JSC";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: GMO RUNSYSTEM JSC";
 				COMPRESS_PNG_FILES = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3190,8 +3198,13 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
+<<<<<<< HEAD
 				PROVISIONING_PROFILE = "cd8f6dde-d473-4433-bccc-b8f8550b8d5a";
 				TARGETED_DEVICE_FAMILY = 1;
+=======
+				PROVISIONING_PROFILE = "6c7e0cc9-10db-4a82-8649-3e040a95415d";
+				TARGETED_DEVICE_FAMILY = "1,2";
+>>>>>>> 0715deabc9ac6cc1bfed802abc36026dc9c8c583
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -3200,8 +3213,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Blake Ratcliff (6M75VL4633)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Blake Ratcliff (6M75VL4633)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: GMO RUNSYSTEM JSC";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: GMO RUNSYSTEM JSC";
 				COMPRESS_PNG_FILES = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3218,8 +3231,13 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
+<<<<<<< HEAD
 				PROVISIONING_PROFILE = "aa908a52-0271-4897-8e5b-aaa6765cea1a";
 				TARGETED_DEVICE_FAMILY = 1;
+=======
+				PROVISIONING_PROFILE = "6c7e0cc9-10db-4a82-8649-3e040a95415d";
+				TARGETED_DEVICE_FAMILY = "1,2";
+>>>>>>> 0715deabc9ac6cc1bfed802abc36026dc9c8c583
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

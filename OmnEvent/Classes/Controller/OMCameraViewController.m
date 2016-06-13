@@ -49,6 +49,7 @@
 @property (assign, nonatomic) BOOL isProcessingData;
 
 @property (strong, nonatomic) UIImageView *focusRectView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contraintLeft;
 
 // Video Control View
 

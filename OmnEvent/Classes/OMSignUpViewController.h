@@ -43,6 +43,9 @@
     IBOutlet UIView *viewForBottom;
 }
 @property (assign, nonatomic) UIBackgroundTaskIdentifier fileUploadBackgroundTaskId;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contraintLeft;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contraintRight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contrainTop;
 
 - (IBAction)registerAction:(id)sender;
 - (IBAction)cancelAction:(id)sender;
