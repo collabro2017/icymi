@@ -239,8 +239,8 @@
 {
     [super viewWillAppear:animated];
     
-    NSLog(@"Event count && Event Global count = %ld, %ld",
-    [arrForFeed count],[[GlobalVar getInstance].gArrEventList count]);
+    NSLog(@"Event count && Event Global count = %i, %i",
+    (int)[arrForFeed count],(int)[[GlobalVar getInstance].gArrEventList count]);
     
  }
 

@@ -86,6 +86,8 @@
 #define  kLoadCurrentEventData  @"loadCurrentEventData"
 #define  kLoadCurrentPhotoData  @"loadCurrentPhotoData"
 
+#define  kExportCancel          @"exportCancel"
+
 #define  kLoadComponentsData    @"loadComponentsData"
 #define  kLoadEventDataWithGlobal @"reloadEventWithGlobal"
 

@@ -10,8 +10,6 @@
 
 #import "F3BarGauge.h"
 
-//#define MIN_AUDIO_DUR 10
-//#define MAX_AUDIO_DUR 60
 
 @interface OMRecordAudioViewController : UIViewController<AVAudioRecorderDelegate, AVAudioPlayerDelegate> {
     

@@ -51,6 +51,10 @@
 #define kTag_TextShare          9000
 #define kTag_TextShare1         10000
 
+#define kTag_PDF                20000
+#define kTag_DupEvent           20001
+
+
 @interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 {
     
@@ -73,9 +77,16 @@
     
     NSMutableArray *arrPrevTagFriends;
     
+    BOOL modeForExport;
+    
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
+
+@property (weak, nonatomic) IBOutlet UIView *doneView;
+
+@property (weak, nonatomic) IBOutlet UIButton *btnDoneForExport;
+@property (weak, nonatomic) IBOutlet UIButton *btnCancelForExport;
 
 @property (readwrite, nonatomic, strong) UIRefreshControl *refreshControl;
 
@@ -83,6 +94,21 @@
 
 @implementation OMDetailEventViewController
 @synthesize currentObject, dic, tblForDetailList, curEventIndex;
+@synthesize doneView, btnDoneForExport;
+
+
+- (IBAction)onCancelForExport:(id)sender {
+    
+    [doneView setHidden:YES];
+    modeForExport = NO;
+    [tblForDetailList reloadData];
+    [GlobalVar getInstance].isPosting = NO;
+    
+    [[GlobalVar getInstance].gArrPostList removeAllObjects];
+    [[GlobalVar getInstance].gArrSelectedList removeAllObjects];
+    
+}
+
 
 - (void)reload:(__unused id)sender
 {
@@ -140,8 +166,17 @@
     [super viewDidLoad];
     [self initializeNavBar];
     [self addRefreshControlToTable];
+    
+    
     // Do any additional setup after loading the view.
     
+    // global array Init
+    [GlobalVar getInstance].gArrPostList = [[NSMutableArray alloc] init];
+    [GlobalVar getInstance].gArrSelectedList = [[NSMutableArray alloc] init];
+    
+    [doneView setHidden:YES];
+    modeForExport = NO;
+
     // Initialize variables
     arrForDetail = [[NSMutableArray alloc] init];
     offlineURLs  = [[NSMutableArray alloc] init];
@@ -155,6 +190,9 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadContents) name:kLoadComponentsData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCurrentObject) name:kLoadCurrentEventData object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onCancelForExport:) name:kExportCancel object:nil];
+
    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(firstViewLoad) name:kNotificationFirstDetailViewLoad object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShow:) name:kNotificationKeyboardShow object:nil];
@@ -180,6 +218,8 @@
     autoRefreshTimer = nil;
     NSLog(@"Auto Refresh timer - stoped!");
     
+    
+    
 }
 - (void)firstViewLoad {
     [self.navigationController popToRootViewControllerAnimated:YES];
@@ -199,6 +239,7 @@
         UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
+    
     
     autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
    
@@ -1043,6 +1084,8 @@
                     
                     [cell setDelegate:self];
                     [cell setCurEventIndex:curEventIndex];
+                    [cell setCurPostIndex:indexPath.section - 1];
+                    [cell setCheckMode:modeForExport];
                     [cell setCurrentObj:tempObj];
                     
                     return cell;
@@ -1092,8 +1135,11 @@
                     }
                     
                     [cell setDelegate:self];
-                    [cell setCurrentObj:tempObj];
                     [cell setCurEventIndex: curEventIndex];
+                    [cell setCurPostIndex:indexPath.section - 1];
+                    [cell setCheckMode:modeForExport];
+                    [cell setCurrentObj:tempObj];
+
                     
                     [cell setNeedsLayout];
                     [cell layoutIfNeeded];
@@ -1289,7 +1335,6 @@
     }
     
 
-
 }
 
 - (void)sharePost:(UITableViewCell *)_cell {
@@ -1309,8 +1354,50 @@
     [postImgView setImageWithURL:[NSURL URLWithString:file.url]];
   
     PFUser *user = (PFUser *)_obj[@"user"];
- 
-    if ([user.objectId isEqualToString:USER.objectId]) {
+    
+    NSMutableArray *arrForTagFriends = [NSMutableArray array];
+    NSMutableArray *arrForTagFriendAuthorities  = [NSMutableArray array];
+    BOOL authFlag = NO;
+    
+    if(currentObject[@"TagFriends"] != nil && [currentObject[@"TagFriends"] count] > 0)
+    {
+        arrForTagFriends = currentObject[@"TagFriends"];
+    }
+    if(currentObject[@"TagFriendAuthorities"] != nil && [currentObject[@"TagFriendAuthorities"] count] > 0)
+    {
+        arrForTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+    }
+    
+    NSString *AuthorityValue = @"";
+    
+    if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] > 0){
+        
+        for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
+            if ([[arrForTagFriends objectAtIndex:i] isEqualToString:USER.objectId]){
+                if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
+                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
+                break;
+            }
+        }
+        
+        if ([AuthorityValue isEqualToString:@"Full"]){
+            authFlag = YES;
+        }
+        else
+        {
+            authFlag = NO;
+        }
+        
+    }
+    else
+    {
+        if ([arrForTagFriends containsObject:USER.objectId]){
+            authFlag = YES;
+        }
+    }
+
+    
+    if ([user.objectId isEqualToString:USER.objectId] || authFlag) {
         
         shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Use this as thumbnail", @"Delete", @"Report", nil];
         [shareAction1 setTag:kTag_Share];
@@ -1335,7 +1422,48 @@
     tempObejct = _obj;
     PFUser *user = (PFUser *)_obj[@"user"];
     
-    if ([user.objectId isEqualToString:USER.objectId]) {
+    NSMutableArray *arrForTagFriends = [NSMutableArray array];
+    NSMutableArray *arrForTagFriendAuthorities  = [NSMutableArray array];
+    BOOL authFlag = NO;
+    
+    if(currentObject[@"TagFriends"] != nil && [currentObject[@"TagFriends"] count] > 0)
+    {
+        arrForTagFriends = currentObject[@"TagFriends"];
+    }
+    if(currentObject[@"TagFriendAuthorities"] != nil && [currentObject[@"TagFriendAuthorities"] count] > 0)
+    {
+        arrForTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+    }
+    
+    NSString *AuthorityValue = @"";
+    
+    if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] > 0){
+        
+        for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
+            if ([[arrForTagFriends objectAtIndex:i] isEqualToString:USER.objectId]){
+                if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
+                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
+                break;
+            }
+        }
+        
+        if ([AuthorityValue isEqualToString:@"Full"]){
+            authFlag = YES;
+        }
+        else
+        {
+            authFlag = NO;
+        }
+        
+    }
+    else
+    {
+        if ([arrForTagFriends containsObject:USER.objectId]){
+            authFlag = YES;
+        }
+    }
+
+    if ([user.objectId isEqualToString:USER.objectId] || authFlag) {
         
         shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Delete", @"Report", nil];
         [shareAction1 setTag:kTag_TextShare];
@@ -1796,31 +1924,87 @@
 
 // Export feed data table to pdf
 
--(void) exportToPDF {
+- (IBAction)onExportDoneBtn:(id)sender {
     
-    NSMutableDictionary* contentPDF = [[NSMutableDictionary alloc] init];
+    [doneView setHidden:YES];
     
-    [contentPDF setObject:currentObject forKey:@"currentObject"];
-    [contentPDF setObject:arrForDetail forKey:@"arrDetail"];
+    UIButton *tmp = (UIButton*)sender;
     
-    [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
-    pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
+    if([tmp tag] == kTag_PDF)
+    {
+        [self doneToPDF];
+        
+    }
+    else if([tmp tag] == kTag_DupEvent)
+    {
+        
+    }
+}
+
+- (void)doneToPDF
+{
     
-    //Preview the PDF
-    QLPreviewController *previewController = [[QLPreviewController alloc] init];
-    [previewController setDelegate:self];
-    [previewController setDataSource:self];
-    
-    if ([self DeviceSystemMajorVersion] >= 7) {
-        previewController.transitioningDelegate = self;
-        previewController.modalPresentationStyle = UIModalPresentationCustom;
-    } else {
-        previewController.modalPresentationStyle = UIModalPresentationFormSheet;
+    if([[GlobalVar getInstance].gArrSelectedList count] > 0)
+    {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        
+        NSArray *sortedArray = [[GlobalVar getInstance].gArrSelectedList sortedArrayUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+            return [obj2.createdAt compare:obj1.createdAt];
+        }];
+        
+        NSMutableDictionary* contentPDF = [[NSMutableDictionary alloc] init];
+        
+        [contentPDF setObject:currentObject forKey:@"currentObject"];
+        [contentPDF setObject:sortedArray forKey:@"arrDetail"];
+        
+        [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
+        pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
+        
+        //Preview the PDF
+        QLPreviewController *previewController = [[QLPreviewController alloc] init];
+        [previewController setDelegate:self];
+        [previewController setDataSource:self];
+        
+        if ([self DeviceSystemMajorVersion] >= 7) {
+            previewController.transitioningDelegate = self;
+            previewController.modalPresentationStyle = UIModalPresentationCustom;
+        } else {
+            previewController.modalPresentationStyle = UIModalPresentationFormSheet;
+        }
+        
+        [self presentViewController:previewController animated:YES completion:^{
+        
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        }];
+    }
+    else
+    {
+        [self onCancelForExport:nil];
     }
 
-    [self presentViewController:previewController animated:YES completion:^{
+}
+
+
+-(void) exportToPDF {
+    
+    if(!modeForExport)
+    {
+        [doneView setHidden:NO];
+        [btnDoneForExport setTag:kTag_PDF];
+        modeForExport = YES;
+        [GlobalVar getInstance].isPosting = YES;
+        [GlobalVar getInstance].gArrPostList = [arrForDetail mutableCopy];
         
-    }];
+        [tblForDetailList reloadData];
+    }
+    else
+    {
+        [self onCancelForExport:nil];
+    }
+}
+- (void) dupToNewEvent
+{
+    
 }
 
 -(NSString*)getPDFFilePath
@@ -2327,6 +2511,7 @@
 
 - (void)previewControllerDidDismiss:(QLPreviewController *)controller{
     pdfURL = nil;
+    [self onCancelForExport:nil];
 }
 
 #pragma mark Newwork connecting Check - help and Auto refresh features
