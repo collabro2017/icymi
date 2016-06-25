@@ -23,6 +23,7 @@
 #import "Reachability.h"
 #import "OMAppDelegate.h"
 
+
 #define MAXIUM_NUM              140;
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 
@@ -39,6 +40,8 @@
     NSMutableArray *arrCurTaggedFriends;
     
     NSMutableArray *arrPostLookedFlags;
+    
+    NSMutableArray *arrSelected;
 }
 
 @property (nonatomic, strong) CLLocationManager *locationManager;
@@ -95,6 +98,8 @@
     
     arrForTaggedFriend = [NSMutableArray array];
     arrForTaggedFriendAuthor = [NSMutableArray array];
+    arrSelected = [NSMutableArray array];
+    arrSelected = [[GlobalVar getInstance].gArrSelectedList mutableCopy];
     
     arrCurTaggedFriends = [[NSMutableArray alloc] init];
     
@@ -154,6 +159,23 @@
                 [imageViewForPostImage setImage:_imageForPost];
                 mediaData = UIImageJPEGRepresentation(_imageForPost, 0.9f);
                 
+            }
+            
+        }
+            break;
+            
+            
+        case kTypeUploadDup:
+        {
+         // For event thumbnail...
+            if([GlobalVar getInstance].gThumbImg != nil)
+            {
+                PFFile *tmp = [GlobalVar getInstance].gThumbImg;
+                [imageViewForPostImage setImageWithURL:[NSURL URLWithString:tmp.url] placeholderImage:[UIImage imageNamed:@"img_thumbnail"]];
+            }
+            else
+            {
+                [imageViewForPostImage setImage:[UIImage imageNamed:@"img_thumbnail"]];
             }
             
         }
@@ -284,6 +306,11 @@
 
 - (void)tagAction
 {
+    if(uploadOption == kTypeUploadDup)
+    {
+        
+        return;
+    }
     OMTagListViewController *tagListVC = [self.storyboard instantiateViewControllerWithIdentifier:@"TagListVC"];
     tagListVC.delegate = self;
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:tagListVC];
@@ -410,6 +437,83 @@
                 }];
             }
             
+        }
+            break;
+            
+        case kTypeUploadDup:
+        {
+            
+            PFObject *post = [PFObject objectWithClassName:@"Event"];
+            PFUser *currentUser = [PFUser currentUser];
+            
+            post[@"user"] = currentUser;
+            post[@"eventname"] = lblForTitle.text;
+            post[@"username"] = USER.username;
+            post[@"description"] = textViewForDescription.text;
+            post[@"openStatus"] = [NSNumber numberWithInteger:1];
+            
+            // Using origin Event's Tag and TagAuthor values
+            PFObject *temp = [GlobalVar getInstance].gEventObj;
+            if(temp && temp[@"TagFriends"] > 0)
+            {
+                post[@"TagFriends"] = temp[@"TagFriends"];
+                post[@"TagFriendAuthorities"] = temp[@"TagFriendAuthorities"];
+            }
+            else
+            {
+                post[@"TagFriends"]= arrForTaggedFriend;
+                post[@"TagFriendAuthorities"] = arrForTaggedFriendAuthor;
+            }
+            
+            
+            post[@"country"] = lblForLocation.text;
+            post[@"postType"] = _postType;
+            
+            //for badge
+            post[@"eventBadgeFlag"] = arrForTaggedFriend;
+            
+            
+            if([GlobalVar getInstance].gThumbImg)
+            {
+                post[@"thumbImage"] = [GlobalVar getInstance].gThumbImg;
+                post[@"postImage"]  = [GlobalVar getInstance].gThumbImg;
+            }
+            else
+            {
+                UIImage *def = [UIImage imageNamed:@"img_thumbnail"];
+                PFFile *thumbFile = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(def, 0.8f)];
+                post[@"thumbImage"] = thumbFile;
+
+                
+                PFFile *postFile = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(def, 0.9f)];
+                post[@"postImage"] = postFile;
+            }
+            
+            post[@"postedObjects"] = [GlobalVar getInstance].gArrSelectedList;
+            
+            //Request a background execution task to allow us to finish uploading the photo even if the app is background
+           // self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+               // [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+            //}];
+            
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+               
+                if (succeeded) {
+                    NSLog(@"Success New event for Dup");
+                    [self sendPushToTaggedFriends:post];
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
+                    
+                    [self dupPostForNewEvent:post];
+                }
+                else
+                {
+                    [OMGlobal showAlertTips:@"Uploading Failed." title:nil];
+                }
+                //[[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+            }];
+        
         }
             break;
             
@@ -576,8 +680,7 @@
                     [GlobalVar getInstance].isPosting = YES;
                     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                        
-                        
+
                         if (succeeded) {
                             NSLog(@"Success ---- Post");
                             
@@ -620,6 +723,100 @@
             break;
         default:
             break;
+    }
+}
+
+- (void)dupPostForNewEvent:(PFObject*)targetEvent
+{
+    
+    if([arrSelected count] <= 0)
+    {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        
+        [[GlobalVar getInstance].gArrPostList removeAllObjects];
+        [[GlobalVar getInstance].gArrSelectedList removeAllObjects];
+        NSLog(@"dup success %i", (int)[arrSelected count]);
+        [self.navigationController popViewControllerAnimated:YES];
+        return;
+    }
+    else
+    {
+        PFObject *postObj = [arrSelected lastObject];
+        PFObject *post = [PFObject objectWithClassName:@"Post"];
+        
+        post[@"user"]           = postObj[@"user"];
+        post[@"targetEvent"]    = targetEvent;
+        post[@"title"]          = postObj[@"title"];
+        post[@"description"]    = postObj[@"description"];
+        post[@"country"]        = postObj[@"country"];
+        
+        NSMutableArray *tmp = [NSMutableArray array];
+        tmp = targetEvent[@"TagFriends"];
+        if([tmp containsObject:USER.objectId])
+        {
+            [tmp removeObject:USER.objectId];
+        }
+        
+        post[@"usersBadgeFlag"] = tmp;
+        post[@"postType"]       = postObj[@"postType"];
+        if(postObj[@"postFile"])
+        {
+            post[@"postFile"] = postObj[@"postFile"];
+        }
+        if(postObj[@"thumbImage"])
+        {
+            post[@"thumbImage"] = postObj[@"thumbImage"];
+        }
+        
+//        if(postObj[@"commentsUsers"] && [postObj[@"commentsUsers"] count]>0)
+//        {
+//            post[@"commentsUsers"]  = postObj[@"commentsUsers"];
+//        }
+//        
+//        if(postObj[@"commentsArray"] && [postObj[@"commentsArray"] count]>0)
+//        {
+//            post[@"commentsArray"]  = postObj[@"commentsArray"];
+//        }
+        
+        if(postObj[@"likers"] && [postObj[@"likers"] count]>0)
+        {
+            post[@"likers"]  = postObj[@"likers"];
+        }
+        if(postObj[@"likeUserArray"] && [postObj[@"likeUserArray"] count]>0)
+        {
+            post[@"likeUserArray"]  = postObj[@"likeUserArray"];
+        }
+      
+        
+        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            
+            if (error == nil) {
+                
+                if([arrSelected count] > 0)
+                {
+                    NSLog(@"dup success %i", (int)[arrSelected count]);
+                    [arrSelected removeLastObject];
+                    [self dupPostForNewEvent:targetEvent];
+                }
+                else
+                {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    [[GlobalVar getInstance].gArrPostList removeAllObjects];
+                    [[GlobalVar getInstance].gArrSelectedList removeAllObjects];
+                    
+                    [self.navigationController popViewControllerAnimated:YES];
+                    return;
+                }
+            }
+            else
+            {
+                if([arrSelected count] > 0)
+                {
+                    [arrSelected removeLastObject];
+                    [self dupPostForNewEvent:targetEvent];
+                }
+            }
+        }];
     }
 }
 

@@ -103,10 +103,7 @@
 
     constraintForHeight.constant = tempValue - (self.view.frame.size.height - btnForLogin.frame.origin.y - keyboardFrame.size.height);
     
-    
     [self.view layoutIfNeeded];
-    
-    
 }
 
 - (void)keyboardDidShow:(NSNotification *)_notification

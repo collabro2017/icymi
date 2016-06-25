@@ -42,6 +42,7 @@
 
 - (void)showDetailPage:(UITapGestureRecognizer *)_gesture
 {
+    
 }
 
 + (FeedText *)sharedCell
