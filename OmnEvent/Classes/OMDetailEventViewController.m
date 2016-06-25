@@ -1321,14 +1321,14 @@
     PFUser *user = (PFUser *)_obj[@"user"];
     
     if ([user.objectId isEqualToString:USER.objectId]) {
-        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram",@"Add to Folder", status, @"Delete", @"Export to PDF", @"Report", nil];
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram",@"Add to Folder",  @"Export to PDF",@"Duplicate to New Event", @"Delete",status, @"Report", nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShare;
     }
     else
     {
-        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram", @"Export to PDF", @"Report", nil];
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram", @"Export to PDF", @"Duplicate to New Event", @"Report", nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShareGuest;
@@ -1679,12 +1679,12 @@
                     [self tagFolders];
                 }
                     break;
-                case 6:
+                case 7:
                 {
                     [self deleteEvent];
                 }
                     break;
-                case 5:
+                case 8:
                 {
                     PFUser *user = (PFUser *)currentObject[@"user"];
                     if ([user.objectId isEqualToString:USER.objectId]) {
@@ -1710,14 +1710,19 @@
                     
                 }
                     break;
-                case 7:
+                case 5:
                 {
                     
                     [self exportToPDF];
                     
                 }
                     break;
-                case 8:
+                case 6:
+                {
+                    [self duplicateToNewEvent];
+                }
+                    break;
+                case 9:
                 {
                     [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
                     [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
@@ -1763,7 +1768,13 @@
                     
                 }
                     break;
-                case 5:{
+                case 5:
+                {
+                    [self duplicateToNewEvent];
+                }
+                    break;
+                    
+                case 6:{
                     
                     [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
                     
@@ -1937,7 +1948,7 @@
     }
     else if([tmp tag] == kTag_DupEvent)
     {
-        
+        [self doneToNewEvent];
     }
 }
 
@@ -1984,6 +1995,36 @@
 
 }
 
+//for duplication
+- (void) doneToNewEvent
+{
+    if([[GlobalVar getInstance].gArrSelectedList count] > 0)
+    {
+        [GlobalVar getInstance].gThumbImg = nil;
+        for (PFObject *postObj in [GlobalVar getInstance].gArrSelectedList) {
+            if([postObj[@"postType"] isEqualToString:@"photo"])
+            {
+                [GlobalVar getInstance].gThumbImg = (PFFile *)postObj[@"thumbImage"];
+                break;
+            }
+        }
+        
+        [GlobalVar getInstance].gEventObj = currentObject;
+        
+        [doneView setHidden:YES];
+        modeForExport = NO;
+        [tblForDetailList reloadData];
+        
+        [self.navigationController popViewControllerAnimated:YES];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kOpenPostEvent object:nil];
+        
+
+    }
+    else
+    {
+        [self onCancelForExport:nil];
+    }
+}
 
 -(void) exportToPDF {
     
@@ -2002,9 +2043,31 @@
         [self onCancelForExport:nil];
     }
 }
-- (void) dupToNewEvent
+
+//for duplication
+- (void) duplicateToNewEvent
 {
-    
+    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+    if(!appDel.network_state)
+    {
+        [OMGlobal showAlertTips:@"You can't duplicate in offline mode." title:@"Warning"];
+        return;
+    }
+    if(!modeForExport)
+    {
+        [doneView setHidden:NO];
+        [btnDoneForExport setTag:kTag_DupEvent];
+        modeForExport = YES;
+        [GlobalVar getInstance].isPosting = YES;
+        [GlobalVar getInstance].gArrPostList = [arrForDetail mutableCopy];
+        
+        [tblForDetailList reloadData];
+    }
+    else
+    {
+        [self onCancelForExport:nil];
+    }
+
 }
 
 -(NSString*)getPDFFilePath

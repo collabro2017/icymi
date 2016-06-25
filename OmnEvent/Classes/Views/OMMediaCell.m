@@ -230,8 +230,6 @@
         
         if (socialTemp.badgeCount > 0) {
             
-            [lblForTimer setTextColor:[UIColor redColor]];
-            
             OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
             if(currentObj != nil)
             {
@@ -240,6 +238,9 @@
                 
                 if ([temp containsObject:self_user.objectId])
                 {
+                    [GlobalVar getInstance].isPosting = YES;
+                    [lblForTimer setTextColor:[UIColor redColor]];
+                    
                     [temp removeObject:self_user.objectId];
                     currentObj[@"usersBadgeFlag"] = temp;
                     [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
@@ -247,6 +248,7 @@
                         {
                             NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
                             [NSTimer scheduledTimerWithTimeInterval: 2.0 target: self selector: @selector(delayChangeTextColor:) userInfo: nil repeats: NO];
+                            [GlobalVar getInstance].isPosting = NO;
                         }
                     }];
                     

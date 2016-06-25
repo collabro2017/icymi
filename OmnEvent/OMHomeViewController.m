@@ -19,6 +19,9 @@
 
 #import "UIImageView+AFNetworking.h"
 
+#import "UIImage+Resize.h"
+#import "OMPostEventViewController.h"
+
 #import <Social/Social.h>
 #import <Crittercism/Crittercism.h>
 
@@ -156,6 +159,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showBadge:) name:kShowBadgeOnEvent object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadEventWithGlobal) name:kLoadEventDataWithGlobal object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createDupEvent) name:kOpenPostEvent object:nil];
     
 }
 
@@ -499,6 +504,24 @@
         }
     }];
     
+}
+
+- (void)createDupEvent
+{
+    // Show PostViewController
+    
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+
+    OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
+    [postEventVC setImageForPost:nil];
+    [postEventVC setPostType:@"image"]; //Post Type  :  image , video, audio
+    
+    [postEventVC setUploadOption:kTypeUploadDup];
+    [postEventVC setCaptureOption:kTypeCaptureAll];
+    [postEventVC setCurObj:nil];
+    
+    [self.navigationController pushViewController:postEventVC animated:YES];
+        
 }
 
 - (void)postNewEvent {

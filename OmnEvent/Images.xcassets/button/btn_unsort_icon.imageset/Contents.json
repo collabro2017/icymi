@@ -6,12 +6,12 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "btn_uncheck_icon.png",
+      "filename" : "btn_unsort_icon.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "btn_uncheck_icon-1.png",
+      "filename" : "btn_unsort_icon-1.png",
       "scale" : "3x"
     }
   ],

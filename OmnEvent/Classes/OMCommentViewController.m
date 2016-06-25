@@ -122,7 +122,7 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
     self.title = @"Comments";
-    [self loadComments];
+    //[self loadComments];
     [self loadController];
 }
 

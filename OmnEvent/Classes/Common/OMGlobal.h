@@ -27,7 +27,8 @@
 typedef enum {
     
     kTypeUploadEvent = 0,
-    kTypeUploadPost
+    kTypeUploadPost,
+    kTypeUploadDup,
     
 }kTypeUpload;
 
@@ -98,6 +99,8 @@ typedef enum {
 
 @property (strong, nonatomic) NSMutableArray *gArrPostList;
 @property (strong, nonatomic) NSMutableArray *gArrSelectedList;
+@property (strong, nonatomic) PFObject *gEventObj;
+@property (strong, nonatomic) PFFile *gThumbImg;
 
 +(GlobalVar*)getInstance;
 
