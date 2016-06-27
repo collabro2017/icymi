@@ -746,18 +746,47 @@
         
         post[@"user"]           = postObj[@"user"];
         post[@"targetEvent"]    = targetEvent;
-        post[@"title"]          = postObj[@"title"];
-        post[@"description"]    = postObj[@"description"];
-        post[@"country"]        = postObj[@"country"];
-        
-        NSMutableArray *tmp = [NSMutableArray array];
-        tmp = targetEvent[@"TagFriends"];
-        if([tmp containsObject:USER.objectId])
+        if(postObj[@"title"] != nil)
         {
-            [tmp removeObject:USER.objectId];
+            post[@"title"] = postObj[@"title"];
+        }
+        else
+        {
+            post[@"title"] = @"";
         }
         
-        post[@"usersBadgeFlag"] = tmp;
+        if(postObj[@"description"] != nil)
+        {
+            post[@"description"] = postObj[@"description"];
+        }
+        else
+        {
+            post[@"description"] = @"";
+        }
+        
+        if(postObj[@"country"] != nil)
+        {
+            post[@"country"] = postObj[@"country"];
+        }
+        else
+        {
+            post[@"country"] = @"";
+        }
+        
+        
+        NSMutableArray *tmp = [NSMutableArray array];
+        if([targetEvent[@"TagFriends"] count] > 0)
+        {
+            tmp = targetEvent[@"TagFriends"];
+            if([tmp containsObject:USER.objectId])
+            {
+                [tmp removeObject:USER.objectId];
+            }
+            
+            post[@"usersBadgeFlag"] = tmp;
+        }
+        
+        
         post[@"postType"]       = postObj[@"postType"];
         if(postObj[@"postFile"])
         {
@@ -778,14 +807,14 @@
 //            post[@"commentsArray"]  = postObj[@"commentsArray"];
 //        }
         
-        if(postObj[@"likers"] && [postObj[@"likers"] count]>0)
-        {
-            post[@"likers"]  = postObj[@"likers"];
-        }
-        if(postObj[@"likeUserArray"] && [postObj[@"likeUserArray"] count]>0)
-        {
-            post[@"likeUserArray"]  = postObj[@"likeUserArray"];
-        }
+//        if(postObj[@"likers"] && [postObj[@"likers"] count]>0)
+//        {
+//            post[@"likers"]  = postObj[@"likers"];
+//        }
+//        if(postObj[@"likeUserArray"] && [postObj[@"likeUserArray"] count]>0)
+//        {
+//            post[@"likeUserArray"]  = postObj[@"likeUserArray"];
+//        }
       
         
         [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {

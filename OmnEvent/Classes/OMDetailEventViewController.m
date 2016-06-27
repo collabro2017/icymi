@@ -54,6 +54,8 @@
 #define kTag_PDF                20000
 #define kTag_DupEvent           20001
 
+#define kTag_PDF_Select         30000
+
 
 @interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate>
 {
@@ -1321,14 +1323,14 @@
     PFUser *user = (PFUser *)_obj[@"user"];
     
     if ([user.objectId isEqualToString:USER.objectId]) {
-        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram",@"Add to Folder",  @"Export to PDF",@"Duplicate to New Event", @"Delete",status, @"Report", nil];
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram",@"Add to Folder",  @"Export to PDF",@"Select Items for New Event", @"Delete",status, @"Report", nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShare;
     }
     else
     {
-        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram", @"Export to PDF", @"Duplicate to New Event", @"Report", nil];
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Share via Email" otherButtonTitles:@"Facebook",@"Twitter",@"Instagram", @"Export to PDF", @"Select Items for New Event", @"Report", nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShareGuest;
@@ -1880,6 +1882,19 @@
             }
         }
             break;
+        case kTag_PDF_Select:
+        {
+            switch (buttonIndex) {
+                case 0:
+                    [self exportToPDFAll];
+                    break;
+                case 1:
+                    [self exportToPDFWithSelect];
+                    break;
+                default:
+                    break;
+            }
+        }
         default:
             break;
     }
@@ -2028,6 +2043,15 @@
 
 -(void) exportToPDF {
     
+    UIActionSheet* shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Select All" otherButtonTitles:@"Select Items", nil];
+    
+    [shareAction showInView:self.view];
+    shareAction.tag = kTag_PDF_Select;
+    
+}
+
+- (void) exportToPDFWithSelect
+{
     if(!modeForExport)
     {
         [doneView setHidden:NO];
@@ -2042,6 +2066,38 @@
     {
         [self onCancelForExport:nil];
     }
+
+}
+
+- (void) exportToPDFAll
+{
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
+    NSMutableDictionary* contentPDF = [[NSMutableDictionary alloc] init];
+    
+    [contentPDF setObject:currentObject forKey:@"currentObject"];
+    [contentPDF setObject:arrForDetail forKey:@"arrDetail"];
+    
+    [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
+    pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
+    
+    //Preview the PDF
+    QLPreviewController *previewController = [[QLPreviewController alloc] init];
+    [previewController setDelegate:self];
+    [previewController setDataSource:self];
+    
+    if ([self DeviceSystemMajorVersion] >= 7) {
+        previewController.transitioningDelegate = self;
+        previewController.modalPresentationStyle = UIModalPresentationCustom;
+    } else {
+        previewController.modalPresentationStyle = UIModalPresentationFormSheet;
+    }
+    
+    [self presentViewController:previewController animated:YES completion:^{
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }];
+
 }
 
 //for duplication
