@@ -350,11 +350,11 @@
             return;
         }
         
-        PFObject *userObj = [objects objectAtIndex:0];
+        PFUser *user = (PFUser *)objects[0];
         
-        if ([userObj objectForKey:@"Status"])
+        if ([user objectForKey:@"Status"])
         {
-            BOOL status = [[userObj objectForKey:@"Status"] boolValue];
+            BOOL status = [[user objectForKey:@"Status"] boolValue];
             if (!status)
             {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
@@ -366,7 +366,7 @@
         [PFUser logInWithUsernameInBackground:userName password:userPassword block:^(PFUser *user, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             
-            if (!error) {
+            if (user) {
                 
                 [user fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                     

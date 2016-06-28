@@ -181,12 +181,13 @@
             [imageViewForAvatar setImageWithURL:[NSURL URLWithString:avatarFile.url] placeholderImage:nil];
             
         }
-       
-    }
-    else if ([USER[@"loginType"] isEqualToString:@"facebook"])
-    {
+        else if ([USER[@"loginType"] isEqualToString:@"facebook"])
+        {
+          
+            [imageViewForAvatar setImageWithURL:[NSURL URLWithString:USER[@"profileURL"]] placeholderImage:nil];
+            
+        }
         
-        [imageViewForAvatar setImageWithURL:[NSURL URLWithString:USER[@"profileURL"]] placeholderImage:nil];
         
     }
     
@@ -327,14 +328,6 @@
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Change Profile Picture" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"From Album", nil];
     
     [actionSheet showInView:self.view];
-    
-    
-    
-}
-
--(void)showImagePickerView
-{
-    [self presentViewController:imagePicker animated:YES completion:nil];
 }
 
 - (void)showGenderPickerView
@@ -635,7 +628,6 @@
     
 }
 
-
 #pragma mark - UIImagePickerController Delegate
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -649,6 +641,7 @@
     [picker dismissViewControllerAnimated:YES completion:^{
        
         [imageViewForAvatar setImage:image];
+        
         changedAvatarImage = image;
     }];
     

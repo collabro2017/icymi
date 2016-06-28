@@ -31,6 +31,6 @@
 
 +(int)drawFeedCommentCell:(NSMutableArray *)arr nCurrOffset:(int)nCurrentOffset;
 
-+(int)drawMediaCell:(PFObject *)obj nCurrOffset:(int)nCurrentOffset IsLast:(BOOL)isLast;
++(int)drawMediaCell:(PFObject *)obj nCurrOffset:(int)nCurrentOffset;
 
 @end

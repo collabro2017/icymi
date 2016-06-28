@@ -104,18 +104,9 @@ BOOL refresh_require;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(thirdViewLoad) name:kNotificationForthDetailViewLoad object:nil];
 
-    
-}
-
--(void)viewWillLayoutSubviews{
     if (IS_IPAD) {
         CGRect frame = avatarView.segmentControlForType.frame;
-        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
-            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
-            avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH - frame.origin.x * 2, frame.size.height);
-        }else{
-            avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_HEIGHT - frame.origin.x * 2, frame.size.height);
-        }
+        avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH_ROTATED - frame.origin.x * 2, frame.size.height);
     }
 }
 

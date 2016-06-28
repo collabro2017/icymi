@@ -36,7 +36,6 @@
     #import "FTTabBarController.h"
     #import "OMPushServiceManager.h"
 
-
     #import <GoogleSignIn/GoogleSignIn.h>
 
 
@@ -87,12 +86,8 @@
 #define  kLoadCurrentEventData  @"loadCurrentEventData"
 #define  kLoadCurrentPhotoData  @"loadCurrentPhotoData"
 
-#define  kExportCancel          @"exportCancel"
-
 #define  kLoadComponentsData    @"loadComponentsData"
 #define  kLoadEventDataWithGlobal @"reloadEventWithGlobal"
-
-#define  kOpenPostEvent         @"openPostEvent"
 
 #define  kLoadSearchData        @"loadSearchData"
 #define  kLoadFriendData        @"loadFriendData"

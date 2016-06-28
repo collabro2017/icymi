@@ -19,7 +19,6 @@
 #import <MobileCoreServices/UTCoreTypes.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <AssetsLibrary/AssetsLibrary.h>
-
 #define TIMER_INTERVAL 0.05f
 
 #define TAG_ALERTVIEW_CLOSE_CONTROLLER 10086
@@ -84,9 +83,7 @@
     
     [self performSelectorOnMainThread:@selector(initRecorder) withObject:nil waitUntilDone:NO];
     
-//    CGRect frame = imageViewForPreview.frame;
-//    frame = CGRectMake(0, 0, IS_IPAD?768: 320, IS_IPAD?768: 320);
-    imageViewForPreview.frame = CGRectMake(0, 0, IS_IPAD?768: 320, IS_IPAD?768: 320);
+    
     // for photo editing
     scrollViewForPreview.delegate = self;
     
@@ -121,17 +118,13 @@
 
 - (void)sendImageOnEditViewWithScroll:(UIImage*) image
 {
-    imageViewForPreview.contentMode = UIViewContentModeScaleAspectFill;
     imageViewForPreview.image = image;
+    imageViewForPreview.frame = CGRectMake(0, 0, 320, 320);
     
-    CGRect frame = imageViewForPreview.frame;
-    frame = CGRectMake(0, 0, IS_IPAD?768: 320,IS_IPAD?768: 320);
-    imageViewForPreview.frame = frame;
-
-    scrollViewForPreview.zoomScale = 1.0;
-    scrollViewForPreview.minimumZoomScale = 1.0;
+    scrollViewForPreview.zoomScale = 1.0f;
+    scrollViewForPreview.minimumZoomScale = 1.0f;
     scrollViewForPreview.maximumZoomScale = 10.0f;
-    scrollViewForPreview.contentSize = CGSizeMake(IS_IPAD?768: 320,IS_IPAD?768: 320);
+    scrollViewForPreview.contentSize = CGSizeMake(320, 320);
     
     [self centerScrollViewContents];
     
@@ -420,7 +413,6 @@
     self.recorder = [[SBVideoRecorder alloc] init];
     _recorder.delegate = self;
     _recorder.preViewLayer.frame = viewForPreview.bounds;
-    _recorder.isPhoto = captureOption == kTypeCaptureVideo? NO:YES;
     
     [viewForPreview.layer addSublayer:_recorder.preViewLayer];
     
@@ -655,18 +647,6 @@
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     UIImage *image = [info objectForKey:UIImagePickerControllerEditedImage];
     
-    float temp;
-    if (image.size.height>image.size.width) {
-        temp = image.size.height;
-    }
-    else
-        temp = image.size.width;
-    
-    //image = [image resizedImageToSize:CGSizeMake(temp*2, temp*2)];
-
-    
-    NSLog(@"image size from lib *** %f, %f", image.size.width, image.size.height);
-    
      [MBProgressHUD showMessag:@"Processing..." toView:self.view];
 
     [picker dismissViewControllerAnimated:YES completion:^{
@@ -703,7 +683,6 @@
 
 - (void)captureManagerStillImageCaptured:(SBVideoRecorder *)videoRecorder image:(UIImage *)image {
 
-    
     self.isProcessingData = NO;
     
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
@@ -923,7 +902,7 @@
             {
                 btnForFlash.enabled = [_recorder isFrontCameraSupported];
             }
-            if(![_recorder isRecording])[_recorder switchCamera];
+            [_recorder switchCamera];
         }
             break;
         default:

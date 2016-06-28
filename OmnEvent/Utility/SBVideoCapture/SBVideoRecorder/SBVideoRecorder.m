@@ -108,9 +108,8 @@
     
     self.videoDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:backCamera error:nil];
     AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio] error:nil];
-
-    if (self.videoDeviceInput)[_captureSession addInput:self.videoDeviceInput];
-    if(audioDeviceInput) [_captureSession addInput:audioDeviceInput];
+    [_captureSession addInput:self.videoDeviceInput];
+    [_captureSession addInput:audioDeviceInput];
     
     //output
     self.movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
@@ -127,9 +126,7 @@
 
     
     //preset
-    if(_isPhoto) _captureSession.sessionPreset = AVCaptureSessionPresetPhoto;
-    else _captureSession.sessionPreset = AVCaptureSessionPresetHigh;
-    
+    _captureSession.sessionPreset = AVCaptureSessionPresetHigh;
     if ([_captureSession canAddOutput:newStillImageOutput]) {
         [_captureSession addOutput:newStillImageOutput];
     }
@@ -501,7 +498,7 @@
     if (_totalVideoDur >= MAX_VIDEO_DUR) {
         return;
     }
-    _movieFileOutput.movieFragmentInterval = CMTimeMake(MAX_VIDEO_DUR + 3, 1);
+    _movieFileOutput.movieFragmentInterval = CMTimeMake(MAX_VIDEO_DUR + 1, 1);
     [_movieFileOutput startRecordingToOutputFileURL:fileURL recordingDelegate:self];
 }
 

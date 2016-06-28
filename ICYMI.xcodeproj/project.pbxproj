@@ -508,7 +508,6 @@
 		8F1BE5201CF8E04C008E9D73 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */; };
 		8F1BE52D1CF96E5E008E9D73 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */; };
 		8F1BE52E1CF96E5E008E9D73 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */; };
-		8F2F29631D1E526300ECB957 /* img_thumbnail.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2F29621D1E526300ECB957 /* img_thumbnail.png */; };
 		8F3A27FA1CF602A800999200 /* FUTURAL.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E41CF602A800999200 /* FUTURAL.TTF */; };
 		8F3A27FB1CF602A800999200 /* FUTURALI.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E51CF602A800999200 /* FUTURALI.TTF */; };
 		8F3A27FC1CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */; };
@@ -1210,7 +1209,6 @@
 		8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleSignIn.bundle; sourceTree = "<group>"; };
 		8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
-		8F2F29621D1E526300ECB957 /* img_thumbnail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img_thumbnail.png; sourceTree = "<group>"; };
 		8F3A27E41CF602A800999200 /* FUTURAL.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURAL.TTF; sourceTree = "<group>"; };
 		8F3A27E51CF602A800999200 /* FUTURALI.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURALI.TTF; sourceTree = "<group>"; };
 		8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HELVETICA NEUE CE 75 BOLD.TTF"; sourceTree = "<group>"; };
@@ -2432,7 +2430,6 @@
 		8FE63D6A1CE70416002907FB /* Splash */ = {
 			isa = PBXGroup;
 			children = (
-				8F2F29621D1E526300ECB957 /* img_thumbnail.png */,
 				8FE63D6B1CE70416002907FB /* Default-568h@2x.png */,
 				8FE63D6C1CE70416002907FB /* Default@2x.png */,
 			);
@@ -2565,7 +2562,6 @@
 				8FE63D6E1CE70416002907FB /* Default@2x.png in Resources */,
 				3CC69240199FBE350064B4D0 /* WS.png in Resources */,
 				3CC691DA199FBE350064B4D0 /* ME.png in Resources */,
-				8F2F29631D1E526300ECB957 /* img_thumbnail.png in Resources */,
 				3CC691A6199FBE350064B4D0 /* GQ.png in Resources */,
 				8F3A280E1CF602A800999200 /* Roboto-Thin.ttf in Resources */,
 				8F3A280C1CF602A800999200 /* Roboto-MediumItalic.ttf in Resources */,
@@ -3184,8 +3180,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: GMO RUNSYSTEM JSC";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: GMO RUNSYSTEM JSC";
 				COMPRESS_PNG_FILES = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3202,7 +3198,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "6c7e0cc9-10db-4a82-8649-3e040a95415d";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -3212,8 +3208,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: GMO RUNSYSTEM JSC";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: GMO RUNSYSTEM JSC";
 				COMPRESS_PNG_FILES = YES;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3230,7 +3226,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "6c7e0cc9-10db-4a82-8649-3e040a95415d";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};

@@ -191,7 +191,7 @@
 {
     [super viewDidLoad];
     
-    self.contraintWidthTabbar.constant = IS_IPAD? 414 : SCREEN_WIDTH;
+    self.contraintWidthTabbar.constant = IS_IPAD? 414 : SCREEN_WIDTH_ROTATED;
     
     urlForVideo = [[NSBundle mainBundle] pathForResource:@"tutorial" ofType:@"mp4"];
     

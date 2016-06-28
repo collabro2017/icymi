@@ -30,6 +30,7 @@
     
     [imageViewForPreview setImage:_preImage];
 }
+
 /*
 #pragma mark - Navigation
 

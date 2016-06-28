@@ -10,7 +10,7 @@
 #import "OMSocialEvent.h"
 
 @implementation OMTextCell
-@synthesize user,currentObj,delegate, beforeTitle, beforeDescription, curEventIndex, curPostIndex, checkMode;
+@synthesize user,currentObj,delegate, beforeTitle, beforeDescription, curEventIndex;
 
 - (void)awakeFromNib {
     // Initialization code
@@ -20,31 +20,9 @@
     lblForDes.delegate = self;
     
     constraintForHeight.constant = 100;
-    
+    curEventIndex = [GlobalVar getInstance].gEventIndex;
     
     [self.superview layoutIfNeeded];
-}
-- (IBAction)onCheckBtn:(id)sender {
-    
-    UIButton* tmp = (UIButton*)sender;
-    
-    if([[GlobalVar getInstance].gArrPostList count] > 0)
-    {
-        PFObject *selectedObj = [[GlobalVar getInstance].gArrPostList objectAtIndex:[tmp tag]];
-        
-        if([[GlobalVar getInstance].gArrSelectedList containsObject:selectedObj])
-        {
-            [[GlobalVar getInstance].gArrSelectedList removeObject:selectedObj];
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_uncheck_icon"] forState:UIControlStateNormal];
-        }
-        else
-        {
-            [[GlobalVar getInstance].gArrSelectedList addObject:selectedObj];
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_check_icon"] forState:UIControlStateNormal];
-        }
-
-    }
-    
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -53,37 +31,9 @@
     // Configure the view for the selected state
 }
 
-- (void)showDetailPage:(UITapGestureRecognizer *)_gesture
-{
-    if ([delegate respondsToSelector:@selector(showProfile:)]) {
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:kExportCancel object:nil];
-        [delegate performSelector:@selector(showProfile:) withObject:user];
-    }
-    
-}
-
 - (void)setCurrentObj:(PFObject *)obj
 {
     currentObj = obj;
-    
-    [btnCheckForExport setTag:curPostIndex];
-    
-    if([[GlobalVar getInstance].gArrPostList count] > 0)
-    {
-        PFObject *selectedObj = [[GlobalVar getInstance].gArrPostList objectAtIndex:curPostIndex];
-        
-        if([[GlobalVar getInstance].gArrSelectedList containsObject:selectedObj])
-        {
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_check_icon"] forState:UIControlStateNormal];
-        }
-        else
-        {
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_uncheck_icon"] forState:UIControlStateNormal];
-        }
-    }
-    [btnCheckForExport setHidden:!checkMode];
-    
     
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showDetailPage:)];
     gesture.numberOfTapsRequired = 1;
@@ -125,9 +75,11 @@
             if ([AuthorityValue isEqualToString:@"Full"]){
                 
                 lblForDes.editable = YES;
+                //lblForDes.enabled = YES;
                 lblForTitle.editable = YES;
             } else {
                 lblForDes.editable = NO;
+                //lblForDes.enabled = NO;
                 lblForTitle.editable = NO;
             }
             
@@ -135,15 +87,18 @@
             
             if ([arrForTagFriends containsObject:self_user.objectId]){
                 lblForDes.editable = YES;
+                //lblForDes.enabled = YES;
                 lblForTitle.editable = YES;
             } else {
                 lblForDes.editable = NO;
+                //lblForDes.enabled = NO;
                 lblForTitle.editable = NO;
             }
         }
         
     } else {
         lblForDes.editable = YES;
+        //lblForDes.enabled = YES;
         lblForTitle.editable = YES;
     }
     

@@ -21,14 +21,10 @@
 
 #define ADMIN_USER_NAME  @"Coline Witt"
 
-#define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-
-
 typedef enum {
     
     kTypeUploadEvent = 0,
-    kTypeUploadPost,
-    kTypeUploadDup,
+    kTypeUploadPost
     
 }kTypeUpload;
 
@@ -96,11 +92,6 @@ typedef enum {
 @property (strong, nonatomic) NSMutableArray *gArrEventList;
 @property (nonatomic) NSInteger gEventIndex;
 @property (nonatomic) BOOL isPosting;
-
-@property (strong, nonatomic) NSMutableArray *gArrPostList;
-@property (strong, nonatomic) NSMutableArray *gArrSelectedList;
-@property (strong, nonatomic) PFObject *gEventObj;
-@property (strong, nonatomic) PFFile *gThumbImg;
 
 +(GlobalVar*)getInstance;
 
