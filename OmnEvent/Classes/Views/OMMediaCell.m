@@ -13,9 +13,10 @@
 
 
 @implementation OMMediaCell
-
+{
+    NSInteger curIndex;
+}
 @synthesize user,delegate,currentObj, imageViewForMedia, beforeTitle, beforeDescription, curEventIndex;
-@synthesize curPostIndex, checkMode;
 
 - (void)awakeFromNib {
     // Initialization code
@@ -24,28 +25,7 @@
     
     lblForTitle.delegate = self;
     lblForDes.delegate = self;
-    
-}
-- (IBAction)onCheckBtn:(id)sender {
-    UIButton* tmp = (UIButton*)sender;
-    NSLog(@"Check Tag === %ld", [tmp tag]);
-    
-    if([[GlobalVar getInstance].gArrPostList count] > 0)
-    {
-        PFObject *selectedObj = [[GlobalVar getInstance].gArrPostList objectAtIndex:[tmp tag]];
-        
-        if([[GlobalVar getInstance].gArrSelectedList containsObject:selectedObj])
-        {
-            [[GlobalVar getInstance].gArrSelectedList removeObject:selectedObj];
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_uncheck_icon"] forState:UIControlStateNormal];
-        }
-        else
-        {
-            [[GlobalVar getInstance].gArrSelectedList addObject:selectedObj];
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_check_icon"] forState:UIControlStateNormal];
-        }
-        
-    }
+    curEventIndex = [GlobalVar getInstance].gEventIndex;
     
 }
 
@@ -58,7 +38,6 @@
 - (void)showDetailPage:(UITapGestureRecognizer *)_gesture
 {
     if ([delegate respondsToSelector:@selector(showProfile:)]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:kExportCancel object:nil];
         [delegate performSelector:@selector(showProfile:) withObject:user];
     }
     
@@ -81,24 +60,6 @@
     
     currentObj = obj;
     
-    [btnCheckForExport setTag:curPostIndex];
-    
-    if([[GlobalVar getInstance].gArrPostList count] > 0)
-    {
-        PFObject *selectedObj = [[GlobalVar getInstance].gArrPostList objectAtIndex:curPostIndex];
-        
-        if([[GlobalVar getInstance].gArrSelectedList containsObject:selectedObj])
-        {
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_check_icon"] forState:UIControlStateNormal];
-        }
-        else
-        {
-            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_uncheck_icon"] forState:UIControlStateNormal];
-        }
-    }
-    [btnCheckForExport setHidden:!checkMode];
-    
-
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showDetailPage:)];
     gesture.numberOfTapsRequired = 1;
     
@@ -230,6 +191,8 @@
         
         if (socialTemp.badgeCount > 0) {
             
+            [lblForTimer setTextColor:[UIColor redColor]];
+            
             OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
             if(currentObj != nil)
             {
@@ -238,9 +201,6 @@
                 
                 if ([temp containsObject:self_user.objectId])
                 {
-                    [GlobalVar getInstance].isPosting = YES;
-                    [lblForTimer setTextColor:[UIColor redColor]];
-                    
                     [temp removeObject:self_user.objectId];
                     currentObj[@"usersBadgeFlag"] = temp;
                     [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
@@ -248,7 +208,6 @@
                         {
                             NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
                             [NSTimer scheduledTimerWithTimeInterval: 2.0 target: self selector: @selector(delayChangeTextColor:) userInfo: nil repeats: NO];
-                            [GlobalVar getInstance].isPosting = NO;
                         }
                     }];
                     

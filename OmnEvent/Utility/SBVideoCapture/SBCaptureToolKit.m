@@ -54,7 +54,7 @@
     {
         BOOL bCreateDir = [fileManager createDirectoryAtPath:folderPath withIntermediateDirectories:YES attributes:nil error:nil];
         if(!bCreateDir){
-            NSLog(@"Failed");
+            NSLog(@"创建图片文件夹失败");
             return NO;
         }
         return YES;

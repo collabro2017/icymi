@@ -40,7 +40,9 @@
 
 @property (nonatomic, strong) UIImage *imageForPost;
 @property (nonatomic, strong) NSURL   *outPutURL;
+
 @property (nonatomic, strong) NSString *postType;
+
 @property (nonatomic, strong) NSData    *audioData;
 
 
@@ -48,9 +50,4 @@
 @property (nonatomic) kTypeUpload       uploadOption;
 @property (nonatomic) kTypeCapture      captureOption;
 @property (nonatomic) kTypeRecord       audioOption;
-
-typedef void(^CallBackFunc)(BOOL success);
-
-- (void) dupPostForNewEvent:(PFObject*)targetObj;
-
 @end

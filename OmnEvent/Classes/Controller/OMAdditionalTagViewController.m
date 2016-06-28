@@ -156,21 +156,12 @@
             [arrForFriend removeAllObjects];
             
             for (PFObject *obj in objects) {
-                 if (obj[@"ToUser"])
-                 {
-                     PFUser* tmpuser = obj[@"ToUser"];
-                     if(![tmpuser.objectId isEqualToString:USER.objectId])
-                     {
-                   
-                        [arrForFriend addObject:obj[@"ToUser"]];
-                     }
-                 }
+                
+                if (obj[@"ToUser"])
+                    [arrForFriend addObject:obj[@"ToUser"]];
+                
             }
-            
-            NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:arrForFriend];
-            NSArray *arr = [orderedSet array];
-            [arrForFriend removeAllObjects];
-            [arrForFriend addObjectsFromArray:arr];
+            // [arrForFriend addObjectsFromArray:objects];
             
             [tblForTagFriend reloadData];
         }

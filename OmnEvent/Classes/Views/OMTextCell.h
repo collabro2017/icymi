@@ -16,7 +16,6 @@
     
     IBOutlet UIImageView *imageViewForAvatar;
     
-    IBOutlet UIButton *btnCheckForExport;
     
     IBOutlet UILabel *lblForTime;
     
@@ -66,9 +65,7 @@
 @property (strong, nonatomic) id delegate;
 @property (strong, nonatomic) PFObject *currentObj;
 @property (strong, nonatomic) PFUser   *user;
-@property (readwrite) NSInteger curEventIndex;
-@property (readwrite) NSInteger curPostIndex;
-@property (readwrite) BOOL checkMode;
+@property (nonatomic) NSInteger curEventIndex;
 
 @property (strong, nonatomic) NSString *beforeTitle;
 @property (strong, nonatomic) NSString *beforeDescription;

@@ -178,9 +178,9 @@ static char UIScrollViewTwitterCover;
         self.frame = CGRectMake(-offset,-offset + topView.bounds.size.height, 320+ offset * 2, CHTwitterCoverViewHeight + offset);
         
         if (IS_IPAD) {
-            topView.frame = CGRectMake(0, -offset, SCREEN_WIDTH, topView.bounds.size.height);
+            topView.frame = CGRectMake(0, -offset, SCREEN_WIDTH_ROTATED, topView.bounds.size.height);
             
-            self.frame = CGRectMake(-offset,-offset + topView.bounds.size.height, SCREEN_WIDTH+ offset * 2, CHTwitterCoverViewHeight + offset);
+            self.frame = CGRectMake(-offset,-offset + topView.bounds.size.height, SCREEN_WIDTH_ROTATED+ offset * 2, CHTwitterCoverViewHeight + offset);
         }
         NSInteger index = offset / 10;
         if (index < 0) {
@@ -206,9 +206,9 @@ static char UIScrollViewTwitterCover;
         self.frame = CGRectMake(0,topView.bounds.size.height, 320, CHTwitterCoverViewHeight);
         
         if (IS_IPAD) {
-            topView.frame = CGRectMake(0, 0, SCREEN_WIDTH, topView.bounds.size.height);
+            topView.frame = CGRectMake(0, 0, SCREEN_WIDTH_ROTATED, topView.bounds.size.height);
             
-            self.frame = CGRectMake(0,topView.bounds.size.height, SCREEN_WIDTH, CHTwitterCoverViewHeight);
+            self.frame = CGRectMake(0,topView.bounds.size.height, SCREEN_WIDTH_ROTATED, CHTwitterCoverViewHeight);
         }
         
         UIImage *image = nil;

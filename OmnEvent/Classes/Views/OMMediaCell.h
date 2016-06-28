@@ -21,7 +21,6 @@
     AVAudioPlayer *audioPlayer;
     
     IBOutlet UIImageView *imageViewForAvatar;
-    IBOutlet UIButton *btnCheckForExport;
     
     IBOutlet UILabel *lblForUsername;
     
@@ -70,9 +69,7 @@
 @property (strong, nonatomic) PFUser   *user;
 @property (strong, nonatomic) PFFile   *file;
 @property (strong, nonatomic) NSURL    *offline_url;
-@property (readwrite) NSInteger curEventIndex;
-@property (readwrite) NSInteger curPostIndex;
-@property (readwrite) BOOL checkMode;
+@property (nonatomic) NSInteger curEventIndex;
 
 @property (strong, nonatomic) NSString *beforeTitle;
 @property (strong, nonatomic) NSString *beforeDescription;

@@ -19,9 +19,6 @@
 
 #import "UIImageView+AFNetworking.h"
 
-#import "UIImage+Resize.h"
-#import "OMPostEventViewController.h"
-
 #import <Social/Social.h>
 #import <Crittercism/Crittercism.h>
 
@@ -160,8 +157,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadEventWithGlobal) name:kLoadEventDataWithGlobal object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createDupEvent) name:kOpenPostEvent object:nil];
-    
 }
 
 //Notification Methods
@@ -244,8 +239,8 @@
 {
     [super viewWillAppear:animated];
     
-    NSLog(@"Event count && Event Global count = %i, %i",
-    (int)[arrForFeed count],(int)[[GlobalVar getInstance].gArrEventList count]);
+    NSLog(@"Event count && Event Global count = %ld, %ld",
+    [arrForFeed count],[[GlobalVar getInstance].gArrEventList count]);
     
  }
 
@@ -506,24 +501,6 @@
     
 }
 
-- (void)createDupEvent
-{
-    // Show PostViewController
-    
-    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-
-    OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
-    [postEventVC setImageForPost:nil];
-    [postEventVC setPostType:@"image"]; //Post Type  :  image , video, audio
-    
-    [postEventVC setUploadOption:kTypeUploadDup];
-    [postEventVC setCaptureOption:kTypeCaptureAll];
-    [postEventVC setCurObj:nil];
-    
-    [self.navigationController pushViewController:postEventVC animated:YES];
-        
-}
-
 - (void)postNewEvent {
     
     OMNewEventPostViewController *newEventPostVC = [self.storyboard instantiateViewControllerWithIdentifier:@"NewEventPostVC"];
@@ -676,7 +653,7 @@
         insetForSectionAtIndex:(NSInteger) section {
     
     if (IS_IPAD) {
-        return UIEdgeInsetsMake(20, 20, 0, 0);
+        return UIEdgeInsetsMake(20, 20, 20, 20);
     }else{
         return UIEdgeInsetsMake(1, 0, 0, 0);
     }

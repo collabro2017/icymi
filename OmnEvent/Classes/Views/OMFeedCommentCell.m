@@ -41,18 +41,8 @@
     
     if (![currentUser.objectId isEqualToString:self_user.objectId]){
         
-        NSMutableArray *arrForTagFriends = [NSMutableArray array];
-        NSMutableArray *arrForTagFriendAuthorities = [NSMutableArray array];
-        
-        if(currentObj[@"TagFriends"] != nil && [currentObj[@"TagFriends"] count] > 0)
-        {
-            arrForTagFriends = currentObj[@"TagFriends"];
-        }
-        if(currentObj[@"TagFriendAuthorities"] != nil && [currentObj[@"TagFriendAuthorities"] count] > 0)
-        {
-            arrForTagFriendAuthorities = currentObj[@"TagFriendAuthorities"];
-        }
-        
+        NSMutableArray *arrForTagFriends = currentObj[@"TagFriends"];
+        NSMutableArray *arrForTagFriendAuthorities = currentObj[@"TagFriendAuthorities"];
         
         NSString *AuthorityValue = @"";
         
@@ -60,12 +50,11 @@
             
             for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                 if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
-                    if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
-                        AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
-                    
+                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
                     break;
                 }
             }
+            
             if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
                 lblForDes.enabled = YES;
             } else {
@@ -165,28 +154,16 @@
             
             if (![currentUser.objectId isEqualToString:self_user.objectId]){
                 
-                NSMutableArray *arrForTagFriends = [NSMutableArray array];
-                NSMutableArray *arrForTagFriendAuthorities = [NSMutableArray array];
-                
-                if(currentObj[@"TagFriends"] != nil && [currentObj[@"TagFriends"] count] > 0)
-                {
-                    arrForTagFriends = currentObj[@"TagFriends"];
-                }
-                if(currentObj[@"TagFriendAuthorities"] != nil && [currentObj[@"TagFriendAuthorities"] count] > 0)
-                {
-                    arrForTagFriendAuthorities = currentObj[@"TagFriendAuthorities"];
-                }
-                
+                NSMutableArray *arrForTagFriends = currentObj[@"TagFriends"];
+                NSMutableArray *arrForTagFriendAuthorities = currentObj[@"TagFriendAuthorities"];
                 
                 NSString *AuthorityValue = @"";
                 
-                if (arrForTagFriendAuthorities != nil){
+                if (arrForTagFriendAuthorities != nil && [arrForTagFriendAuthorities count] > 0){
                     
                     for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                         if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
-                            if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
-                                AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
-                            
+                            AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
                             break;
                         }
                     }
@@ -344,18 +321,8 @@
     
     if (![currentUser.objectId isEqualToString:self_user.objectId]){
         
-        NSMutableArray *arrForTagFriends = [NSMutableArray array];
-        NSMutableArray *arrForTagFriendAuthorities = [NSMutableArray array];
-        
-        if(eventObject[@"TagFriends"] != nil && [eventObject[@"TagFriends"] count] > 0)
-        {
-            arrForTagFriends = eventObject[@"TagFriends"];
-        }
-        if(eventObject[@"TagFriendAuthorities"] != nil && [eventObject[@"TagFriendAuthorities"] count] > 0)
-        {
-            arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
-        }
-        
+        NSMutableArray *arrForTagFriends = eventObject[@"TagFriends"];
+        NSMutableArray *arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
         
         NSString *AuthorityValue = @"";
         
@@ -363,13 +330,10 @@
             
             for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                 if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
-                    if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
-                        AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
-                    
+                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
                     break;
                 }
             }
-
             
             if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
                 lblForDes.enabled = YES;
@@ -449,18 +413,8 @@
     
     if (![currentUser.objectId isEqualToString:self_user.objectId]){
         
-        NSMutableArray *arrForTagFriends = [NSMutableArray array];
-        NSMutableArray *arrForTagFriendAuthorities = [NSMutableArray array];
-        
-        if(eventObject[@"TagFriends"] != nil && [eventObject[@"TagFriends"] count] > 0)
-        {
-            arrForTagFriends = eventObject[@"TagFriends"];
-        }
-        if(eventObject[@"TagFriendAuthorities"] != nil && [eventObject[@"TagFriendAuthorities"] count] > 0)
-        {
-            arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
-        }
-
+        NSMutableArray *arrForTagFriends = eventObject[@"TagFriends"];
+        NSMutableArray *arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
         
         NSString *AuthorityValue = @"";
         
@@ -468,13 +422,10 @@
             
             for (NSUInteger i = 0 ;i < arrForTagFriends.count; i++) {
                 if ([[arrForTagFriends objectAtIndex:i] isEqualToString:self_user.objectId]){
-                    if([arrForTagFriendAuthorities count] >= [arrForTagFriends count])
-                        AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
-                    
+                    AuthorityValue = [arrForTagFriendAuthorities objectAtIndex:i];
                     break;
                 }
             }
-
             
             if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
                 lblForDes.enabled = YES;

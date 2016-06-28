@@ -21,7 +21,6 @@
     IBOutlet UIButton *btnForAudio;
     
     IBOutlet UIButton *btnForVideo;
-    
     UIImageView *postImgView;
     
     UIImagePickerController *imagePicker;
