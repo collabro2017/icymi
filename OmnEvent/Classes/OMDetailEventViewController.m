@@ -1223,7 +1223,7 @@
         else
         {
             if (indexPath.row == 0) {
-                return 450;
+                return IS_IPAD? SCREEN_WIDTH_ROTATED + 130 :450;
             }
             else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {

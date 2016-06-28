@@ -6842,14 +6842,19 @@
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uzo-0Z-trK">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="uzo-0Z-trK" secondAttribute="height" multiplier="1:1" id="D5D-xJ-Pcs"/>
+                                        </constraints>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="uzo-0Z-trK" firstAttribute="top" secondItem="PFY-Ro-waS" secondAttribute="top" id="DPR-Zb-EmA"/>
+                                    <constraint firstItem="uzo-0Z-trK" firstAttribute="centerX" secondItem="PFY-Ro-waS" secondAttribute="centerX" id="Lkc-E9-FcP"/>
                                     <constraint firstAttribute="bottom" secondItem="uzo-0Z-trK" secondAttribute="bottom" id="SMi-mc-W8Z"/>
                                     <constraint firstAttribute="trailing" secondItem="uzo-0Z-trK" secondAttribute="trailing" id="WUx-ng-a5d"/>
                                     <constraint firstItem="uzo-0Z-trK" firstAttribute="leading" secondItem="PFY-Ro-waS" secondAttribute="leading" id="fad-td-vwG"/>
+                                    <constraint firstItem="uzo-0Z-trK" firstAttribute="centerY" secondItem="PFY-Ro-waS" secondAttribute="centerY" id="roH-MH-AuX"/>
                                     <constraint firstAttribute="width" secondItem="PFY-Ro-waS" secondAttribute="height" multiplier="1:1" id="ytc-Pi-hM2"/>
                                 </constraints>
                             </view>
@@ -6921,6 +6926,7 @@
                             <constraint firstItem="Tym-XN-GdV" firstAttribute="top" secondItem="JZ0-Vx-kQQ" secondAttribute="bottom" id="Zjy-2y-j4t"/>
                             <constraint firstItem="PFY-Ro-waS" firstAttribute="leading" secondItem="lnN-Mp-Rzs" secondAttribute="leading" id="b4J-D5-oxY"/>
                             <constraint firstItem="Dl3-x3-lq1" firstAttribute="leading" secondItem="lnN-Mp-Rzs" secondAttribute="leading" id="e3e-x2-gLc"/>
+                            <constraint firstItem="PFY-Ro-waS" firstAttribute="centerX" secondItem="lnN-Mp-Rzs" secondAttribute="centerX" id="lXy-Yf-Cik"/>
                             <constraint firstAttribute="trailing" secondItem="PFY-Ro-waS" secondAttribute="trailing" id="lvN-dV-pwO"/>
                             <constraint firstItem="Tym-XN-GdV" firstAttribute="top" secondItem="Fwm-4E-M3y" secondAttribute="bottom" id="oot-Y0-KyM"/>
                             <constraint firstItem="Fwm-4E-M3y" firstAttribute="leading" secondItem="lnN-Mp-Rzs" secondAttribute="leading" id="ri6-Vi-IOL"/>
@@ -7682,6 +7688,7 @@
                             <constraint firstItem="eRX-9P-fhP" firstAttribute="leading" secondItem="Okx-x3-tG6" secondAttribute="leadingMargin" constant="-16" id="D5y-Bx-usC"/>
                             <constraint firstAttribute="trailingMargin" secondItem="N59-gJ-MfM" secondAttribute="trailing" constant="-16" id="E49-pR-vb5"/>
                             <constraint firstAttribute="trailingMargin" secondItem="gZa-t6-ciV" secondAttribute="trailing" constant="-16" id="Fe8-z8-XN8"/>
+                            <constraint firstItem="gZa-t6-ciV" firstAttribute="top" secondItem="UgM-7L-7wh" secondAttribute="bottom" id="M6v-xo-ohu"/>
                             <constraint firstItem="Tlx-Ly-blO" firstAttribute="top" secondItem="gZa-t6-ciV" secondAttribute="bottom" constant="22" id="MQE-eq-i58"/>
                             <constraint firstItem="Tlx-Ly-blO" firstAttribute="top" secondItem="gZa-t6-ciV" secondAttribute="bottom" constant="22" id="QA7-Sw-FXV"/>
                             <constraint firstItem="gZa-t6-ciV" firstAttribute="leading" secondItem="Okx-x3-tG6" secondAttribute="leadingMargin" constant="-16" id="S0y-hL-TCb"/>

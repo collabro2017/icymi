@@ -653,7 +653,7 @@
         insetForSectionAtIndex:(NSInteger) section {
     
     if (IS_IPAD) {
-        return UIEdgeInsetsMake(20, 20, 0, 0);
+        return UIEdgeInsetsMake(20, 20, 20, 20);
     }else{
         return UIEdgeInsetsMake(1, 0, 0, 0);
     }
