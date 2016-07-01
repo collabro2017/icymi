@@ -379,7 +379,7 @@
 		NSError *error = nil;
 		if ([device lockForConfiguration:&error]) {
 			if ([device isFocusPointOfInterestSupported]) {
-                [device setFocusPointOfInterest:point];
+                //[device setFocusPointOfInterest:point];
             }
             
             if ([device isFocusModeSupported:focusMode]) {
@@ -387,11 +387,11 @@
 			}
             
 			if ([device isExposurePointOfInterestSupported]) {
-                [device setExposurePointOfInterest:point];
+                //[device setExposurePointOfInterest:point];
             }
             
             if ([device isExposureModeSupported:exposureMode]) {
-				[device setExposureMode:exposureMode];
+				//[device setExposureMode:exposureMode];
 			}
             
 			[device setSubjectAreaChangeMonitoringEnabled:monitorSubjectAreaChange];
@@ -406,7 +406,7 @@
 - (void)focusInPoint:(CGPoint)touchPoint
 {
     CGPoint devicePoint = [self convertToPointOfInterestFromViewCoordinates:touchPoint];
-    [self focusWithMode:AVCaptureFocusModeAutoFocus exposeWithMode:AVCaptureExposureModeContinuousAutoExposure atDevicePoint:devicePoint monitorSubjectAreaChange:YES];
+    [self focusWithMode:AVCaptureFocusModeContinuousAutoFocus exposeWithMode:AVCaptureExposureModeContinuousAutoExposure atDevicePoint:devicePoint monitorSubjectAreaChange:YES];
 }
 
 

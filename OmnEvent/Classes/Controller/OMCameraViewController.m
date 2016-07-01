@@ -74,6 +74,8 @@
     imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     imagePicker.delegate = self;
     imagePicker.allowsEditing = YES;
+    
+    
    
     [self initTopBar];
     [self initPhotoControls];
@@ -420,21 +422,37 @@
     self.recorder = [[SBVideoRecorder alloc] init];
     _recorder.delegate = self;
     _recorder.preViewLayer.frame = viewForPreview.bounds;
-    _recorder.isPhoto = captureOption == kTypeCaptureVideo? NO:YES;
     
+    _recorder.isPhoto = captureOption == kTypeCaptureVideo? NO:YES;
+    [_recorder focusInPoint:viewForPreview.center];
     [viewForPreview.layer addSublayer:_recorder.preViewLayer];
     
     //focus rect view
     self.focusRectView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
     _focusRectView.image = [UIImage imageNamed:@"touch_focus_not.png"];
     _focusRectView.alpha = 0;
+    _focusRectView.center = viewForPreview.center;
     [viewForPreview addSubview:_focusRectView];
+    
+    [_focusRectView setHidden:captureOption == kTypeCaptureVideo];
+    
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(setFocuseTap:)];
+    [viewForPreview addGestureRecognizer:singleTap];
     
     
     btnForFront.enabled = [_recorder isFrontCameraSupported];
     btnForFlash.enabled = _recorder.isTorchSupported;
 }
 
+- (void)setFocuseTap:(UITapGestureRecognizer*)recognizer
+{
+    if(captureOption == kTypeCaptureVideo) return;
+    CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+    if (CGRectContainsPoint(_recorder.preViewLayer.frame, location)) {
+        [self showFocusRectAtPoint:location];
+        [_recorder focusInPoint:location];
+    }
+}
 
 - (void)initProgressBar {
     
@@ -537,19 +555,19 @@
 //        return;
 //    }
 //    
-    UITouch *touch = [touches anyObject];
+   // UITouch *touch = [touches anyObject];
     
-    CGPoint touchPoint = [touch locationInView:btnForRecord.superview];
+   // CGPoint touchPoint = [touch locationInView:viewForPreview];
 //    if (CGRectContainsPoint(btnForRecord.frame, touchPoint)) {
 //        NSString *filePath = [SBCaptureToolKit getVideoSaveFilePathString];
 //        [_recorder startRecordingToOutputFileURL:[NSURL fileURLWithPath:filePath]];
 //    }
 //    
-    touchPoint = [touch locationInView:self.view];
-    if (CGRectContainsPoint(_recorder.preViewLayer.frame, touchPoint)) {
-        //[self showFocusRectAtPoint:touchPoint];
-        [_recorder focusInPoint:touchPoint];
-    }
+   // touchPoint = [touch locationInView:self.view];
+   // if (CGRectContainsPoint(_recorder.preViewLayer.frame, touchPoint)) {
+   //     [self showFocusRectAtPoint:touchPoint];
+   //     [_recorder focusInPoint:touchPoint];
+   // }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
