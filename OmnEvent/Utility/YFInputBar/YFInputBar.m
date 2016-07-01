@@ -101,6 +101,7 @@
                              animations:^{
                                  self.transform = CGAffineTransformMakeTranslation(0, -_keyboardRect.size.height+[self getHeighOfWindow]-CGRectGetMaxY(self.originalFrame));
                              } completion:nil];
+      
         }
         else
         {

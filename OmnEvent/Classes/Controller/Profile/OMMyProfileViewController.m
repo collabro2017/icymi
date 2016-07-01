@@ -108,8 +108,21 @@ BOOL refresh_require;
         CGRect frame = avatarView.segmentControlForType.frame;
         avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH_ROTATED - frame.origin.x * 2, frame.size.height);
     }
+    
 }
-
+/*
+-(void)viewWillLayoutSubviews{
+    if (IS_IPAD) {
+        CGRect frame = avatarView.segmentControlForType.frame;
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+            avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH - frame.origin.x * 2, frame.size.height);
+        }else{
+            avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_HEIGHT - frame.origin.x * 2, frame.size.height);
+        }
+    }
+}
+*/
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

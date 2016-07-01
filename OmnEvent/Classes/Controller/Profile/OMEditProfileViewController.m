@@ -181,13 +181,12 @@
             [imageViewForAvatar setImageWithURL:[NSURL URLWithString:avatarFile.url] placeholderImage:nil];
             
         }
-        else if ([USER[@"loginType"] isEqualToString:@"facebook"])
-        {
-          
-            [imageViewForAvatar setImageWithURL:[NSURL URLWithString:USER[@"profileURL"]] placeholderImage:nil];
-            
-        }
+       
+    }
+    else if ([USER[@"loginType"] isEqualToString:@"facebook"])
+    {
         
+        [imageViewForAvatar setImageWithURL:[NSURL URLWithString:USER[@"profileURL"]] placeholderImage:nil];
         
     }
     
@@ -325,9 +324,70 @@
 
 - (void)changeAvatar
 {
+ /*
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Change Profile Picture" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"From Album", nil];
     
     [actionSheet showInView:self.view];
+ */
+
+#ifdef __IPHONE_8_0
+    if( SYSTEM_VERSION_LESS_THAN(@"8.0") || [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone )
+    {
+#endif
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Change Profile Picture" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Take a Photo", @"From Album", nil];
+        
+        [actionSheet showInView:self.view];
+        
+#ifdef __IPHONE_8_0
+    }
+    else
+    {
+        UIAlertController   *popup = [UIAlertController alertControllerWithTitle:@"Change Profile Picture"
+                                                                         message:@""
+                                                                  preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIAlertAction       *action1 = [UIAlertAction actionWithTitle:@"Take a Photo"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * _Nonnull action) {
+                                                                  if( [UIImagePickerController isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear] == FALSE )
+                                                                      return;
+                                                                  
+                                                                  imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+                                                                  
+                                                                  [self performSelector:@selector(showImagePickerView) withObject:nil afterDelay:0];
+                                                              }];
+        
+        UIAlertAction       *action2 = [UIAlertAction actionWithTitle:@"From Album"
+                                                                style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * _Nonnull action) {
+                                                                  imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                                                                  imagePicker.allowsEditing = YES;
+                                                                  [self performSelector:@selector(showImagePickerView) withObject:nil afterDelay:0];
+                                                              }];
+        
+        [popup addAction:action1];
+        [popup addAction:action2];
+        
+        UIPopoverController *popoverController = [[UIPopoverController alloc] initWithContentViewController:popup];
+        
+        CGRect rect = CGRectMake(self.view.frame.size.width, 0, 100, 100);
+        
+        UIPopoverArrowDirection dir = UIPopoverArrowDirectionUp;
+        
+        [popoverController presentPopoverFromRect:rect
+                                           inView:self.view
+                         permittedArrowDirections:dir
+                                         animated:YES];
+    }
+#endif
+
+    
+    
+}
+
+-(void)showImagePickerView
+{
+    [self presentViewController:imagePicker animated:YES completion:nil];
 }
 
 - (void)showGenderPickerView
@@ -628,6 +688,7 @@
     
 }
 
+
 #pragma mark - UIImagePickerController Delegate
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -641,7 +702,6 @@
     [picker dismissViewControllerAnimated:YES completion:^{
        
         [imageViewForAvatar setImage:image];
-        
         changedAvatarImage = image;
     }];
     

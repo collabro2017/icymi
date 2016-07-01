@@ -43,6 +43,8 @@
 @property (strong, nonatomic) AVCaptureMovieFileOutput *movieFileOutput;
 @property (nonatomic,strong) AVCaptureStillImageOutput *stillImageOutput;
 
+@property (readwrite) BOOL isPhoto;
+
 
 
 

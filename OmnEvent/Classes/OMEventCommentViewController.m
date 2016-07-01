@@ -95,8 +95,22 @@
     [self.refreshControl addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
     
     [tblForComment addSubview:self.refreshControl];
+    
+}
+
+-(void)viewWillLayoutSubviews{
     if (IS_IPAD) {
+        
         CGRect textFrame = inputBar.textField.frame;
+        /*
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+            inputBar.textField.frame = CGRectMake(textFrame.origin.x, textFrame.origin.y, SCREEN_WIDTH - 70, 24);
+            inputBar.sendBtn.frame = CGRectMake(SCREEN_WIDTH - 60, 0, 60, 50);
+        }else{
+            inputBar.textField.frame = CGRectMake(textFrame.origin.x, textFrame.origin.y, SCREEN_HEIGHT - 70, 24);
+            inputBar.sendBtn.frame = CGRectMake(SCREEN_HEIGHT - 60, 0, 60, 50);
+        }*/
         inputBar.textField.frame = CGRectMake(textFrame.origin.x, textFrame.origin.y, SCREEN_WIDTH_ROTATED - 70, 24);
         inputBar.sendBtn.frame = CGRectMake(SCREEN_WIDTH_ROTATED - 60, 0, 60, 50);
     }
