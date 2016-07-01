@@ -52,6 +52,7 @@
     
     IBOutlet UIButton *btnForVideoPlay;
     
+    IBOutlet UIView *viewForMedia;
     
     NSMutableArray *likeUserArray;
     NSMutableArray *likerArr;
