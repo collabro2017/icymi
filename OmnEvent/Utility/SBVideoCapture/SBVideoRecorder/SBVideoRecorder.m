@@ -44,13 +44,14 @@
 
 @implementation SBVideoRecorder
 
-- (id)init
+-(id)initWithView:(UIView*)preView
 {
     self = [super init];
     if (self) {
+        _preview = preView;
         [self initalize];
+        
     }
-    
     return self;
 }
 
@@ -65,6 +66,8 @@
 - (void)initCapture
 {
     //session---------------------------------
+    effectiveScale = 1.0;
+    
     self.captureSession = [[AVCaptureSession alloc] init];
     
     //input
@@ -139,6 +142,11 @@
     _preViewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     
     [_captureSession startRunning];
+    
+    UIPinchGestureRecognizer *guester = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinchGesture:)];
+    guester.delegate = self;
+    [_preview addGestureRecognizer:guester];
+    
 }
 
 - (void)startCountDurTimer
@@ -379,7 +387,7 @@
 		NSError *error = nil;
 		if ([device lockForConfiguration:&error]) {
 			if ([device isFocusPointOfInterestSupported]) {
-                //[device setFocusPointOfInterest:point];
+                [device setFocusPointOfInterest:point];
             }
             
             if ([device isFocusModeSupported:focusMode]) {
@@ -387,11 +395,11 @@
 			}
             
 			if ([device isExposurePointOfInterestSupported]) {
-                //[device setExposurePointOfInterest:point];
+                [device setExposurePointOfInterest:point];
             }
             
             if ([device isExposureModeSupported:exposureMode]) {
-				//[device setExposureMode:exposureMode];
+				[device setExposureMode:exposureMode];
 			}
             
 			[device setSubjectAreaChangeMonitoringEnabled:monitorSubjectAreaChange];
@@ -612,6 +620,8 @@
 //    }
 //    
     AVCaptureConnection *stillImageConnection = [SBCaptureConnection connectionWithMediaType:AVMediaTypeVideo fromConnections:[[self stillImageOutput] connections]];
+    [stillImageConnection setVideoScaleAndCropFactor:effectiveScale];
+    
     if ([stillImageConnection isVideoOrientationSupported])
         [stillImageConnection setVideoOrientation:AVCaptureVideoOrientationPortrait];
     
@@ -659,6 +669,55 @@
 - (BOOL)isRecording
 {
    return [[self movieFileOutput] isRecording];
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if ( [gestureRecognizer isKindOfClass:[UIPinchGestureRecognizer class]] ) {
+        beginGestureScale = effectiveScale;
+    }
+    return YES;
+}
+
+// scale image depending on users pinch gesture
+- (void)handlePinchGesture:(UIPinchGestureRecognizer *)recognizer
+{
+    BOOL allTouchesAreOnThePreviewLayer = YES;
+    NSUInteger numTouches = [recognizer numberOfTouches], i;
+    for ( i = 0; i < numTouches; ++i ) {
+        CGPoint location = [recognizer locationOfTouch:i inView:_preview];
+        CGPoint convertedLocation = [_preViewLayer convertPoint:location fromLayer:_preViewLayer.superlayer];
+        if ( ! [_preViewLayer containsPoint:convertedLocation] ) {
+            allTouchesAreOnThePreviewLayer = NO;
+            break;
+        }
+    }
+    
+    if ( allTouchesAreOnThePreviewLayer ) {
+        effectiveScale = beginGestureScale * recognizer.scale;
+        if (effectiveScale < 1.0)
+            effectiveScale = 1.0;
+        CGFloat maxScaleAndCropFactor = [[_stillImageOutput connectionWithMediaType:AVMediaTypeVideo] videoMaxScaleAndCropFactor];
+        if (effectiveScale > maxScaleAndCropFactor)
+            effectiveScale = maxScaleAndCropFactor;
+        [CATransaction begin];
+        [CATransaction setAnimationDuration:.025];
+        [_preViewLayer setAffineTransform:CGAffineTransformMakeScale(effectiveScale, effectiveScale)];
+        [CATransaction commit];
+    }
+}
+
+- (void)initCameraView:(UIView*)preCameraView
+{
+    effectiveScale = 1.0;
+    [CATransaction begin];
+    [_preViewLayer setAffineTransform:CGAffineTransformMakeScale(effectiveScale, effectiveScale)];
+    [CATransaction commit];
+}
+
+- (BOOL) isAdjustingFocus
+{
+    return [self.videoDeviceInput.device isAdjustingFocus];
 }
 
 @end

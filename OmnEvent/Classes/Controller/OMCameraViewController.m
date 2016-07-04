@@ -75,16 +75,16 @@
     imagePicker.delegate = self;
     imagePicker.allowsEditing = YES;
     
-    
+    [self performSelectorOnMainThread:@selector(initRecorder) withObject:nil waitUntilDone:NO];
    
     [self initTopBar];
     [self initPhotoControls];
     [self initVideoControls];
-    
+    [self initFocuseView];
     [SBCaptureToolKit createVideoFolderIfNotExist];
     [self initProgressBar];
     
-    [self performSelectorOnMainThread:@selector(initRecorder) withObject:nil waitUntilDone:NO];
+    
     
 //    CGRect frame = imageViewForPreview.frame;
 //    frame = CGRectMake(0, 0, IS_IPAD?768: 320, IS_IPAD?768: 320);
@@ -101,7 +101,10 @@
     twoFingerTapRecognizer.numberOfTapsRequired = 1;
     twoFingerTapRecognizer.numberOfTouchesRequired = 2;
     [scrollViewForPreview addGestureRecognizer:twoFingerTapRecognizer];
+    
+   // [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(drawFocusView) userInfo:nil repeats:NO];
 
+    
    
 }
 
@@ -119,6 +122,16 @@
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 }
 
+- (void)drawFocusView
+{
+    if([_recorder isAdjustingFocus])
+        [self showFocusRectAtPoint:viewForCamera.center];
+    else
+    {
+        [_recorder focusInPoint:viewForCamera.center];
+        
+    }
+}
 // for photo editing -------------
 
 - (void)sendImageOnEditViewWithScroll:(UIImage*) image
@@ -236,7 +249,7 @@
     // previewlayer hide and show - Due to place pre-viewlayer for result on Video or Photo camera view.
     
     [GlobalVar getInstance].gIsPhotoPreview = YES;
-    [_recorder.preViewLayer setHidden:NO];
+    [viewForCamera setHidden:NO];
     
     btnForVideo.enabled = NO;
     btnForVideo.hidden = YES;
@@ -419,13 +432,20 @@
 
 - (void)initRecorder {
     
-    self.recorder = [[SBVideoRecorder alloc] init];
+    self.recorder = [[SBVideoRecorder alloc] initWithView:viewForCamera];
     _recorder.delegate = self;
-    _recorder.preViewLayer.frame = viewForPreview.bounds;
+    _recorder.preViewLayer.frame = viewForCamera.bounds;
     
     _recorder.isPhoto = captureOption == kTypeCaptureVideo? NO:YES;
-    [_recorder focusInPoint:viewForPreview.center];
-    [viewForPreview.layer addSublayer:_recorder.preViewLayer];
+    
+    [_recorder focusInPoint:viewForCamera.center];
+    [viewForCamera.layer addSublayer:_recorder.preViewLayer];
+    
+    btnForFront.enabled = [_recorder isFrontCameraSupported];
+    btnForFlash.enabled = _recorder.isTorchSupported;
+}
+
+- (void)initFocuseView{
     
     //focus rect view
     self.focusRectView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
@@ -438,10 +458,7 @@
     
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(setFocuseTap:)];
     [viewForPreview addGestureRecognizer:singleTap];
-    
-    
-    btnForFront.enabled = [_recorder isFrontCameraSupported];
-    btnForFlash.enabled = _recorder.isTorchSupported;
+
 }
 
 - (void)setFocuseTap:(UITapGestureRecognizer*)recognizer
@@ -680,16 +697,12 @@
     else
         temp = image.size.width;
     
-    //image = [image resizedImageToSize:CGSizeMake(temp*2, temp*2)];
-
     
-    NSLog(@"image size from lib *** %f, %f", image.size.width, image.size.height);
-    
-     [MBProgressHUD showMessag:@"Processing..." toView:self.view];
+    [MBProgressHUD showMessag:@"Processing..." toView:self.view];
 
     [picker dismissViewControllerAnimated:YES completion:^{
         
-        [_recorder.preViewLayer setHidden:YES];
+        [viewForCamera setHidden:YES];
         
         //[imageViewForPreview setImage:image];
         // for photo editing
@@ -729,7 +742,8 @@
     [_recorder stopCurrentVideoRecording];
 
     // Hide the previewlayer when get image or video for new Event/Post
-    [_recorder.preViewLayer setHidden:YES];
+    //[_recorder.preViewLayer setHidden:YES];
+    [viewForCamera setHidden:YES];
     
     _focusRectView.hidden = NO;
     
@@ -844,6 +858,8 @@
 //Focus RectView
 - (void)showFocusRectAtPoint:(CGPoint)point
 {
+    //if(_focusRectView.alpha != 0.0f) return;
+        
     _focusRectView.alpha = 1.0f;
     _focusRectView.center = point;
     _focusRectView.transform = CGAffineTransformMakeScale(1.5f, 1.5f);
@@ -858,6 +874,7 @@
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.7f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [UIView animateWithDuration:0.3f animations:^{
                 _focusRectView.alpha = 0;
+                
             }];
         });
     }];
@@ -965,7 +982,10 @@
                 }
                 else
                 {
-                    [_recorder.preViewLayer setHidden:NO];
+                    
+                    [viewForCamera setHidden:NO];
+                    [_recorder initCameraView:viewForCamera];
+                    
                     btnForVideo.enabled = NO;
                     btnForVideo.hidden = YES;
                     

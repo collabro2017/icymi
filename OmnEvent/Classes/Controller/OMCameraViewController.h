@@ -25,6 +25,7 @@
     
     //Camera View
     
+    IBOutlet UIView *viewForCamera;
     IBOutlet UIView *viewForPreview;
     IBOutlet UIImageView *imageViewForPreview;
     IBOutlet UILabel *lblForTimer;
