@@ -19,6 +19,9 @@
 
 #import "UIImageView+AFNetworking.h"
 
+#import "UIImage+Resize.h"
+#import "OMPostEventViewController.h"
+
 #import <Social/Social.h>
 #import <Crittercism/Crittercism.h>
 
@@ -157,6 +160,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadEventWithGlobal) name:kLoadEventDataWithGlobal object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createDupEvent) name:kOpenPostEvent object:nil];
+    
 }
 
 //Notification Methods
@@ -239,8 +244,8 @@
 {
     [super viewWillAppear:animated];
     
-    NSLog(@"Event count && Event Global count = %ld, %ld",
-    [arrForFeed count],[[GlobalVar getInstance].gArrEventList count]);
+    NSLog(@"Event count && Event Global count = %i, %i",
+    (int)[arrForFeed count],(int)[[GlobalVar getInstance].gArrEventList count]);
     
  }
 
@@ -293,7 +298,8 @@
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
-    
+    //[mainQuery whereKey:@"user" equalTo:USER];
+    [mainQuery setLimit:1000];
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
@@ -311,19 +317,22 @@
             for (PFObject *obj in objects) {
                 
                 if((NSNull*)obj == [NSNull null]) NSLog(@"-- have one null obj --");
-                
                 OMSocialEvent * socialtempObj = (OMSocialEvent*) obj;
                 PFUser *user = socialtempObj[@"user"];
                 
                 // Filtering Event: Own Events or User's Events including me in TagFriends
-                if ([socialtempObj[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] )
+                if([user.objectId isEqualToString:USER.objectId] )
+                {
+                    [arrForFeed addObject:socialtempObj];
+                }
+                else if ([socialtempObj[@"TagFriends"] containsObject:USER.objectId])
                 {
                     if (user != nil && user.username != nil) {
                         [arrForFeed addObject:socialtempObj];
                     }
                     else
                     {
-                        NSLog(@"missing user obj = %@", socialtempObj);
+                        NSLog(@"error user obj = %@", socialtempObj);
                     }
                 }
                 
@@ -359,7 +368,7 @@
         NSInteger postBadgeCount = 0;
        
         if(eventObj[@"postedObjects"] != nil && [eventObj[@"postedObjects"] count] > 0)
-            {
+        {
                 for (PFObject *postObj in eventObj[@"postedObjects"])
                 {
                     if((NSNull*)postObj != [NSNull null])
@@ -383,17 +392,17 @@
                     
                 }
 
-            }
-        
-            eventObj.badgeCount = postBadgeCount;
-            if(eventObj[@"eventBadgeFlag"] != nil && [eventObj[@"eventBadgeFlag"] count] > 0)
+        }
+        eventObj.badgeCount = postBadgeCount;
+        if(eventObj[@"eventBadgeFlag"] != nil && [eventObj[@"eventBadgeFlag"] count] > 0)
+        {
+            if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId])
             {
-                if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId])
-                {
                      eventObj.badgeNewEvent = 1;
-                }
             }
-            [arrForFeed addObject:eventObj];
+        }
+        
+        [arrForFeed addObject:eventObj];
         
     }
     
@@ -499,6 +508,24 @@
         }
     }];
     
+}
+
+- (void)createDupEvent
+{
+    // Show PostViewController
+    
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+
+    OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
+    [postEventVC setImageForPost:nil];
+    [postEventVC setPostType:@"image"]; //Post Type  :  image , video, audio
+    
+    [postEventVC setUploadOption:kTypeUploadDup];
+    [postEventVC setCaptureOption:kTypeCaptureAll];
+    [postEventVC setCurObj:nil];
+    
+    [self.navigationController pushViewController:postEventVC animated:YES];
+        
 }
 
 - (void)postNewEvent {

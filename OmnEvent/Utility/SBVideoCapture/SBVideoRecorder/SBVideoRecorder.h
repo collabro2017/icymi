@@ -34,7 +34,11 @@
 
 @end
 
-@interface SBVideoRecorder : NSObject <AVCaptureFileOutputRecordingDelegate>
+@interface SBVideoRecorder : NSObject <AVCaptureFileOutputRecordingDelegate, UIGestureRecognizerDelegate>
+{
+    CGFloat beginGestureScale;
+    CGFloat effectiveScale;
+}
 
 @property (weak, nonatomic) id <SBVideoRecorderDelegate> delegate;
 
@@ -42,10 +46,13 @@
 @property (strong, nonatomic) AVCaptureSession *captureSession;
 @property (strong, nonatomic) AVCaptureMovieFileOutput *movieFileOutput;
 @property (nonatomic,strong) AVCaptureStillImageOutput *stillImageOutput;
+@property (nonatomic, strong) UIView *preview;
+@property (readwrite) BOOL isPhoto;
 
 
 
 
+- (id)initWithView:(UIView*) preView;
 - (CGFloat)getTotalVideoDuration;
 - (void)stopCurrentVideoRecording;
 - (void)startRecordingToOutputFileURL:(NSURL *)fileURL;
@@ -68,5 +75,9 @@
 - (void)captureStillImage;
 
 - (BOOL)isRecording;
+
+- (void)initCameraView:(UIView*)preCameraView;
+- (BOOL)isAdjustingFocus;
+
 
 @end

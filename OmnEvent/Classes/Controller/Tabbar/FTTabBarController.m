@@ -15,6 +15,7 @@
 #import "OMRecordAudioViewController.h"
 #import "OMMyProfileViewController.h"
 #import "OMTutorialVC.h"
+#import "OMCameraPhotoViewController.h"
 
 #define RED     13.0f/255.0f
 #define BLUE    178.0f/255.0f
@@ -99,17 +100,34 @@
     }
     else
     {
-        OMCameraViewController *cameraVC = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
-        
-        [cameraVC setUploadOption:(kTypeUpload)_uploadOption];
-        [cameraVC setCaptureOption:(kTypeCapture)_captureOption];
-        [cameraVC setCurObj:_curObj];
-        
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraVC];
-        
-        [nav setNavigationBarHidden:YES animated:YES];
-        
-        [self presentViewController:nav animated:YES completion:nil];
+//        if(_captureOption == kTypeCaptureVideo)
+        {
+            OMCameraViewController *cameraVC = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
+            
+            [cameraVC setUploadOption:(kTypeUpload)_uploadOption];
+            [cameraVC setCaptureOption:(kTypeCapture)_captureOption];
+            [cameraVC setCurObj:_curObj];
+            
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraVC];
+            
+            [nav setNavigationBarHidden:YES animated:YES];
+            
+            [self presentViewController:nav animated:YES completion:nil];
+        }
+//        else if(_captureOption == kTypeCapturePhoto)
+//        {
+//            OMCameraPhotoViewController * photoVC = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraPhotoVC"];
+//            [photoVC setUploadOption:(kTypeUpload)_uploadOption];
+//            [photoVC setCaptureOption:_captureOption];
+//            [photoVC setCurObj:_curObj];
+//            
+//            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:photoVC];
+//            
+//            [nav setNavigationBarHidden:YES animated:YES];
+//            
+//            [self presentViewController:nav animated:YES completion:nil];
+//        }
+       
 
     }
 }

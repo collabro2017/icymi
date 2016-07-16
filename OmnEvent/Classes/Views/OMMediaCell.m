@@ -14,9 +14,11 @@
 
 @implementation OMMediaCell
 {
-    NSInteger curIndex;
+    CGRect originFrame;
 }
+
 @synthesize user,delegate,currentObj, imageViewForMedia, beforeTitle, beforeDescription, curEventIndex;
+@synthesize curPostIndex, checkMode;
 
 - (void)awakeFromNib {
     // Initialization code
@@ -25,8 +27,29 @@
     
     lblForTitle.delegate = self;
     lblForDes.delegate = self;
-    curEventIndex = [GlobalVar getInstance].gEventIndex;
+//    self.contrainImageRight.constant =300;
     
+}
+- (IBAction)onCheckBtn:(id)sender {
+    UIButton* tmp = (UIButton*)sender;
+    NSLog(@"Check Tag === %ld", [tmp tag]);
+    
+    if([[GlobalVar getInstance].gArrPostList count] > 0)
+    {
+        PFObject *selectedObj = [[GlobalVar getInstance].gArrPostList objectAtIndex:[tmp tag]];
+        
+        if([[GlobalVar getInstance].gArrSelectedList containsObject:selectedObj])
+        {
+            [[GlobalVar getInstance].gArrSelectedList removeObject:selectedObj];
+            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_uncheck_icon"] forState:UIControlStateNormal];
+        }
+        else
+        {
+            [[GlobalVar getInstance].gArrSelectedList addObject:selectedObj];
+            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_check_icon"] forState:UIControlStateNormal];
+        }
+        
+    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -38,6 +61,7 @@
 - (void)showDetailPage:(UITapGestureRecognizer *)_gesture
 {
     if ([delegate respondsToSelector:@selector(showProfile:)]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:kExportCancel object:nil];
         [delegate performSelector:@selector(showProfile:) withObject:user];
     }
     
@@ -60,6 +84,26 @@
     
     currentObj = obj;
     
+    [btnCheckForExport setTag:curPostIndex];
+    [btnForVideoPlay setHidden:YES];
+    
+    
+    if([[GlobalVar getInstance].gArrPostList count] > 0)
+    {
+        PFObject *selectedObj = [[GlobalVar getInstance].gArrPostList objectAtIndex:curPostIndex];
+        
+        if([[GlobalVar getInstance].gArrSelectedList containsObject:selectedObj])
+        {
+            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_check_icon"] forState:UIControlStateNormal];
+        }
+        else
+        {
+            [btnCheckForExport setImage:[UIImage imageNamed:@"btn_uncheck_icon"] forState:UIControlStateNormal];
+        }
+    }
+    [btnCheckForExport setHidden:!checkMode];
+    
+
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showDetailPage:)];
     gesture.numberOfTapsRequired = 1;
     
@@ -184,14 +228,12 @@
     
     
     // for badge processing
-    NSLog(@"------Current Index-----%ld", curEventIndex);
+    
     if(curEventIndex >= 0)
     {
         OMSocialEvent *socialTemp = [[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
         
         if (socialTemp.badgeCount > 0) {
-            
-            [lblForTimer setTextColor:[UIColor redColor]];
             
             OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
             if(currentObj != nil)
@@ -201,6 +243,9 @@
                 
                 if ([temp containsObject:self_user.objectId])
                 {
+                    [GlobalVar getInstance].isPosting = YES;
+                    [lblForTimer setTextColor:[UIColor redColor]];
+                    
                     [temp removeObject:self_user.objectId];
                     currentObj[@"usersBadgeFlag"] = temp;
                     [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
@@ -208,6 +253,7 @@
                         {
                             NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
                             [NSTimer scheduledTimerWithTimeInterval: 2.0 target: self selector: @selector(delayChangeTextColor:) userInfo: nil repeats: NO];
+                            [GlobalVar getInstance].isPosting = NO;
                         }
                     }];
                     
@@ -263,7 +309,7 @@
     }
     
     if ([currentObj[@"postType"] isEqualToString:@"video"]) {
-        
+        [btnForVideoPlay setHidden:NO];
         [_videoPlayerController.view setHidden:NO];
         
         PFFile *videoFile = (PFFile *)currentObj[@"postFile"];
@@ -279,7 +325,7 @@
         _videoPlayerController.delegate = self;
         
         _videoPlayerController.view.frame = imageViewForMedia.frame;
-        [self insertSubview:_videoPlayerController.view aboveSubview:imageViewForMedia];
+        [viewForMedia addSubview:_videoPlayerController.view];
         
         _videoPlayerController.videoPath = videoFile.url;
         if (_file != nil && _offline_url){
@@ -287,37 +333,12 @@
             _videoPlayerController.videoPath = urlString;            
         }
         
-        _playButton = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"btn_video_play"]];
-        _playButton.center = imageViewForMedia.center;
-        [self addSubview:_playButton];
-        [self bringSubviewToFront:_playButton];
-
-        ////******************   Video **************
-        
-        
-//        __block OMMediaCell *cell = self;
-//        __block PBJVideoPlayerController *controller = _videoPlayerController;
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            
-////            [cell insertSubview:controller.view belowSubview:_btnForVideo];
-//            controller.videoPath = videoFile.url;
-//            [controller playFromBeginning];
-//            
-//        });
-        
-        //
-        //        double delayInSeconds = 0.0001f;
-        //
-        //        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds *NSEC_PER_SEC));
-        //
-        //
-        //        dispatch_after(popTime, dispatch_get_main_queue(), ^{
-        //
-        //
-        //        });
+        [viewForMedia bringSubviewToFront:btnForVideoPlay];
+        [viewForMedia bringSubviewToFront:btnCheckForExport];
         
     } else if ([currentObj[@"postType"] isEqualToString:@"photo"]) {
         
+        [btnForVideoPlay setHidden:YES];
         [_videoPlayerController.view setHidden:YES];
         
         if (_videoPlayerController.view) {
@@ -342,7 +363,8 @@
     } else if ([currentObj[@"postType"] isEqualToString:@"audio"]) {
         
         [_videoPlayerController.view setHidden:YES];
-        
+        [btnForVideoPlay setHidden:YES];
+
         if (_videoPlayerController.view) {
             
             [_videoPlayerController.view removeFromSuperview];
@@ -365,7 +387,8 @@
         btnForPlay.tag = 10;
         btnForPlay.center = imageViewForMedia.center;
         [btnForPlay setImage:[UIImage imageNamed:@"btn_playaudio"] forState:UIControlStateNormal];
-        [self addSubview:btnForPlay];
+        [viewForMedia addSubview:btnForPlay];
+        
         [btnForPlay addTarget:self action:@selector(playAudio) forControlEvents:UIControlEventTouchUpInside];
         
         eq = [[PCSEQVisualizer alloc]initWithNumberOfBars:6];
@@ -472,9 +495,6 @@
 }
 
 - (void)videoPlayerReady:(PBJVideoPlayerController *)videoPlayer {
-    
-//    [self addSubview:videoPlayer.view];
-//    [videoPlayer.view setFrame:imageViewForMedia.bounds];
 
 }
 
@@ -485,6 +505,7 @@
         {
             [btnForVideoPlay setHidden:NO];
             [GlobalVar getInstance].isPosting = NO;
+            
 
         }
             break;
@@ -492,18 +513,21 @@
         {
             [btnForVideoPlay setHidden:YES];
             [GlobalVar getInstance].isPosting = YES;
+            
         }
             break;
         case PBJVideoPlayerPlaybackStatePaused:
         {
             [btnForVideoPlay setHidden:NO];
             [GlobalVar getInstance].isPosting = NO;
+            
 
         }
             break;
         case PBJVideoPlayerPlaybackStateFailed:
         {
             [GlobalVar getInstance].isPosting = NO;
+            
         }
             break;
         default:
@@ -578,12 +602,6 @@
         }
     }
     
-//    if ([delegate respondsToSelector:@selector(playAudio:)]) {
-//        
-//        [delegate performSelector:@selector(playAudio:) withObject:currentObj];
-//        
-//    }
-
 }
 
 - (void)stopAudio {

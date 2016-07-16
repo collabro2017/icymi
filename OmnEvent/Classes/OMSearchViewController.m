@@ -53,6 +53,17 @@
     
 }
 
+-(void)viewWillLayoutSubviews{
+    if (IS_IPAD) {
+        CGRect frame = self.searchBarForEvent.frame;
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+            self.searchBarForEvent.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH, frame.size.height);
+        }else{
+            self.searchBarForEvent.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_HEIGHT, frame.size.height);
+        }
+    }
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.

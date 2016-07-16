@@ -103,10 +103,7 @@
 
     constraintForHeight.constant = tempValue - (self.view.frame.size.height - btnForLogin.frame.origin.y - keyboardFrame.size.height);
     
-    
     [self.view layoutIfNeeded];
-    
-    
 }
 
 - (void)keyboardDidShow:(NSNotification *)_notification
@@ -186,7 +183,11 @@
     [query whereKey:@"email" equalTo:txtForUsername.text];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
+        if(error)
+        {
+            [[[UIAlertView alloc] initWithTitle:@"Error!" message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
+            return;
+        }
         if (!objects || [objects count] == 0) {
             
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
@@ -194,11 +195,11 @@
             return;
         }
         
-        PFUser *user = (PFUser *)objects[0];
+        PFObject *userObj = [objects objectAtIndex:0];
         
-        if ([user objectForKey:@"Status"])
+        if ([userObj objectForKey:@"Status"])
         {
-            BOOL status = [[user objectForKey:@"Status"] boolValue];
+            BOOL status = [[userObj objectForKey:@"Status"] boolValue];
             if (!status)
             {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
@@ -206,38 +207,44 @@
                 return;
             }
         }
-        [PFUser logInWithUsernameInBackground:[user.username lowercaseString] password:[txtForPassword.text lowercaseString] block:^(PFUser *user, NSError *error) {
+        [PFUser logInWithUsernameInBackground:[[userObj valueForKey:@"username"] lowercaseString] password:[txtForPassword.text lowercaseString] block:^(PFUser *user, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-            if (user) {
-                
-                [user fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                    NSLog(@"%@",object);
-                    
-                    PFInstallation *installation = [PFInstallation currentInstallation];
-                    [installation setObject:user forKey:@"user"];
-                    [installation setObject:user.objectId forKey:@"userID"];
+            if (!error) {
+                if(user)
+                {
+                    [user fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                        NSLog(@"%@",object);
+                        
+                        PFInstallation *installation = [PFInstallation currentInstallation];
+                        [installation setObject:user forKey:@"user"];
+                        [installation setObject:user.objectId forKey:@"userID"];
 
-                    [installation saveEventually];
+                        [installation saveEventually];
 
-                    [OMGlobal setLogInUserDefault];
-                    
-                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
-                    
-                    if ([APP_DELEGATE logOut]) {
+                        [OMGlobal setLogInUserDefault];
                         
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFolderData object:nil];
-                    }
-                    
-                    [self.navigationController dismissViewControllerAnimated:YES completion:^{
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                         
-                        [APP_DELEGATE setLogOut:NO];
+                        if ([APP_DELEGATE logOut]) {
+                            
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFolderData object:nil];
+                        }
                         
+                        [self.navigationController dismissViewControllerAnimated:YES completion:^{
+                            
+                            [APP_DELEGATE setLogOut:NO];
+                            
+                        }];
+
                     }];
-
-                }];
+                }
+                else
+                {
+                    NSLog(@"User Fetch Error!!!");
+                }
             }
             else
             {

@@ -70,7 +70,8 @@
 
 - (void)backAction
 {
-    
+    [[GlobalVar getInstance].gArrSelectedList removeAllObjects];
+    [[GlobalVar getInstance].gArrPostList removeAllObjects];
         
     [self.navigationController popViewControllerAnimated:YES];
 }

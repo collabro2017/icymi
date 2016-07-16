@@ -508,6 +508,7 @@
 		8F1BE5201CF8E04C008E9D73 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */; };
 		8F1BE52D1CF96E5E008E9D73 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */; };
 		8F1BE52E1CF96E5E008E9D73 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */; };
+		8F2F29631D1E526300ECB957 /* img_thumbnail.png in Resources */ = {isa = PBXBuildFile; fileRef = 8F2F29621D1E526300ECB957 /* img_thumbnail.png */; };
 		8F3A27FA1CF602A800999200 /* FUTURAL.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E41CF602A800999200 /* FUTURAL.TTF */; };
 		8F3A27FB1CF602A800999200 /* FUTURALI.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E51CF602A800999200 /* FUTURALI.TTF */; };
 		8F3A27FC1CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */; };
@@ -530,6 +531,7 @@
 		8F3A280D1CF602A800999200 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27F71CF602A800999200 /* Roboto-Regular.ttf */; };
 		8F3A280E1CF602A800999200 /* Roboto-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27F81CF602A800999200 /* Roboto-Thin.ttf */; };
 		8F3A280F1CF602A800999200 /* Roboto-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8F3A27F91CF602A800999200 /* Roboto-ThinItalic.ttf */; };
+		8FBFC4401D2906A300E33CD7 /* OMCameraPhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FBFC43F1D2906A300E33CD7 /* OMCameraPhotoViewController.m */; };
 		8FE63D6D1CE70416002907FB /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE63D6B1CE70416002907FB /* Default-568h@2x.png */; };
 		8FE63D6E1CE70416002907FB /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FE63D6C1CE70416002907FB /* Default@2x.png */; };
 		A9193FBE1AD0ACCF00692A50 /* AMScrollingNavbarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9193FBD1AD0ACCF00692A50 /* AMScrollingNavbarViewController.m */; };
@@ -1209,6 +1211,7 @@
 		8F1BE51F1CF8E04C008E9D73 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8F1BE52B1CF96E5E008E9D73 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleSignIn.bundle; sourceTree = "<group>"; };
 		8F1BE52C1CF96E5E008E9D73 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
+		8F2F29621D1E526300ECB957 /* img_thumbnail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img_thumbnail.png; sourceTree = "<group>"; };
 		8F3A27E41CF602A800999200 /* FUTURAL.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURAL.TTF; sourceTree = "<group>"; };
 		8F3A27E51CF602A800999200 /* FUTURALI.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = FUTURALI.TTF; sourceTree = "<group>"; };
 		8F3A27E61CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "HELVETICA NEUE CE 75 BOLD.TTF"; sourceTree = "<group>"; };
@@ -1231,6 +1234,8 @@
 		8F3A27F71CF602A800999200 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		8F3A27F81CF602A800999200 /* Roboto-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Thin.ttf"; sourceTree = "<group>"; };
 		8F3A27F91CF602A800999200 /* Roboto-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-ThinItalic.ttf"; sourceTree = "<group>"; };
+		8FBFC43E1D2906A300E33CD7 /* OMCameraPhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMCameraPhotoViewController.h; path = Controller/OMCameraPhotoViewController.h; sourceTree = "<group>"; };
+		8FBFC43F1D2906A300E33CD7 /* OMCameraPhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMCameraPhotoViewController.m; path = Controller/OMCameraPhotoViewController.m; sourceTree = "<group>"; };
 		8FE63D6B1CE70416002907FB /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		8FE63D6C1CE70416002907FB /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		A9193FBC1AD0ACCF00692A50 /* AMScrollingNavbarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AMScrollingNavbarViewController.h; sourceTree = "<group>"; };
@@ -2106,6 +2111,8 @@
 			children = (
 				3EB66C451AB60F2C00E90054 /* OMCameraViewController.h */,
 				3EB66C461AB60F2C00E90054 /* OMCameraViewController.m */,
+				8FBFC43E1D2906A300E33CD7 /* OMCameraPhotoViewController.h */,
+				8FBFC43F1D2906A300E33CD7 /* OMCameraPhotoViewController.m */,
 				3EC269A51AC793F1000CB513 /* OMPhotoEditViewController.h */,
 				3EC269A61AC793F1000CB513 /* OMPhotoEditViewController.m */,
 				3EC7659E1AC9415000A3F1F5 /* OMPostEventViewController.h */,
@@ -2430,6 +2437,7 @@
 		8FE63D6A1CE70416002907FB /* Splash */ = {
 			isa = PBXGroup;
 			children = (
+				8F2F29621D1E526300ECB957 /* img_thumbnail.png */,
 				8FE63D6B1CE70416002907FB /* Default-568h@2x.png */,
 				8FE63D6C1CE70416002907FB /* Default@2x.png */,
 			);
@@ -2562,6 +2570,7 @@
 				8FE63D6E1CE70416002907FB /* Default@2x.png in Resources */,
 				3CC69240199FBE350064B4D0 /* WS.png in Resources */,
 				3CC691DA199FBE350064B4D0 /* ME.png in Resources */,
+				8F2F29631D1E526300ECB957 /* img_thumbnail.png in Resources */,
 				3CC691A6199FBE350064B4D0 /* GQ.png in Resources */,
 				8F3A280E1CF602A800999200 /* Roboto-Thin.ttf in Resources */,
 				8F3A280C1CF602A800999200 /* Roboto-MediumItalic.ttf in Resources */,
@@ -3029,6 +3038,7 @@
 				3C0A5C5B1978FC08009AEC85 /* OMSocialFollow.m in Sources */,
 				0AB87A701B81FFBB009EC78B /* UzysWrapperPickerController.m in Sources */,
 				0AB04E901B81613100A308ED /* OMFolderListCell.m in Sources */,
+				8FBFC4401D2906A300E33CD7 /* OMCameraPhotoViewController.m in Sources */,
 				3EC317E21ABE1A1B00541D39 /* MMNavigationSegue.m in Sources */,
 				A9C016311AD8770C00E7F2B1 /* OMAdditionalTagViewController.m in Sources */,
 				3C3402461979290D00AFC3BC /* AFNetworkReachabilityManager.m in Sources */,

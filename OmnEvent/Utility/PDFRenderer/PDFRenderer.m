@@ -260,8 +260,10 @@
     return nCurrOffset;
 }
 
-+(int)drawMediaCell:(PFObject *)obj nCurrOffset:(int)nCurrentOffset
++(int)drawMediaCell:(PFObject *)obj nCurrOffset:(int)nCurrentOffset IsLast:(BOOL) isLast
 {
+    float pageH = 800;
+    float pageContentH = 730;
     PFObject *currentObj = obj;
     PFUser* user = currentObj[@"user"];
     int nCurrOffset = nCurrentOffset;
@@ -308,9 +310,9 @@
     
     nCurrOffset += 70;
     
-    if ((nCurrOffset * rScale) > 712)
+    if ((nCurrOffset * rScale) > pageContentH)
     {
-        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
+        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil); // start second page
         nCurrOffset = 30;
     }
     
@@ -321,9 +323,9 @@
     
     nCurrOffset += nDescTitleHeight;
     
-    if ((nCurrOffset * rScale) > 712)
+    if ((nCurrOffset * rScale) > pageContentH)
     {
-        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
+        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil); // start second page
         nCurrOffset = 30;
     }
     
@@ -333,9 +335,9 @@
         
         int nImageWidth = 200;
         
-        if (((nCurrOffset + nImageWidth) * rScale) > 712)
+        if (((nCurrOffset + nImageWidth) * rScale) > pageContentH)
         {
-            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
+            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil); // start second page
             nCurrOffset = 30;
         }
         
@@ -395,10 +397,13 @@
     
     nCurrOffset += 30;
     
-    if ((nCurrOffset * rScale) > 712)
+    if(!isLast)
     {
-        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
-        nCurrOffset = 30;
+        if ((nCurrOffset * rScale) > pageContentH)
+        {
+            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil); // start second page
+            nCurrOffset = 30;
+        }
     }
     
     return nCurrOffset;
@@ -444,12 +449,14 @@
 
 +(void)createPDF:(NSString*)filePath content:(NSMutableDictionary*)contentDic
 {
+    float pageH = 800;
+    float pageContentH = 715;
     float rScale = 612.0f / 320;
     __block int nCurrentOffset = 0;
     // Create the PDF context using the default page size of 612 x 792.
     UIGraphicsBeginPDFContextToFile(filePath, CGRectZero, nil);
     // Mark the beginning of a new page.
-    UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil);
+    UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil);
     
     PFObject *currentObject = [contentDic objectForKey:@"currentObject"];
     PFUser* user = currentObject[@"user"];
@@ -606,9 +613,9 @@
                         
                         nCurrentOffset += 70;
                         
-                        if ((nCurrentOffset * rScale) > 712) {
+                        if ((nCurrentOffset * rScale) > pageContentH) {
                             
-                            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
+                            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil); // start second page
                             nCurrentOffset = 30;
                         }
                     }
@@ -653,9 +660,9 @@
                         
                         nCurrentOffset += 70;
                         
-                        if ((nCurrentOffset * rScale) > 712) {
-                            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
-                            nCurrentOffset = 30;
+                        if ((nCurrentOffset * rScale) > pageContentH) {
+                            UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil); // start second page
+                            nCurrentOffset = 20;
                         }                        
                     }
                 }];
@@ -669,10 +676,10 @@
     
     nCurrentOffset += 20;
     
-    if ((nCurrentOffset * rScale) > 712)
+    if ((nCurrentOffset * rScale) > pageContentH)
     {
-        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, 792), nil); // start second page
-        nCurrentOffset = 30;
+        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, 612, pageH), nil); // start second page
+        nCurrentOffset = 20;
     }
     
     NSMutableArray *arrForDetail = [contentDic objectForKey:@"arrDetail"];
@@ -699,12 +706,20 @@
                 CGPoint to = CGPointMake(322 * rScale, nCurrentOffset * rScale);
                 [PDFRenderer drawLineFromPoint:from toPoint:to];
                 
-                nCurrentOffset += 20;
+                nCurrentOffset += 30;
             }
         }
         else
         {
-            nCurrentOffset = [PDFRenderer drawMediaCell:tempObj nCurrOffset:nCurrentOffset];
+            if(i >= [arrForDetail count]-1)
+            {
+                nCurrentOffset = [PDFRenderer drawMediaCell:tempObj nCurrOffset:nCurrentOffset IsLast:YES];
+            }
+            else
+            {
+                nCurrentOffset = [PDFRenderer drawMediaCell:tempObj nCurrOffset:nCurrentOffset IsLast:NO];
+            }
+            
             
             NSMutableArray *arr = nil;
 
@@ -716,11 +731,12 @@
             }
             else
             {
+                
                 CGPoint from = CGPointMake(0, nCurrentOffset * rScale);
                 CGPoint to = CGPointMake(322 * rScale, nCurrentOffset * rScale);
                 [PDFRenderer drawLineFromPoint:from toPoint:to];
                 
-                nCurrentOffset += 20;
+                nCurrentOffset += 30;
             }
         }
     }

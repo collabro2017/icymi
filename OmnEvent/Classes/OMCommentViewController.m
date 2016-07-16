@@ -69,12 +69,12 @@
     currentUser = [PFUser currentUser];
     //Input Bar
     
-    inputBar = [[YFInputBar alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH_ROTATED, 50)];
+    inputBar = [[YFInputBar alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT_ROTATED - 50, SCREEN_WIDTH_ROTATED, 50)];
     inputBar.backgroundColor = [UIColor colorWithRed:arc4random_uniform(255)/255.0f green:arc4random_uniform(255)/255.0f blue:arc4random_uniform(255)/255.0f alpha:1];
     inputBar.delegate = self;
     inputBar.clearInputWhenSend = YES;
     inputBar.resignFirstResponderWhenSend = YES;    
-    [self.viewSent addSubview:inputBar];
+    [self.view addSubview:inputBar];
     
     
     // Do any additional setup after loading the view.
@@ -98,11 +98,25 @@
     
     [tblForComment addSubview:self.refreshControl];
 
+
+}
+
+-(void)viewWillLayoutSubviews{
     if (IS_IPAD) {
         
         CGRect textFrame = inputBar.textField.frame;
-        inputBar.textField.frame = CGRectMake(textFrame.origin.x, textFrame.origin.y, SCREEN_WIDTH_ROTATED - 70, 24);
-        inputBar.sendBtn.frame = CGRectMake(SCREEN_WIDTH_ROTATED - 60, 0, 60, 50);
+        if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+            [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+            inputBar.frame = CGRectMake(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50);
+            inputBar.textField.frame = CGRectMake(textFrame.origin.x, 10, inputBar.frame.size.width - 70, 24);
+            inputBar.sendBtn.frame = CGRectMake(inputBar.frame.size.width - 60, 0, 60, 50);
+            
+        }else{
+            inputBar.frame = CGRectMake(0, SCREEN_WIDTH - 50, SCREEN_HEIGHT, 50);
+            inputBar.textField.frame = CGRectMake(textFrame.origin.x, 10, inputBar.frame.size.width - 70, 24);
+            inputBar.sendBtn.frame = CGRectMake(inputBar.frame.size.width - 60, 0, 60, 50);
+            
+        }
     }
 }
 
