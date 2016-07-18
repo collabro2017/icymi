@@ -27,8 +27,11 @@
     
     lblForTitle.delegate = self;
     lblForDes.delegate = self;
+
+//    self.contrainImageRight.constant =300;
     
 }
+
 - (IBAction)onCheckBtn:(id)sender {
     UIButton* tmp = (UIButton*)sender;
     NSLog(@"Check Tag === %ld", [tmp tag]);

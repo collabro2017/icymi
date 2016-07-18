@@ -79,6 +79,7 @@
 @property (strong, nonatomic) NSString *beforeDescription;
 
 @property (strong, nonatomic)    IBOutlet UIImageView *imageViewForMedia;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *contrainImageRight;
 
 - (IBAction)likeAction:(id)sender;
 - (IBAction)showLikersAction:(id)sender;

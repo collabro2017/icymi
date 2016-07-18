@@ -53,7 +53,7 @@ static char UIScrollViewTwitterCover;
 - (void)addTwitterCoverWithImage:(UIImage*)image withTopView:(UIView*)topView withBottomView:(UIView *)bottomView
 {
     
-    CHTwitterCoverView *view = [[CHTwitterCoverView alloc] initWithFrame:CGRectMake(0,0, [UIScreen mainScreen].bounds.size.width, CHTwitterCoverViewHeight) andContentTopView:topView];
+    CHTwitterCoverView *view = [[CHTwitterCoverView alloc] initWithFrame:CGRectMake(0,0, SCREEN_WIDTH_ROTATED, CHTwitterCoverViewHeight) andContentTopView:topView];
     [view setTempImage:image];
     view.backgroundColor = [UIColor clearColor];
 //    view.clipsToBounds = YES;
@@ -64,7 +64,7 @@ static char UIScrollViewTwitterCover;
     
     if (bottomView) {
         
-        [bottomView setFrame:CGRectMake(0, CHTwitterCoverViewHeight, [UIScreen mainScreen].bounds.size.width, 93)];
+        [bottomView setFrame:CGRectMake(0, CHTwitterCoverViewHeight, SCREEN_WIDTH_ROTATED, 93)];
         
         [self addSubview:bottomView];
     }
@@ -178,9 +178,16 @@ static char UIScrollViewTwitterCover;
         self.frame = CGRectMake(-offset,-offset + topView.bounds.size.height, 320+ offset * 2, CHTwitterCoverViewHeight + offset);
         
         if (IS_IPAD) {
-            topView.frame = CGRectMake(0, -offset, SCREEN_WIDTH_ROTATED, topView.bounds.size.height);
-            
-            self.frame = CGRectMake(-offset,-offset + topView.bounds.size.height, SCREEN_WIDTH_ROTATED+ offset * 2, CHTwitterCoverViewHeight + offset);
+            if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
+                [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
+                topView.frame = CGRectMake(0, -offset, SCREEN_WIDTH, topView.bounds.size.height);
+                
+                self.frame = CGRectMake(-offset,-offset + topView.bounds.size.height, SCREEN_WIDTH+ offset * 2, CHTwitterCoverViewHeight + offset);
+            } else {
+                topView.frame = CGRectMake(0, -offset, SCREEN_HEIGHT, topView.bounds.size.height);
+                
+                self.frame = CGRectMake(-offset,-offset + topView.bounds.size.height, SCREEN_HEIGHT+ offset * 2, CHTwitterCoverViewHeight + offset);
+            }
         }
         NSInteger index = offset / 10;
         if (index < 0) {
@@ -206,9 +213,9 @@ static char UIScrollViewTwitterCover;
         self.frame = CGRectMake(0,topView.bounds.size.height, 320, CHTwitterCoverViewHeight);
         
         if (IS_IPAD) {
-            topView.frame = CGRectMake(0, 0, SCREEN_WIDTH_ROTATED, topView.bounds.size.height);
+            topView.frame = CGRectMake(0, 0, SCREEN_HEIGHT_ROTATED, topView.bounds.size.height);
             
-            self.frame = CGRectMake(0,topView.bounds.size.height, SCREEN_WIDTH_ROTATED, CHTwitterCoverViewHeight);
+            self.frame = CGRectMake(0,topView.bounds.size.height, SCREEN_HEIGHT_ROTATED, CHTwitterCoverViewHeight);
         }
         
         UIImage *image = nil;
@@ -218,7 +225,9 @@ static char UIScrollViewTwitterCover;
         if (self.image != image) {
             [super setImage:image];
         }
-    }  
+    }
+    
+    [self setNeedsDisplay];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
