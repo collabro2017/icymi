@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>374815263085-i2261314k94v2gchsm60lqvfktu88qee.apps.googleusercontent.com</string>
+	<string>529263599195-49fbgf7g1dlahc52el3sdfoge4co4d38.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.374815263085-i2261314k94v2gchsm60lqvfktu88qee</string>
+	<string>com.googleusercontent.apps.529263599195-49fbgf7g1dlahc52el3sdfoge4co4d38</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.social.event</string>
+	<string>com.collabro.collabroinc</string>
 	<key>PROJECT_ID</key>
-	<string>socialevent-18c5d</string>
+	<string>firebase-icymi</string>
 	<key>IS_ADS_ENABLED</key>
 	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -23,6 +23,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:374815263085:ios:f9b84d75a000a954</string>
+	<string>1:529263599195:ios:7726ab23862f5810</string>
 </dict>
 </plist>

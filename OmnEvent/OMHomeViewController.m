@@ -746,7 +746,7 @@
             if (button.tag < [arrForFeed count]) {
                 
                 PFObject *obj = [arrForFeed objectAtIndex:button.tag];
-                PFFile *postImgFile = (PFFile *)obj[@"thumbImage"];
+                PFFile *postImgFile = (PFFile *)obj[@"postImage"];
                 if (postImgFile) {
                     if (replaceView.image) {
                         replaceView.image = nil;

@@ -207,7 +207,7 @@
                 return;
             }
         }
-        [PFUser logInWithUsernameInBackground:[[userObj valueForKey:@"username"] lowercaseString] password:[txtForPassword.text lowercaseString] block:^(PFUser *user, NSError *error) {
+        [PFUser logInWithUsernameInBackground:[userObj valueForKey:@"username"] password:[txtForPassword.text lowercaseString] block:^(PFUser *user, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             if (!error) {
                 if(user)

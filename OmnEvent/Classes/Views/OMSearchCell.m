@@ -22,7 +22,7 @@
         imageViewForBG.image = nil;
     }
     
-    PFFile *postFile = (PFFile *)_currentObj[@"thumbImage"];
+    PFFile *postFile = (PFFile *)_currentObj[@"postImage"];
     if (postFile) {
     
         if (imageViewForBG.image) {

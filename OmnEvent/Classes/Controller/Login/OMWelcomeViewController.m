@@ -410,11 +410,15 @@
 
 - (void) signIn:(GIDSignIn *)signIn didSignInForUser:(GIDGoogleUser *)user withError:(NSError *)error
 {
-    if(!user) [OMGlobal showAlertTips:error.localizedDescription title:@"SignIn with Gmail"];
+    if (user) {
+        [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+        [self signInwithGoogleMail:user];
+    }
+    else
+    {
+        [OMGlobal showAlertTips:error.localizedDescription title:@"SignIn with Gmail"];
+    }
     
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    
-    [self signInwithGoogleMail:user];
     
     NSLog(@"SignIn From Google...");
     //[[GIDSignIn sharedInstance] signOut];
@@ -426,11 +430,16 @@
     //[MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
+- (void)signInWillDispatch:(GIDSignIn *)signIn error:(NSError *)error {
+    
+}
+
 #pragma mark - GoogleUI Signin Delegate
 - (void)signIn:(GIDSignIn *)signIn dismissViewController:(UIViewController *)viewController
 {
-    //[MBProgressHUD hideHUDForView:self.view animated:YES];
+    [MBProgressHUD hideHUDForView:self.view animated:YES];
     NSLog(@"Google SignIn ViewController dismiss...");
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)presentSignInViewController:(UIViewController *)viewController {
