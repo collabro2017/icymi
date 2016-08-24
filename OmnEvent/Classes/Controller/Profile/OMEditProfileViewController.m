@@ -863,13 +863,8 @@
             break;
         case 1:
         {
-            if (indexPath.row == 3) {
-                
+            if (indexPath.row == 4) {
                 [self performSegueWithIdentifier:@"kIdentifierChangePassword" sender:nil];
-            }
-            else if (indexPath.row == 4)
-            {
-                
             }
         }
             break;
