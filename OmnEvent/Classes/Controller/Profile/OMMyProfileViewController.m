@@ -7,9 +7,8 @@
 //
 
 #import "OMMyProfileViewController.h"
-#import "UIScrollView+TwitterCover.h"
 #import "OMDetailEventViewController.h"
-
+#import "UIScrollView+TwitterCover.h"
 #import "OMProfileBioCell.h"
 #import "OMCustomProfileInfoView.h"
 #import "OMSettingsViewController.h"

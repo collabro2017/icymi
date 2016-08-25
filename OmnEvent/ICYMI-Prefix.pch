@@ -35,8 +35,6 @@
     #import "OMAppDelegate.h"
     #import "FTTabBarController.h"
     #import "OMPushServiceManager.h"
-
-
     #import <GoogleSignIn/GoogleSignIn.h>
 
 
