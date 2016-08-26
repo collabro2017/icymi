@@ -132,8 +132,6 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    
-    
     if ([textField isEqual:txtForUsername]) {
         
         [txtForPassword becomeFirstResponder];
@@ -146,6 +144,20 @@
 
     }
     return NO;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    //Junaid: Force the user to add only lower-case letters for email
+    if (textField == txtForUsername) {
+        NSRange lowercaseCharRange = [string rangeOfCharacterFromSet:[NSCharacterSet uppercaseLetterCharacterSet]];
+        if (lowercaseCharRange.location != NSNotFound) {
+            textField.text = [textField.text stringByReplacingCharactersInRange:range withString:[string lowercaseString]];
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 //Check empty field
@@ -180,7 +192,7 @@
     
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     PFQuery *query = [PFUser query];
-    [query whereKey:@"email" equalTo:txtForUsername.text];
+    [query whereKey:@"email" equalTo:txtForUsername.text.lowercaseString];
     
     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if(error)
@@ -207,7 +219,7 @@
                 return;
             }
         }
-        [PFUser logInWithUsernameInBackground:[userObj valueForKey:@"username"] password:[txtForPassword.text lowercaseString] block:^(PFUser *user, NSError *error) {
+        [PFUser logInWithUsernameInBackground:[userObj valueForKey:@"username"] password:txtForPassword.text block:^(PFUser *user, NSError *error) {
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
             if (!error) {
                 if(user)

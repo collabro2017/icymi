@@ -235,6 +235,20 @@
     return NO;
 }
 
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    //Junaid: Force the user to add only lower-case letters for email
+    if (textField == txtForEmail) {
+        NSRange lowercaseCharRange = [string rangeOfCharacterFromSet:[NSCharacterSet uppercaseLetterCharacterSet]];
+        if (lowercaseCharRange.location != NSNotFound) {
+            textField.text = [textField.text stringByReplacingCharactersInRange:range withString:[string lowercaseString]];
+            return NO;
+        }
+    }
+    
+    return YES;
+}
+
 //Check empty field
 
 - (BOOL)validateInputInView
@@ -340,7 +354,7 @@
     
     PFUser *user = [[PFUser alloc] init];
     [user setUsername:txtForUsername.text];
-    [user setEmail:txtForEmail.text];
+    [user setEmail:txtForEmail.text.lowercaseString];
     [user setPassword:txtForPassword.text];
     user[@"loginType"] = @"email";
     
