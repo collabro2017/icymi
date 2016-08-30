@@ -32,7 +32,7 @@
 #import "OMFeedCommentCell.h"
 #import "OMSearchCell.h"
 
-@interface OMHomeViewController ()<OMTagListViewControllerDelegate,UICollectionViewDataSource,UICollectionViewDelegate>
+@interface OMHomeViewController ()<OMTagListViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 {
     PFUser *currentUser;
     NSMutableArray *arrCurrentTagedFriends;

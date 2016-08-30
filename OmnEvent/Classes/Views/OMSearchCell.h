@@ -13,15 +13,12 @@
     IBOutlet UIImageView *imageViewForBG;
     
     IBOutlet UILabel *lblForTitle;
-    
     IBOutlet UILabel *lblForUsername;
-    
+    IBOutlet UILabel *lblDateTime;
     
     IBOutlet UILabel *lblForNewEvent;
     IBOutlet UILabel *lblForBadge;
     IBOutlet UIButton *btnForVideo;
-   
-    
 }
 
 @property (strong, nonatomic) id delegate;

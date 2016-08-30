@@ -67,7 +67,18 @@
         [lblForUsername setText:user.username];
     }
     
+    //Show Date & Time in Local Timezone of user's device and in GMT
+    NSDateFormatter* formatterLocal = [[NSDateFormatter alloc] init];
+    [formatterLocal setTimeZone:[NSTimeZone systemTimeZone]];
+    [formatterLocal setDateFormat:@"yyyy-MM-dd HH:mm"];
+    NSString *strCreationDateInLocal = [formatterLocal stringFromDate:_currentObj.createdAt];
     
+    NSDateFormatter* formatterGMT = [[NSDateFormatter alloc] init];
+    [formatterGMT setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"GMT"]];
+    [formatterGMT setDateFormat:@"yyyy-MM-dd HH:mm"];
+    NSString *strCreationDateInGMT = [formatterGMT stringFromDate:_currentObj.createdAt];
+    lblDateTime.text = [NSString stringWithFormat:@"%@ / %@", strCreationDateInLocal, strCreationDateInGMT];
+    lblDateTime.adjustsFontSizeToFitWidth = YES;
 }
 
 @end

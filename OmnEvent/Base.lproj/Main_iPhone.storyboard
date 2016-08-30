@@ -2789,29 +2789,39 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="159" height="159"/>
                                                         </imageView>
                                                         <imageView userInteractionEnabled="NO" alpha="0.59999999999999964" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Wsh-2Z-YAn">
-                                                            <rect key="frame" x="0.0" y="119" width="159" height="40"/>
+                                                            <rect key="frame" x="0.0" y="104" width="159" height="55"/>
                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="ISR-kV-T3Y"/>
+                                                                <constraint firstAttribute="height" constant="55" id="ISR-kV-T3Y"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Columbia" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZ3-TF-h2Y">
-                                                            <rect key="frame" x="8" y="141" width="94" height="13"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="13" id="Cvb-cM-p0w"/>
-                                                                <constraint firstAttribute="width" constant="94" id="hVW-kq-wfx"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" name="STHeitiSC-Light" family="Heiti SC" pointSize="10"/>
-                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Columbia, USA" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X6h-qn-OAC">
-                                                            <rect key="frame" x="8" y="122" width="128" height="18"/>
+                                                            <rect key="frame" x="8" y="110" width="128" height="18"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="128" id="346-7f-E9J"/>
                                                                 <constraint firstAttribute="height" constant="18" id="P6R-a7-cmi"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" name="Roboto-Black" family="Roboto" pointSize="11"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date &amp; Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n42-ms-xOG">
+                                                            <rect key="frame" x="8" y="127" width="128" height="13"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="128" id="Bmv-EW-Sh0"/>
+                                                                <constraint firstAttribute="height" constant="13" id="uUm-XA-8bd"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" name="STHeitiSC-Light" family="Heiti SC" pointSize="10"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Columbia" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NZ3-TF-h2Y">
+                                                            <rect key="frame" x="8" y="142" width="94" height="13"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="13" id="Cvb-cM-p0w"/>
+                                                                <constraint firstAttribute="width" constant="94" id="hVW-kq-wfx"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" name="STHeitiSC-Light" family="Heiti SC" pointSize="10"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
@@ -2828,19 +2838,22 @@
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <constraints>
+                                                        <constraint firstItem="n42-ms-xOG" firstAttribute="top" secondItem="n5J-NN-2sS" secondAttribute="bottom" constant="95" id="Gd2-7q-ITv"/>
                                                         <constraint firstAttribute="bottom" secondItem="Wsh-2Z-YAn" secondAttribute="bottom" id="Hmt-NR-31J"/>
                                                         <constraint firstAttribute="trailing" secondItem="ERQ-kS-mq1" secondAttribute="trailing" id="RUw-U0-KvJ"/>
-                                                        <constraint firstAttribute="bottom" secondItem="NZ3-TF-h2Y" secondAttribute="bottom" constant="5" id="VXD-74-00N"/>
+                                                        <constraint firstAttribute="bottom" secondItem="NZ3-TF-h2Y" secondAttribute="bottom" constant="4" id="VXD-74-00N"/>
                                                         <constraint firstItem="ERQ-kS-mq1" firstAttribute="top" secondItem="z9D-Qy-a5X" secondAttribute="top" id="WsP-AP-BHZ"/>
                                                         <constraint firstItem="ERQ-kS-mq1" firstAttribute="leading" secondItem="z9D-Qy-a5X" secondAttribute="leading" id="Zdo-ef-Evd"/>
                                                         <constraint firstItem="NZ3-TF-h2Y" firstAttribute="leading" secondItem="z9D-Qy-a5X" secondAttribute="leading" constant="8" id="Zxj-SC-B9H"/>
                                                         <constraint firstItem="n5J-NN-2sS" firstAttribute="top" secondItem="z9D-Qy-a5X" secondAttribute="top" constant="8" id="aW3-UU-0Oi"/>
                                                         <constraint firstAttribute="trailing" secondItem="n5J-NN-2sS" secondAttribute="trailing" constant="8" id="et0-pR-Dca"/>
                                                         <constraint firstAttribute="bottom" secondItem="ERQ-kS-mq1" secondAttribute="bottom" id="fQN-4z-aMN"/>
-                                                        <constraint firstItem="NZ3-TF-h2Y" firstAttribute="top" secondItem="X6h-qn-OAC" secondAttribute="bottom" constant="1" id="gXB-qP-5Er"/>
+                                                        <constraint firstItem="NZ3-TF-h2Y" firstAttribute="top" secondItem="X6h-qn-OAC" secondAttribute="bottom" constant="14" id="gXB-qP-5Er"/>
                                                         <constraint firstItem="X6h-qn-OAC" firstAttribute="leading" secondItem="z9D-Qy-a5X" secondAttribute="leading" constant="8" id="igu-U3-5f2"/>
                                                         <constraint firstAttribute="trailing" secondItem="Wsh-2Z-YAn" secondAttribute="trailing" id="mPA-5F-aB7"/>
+                                                        <constraint firstItem="n42-ms-xOG" firstAttribute="leading" secondItem="z9D-Qy-a5X" secondAttribute="leading" constant="8" id="rTF-CM-Y4D"/>
                                                         <constraint firstItem="Wsh-2Z-YAn" firstAttribute="leading" secondItem="z9D-Qy-a5X" secondAttribute="leading" id="xtz-F1-jFE"/>
+                                                        <constraint firstAttribute="trailing" secondItem="n42-ms-xOG" secondAttribute="trailing" constant="23" id="yVq-5k-max"/>
                                                     </constraints>
                                                 </view>
                                             </subviews>
@@ -2857,6 +2870,7 @@
                                         <connections>
                                             <outlet property="btnForVideo" destination="n5J-NN-2sS" id="YGi-Jo-qHL"/>
                                             <outlet property="imageViewForBG" destination="ERQ-kS-mq1" id="Y2a-0R-8tS"/>
+                                            <outlet property="lblDateTime" destination="n42-ms-xOG" id="bPN-vN-i5A"/>
                                             <outlet property="lblForTitle" destination="X6h-qn-OAC" id="dIC-JV-Ink"/>
                                             <outlet property="lblForUsername" destination="NZ3-TF-h2Y" id="kQ7-lA-68V"/>
                                         </connections>
@@ -4275,29 +4289,38 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="159" height="159"/>
                                                         </imageView>
                                                         <imageView userInteractionEnabled="NO" alpha="0.60000002384185791" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="VxJ-Mu-jLW">
-                                                            <rect key="frame" x="0.0" y="119" width="159" height="40"/>
+                                                            <rect key="frame" x="0.0" y="104" width="159" height="55"/>
                                                             <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="FqN-JN-u6D"/>
+                                                                <constraint firstAttribute="height" constant="55" id="FqN-JN-u6D"/>
                                                             </constraints>
                                                         </imageView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Columbia" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VFx-DZ-TF0">
-                                                            <rect key="frame" x="8" y="141" width="94" height="13"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="94" id="Lqb-Qx-tTV"/>
-                                                                <constraint firstAttribute="height" constant="13" id="bu9-1B-e3C"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" name="STHeitiSC-Light" family="Heiti SC" pointSize="10"/>
-                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Columbia, USA" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hax-Ww-hIa">
-                                                            <rect key="frame" x="8" y="122" width="128" height="18"/>
+                                                            <rect key="frame" x="8" y="110" width="128" height="18"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="18" id="7QX-zj-Vrw"/>
                                                                 <constraint firstAttribute="width" constant="128" id="gc6-dQ-8np"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" name="Roboto-Black" family="Roboto" pointSize="11"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date &amp; Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LSr-40-Bm9">
+                                                            <rect key="frame" x="8" y="127" width="128" height="13"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="13" id="lLh-2Q-Kk5"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" name="STHeitiSC-Light" family="Heiti SC" pointSize="10"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Columbia" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VFx-DZ-TF0">
+                                                            <rect key="frame" x="8" y="142" width="94" height="13"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="94" id="Lqb-Qx-tTV"/>
+                                                                <constraint firstAttribute="height" constant="13" id="bu9-1B-e3C"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" name="STHeitiSC-Light" family="Heiti SC" pointSize="10"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
@@ -4337,19 +4360,22 @@
                                                     <constraints>
                                                         <constraint firstItem="Bgb-Os-E7X" firstAttribute="top" secondItem="aFv-Rj-ahs" secondAttribute="top" constant="8" id="0dq-AP-ojX"/>
                                                         <constraint firstItem="hax-Ww-hIa" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" constant="8" id="2oT-RK-eHj"/>
+                                                        <constraint firstAttribute="trailing" secondItem="LSr-40-Bm9" secondAttribute="trailing" constant="23" id="797-fT-GTx"/>
+                                                        <constraint firstItem="LSr-40-Bm9" firstAttribute="top" secondItem="Bgb-Os-E7X" secondAttribute="bottom" constant="95" id="87W-XA-Wz6"/>
                                                         <constraint firstItem="GaR-ls-ueh" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" id="AYJ-bW-nn0"/>
                                                         <constraint firstItem="oEI-d5-LDY" firstAttribute="top" secondItem="aFv-Rj-ahs" secondAttribute="top" constant="8" id="BQF-TT-acl"/>
-                                                        <constraint firstItem="VFx-DZ-TF0" firstAttribute="top" secondItem="hax-Ww-hIa" secondAttribute="bottom" constant="1" id="Bdk-jc-c1Q"/>
+                                                        <constraint firstItem="VFx-DZ-TF0" firstAttribute="top" secondItem="hax-Ww-hIa" secondAttribute="bottom" constant="14" id="Bdk-jc-c1Q"/>
                                                         <constraint firstAttribute="trailing" secondItem="Bgb-Os-E7X" secondAttribute="trailing" constant="8" id="Cpr-Lc-SAR"/>
                                                         <constraint firstAttribute="bottom" secondItem="VxJ-Mu-jLW" secondAttribute="bottom" id="Fkz-wq-uWe"/>
                                                         <constraint firstItem="VFx-DZ-TF0" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" constant="8" id="MR9-6A-szt"/>
+                                                        <constraint firstItem="LSr-40-Bm9" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" constant="8" id="PgG-qm-hY7"/>
                                                         <constraint firstAttribute="trailing" secondItem="oEI-d5-LDY" secondAttribute="trailing" constant="8" id="TcP-mU-DhS"/>
                                                         <constraint firstAttribute="bottom" secondItem="GaR-ls-ueh" secondAttribute="bottom" id="UTV-KV-8em"/>
                                                         <constraint firstItem="Ga8-nh-Qd7" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" constant="8" id="X8H-09-wDz"/>
                                                         <constraint firstAttribute="trailing" secondItem="GaR-ls-ueh" secondAttribute="trailing" id="Z6w-sv-eUj"/>
                                                         <constraint firstItem="Ga8-nh-Qd7" firstAttribute="top" secondItem="aFv-Rj-ahs" secondAttribute="top" constant="8" id="akg-hc-qSL"/>
                                                         <constraint firstItem="VxJ-Mu-jLW" firstAttribute="leading" secondItem="aFv-Rj-ahs" secondAttribute="leading" id="jYp-vL-nkW"/>
-                                                        <constraint firstAttribute="bottom" secondItem="VFx-DZ-TF0" secondAttribute="bottom" constant="5" id="kD1-gH-kqh"/>
+                                                        <constraint firstAttribute="bottom" secondItem="VFx-DZ-TF0" secondAttribute="bottom" constant="4" id="kD1-gH-kqh"/>
                                                         <constraint firstAttribute="trailing" secondItem="VxJ-Mu-jLW" secondAttribute="trailing" id="li0-ah-0Qn"/>
                                                         <constraint firstItem="GaR-ls-ueh" firstAttribute="top" secondItem="aFv-Rj-ahs" secondAttribute="top" id="x1Q-6l-hB7"/>
                                                     </constraints>
@@ -4368,6 +4394,7 @@
                                         <connections>
                                             <outlet property="btnForVideo" destination="Bgb-Os-E7X" id="Eza-UU-7Ev"/>
                                             <outlet property="imageViewForBG" destination="GaR-ls-ueh" id="PUC-2s-cQf"/>
+                                            <outlet property="lblDateTime" destination="LSr-40-Bm9" id="hIq-vg-5mr"/>
                                             <outlet property="lblForBadge" destination="Ga8-nh-Qd7" id="nx6-qj-LEY"/>
                                             <outlet property="lblForNewEvent" destination="oEI-d5-LDY" id="faP-MV-ZC9"/>
                                             <outlet property="lblForTitle" destination="hax-Ww-hIa" id="7ZV-lh-aAD"/>
