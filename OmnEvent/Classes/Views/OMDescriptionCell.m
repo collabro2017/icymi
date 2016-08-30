@@ -12,15 +12,11 @@
 @synthesize beforeDescription;
 
 - (void)awakeFromNib {
-    // Initialization code
-    
-    lblForDescription.delegate = self;
+    txtViewForDescription.delegate = self;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
 }
 
 - (void)setCurrentObj:(PFObject *)_obj
@@ -31,49 +27,55 @@
     
     PFUser *self_user = [PFUser currentUser];    
     
-    if (![_user.objectId isEqualToString:self_user.objectId]){
-        lblForDescription.enabled = NO;
+    if (![_user.objectId isEqualToString:self_user.objectId]) {
+        txtViewForDescription.editable = NO;
     } else {
-        lblForDescription.enabled = YES;
+        txtViewForDescription.editable = YES;
     }
     
-    constraintForDescription.constant = [OMGlobal getBoundingOfString:_currentObj[@"description"] width:lblForDescription.frame.size.width].height;
+    txtViewForDescription.text = _currentObj[@"description"];
+    txtViewForDescription.scrollEnabled = NO;
+    txtViewForDescription.showsHorizontalScrollIndicator = NO;
+    txtViewForDescription.showsVerticalScrollIndicator = NO;
     
-    [lblForDescription setText:_currentObj[@"description"]];
-    
+    CGRect txtViewTitleFrame = txtViewForDescription.frame;
+    CGSize txtViewTitleNewSize = [OMGlobal getBoundingOfString:_currentObj[@"description"] width:txtViewTitleFrame.size.width];
+    if (txtViewTitleNewSize.height > 44) {
+        txtViewTitleFrame.size.height = txtViewTitleNewSize.height;
+    }
+    txtViewForDescription.frame = txtViewTitleFrame;
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    
-    if (textField == lblForDescription)
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if (textView == txtViewForDescription)
     {
-        beforeDescription = lblForDescription.text;
+        beforeDescription = txtViewForDescription.text;
     }
     
-    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-        //NSLog(@" UITableView---");
-        
-        CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
+    textView.scrollEnabled = YES;
+    
+    if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]) {
+        CGPoint pointInTable = [textView.superview convertPoint:textView.frame.origin toView:textView.superview.superview.superview.superview];
         
         NSDictionary *userInfo = @{
                                    @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
                                    @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y+30] stringValue],
-                                   @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
+                                   @"textFieldHeight": [[NSNumber numberWithFloat:textView.frame.size.height] stringValue]
                                    };
         
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
     }
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    if (textField == lblForDescription)
-    {
-        
-        if (![beforeDescription isEqualToString:lblForDescription.text] && lblForDescription.text.length > 0){
-            _currentObj[@"description"] = lblForDescription.text;
-            // for badge processing in here
-            
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if ([text isEqualToString:@"\n"]) {
+        if (textView == txtViewForDescription)
+        {
+            if (![beforeDescription isEqualToString:txtViewForDescription.text] && txtViewForDescription.text.length > 0)
+            {
+                _currentObj[@"description"] = txtViewForDescription.text;
+                // for badge processing in here
+                
                 //for badge
                 NSMutableArray * arrPostLookedFlags = [NSMutableArray array];
                 arrPostLookedFlags = [_currentObj[@"TagFriends"] mutableCopy];
@@ -86,26 +88,29 @@
                         [arrPostLookedFlags removeObject:USER.objectId];
                     }
                 }
-            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-            if(appDel.network_state)
-            {
-                NSLog(@"Badge for event desription of Post Added");
-                [_currentObj saveInBackground];
+                OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                if(appDel.network_state)
+                {
+                    NSLog(@"Badge for event desription of Post Added");
+                    [_currentObj saveInBackground];
+                }
+                
             }
-
+            [txtViewForDescription resignFirstResponder];
         }
-        [lblForDescription resignFirstResponder];
-    }
-    
-    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-        CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
         
-        NSDictionary *userInfo = @{
-                                   @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
-                                   @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]
-                                   };
+        if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+            CGPoint bottomPosition = [textView convertPoint:textView.frame.origin toView:textView.superview.superview.superview.superview];
+            
+            NSDictionary *userInfo = @{
+                                       @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
+                                       @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]
+                                       };
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
+        }
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
+        return NO;
     }
     
     return YES;

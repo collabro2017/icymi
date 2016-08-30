@@ -264,7 +264,7 @@
     NSString *textFieldHeight_string = [messageInfo objectForKey:@"textFieldHeight"];
     
     CGFloat pointInTable_x = (CGFloat)[pointInTable_x_string floatValue];
-    CGFloat pointInTable_y = (CGFloat)[pointInTable_y_string floatValue] - 216.0f;
+    CGFloat pointInTable_y = (CGFloat)[pointInTable_y_string floatValue] - 100;
     CGFloat textFieldHeight = (CGFloat)[textFieldHeight_string floatValue];
     
     CGPoint pointInTable = CGPointMake(pointInTable_x, pointInTable_y);
@@ -346,8 +346,19 @@
 
 - (void)initializeNavBar
 {
-    self.title = currentObject[@"eventname"];
-    [self.navigationController setNavigationBarHidden:NO];    
+    //Junaid: The text needs to be expanded for the title and the description.
+//    self.title = currentObject[@"eventname"];
+    UILabel *lblTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    lblTitle.text = currentObject[@"eventname"];
+    lblTitle.backgroundColor = [UIColor clearColor];
+    lblTitle.textColor = [UIColor whiteColor];
+    lblTitle.textAlignment = NSTextAlignmentCenter;
+    lblTitle.font = [UIFont boldSystemFontOfSize:17.0f];
+    lblTitle.adjustsFontSizeToFitWidth = YES;
+    lblTitle.numberOfLines = 0;
+    self.navigationItem.titleView = lblTitle;
+    [self.navigationController setNavigationBarHidden:NO];
+    
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
     UIBarButtonItem *backBarButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"btn_back_profile"] style:UIBarButtonItemStylePlain target:self action:@selector(backAction)];
     UIBarButtonItem *negativeSpacer1 = [[UIBarButtonItem alloc]
@@ -1038,7 +1049,6 @@
             if (!cell) {
                 cell = [[OMDescriptionCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kDescriptionCell];
             }
-            [cell setDelegate:self];
             [cell setCurrentObj:currentObject];
             return cell;
             
@@ -1240,8 +1250,7 @@
         else if (indexPath.row == 1)
         {
             if (currentObject[@"description"]) {
-                
-                return ([OMGlobal getBoundingOfString:currentObject[@"description"] width:tableView.frame.size.width * 0.9f].height + 20.0f);
+                return ([OMGlobal getBoundingOfString:currentObject[@"description"] width:tableView.frame.size.width].height + 20.0f);
             }
             return 0;
         }

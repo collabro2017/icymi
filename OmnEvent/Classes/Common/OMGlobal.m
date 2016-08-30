@@ -277,10 +277,10 @@ static GlobalVar *_instance = nil;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
     sizeToFit = [text boundingRectWithSize: CGSizeMake(messageMaxWidth, CGFLOAT_MAX)
                                    options: NSStringDrawingUsesLineFragmentOrigin
-                                attributes: @{ NSFontAttributeName : [UIFont systemFontOfSize:12.0f] }
+                                attributes: @{ NSFontAttributeName : [UIFont systemFontOfSize:14.0f] }
                                    context: nil].size;
 #else
-    sizeToFit = [text sizeWithFont:[[UIFont systemFontOfSize:13.0f]
+    sizeToFit = [text sizeWithFont:[[UIFont systemFontOfSize:14.0f]
                                     constrainedToSize:CGSizeMake(messageMaxWidth, CGFLOAT_MAX)
                                     lineBreakMode:NSLineBreakByWordWrapping];
 #endif

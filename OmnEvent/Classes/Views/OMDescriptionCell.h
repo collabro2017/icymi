@@ -8,18 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OMDescriptionCell : UITableViewCell<UITextFieldDelegate>
-{   
-    
-    //IBOutlet UILabel *lblForDescription;    
-    IBOutlet UITextField *lblForDescription;
-    IBOutlet NSLayoutConstraint *constraintForDescription;
-    
+@interface OMDescriptionCell : UITableViewCell<UITextFieldDelegate, UITextViewDelegate>
+{
+    IBOutlet UITextView *txtViewForDescription;
 }
-@property (strong, nonatomic) id delegate;
+
 @property (strong, nonatomic) PFObject *currentObj;
 @property (strong, nonatomic) PFUser   *user;
-
 @property (strong, nonatomic) NSString *beforeDescription;
 
 @end
