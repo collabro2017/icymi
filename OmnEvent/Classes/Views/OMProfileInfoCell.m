@@ -36,6 +36,9 @@
     }
     if (user[@"email"]) {
         lblForEmailValue.text = user[@"email"];
+    }
+    if (user[@"company"]) {
+        lblCompanyValue.text = user[@"company"];
         
     }
     if (user[@"Gender"]) {

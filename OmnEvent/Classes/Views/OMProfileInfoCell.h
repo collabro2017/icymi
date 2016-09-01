@@ -41,10 +41,11 @@
     
     
     IBOutlet UILabel *lblForEmail;
-    
     IBOutlet UILabel *lblForEmailValue;
     
     
+    IBOutlet UILabel *lblForCompany;
+    IBOutlet UILabel *lblCompanyValue;
     
     
     IBOutlet UILabel *lblForPhone;

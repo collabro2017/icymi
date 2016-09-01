@@ -639,7 +639,7 @@ BOOL refresh_require;
             break;
         case TableRowsFriend:
         {
-            return 474;
+            return 540;
         }
             break;
         case TableRowsFavorite:

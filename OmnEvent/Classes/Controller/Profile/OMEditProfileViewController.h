@@ -23,8 +23,11 @@
     IBOutlet UITextField *txtForUsername;
     
     //Email
-    
     IBOutlet UITextField *txtForEmail;
+    
+    //Company
+    IBOutlet UITextField *txtForCompany;
+    
     //Bio
     IBOutlet UITextField *txtForBio;
     // Gender

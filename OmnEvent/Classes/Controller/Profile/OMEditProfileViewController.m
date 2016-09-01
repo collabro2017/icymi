@@ -201,13 +201,16 @@
         txtForEmail.text = USER.email;
     }
     
+    if ([USER objectForKey:@"company"]) {
+        
+        txtForCompany.text = [USER objectForKey:@"company"];
+    }
+    
     if ([USER objectForKey:@"Bio"]) {
         
         txtForGender.text = [USER objectForKey:@"Bio"];
     }
 
-    
-    
     if ([USER objectForKey:@"Gender"]) {
         
         txtForGender.text = [USER objectForKey:@"Gender"];
@@ -271,6 +274,7 @@
 {
 //    USER.username = txtForUsername.text;
     USER.email = txtForEmail.text;
+    USER[@"company"] = txtForCompany.text;
     USER[@"Gender"] = txtForGender.text;
     USER[@"name"] = txtForName.text;
     USER[@"Age"] = txtForAge.text;
@@ -726,6 +730,10 @@
     {
         textField.returnKeyType = UIReturnKeyNext;
     }
+    else if ([textField isEqual:txtForCompany])
+    {
+        textField.returnKeyType = UIReturnKeyNext;
+    }
     else if ([textField isEqual:txtForBio])
     {
         textField.returnKeyType = UIReturnKeyNext;
@@ -786,15 +794,19 @@
     }
     else if ([textField isEqual:txtForEmail])
     {
-        [txtForBio becomeFirstResponder];
+        [txtForCompany becomeFirstResponder];
 
+    }
+    else if ([textField isEqual:txtForCompany])
+    {
+        [txtForBio becomeFirstResponder];
+        
     }
     else if ([textField isEqual:txtForBio])
     {
         [txtForGender becomeFirstResponder];
         
     }
-
     else if ([textField isEqual:txtForGender])
     {
     }
@@ -863,7 +875,7 @@
             break;
         case 1:
         {
-            if (indexPath.row == 4) {
+            if (indexPath.row == 5) {
                 [self performSegueWithIdentifier:@"kIdentifierChangePassword" sender:nil];
             }
         }
