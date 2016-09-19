@@ -120,16 +120,25 @@
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
 
         if (objects == nil || [objects count] == 0) {
-            return ;
+            return;
         }
+        
         if (!error) {
-            
+            NSMutableArray *strUserObjectIds = [[NSMutableArray alloc] init];
             [arrForFriend removeAllObjects];
+            
             for (PFObject *obj in objects) {
-                if (obj[@"ToUser"])
-                    [arrForFriend addObject:obj[@"ToUser"]];
+                if (obj[@"ToUser"]) {
+                    PFUser *user = obj[@"ToUser"];
+                    if (![user.objectId isEqualToString:USER.objectId] && ![strUserObjectIds containsObject:user.objectId]) {
+                        [strUserObjectIds addObject:user.objectId];
+                        [arrForFriend addObject:user];
+                    }
+                }
             }
-
+            
+            [strUserObjectIds removeAllObjects];
+            strUserObjectIds = nil;
             [tblForFriendList reloadData];
         }
         

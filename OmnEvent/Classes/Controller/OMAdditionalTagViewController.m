@@ -152,29 +152,30 @@
             return ;
         }
         
-        if (!error) {
+        if (!error) {            
+            NSMutableArray *strUserObjectIds = [[NSMutableArray alloc] init];
             [arrForFriend removeAllObjects];
             
             for (PFObject *obj in objects) {
-                 if (obj[@"ToUser"])
-                 {
-                     PFUser* tmpuser = obj[@"ToUser"];
-                     if(![tmpuser.objectId isEqualToString:USER.objectId])
-                     {
-                   
-                        [arrForFriend addObject:obj[@"ToUser"]];
-                     }
-                 }
+                if (obj[@"ToUser"]) {
+                    PFUser *user = obj[@"ToUser"];
+                    if (![user.objectId isEqualToString:USER.objectId] && ![strUserObjectIds containsObject:user.objectId]) {
+                        [strUserObjectIds addObject:user.objectId];
+                        [arrForFriend addObject:user];
+                    }
+                }
             }
+            
+            [strUserObjectIds removeAllObjects];
+            strUserObjectIds = nil;
+            
             
             NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:arrForFriend];
             NSArray *arr = [orderedSet array];
             [arrForFriend removeAllObjects];
             [arrForFriend addObjectsFromArray:arr];
-            
             [tblForTagFriend reloadData];
         }
-        
     }];
 }
 
