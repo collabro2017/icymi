@@ -42,6 +42,7 @@
     
     [mainQ includeKey:@"FromUser"];
     [mainQ includeKey:@"ToUser"];
+    [mainQ whereKey:@"FromUser" equalTo:[PFUser currentUser]];
     
     [mainQ findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
     {
@@ -57,6 +58,12 @@
             if (objects.count == 0)
             {
                 NSLog(@"Not Found");
+                
+                [arrForFriends removeAllObjects];
+                [arrForPeople removeAllObjects];
+                [arrForObjects removeAllObjects];
+                [tblForFriend reloadData];
+                [tblForSearch reloadData];
             }
             else
             {
@@ -163,6 +170,12 @@
              if (objects.count == 0)
              {
                  NSLog(@"Not Found");
+                 
+                 [arrForFriends removeAllObjects];
+                 [arrForPeople removeAllObjects];
+                 [arrForObjects removeAllObjects];
+                 [tblForFriend reloadData];
+                 [tblForSearch reloadData];
              }
              else
              {
@@ -362,13 +375,9 @@
     PFQuery *queryForStateLowerCaseString = [PFUser query];
     [queryForStateLowerCaseString whereKey:@"State" containsString:[text lowercaseString]];
     
-    
     PFQuery *finalQuery = [PFQuery orQueryWithSubqueries:[NSArray arrayWithObjects:query, queryCapitalizedString,queryLowerCaseString, queryForCity, queryForCityCapitalizedString, queryForCityLowerCaseString, queryForState, queryForStateCapitalizedString, queryForStateUpperCaseString, queryForStateLowerCaseString, nil]];
     
-    
 //    [finalQuery findObjectsInBackgroundWithTarget:self selector:@selector(searchPeopleWithResult:error:)];
-
-    
     [finalQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
 //        [MBProgressHUD hideHUDForView:self.view animated:YES];
         m_isSearchContent = NO;
