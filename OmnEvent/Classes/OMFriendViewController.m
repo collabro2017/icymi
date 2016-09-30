@@ -73,10 +73,10 @@
                 
                 
                 NSLog(@"Current USer = %@",USER);
+                NSMutableArray *strUserObjectIds = [NSMutableArray array];
                 
                 for (PFObject *obj in objects)
                 {
-                    //NSLog(@"%@",[obj objectForKey:@"FromUser"]);
                     PFUser *user = (PFUser *)[obj objectForKey:@"FromUser"];
                     
                     if ([user.objectId isEqualToString:kIDOfCurrentUser] && !([[((PFUser *)obj[@"ToUser"]) objectForKey:@"visibility"] isEqualToString:@"Hidden"]))
@@ -84,11 +84,19 @@
                         if (obj[@"ToUser"])
                         {
                             [arrForObjects addObject:obj];
-                            [arrForFriends addObject:obj[@"ToUser"]];
-                        
+                            
+                            //Fix issue for multiple friends
+                            PFUser *user = obj[@"ToUser"];
+                            if (![user.objectId isEqualToString:USER.objectId] && ![strUserObjectIds containsObject:user.objectId]) {
+                                [strUserObjectIds addObject:user.objectId];
+                                [arrForFriends addObject:user];
+                            }
                         }
                     }
                 }
+                
+                [strUserObjectIds removeAllObjects];
+                strUserObjectIds = nil;
                 
                 NSMutableArray *tempArrForObjects = [NSMutableArray array];
                 NSMutableArray *tempArrForFriends = [NSMutableArray array];
