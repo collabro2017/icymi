@@ -13,18 +13,19 @@
 
 + (AVCaptureConnection *)connectionWithMediaType:(NSString *)mediaType fromConnections:(NSArray *)connections
 {
+    AVCaptureConnection *videoConnection = nil;
     for (AVCaptureConnection *connection in connections) {
-        
         for (AVCaptureInputPort *port in [connection inputPorts]) {
-            
             if ([[port mediaType] isEqual:mediaType]) {
-                
-                return connection;
+                videoConnection = connection;
+                break;
             }
-            
+        }
+        if (videoConnection) {
+            break;
         }
     }
-    return nil;
+    return videoConnection;
 }
 
 @end

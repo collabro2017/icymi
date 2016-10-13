@@ -84,11 +84,9 @@
     [SBCaptureToolKit createVideoFolderIfNotExist];
     [self initProgressBar];
     
-    
-    
 //    CGRect frame = imageViewForPreview.frame;
 //    frame = CGRectMake(0, 0, IS_IPAD?768: 320, IS_IPAD?768: 320);
-    imageViewForPreview.frame = CGRectMake(0, 0, IS_IPAD?768: 320, IS_IPAD?768: 320);
+//    imageViewForPreview.frame = CGRectMake(0, 0, IS_IPAD?768: 320, IS_IPAD?768: 320);
     // for photo editing
     scrollViewForPreview.delegate = self;
     
@@ -103,15 +101,6 @@
     [scrollViewForPreview addGestureRecognizer:twoFingerTapRecognizer];
     
    // [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(drawFocusView) userInfo:nil repeats:NO];
-
-    
-   
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -120,6 +109,11 @@
     
     [self refreshScreen];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated
 }
 
 - (void)drawFocusView
@@ -185,11 +179,9 @@
     imageViewForPreview.frame = contentsFrame;
 }
 
-- (UIImage*)cropImageFromScroll:(UIScrollView *)scrollview
-{
-    
+- (UIImage*)cropImageFromScroll:(UIScrollView *)scrollview {
     CGSize pageSize = scrollview.frame.size;
-    UIGraphicsBeginImageContext(pageSize);
+    UIGraphicsBeginImageContextWithOptions(pageSize, NO, 0);
     CGContextRef resizedContext = UIGraphicsGetCurrentContext();
     int offsetX = -1*scrollview.contentOffset.x;
     int offsetY = -1*scrollview.contentOffset.y;
@@ -198,7 +190,6 @@
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     UIImageWriteToSavedPhotosAlbum(viewImage, nil, nil, nil);
-    
     return viewImage;
 }
 
@@ -359,7 +350,7 @@
                         
                         UIImageView *buttonImgView = [[UIImageView alloc] initWithFrame:btnForAlbum.bounds];
                         
-                        [buttonImgView setContentMode:UIViewContentModeScaleToFill];
+                        [buttonImgView setContentMode:UIViewContentModeScaleAspectFill];
                         [buttonImgView setImage:img];
                         
                         
@@ -431,21 +422,16 @@
 }
 
 - (void)initRecorder {
-    
     self.recorder = [[SBVideoRecorder alloc] initWithView:viewForCamera];
-    _recorder.delegate = self;
-    _recorder.preViewLayer.frame = viewForCamera.bounds;
-    
-    _recorder.isPhoto = captureOption == kTypeCaptureVideo? NO:YES;
-    
-    [_recorder focusInPoint:viewForCamera.center];
-    [viewForCamera.layer addSublayer:_recorder.preViewLayer];
+    self.recorder.isPhoto = captureOption == kTypeCaptureVideo? NO:YES;
+    self.recorder.delegate = self;
+    [self.recorder focusInPoint:viewForPreview.center];
     
     btnForFront.enabled = [_recorder isFrontCameraSupported];
     btnForFlash.enabled = _recorder.isTorchSupported;
 }
 
-- (void)initFocuseView{
+- (void)initFocuseView {
     
     //focus rect view
     self.focusRectView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 90, 90)];
