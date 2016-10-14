@@ -343,9 +343,8 @@
         [APP_DELEGATE setLogOut:YES];
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:LOG_IN];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        [MBProgressHUD hideAllHUDsForView:self.view.window animated:YES];
-        
-
+        OMAppDelegate *appDelegate = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
+        [MBProgressHUD hideAllHUDsForView:appDelegate.window animated:YES];
     }];
 }
 

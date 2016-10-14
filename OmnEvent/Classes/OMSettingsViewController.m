@@ -88,16 +88,12 @@
 
 - (void)signOut
 {
-    [MBProgressHUD showHUDAddedTo:self.view.window animated:YES];
-
-    
+    OMAppDelegate *appDelegate = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
+    [MBProgressHUD showHUDAddedTo:appDelegate.window animated:YES];
     [self.navigationController dismissViewControllerAnimated:YES completion:^{
-        
         OMAppDelegate *appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
         FTTabBarController *tab = [appDel tabBarController];
-        
         [tab signOut];
-
     }];
 }
 
