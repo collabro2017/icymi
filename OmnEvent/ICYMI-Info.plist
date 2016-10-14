@@ -42,7 +42,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.1.6</string>
+	<string>1.2.2</string>
 	<key>FacebookAppID</key>
 	<string>859444260812322</string>
 	<key>FacebookDisplayName</key>
@@ -94,8 +94,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) uses camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Collabro wants to use your current location</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(PRODUCT_NAME) uses microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) uses photos</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Bold.ttf</string>

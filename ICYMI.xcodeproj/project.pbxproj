@@ -589,7 +589,7 @@
 		3C12844F1978D82B00EB7744 /* MHTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MHTextField.h; sourceTree = "<group>"; };
 		3C1284501978D82B00EB7744 /* MHTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MHTextField.m; sourceTree = "<group>"; };
 		3C27C8EA198E93E900998DD4 /* OMProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMProfileViewController.h; sourceTree = "<group>"; };
-		3C27C8EB198E93E900998DD4 /* OMProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMProfileViewController.m; sourceTree = "<group>"; };
+		3C27C8EB198E93E900998DD4 /* OMProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMProfileViewController.m; sourceTree = "<group>"; tabWidth = 1; };
 		3C2EE60419816D9300733EED /* OMOwnerProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMOwnerProfileViewController.h; sourceTree = "<group>"; };
 		3C2EE60519816D9300733EED /* OMOwnerProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMOwnerProfileViewController.m; sourceTree = "<group>"; };
 		3C2EE60A1981750F00733EED /* OMProfileHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMProfileHeaderCell.h; sourceTree = "<group>"; };
@@ -2293,6 +2293,7 @@
 				TargetAttributes = {
 					3C5E7E7E197628DF000550F6 = {
 						DevelopmentTeam = 6M75VL4633;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -2983,6 +2984,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = YES;
+				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3000,7 +3002,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "d4b09177-09f7-480e-bc98-e87f07fe20a4";
+				PROVISIONING_PROFILE_SPECIFIER = Collabro_devPro_0811;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -3014,6 +3017,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COMPRESS_PNG_FILES = YES;
+				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3031,7 +3035,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "6328482e-f845-4079-b9fe-50225c8ddc49";
+				PROVISIONING_PROFILE_SPECIFIER = Collabro_disPro;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
