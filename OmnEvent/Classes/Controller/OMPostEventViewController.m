@@ -24,7 +24,7 @@
 #import "OMAppDelegate.h"
 
 
-#define MAXIUM_NUM              140;
+#define MAXIUM_NUM              420;
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 
 @interface OMPostEventViewController ()<CLLocationManagerDelegate,OMTagListViewControllerDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>

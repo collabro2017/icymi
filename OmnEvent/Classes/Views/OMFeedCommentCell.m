@@ -16,21 +16,25 @@
 
 - (void)awakeFromNib {
     // Initialization code
+    [super awakeFromNib];
+}
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
     
     [OMGlobal setCircleView:imageViewForProfile borderColor:nil];
-    
-    lblForDes.delegate = self;
+    commentTextView.delegate = self;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 
 - (void)setUser:(PFUser *)user comment:(NSString *)_comment curObj:(PFObject *)_obj number:(NSUInteger)_number {
     
-    [lblForDes sizeToFit];
+    [commentTextView sizeToFit];
     [lblForTime setHidden:YES];
     currentUser = user;
     currentObj = _obj;
@@ -67,21 +71,21 @@
                 }
             }
             if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
-                lblForDes.enabled = YES;
+                commentTextView.editable = YES;
             } else {
-                lblForDes.enabled = NO;
+                commentTextView.editable = NO;
             }
             
         } else {
             
             if ([arrForTagFriends containsObject:self_user.objectId]){
-                lblForDes.enabled = YES;
+                commentTextView.editable = YES;
             } else {
-                lblForDes.enabled = NO;
+                commentTextView.editable = NO;
             }
         }
         
-        if (lblForDes.enabled){
+        if (commentTextView.editable) {
             
             //[MBProgressHUD showHUDAddedTo:self.superview animated:YES];
             PFQuery *query = [PFQuery queryWithClassName:@"EventComment"];
@@ -100,7 +104,7 @@
         
     } else {
         
-        lblForDes.enabled = YES;
+        commentTextView.editable = YES;
         
         //[MBProgressHUD showHUDAddedTo:self.superview animated:YES];
         PFQuery *query = [PFQuery queryWithClassName:@"EventComment"];
@@ -133,20 +137,23 @@
             }
             
             constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:_comment];
-
-            [lblForDes setText:_comment];
+            
+            [commentTextView setText:_comment];
             [lblForUsername setText:currentUser.username];
         }
     }];
 }
+
 // for event
-- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj commentType:(NSInteger)curType
+- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj
+       commentType:(NSInteger)curType number:(NSUInteger)_number
 {
-    [lblForDes sizeToFit];
+    [commentTextView sizeToFit];
     [lblForTime setHidden:YES];
     
-    //currentType = curType;
     currentType = kTypeEventComment;
+    comment_number = _number;
+    event_flag = YES;
     
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo:user];
@@ -192,21 +199,21 @@
                     }
                     
                     if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
-                        lblForDes.enabled = YES;
+                        commentTextView.editable = YES;
                     } else {
-                        lblForDes.enabled = NO;
+                        commentTextView.editable = NO;
                     }
                     
                 } else {
                     
                     if ([arrForTagFriends containsObject:self_user.objectId]){
-                        lblForDes.enabled = YES;
+                        commentTextView.editable = YES;
                     } else {
-                        lblForDes.enabled = NO;
+                        commentTextView.editable = NO;
                     }
                 }
                 
-                if (lblForDes.enabled){
+                if (commentTextView.editable) {
                     
                     PFQuery *query = [PFQuery queryWithClassName:@"EventComment"];
                     [query whereKey:@"targetEvent" equalTo:currentObj];
@@ -214,7 +221,7 @@
                     [query whereKey:@"Comments" equalTo:_comment];
                     
                     [query findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
- 
+                        
                         if ([objects count] == 0 || !objects) {
                             return;
                         }
@@ -237,7 +244,7 @@
                                 
                                 constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:_comment];
                                 
-                                [lblForDes setText:_comment];
+                                [commentTextView setText:_comment];
                                 [lblForUsername setText:currentUser.username];
                             }
                         }];
@@ -245,7 +252,7 @@
                 }
                 
             } else {
-                lblForDes.enabled = YES;
+                commentTextView.editable = YES;
                 
                 //[MBProgressHUD showHUDAddedTo:self.superview animated:YES];
                 PFQuery *query = [PFQuery queryWithClassName:@"EventComment"];
@@ -276,9 +283,9 @@
                                 [OMGlobal setImageURLWithAsync:currentUser[@"profileURL"] positionView:self displayImgView:imageViewForProfile];
                             }
                             
-                            constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:_comment];
-                            
-                            [lblForDes setText:_comment];
+                            CGFloat height = [OMGlobal heightForCellWithPost:_comment];
+                            constraintForCommentHeight.constant = height;
+                            [commentTextView setText:_comment];
                             [lblForUsername setText:currentUser.username];
                         }
                     }];
@@ -308,7 +315,7 @@
     }
     
     constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"Comments"]];
-    [lblForDes setText:currentObj[@"Comments"]];
+    [commentTextView setText:currentObj[@"Comments"]];
     [lblForUsername setText:currentUser.username];
     
     //******************
@@ -324,7 +331,7 @@
 // for post comment cell
 - (void)configCell:(PFObject *)tempObj EventObject:(PFObject *) eventObject commentType:(NSInteger)curType
 {
-
+    
     currentType = curType;
     //currentType = kTypePostComment;
     currentObj = tempObj;
@@ -369,37 +376,37 @@
                     break;
                 }
             }
-
+            
             
             if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
-                lblForDes.enabled = YES;
+                commentTextView.editable = YES;
                 
             } else {
-                lblForDes.enabled = NO;
+                commentTextView.editable = NO;
                 
             }
             
         } else {
             
             if ([arrForTagFriends containsObject:self_user.objectId]){
-                lblForDes.enabled = YES;
+                commentTextView.editable = YES;
                 
             } else {
-                lblForDes.enabled = NO;
+                commentTextView.editable = NO;
             }
         }
         
-        lblForDes.enabled = NO;
+        commentTextView.editable = NO;
     } else {
-        lblForDes.enabled = YES;
+        commentTextView.editable = YES;
     }
     
     [currentUser fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-       
+        
         if (!error) {
             
             [lblForUsername setText:currentUser.username];
-
+            
             if ([currentUser[@"loginType"] isEqualToString:@"email"] || [currentUser[@"loginType"] isEqualToString:@"gmail"]) {
                 PFFile *avatarFile = (PFFile *)currentUser[@"ProfileImage"];
                 if (avatarFile) {
@@ -414,7 +421,7 @@
         }
         
         constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"Comments"]];
-        [lblForDes setText:currentObj[@"Comments"]];
+        [commentTextView setText:currentObj[@"Comments"]];
         
         //******************
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
@@ -460,7 +467,7 @@
         {
             arrForTagFriendAuthorities = eventObject[@"TagFriendAuthorities"];
         }
-
+        
         
         NSString *AuthorityValue = @"";
         
@@ -474,29 +481,29 @@
                     break;
                 }
             }
-
+            
             
             if ([AuthorityValue isEqualToString:@"Full"] || [AuthorityValue isEqualToString:@"Comment Only"]){
-                lblForDes.enabled = YES;
+                commentTextView.editable = YES;
                 
             } else {
-                lblForDes.enabled = NO;
+                commentTextView.editable = NO;
                 
             }
             
         } else {
             
             if ([arrForTagFriends containsObject:self_user.objectId]){
-                lblForDes.enabled = YES;
+                commentTextView.editable = YES;
                 
             } else {
-                lblForDes.enabled = NO;
+                commentTextView.editable = NO;
             }
         }
         
-        lblForDes.enabled = NO;
+        commentTextView.editable = NO;
     } else {
-        lblForDes.enabled = YES;
+        commentTextView.editable = YES;
     }
     
     [currentUser fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
@@ -519,7 +526,7 @@
         }
         
         constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:commentObj[@"Comments"]];
-        [lblForDes setText:commentObj[@"Comments"]];
+        [commentTextView setText:commentObj[@"Comments"]];
         
         //******************
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
@@ -529,47 +536,45 @@
         [lblForTime setText:str_date];
         
     }];
-
+    
 }
 
--(void)textFieldDidBeginEditing:(UITextField *)textField {
-    
-    if (textField == lblForDes)
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if (textView == commentTextView)
     {
-        beforeDescription = lblForDes.text;
+        beforeDescription = commentTextView.text;
         
-        if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+        if ([commentTextView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
             
             
-            CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];        
+            CGPoint pointInTable = [textView.superview convertPoint:textView.frame.origin
+                                                             toView:textView.superview.superview.superview.superview];
             
             NSDictionary *userInfo = @{
                                        @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
                                        @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y+30] stringValue],
-                                       @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
+                                       @"textFieldHeight": [[NSNumber numberWithFloat:textView.inputAccessoryView.frame.size.height] stringValue]
                                        };
             
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
         }
-    }   
+    }
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    if (textField == lblForDes) {
-        
-        if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if ([text isEqualToString:@"\n"]) {
+        if (![beforeDescription isEqualToString:commentTextView.text] && commentTextView.text.length > 0) {
             
-            if (event_flag){
+            if (event_flag) {
                 
                 // In Case User comments
-                currentCommentObj[@"Comments"] = lblForDes.text;
+                currentCommentObj[@"Comments"] = commentTextView.text;
                 
                 NSMutableArray *tempArray = [[NSMutableArray alloc] init];
                 
                 tempArray = currentObj[@"commentsArray"];
                 [tempArray removeObjectAtIndex:comment_number];
-                [tempArray insertObject:lblForDes.text atIndex:comment_number];
+                [tempArray insertObject:commentTextView.text atIndex:comment_number];
                 
                 [MBProgressHUD showHUDAddedTo:self.superview animated:YES];
                 
@@ -608,13 +613,14 @@
                                         NSLog(@"Badge for description for event of Post Added");
                                         [currentObj saveInBackground];
                                     }
-
+                                    
                                 }
-
-                                [lblForDes resignFirstResponder];
                                 
-                                if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-                                    CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
+                                [commentTextView resignFirstResponder];
+                                
+                                if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+                                    CGPoint bottomPosition = [textView convertPoint:textView.frame.origin
+                                                                             toView:textView.superview.superview.superview.superview];
                                     
                                     NSDictionary *userInfo = @{
                                                                @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
@@ -640,9 +646,9 @@
             // Others comments
             else
             {
-                commentObj[@"Comments"] = lblForDes.text;
+                commentObj[@"Comments"] = commentTextView.text;
                 [commentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                     NSLog(@"EventCommentCell: Updated other comments");
+                    NSLog(@"EventCommentCell: Updated other comments");
                     
                     // Let's add badge feature in here.
                     if (currentType == kTypePostComment)
@@ -667,10 +673,11 @@
                     }
                 }];
                 
-                [lblForDes resignFirstResponder];
+                [commentTextView resignFirstResponder];
                 
-                if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-                    CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
+                if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+                    CGPoint bottomPosition = [textView convertPoint:textView.frame.origin
+                                                             toView:textView.superview.superview.superview.superview];
                     
                     NSDictionary *userInfo = @{
                                                @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
@@ -683,10 +690,11 @@
         }
         else
         {
-            [lblForDes resignFirstResponder];
+            [commentTextView resignFirstResponder];
             
-            if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-                CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
+            if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+                CGPoint bottomPosition = [textView convertPoint:textView.frame.origin
+                                                         toView:textView.superview.superview.superview.superview];
                 
                 NSDictionary *userInfo = @{
                                            @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
@@ -695,9 +703,9 @@
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
             }
-
-       
         }
+        
+        return NO;
     }
     
     return YES;

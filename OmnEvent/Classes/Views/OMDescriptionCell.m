@@ -12,6 +12,7 @@
 @synthesize beforeDescription;
 
 - (void)awakeFromNib {
+    [super awakeFromNib];
     txtViewForDescription.delegate = self;
 }
 

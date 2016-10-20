@@ -252,7 +252,7 @@ static GlobalVar *_instance = nil;
     NSMutableParagraphStyle * paragraphStyle = [[NSMutableParagraphStyle defaultParagraphStyle] mutableCopy];
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     
-    NSDictionary * attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:11.0f],
+    NSDictionary * attributes = @{NSFontAttributeName:[UIFont systemFontOfSize:14.0f],
                                   NSParagraphStyleAttributeName:paragraphStyle
                                   };
     

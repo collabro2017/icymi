@@ -12,8 +12,12 @@
 
 - (void)awakeFromNib {
     // Initialization code
-    
-    [OMGlobal setCircleView:_imageViewForProfile borderColor:nil];   
+    [super awakeFromNib];
+}
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
+    [OMGlobal setCircleView:_imageViewForProfile borderColor:nil];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

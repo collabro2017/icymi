@@ -8,19 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
-@interface OMFeedCommentCell : UITableViewCell<UITextFieldDelegate>
+@interface OMFeedCommentCell : UITableViewCell<UITextViewDelegate>
 {
     
     IBOutlet UIImageView *imageViewForProfile;
     IBOutlet UILabel *lblForUsername;
     IBOutlet UILabel *lblForTime;
     
-    IBOutlet UITextField *lblForDes;
+    IBOutlet UITextView *commentTextView;
     IBOutlet NSLayoutConstraint *constraintForCommentHeight;
     
     NSInteger currentType;
     NSMutableArray *arrEventTagFriends;
-    
 }
 
 @property (strong, nonatomic) id delegate;
@@ -34,8 +33,8 @@
 //Event
 - (void)setUser:(PFUser *)user comment:(NSString *)_comment curObj:(PFObject *)_obj number:(NSUInteger)_number;
 
-- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj commentType:(NSInteger)curType;
-
+- (void)newsetUser:(NSString *)user comment:(NSString *)_comment curObj:(PFObject *)_obj
+       commentType:(NSInteger)curType number:(NSUInteger)_number;
 // Comment
 - (void)configurateCell:(PFObject *)tempObj;
 //Post
@@ -44,4 +43,5 @@
 // newly
 
 - (void)configPostCell:(PFObject *)comObj PostObject:(PFObject*) postObj EventObject:(PFObject *) eventObject CommentType:(NSInteger)curType;
+
 @end

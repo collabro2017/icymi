@@ -10,8 +10,14 @@
 
 @implementation OMDetailHeaderCell
 @synthesize user,delegate;
+
 - (void)awakeFromNib {
     // Initialization code
+    [super awakeFromNib];
+}
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
     
     [OMGlobal setCircleView:imageViewForAvatar borderColor:[UIColor whiteColor]];
     
@@ -19,12 +25,11 @@
     gesture.numberOfTapsRequired = 1;
     
     [imageViewForAvatar addGestureRecognizer:gesture];
-
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 
@@ -33,7 +38,7 @@
     if ([delegate respondsToSelector:@selector(showProfile:)]) {
         [delegate performSelector:@selector(showProfile:) withObject:user];
     }
-
+    
 }
 
 - (void)setCurrentObj:(PFObject *)obj
@@ -117,7 +122,7 @@
         likeCount = 0;
     }
     likerArr = [NSMutableArray array];
-
+    
     likeUserArray = [NSMutableArray array];
     
     if (_currentObj[@"likers"]) {
@@ -131,7 +136,7 @@
     if (_currentObj[@"likers"]) {
         [likeUserArray addObjectsFromArray:_currentObj[@"likers"]];
         [likerArr addObjectsFromArray:_currentObj[@"likeUserArray"]];
-
+        
     }
     if ([likeUserArray containsObject:USER.objectId]) {
         liked = YES;
@@ -182,7 +187,7 @@
         [btnForLikeCount setTitle:[NSString stringWithFormat:@"%ld",(long)++likeCount] forState:UIControlStateNormal];
         [likeUserArray addObject:USER.objectId];
         [likerArr addObject:USER];
-
+        
         [_currentObj setObject:likeUserArray forKey:@"likers"];
         [_currentObj setObject:likerArr forKey:@"likeUserArray"];
         [_currentObj saveEventually];
@@ -194,7 +199,7 @@
     if ([delegate respondsToSelector:@selector(showLikersOfEvent:)]) {
         [delegate performSelector:@selector(showLikersOfEvent:) withObject:_currentObj];
     }
-
+    
 }
 
 - (IBAction)commentAction:(id)sender {

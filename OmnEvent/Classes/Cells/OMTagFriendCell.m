@@ -22,14 +22,18 @@
 - (void)awakeFromNib
 {
     // Initialization code
-    
+    [super awakeFromNib];
+}
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
     [OMGlobal setCircleView:imageViewForAvatar borderColor:nil];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 
@@ -40,8 +44,8 @@
     object = _object;
     user = (PFUser *)_object;
     [lblForUsername setText:user.username];
-
-//    user = object[@"Commenter"];
+    
+    //    user = object[@"Commenter"];
     
     if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
@@ -54,12 +58,12 @@
     {
         [OMGlobal setImageURLWithAsync:user[@"profileURL"] positionView:self displayImgView:imageViewForAvatar];
     }
-
+    
     
     
 //    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
 //        PFFile *profileImgFile = (PFFile *)object[@"ProfileImage"];
-//        
+//
 //        if (profileImgFile) {
 //            [OMGlobal setImageURLWithAsync:profileImgFile.url positionView:self displayImgView:imageViewForAvatar];
 //        }
@@ -69,7 +73,7 @@
 //    {
 //        [lblForUsername setText:user[@"Name"]];
 //    }
-//    
+//
     
 }
 
@@ -78,6 +82,6 @@
     if ([self.delegate respondsToSelector:@selector(showProfile:)]) {
         [self.delegate performSelector:@selector(showProfile:) withObject:object];
     }
-
+    
 }
 @end

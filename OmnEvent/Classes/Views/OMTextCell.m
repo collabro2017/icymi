@@ -14,16 +14,18 @@
 
 - (void)awakeFromNib {
     // Initialization code
+    [super awakeFromNib];
+}
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
+    
     [OMGlobal setCircleView:imageViewForAvatar borderColor:nil];
     
     lblForTitle.delegate = self;
     lblForDes.delegate = self;
-    
-    constraintForHeight.constant = 100;
-    
-    
-    [self.superview layoutIfNeeded];
 }
+
 - (IBAction)onCheckBtn:(id)sender {
     
     UIButton* tmp = (UIButton*)sender;
@@ -42,14 +44,14 @@
             [[GlobalVar getInstance].gArrSelectedList addObject:selectedObj];
             [btnCheckForExport setImage:[UIImage imageNamed:@"btn_check_icon"] forState:UIControlStateNormal];
         }
-
+        
     }
     
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 
@@ -185,9 +187,10 @@
     [lblForTime setTextColor:HEXCOLOR(0x6F7179FF)];
     
     [lblForTitle setText:currentObj[@"title"]];
-    constraintForHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"description"]];
+    constraintForTitleHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"title"]];
     
     [lblForDes setText:currentObj[@"description"]];
+    constraintForHeight.constant = [OMGlobal heightForCellWithPost:currentObj[@"description"]];
     
     // for badge processing
     if(curEventIndex  >= 0)
@@ -222,7 +225,7 @@
             }
         }
     }
-
+    
     
     // Display image
     
@@ -455,29 +458,29 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     
-//    if (textField == lblForTitle)
-//    {
-//        beforeTitle = lblForTitle.text;
-//    }
-//    
-////    if (textField == lblForDes)
-////    {
-////        beforeDescription = lblForDes.text;
-////    }
-//    
-//    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-//        //NSLog(@" UITableView---");
-//        
-//        CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
-//        
-//        NSDictionary *userInfo = @{
-//                                   @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
-//                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y] stringValue],
-//                                   @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
-//                                   };
-//        
-//        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
-//    }
+    //    if (textField == lblForTitle)
+    //    {
+    //        beforeTitle = lblForTitle.text;
+    //    }
+    //
+    ////    if (textField == lblForDes)
+    ////    {
+    ////        beforeDescription = lblForDes.text;
+    ////    }
+    //
+    //    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+    //        //NSLog(@" UITableView---");
+    //
+    //        CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
+    //
+    //        NSDictionary *userInfo = @{
+    //                                   @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
+    //                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y] stringValue],
+    //                                   @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
+    //                                   };
+    //
+    //        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
+    //    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -490,11 +493,11 @@
 //        }
 //        [lblForTitle resignFirstResponder];
 //    }
-//    
-//    
+//
+//
 //    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
 //        CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
-//        
+//
 //        NSDictionary *userInfo = @{
 //                                   @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
 //                                   @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]

@@ -14,7 +14,7 @@
 
 
 @interface OMEventCommentViewController ()<YFInputBarDelegate>
-{    
+{
     NSMutableArray *arrForComment;
     NSMutableArray *arrForCommentUsers;
     NSMutableArray *arrForCommentContents;
@@ -42,11 +42,11 @@
         }
         [arrForComment removeAllObjects];
         [arrForComment addObjectsFromArray:objects];
-
+        
         [self loadController];
         [tblForComment reloadData];
     }];
-
+    
 }
 
 
@@ -65,10 +65,10 @@
     arrForComment = [NSMutableArray array];
     arrForCommentUsers = [NSMutableArray array];
     arrForCommentContents = [NSMutableArray array];
-
+    
     currentUser = [PFUser currentUser];
     //Input Bar
-
+    
     inputBar = [[YFInputBar alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT_ROTATED - 50, SCREEN_WIDTH_ROTATED, 50)];
     inputBar.backgroundColor = [UIColor colorWithRed:arc4random_uniform(255)/255.0f green:arc4random_uniform(255)/255.0f blue:arc4random_uniform(255)/255.0f alpha:1];
     inputBar.delegate = self;
@@ -102,13 +102,13 @@
     if (IS_IPAD) {
         
         CGRect textFrame = inputBar.textField.frame;
-
+        
         if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft ||
             [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) {
             inputBar.frame = CGRectMake(0, SCREEN_HEIGHT - 50, SCREEN_WIDTH, 50);
             inputBar.textField.frame = CGRectMake(textFrame.origin.x, 10, inputBar.frame.size.width - 70, 24);
             inputBar.sendBtn.frame = CGRectMake(inputBar.frame.size.width - 60, 0, 60, 50);
-
+            
         }else{
             inputBar.frame = CGRectMake(0, SCREEN_WIDTH - 50, SCREEN_HEIGHT, 50);
             inputBar.textField.frame = CGRectMake(textFrame.origin.x, 10, inputBar.frame.size.width - 70, 24);
@@ -130,6 +130,11 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [inputBar.textField becomeFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
@@ -179,16 +184,16 @@
 }
 
 
- /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+/*
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+ {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 #pragma mark YFInput Bar Delegate
 
 - (void)inputBar:(YFInputBar *)_inputBar sendBtnPress:(UIButton *)sendBtn withInputString:(NSString *)str
@@ -214,14 +219,14 @@
             
             [currentObject saveInBackgroundWithBlock:^(BOOL _succeeded, NSError *_error) {
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-
+                
                 if (_succeeded) {
                     [self loadComments];
                     [self loadController];
                     
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadCurrentEventData object:nil];
-//                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadPhotoData object:nil];
+                    //                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadPhotoData object:nil];
                     
                     NSLog(@"EventCommentViewController: Updated EventComments");
                     // for badge
