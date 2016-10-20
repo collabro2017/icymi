@@ -146,6 +146,12 @@
                 [arrForObjects addObjectsFromArray:tempArrForObjects];
                 [arrForFriends addObjectsFromArray:tempArrForFriends];
                 
+                //Apply Sorting
+                NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES
+                                                                        selector:@selector(caseInsensitiveCompare:)];
+                [arrForObjects sortUsingDescriptors:@[sort]];
+                [arrForFriends sortUsingDescriptors:@[sort]];
+                
                 [tblForFriend reloadData];
             }
         }
@@ -164,6 +170,7 @@
     
     [mainQ includeKey:@"FromUser"];
     [mainQ includeKey:@"ToUser"];
+    [mainQ orderByDescending:@"username"];
     
     [mainQ findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
      {
@@ -241,7 +248,6 @@
                                  }
                              }
                              
-                             
                              if (!isFound && !isFoundMutalFriend && !([[((PFUser *)anotherObj[@"ToUser"]) objectForKey:@"visiblity"] isEqualToString:@"Hidden"]))
                              {
                                  if (anotherObj[@"ToUser"])
@@ -256,6 +262,12 @@
                  
                  [arrForObjects addObjectsFromArray:tempArrForObjects];
                  [arrForFriends addObjectsFromArray:tempArrForFriends];
+                 
+                 //Apply Sorting
+                 NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES
+                                                                         selector:@selector(caseInsensitiveCompare:)];
+                 [arrForObjects sortUsingDescriptors:@[sort]];
+                 [arrForFriends sortUsingDescriptors:@[sort]];
                  
                  [tblForFriend reloadData];
                  
@@ -402,7 +414,12 @@
                     [arrForPeople addObject:aUser];
                 }
             }
-
+            
+            //Apply Sorting
+            NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES
+                                                                    selector:@selector(caseInsensitiveCompare:)];
+            [arrForPeople sortUsingDescriptors:@[sort]];
+            
             [tblForSearch reloadData];
         }
     }];
