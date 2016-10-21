@@ -3131,6 +3131,17 @@
                                             <action selector="changeModeAction:" destination="y7e-16-ruc" eventType="touchUpInside" id="x0K-zt-e1M"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kTK-ox-yZ2">
+                                        <rect key="frame" x="85" y="7" width="20" height="22"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="20" id="FwO-uU-0Un"/>
+                                            <constraint firstAttribute="height" constant="22" id="qf7-Xv-iNb"/>
+                                        </constraints>
+                                        <state key="normal" image="btn-updown-arrow"/>
+                                        <connections>
+                                            <action selector="onBtnReverseActionSheetContentsTapped:" destination="y7e-16-ruc" eventType="touchUpInside" id="0xY-Iw-0n6"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -3143,9 +3154,11 @@
                                     <constraint firstItem="u20-4n-9kr" firstAttribute="leading" secondItem="AvW-hm-ch0" secondAttribute="trailing" constant="15" id="NXj-ru-SNV"/>
                                     <constraint firstItem="bAQ-hp-kod" firstAttribute="centerY" secondItem="JR9-X7-tT8" secondAttribute="centerY" id="QoG-2d-tPz"/>
                                     <constraint firstItem="bAQ-hp-kod" firstAttribute="centerY" secondItem="AvW-hm-ch0" secondAttribute="centerY" id="Vw7-Iq-6dg"/>
+                                    <constraint firstItem="kTK-ox-yZ2" firstAttribute="leading" secondItem="7Wf-TZ-Dvr" secondAttribute="trailing" constant="16" id="Wmk-2q-nnv"/>
                                     <constraint firstItem="gXE-DB-GFo" firstAttribute="top" secondItem="7Sj-sf-r6H" secondAttribute="top" constant="8" id="XlZ-7b-c6Q"/>
                                     <constraint firstItem="7Wf-TZ-Dvr" firstAttribute="top" secondItem="7Sj-sf-r6H" secondAttribute="top" constant="8" id="d6l-yv-Tz4"/>
                                     <constraint firstAttribute="trailing" secondItem="45e-VB-yNq" secondAttribute="trailing" id="dYc-Pt-vtX"/>
+                                    <constraint firstItem="kTK-ox-yZ2" firstAttribute="top" secondItem="7Sj-sf-r6H" secondAttribute="top" constant="7" id="gba-RO-kZv"/>
                                     <constraint firstAttribute="trailing" secondItem="u20-4n-9kr" secondAttribute="trailing" constant="12" id="mrO-t1-WLL"/>
                                     <constraint firstAttribute="height" constant="35" id="nX5-ol-xAK"/>
                                     <constraint firstItem="7Wf-TZ-Dvr" firstAttribute="leading" secondItem="gXE-DB-GFo" secondAttribute="trailing" constant="16" id="ntZ-bI-r2x"/>
@@ -4071,6 +4084,7 @@
                         <outlet property="btnForNetState" destination="7Wf-TZ-Dvr" id="QsU-eR-XY6"/>
                         <outlet property="btnForPhoto" destination="bAQ-hp-kod" id="c1p-SR-2Ay"/>
                         <outlet property="btnForVideo" destination="u20-4n-9kr" id="PT9-4t-sL5"/>
+                        <outlet property="btnReverse" destination="kTK-ox-yZ2" id="FDN-jK-S0o"/>
                         <outlet property="doneView" destination="jh8-OB-zd4" id="Dd6-N1-l5H"/>
                         <outlet property="tblForDetailList" destination="Vxp-Dm-FQr" id="UCK-8A-EPE"/>
                     </connections>
@@ -8206,6 +8220,7 @@
         <image name="back-green.png" width="30" height="30"/>
         <image name="bg_splash" width="320" height="569"/>
         <image name="btn-post.png" width="93" height="28"/>
+        <image name="btn-updown-arrow" width="24" height="24"/>
         <image name="btn_FB" width="280" height="44"/>
         <image name="btn_add_audio" width="20" height="18"/>
         <image name="btn_add_photo" width="20" height="19"/>
