@@ -369,10 +369,8 @@
 
 - (BOOL) textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     
-    if ([text isEqualToString:@"\n"]){
-        
-        if (textView == lblForDes)
-        {
+    if ([text isEqualToString:@"\n"]) {
+        if (textView == lblForDes) {
             if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
                 currentObj[@"description"] = lblForDes.text;
                 
@@ -409,8 +407,7 @@
             [lblForDes resignFirstResponder];
         }
         
-        if (textView == lblForTitle){
-            
+        if (textView == lblForTitle) {
             if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
                 currentObj[@"title"] = lblForTitle.text;
                 
@@ -452,62 +449,16 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
         }
     }
+    else {
+        if ([textView isEqual:lblForTitle] && (textView.text.length < MAX_TITLE_LIMIT || [text isEqualToString:@""])) {
+            return YES;
+        }
+        else if ([textView isEqual:lblForDes] && (textView.text.length < MAX_DESCRIPTION_LIMIT || [text isEqualToString:@""])) {
+            return YES;
+        }
+    }
     
-    return YES;
+    return NO;
 }
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    
-    //    if (textField == lblForTitle)
-    //    {
-    //        beforeTitle = lblForTitle.text;
-    //    }
-    //
-    ////    if (textField == lblForDes)
-    ////    {
-    ////        beforeDescription = lblForDes.text;
-    ////    }
-    //
-    //    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-    //        //NSLog(@" UITableView---");
-    //
-    //        CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
-    //
-    //        NSDictionary *userInfo = @{
-    //                                   @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
-    //                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y] stringValue],
-    //                                   @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
-    //                                   };
-    //
-    //        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
-    //    }
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-//    if (textField == lblForTitle)
-//    {
-//        if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
-//            currentObj[@"title"] = lblForTitle.text;
-//            [currentObj saveEventually];
-//        }
-//        [lblForTitle resignFirstResponder];
-//    }
-//
-//
-//    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-//        CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
-//
-//        NSDictionary *userInfo = @{
-//                                   @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
-//                                   @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]
-//                                   };
-//        
-//        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
-//    }
-    
-    return YES;
-}
-
 
 @end

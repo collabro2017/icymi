@@ -707,8 +707,11 @@
         
         return NO;
     }
+    else if (textView.text.length < MAX_COMMENT_LIMIT || [text isEqualToString:@""]) {
+        return YES;
+    }
     
-    return YES;
+    return NO;
 }
 
 @end

@@ -23,8 +23,6 @@
 #import "Reachability.h"
 #import "OMAppDelegate.h"
 
-
-#define MAXIUM_NUM              420;
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 
 @interface OMPostEventViewController ()<CLLocationManagerDelegate,OMTagListViewControllerDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
@@ -122,6 +120,8 @@
     tapGestureForBg.numberOfTapsRequired = 1;
     [tapGestureForBg setDelegate:self];
     [imageViewForPostImage addGestureRecognizer:tapGestureForBg];
+    
+    lblForCount.text = [NSString stringWithFormat:@"%d", MAX_DESCRIPTION_LIMIT];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1024,7 +1024,12 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    return YES;
+    if ([textField isEqual:lblForTitle]) {
+        if (textField.text.length < MAX_TITLE_LIMIT || [string isEqualToString:@""]) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
@@ -1065,7 +1070,7 @@
         }];
     }
     
-    NSUInteger max_num = MAXIUM_NUM;
+    NSUInteger max_num = MAX_DESCRIPTION_LIMIT;
     
     lblForCount.text = [NSString stringWithFormat:@"%lu",max_num - textView.text.length];
     
@@ -1098,7 +1103,7 @@
 
 - (BOOL)isAcceptableTextLength:(NSUInteger )length
 {
-    return length <= MAXIUM_NUM;
+    return length <= MAX_DESCRIPTION_LIMIT;
 }
 
 #pragma mark UIGestureRecognizer Delegate
@@ -1124,21 +1129,10 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    
     [[UIApplication sharedApplication] setStatusBarHidden:YES];
     [picker dismissViewControllerAnimated:YES completion:^{
         
     }];
 }
-
-/*
- #pragma mark - Navigation
- 
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
 
 @end

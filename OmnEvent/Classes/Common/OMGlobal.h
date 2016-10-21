@@ -16,13 +16,16 @@
 #define MIN_AUDIO_DUR 10
 #define MAX_AUDIO_DUR 60
 
+#define MAX_TITLE_LIMIT         280
+#define MAX_DESCRIPTION_LIMIT   420
+#define MAX_COMMENT_LIMIT       420
+
 #define KEY_GOOGLE_CLIENTID @"529263599195-49fbgf7g1dlahc52el3sdfoge4co4d38.apps.googleusercontent.com"
 #define GMAIL_SIGNIN_KEY        @"icymi.social.event!" //password
 
 #define ADMIN_USER_NAME  @"Coline Witt"
 
 #define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-
 
 typedef enum {
     
