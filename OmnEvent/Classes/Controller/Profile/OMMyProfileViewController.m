@@ -102,14 +102,8 @@ BOOL refresh_require;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFolders) name:kLoadFolderData object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(thirdViewLoad) name:kNotificationForthDetailViewLoad object:nil];
-
-    if (IS_IPAD) {
-        CGRect frame = avatarView.segmentControlForType.frame;
-        avatarView.segmentControlForType.frame = CGRectMake(frame.origin.x, frame.origin.y, SCREEN_WIDTH_ROTATED - frame.origin.x * 2, frame.size.height);
-    }
-    
 }
-/*
+
 -(void)viewWillLayoutSubviews{
     if (IS_IPAD) {
         CGRect frame = avatarView.segmentControlForType.frame;
@@ -121,7 +115,7 @@ BOOL refresh_require;
         }
     }
 }
-*/
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
