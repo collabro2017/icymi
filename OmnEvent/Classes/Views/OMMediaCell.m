@@ -226,8 +226,18 @@
     
     constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:lblForTitle.frame.size.width].height;
     
-    [lblForLocation setText:currentObj[@"country"]];
-    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"]) {
+        CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+        [geocoder geocodeAddressString:currentObj[@"country"] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+            if (placemarks.count > 0) {
+                CLPlacemark *placemark = placemarks.firstObject;
+                CLLocationCoordinate2D location = placemark.location.coordinate;
+                lblForLocation.text = [NSString stringWithFormat:@"%f, %f", location.latitude, location.longitude];
+            }
+        }];
+    } else {
+        [lblForLocation setText:currentObj[@"country"]];
+    }
     
     // for badge processing
     

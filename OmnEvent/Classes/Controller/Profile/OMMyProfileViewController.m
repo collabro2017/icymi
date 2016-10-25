@@ -776,6 +776,13 @@ BOOL refresh_require;
 
 }
 
+- (IBAction)geocodeAction:(UIButton *)sender {
+    BOOL flag = [[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"];
+    [[NSUserDefaults standardUserDefaults] setBool:!flag forKey:@"IS_GEOCODE_ENABLED"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    [self hidePopup];
+}
+
 - (IBAction)createFolderAction:(id)sender {
     
     NSString *tempStr = _m_lblFolderName.text;
