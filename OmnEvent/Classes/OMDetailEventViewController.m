@@ -134,7 +134,7 @@
         {
             [arrForDetail removeAllObjects];
             
-            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
+            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
             offline_data_num = appDel.m_offlinePosts.count;
             
             for (NSUInteger i = 0; i < offline_data_num; i ++){
@@ -149,6 +149,11 @@
             }
             
             [arrForDetail addObjectsFromArray:objects];
+            
+            if (isActionSheetReverseSelected) {
+                arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
+            }
+            
             [tblForDetailList reloadData];
         }
     }];
@@ -441,6 +446,10 @@
             
             if([objects count] > 0) [arrForDetail addObjectsFromArray:objects];
             
+            if (isActionSheetReverseSelected) {
+                arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
+            }
+            
             // Current Test feature. lets check these again.
             PFUser *eventUser = currentObject[@"user"];
             if([eventUser.objectId isEqualToString: USER.objectId] && appDel.network_state)
@@ -483,8 +492,13 @@
         {
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
-            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
+            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
             [arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+            
+            if (isActionSheetReverseSelected) {
+                arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
+            }
+            
             [tblForDetailList reloadData];
         }
     }];
@@ -637,6 +651,12 @@
     } else {
         [sender setImage:[UIImage imageNamed:@"btn-updown-arrow"] forState:UIControlStateNormal];
     }
+    
+    if (arrForDetail.count > 0) {
+        arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
+    }
+    
+    [tblForDetailList reloadData];
 }
 
 
@@ -1233,8 +1253,9 @@
                     {
                         [_cell stopVideo];
                     }
-                    else
+                    else if ([tempObj[@"postType"] isEqualToString:@"audio"]) {
                         [_cell stopAudio];
+                    }
                 }
                 
             }
@@ -1339,35 +1360,21 @@
     PFUser *user = (PFUser *)_obj[@"user"];
     
     if ([user.objectId isEqualToString:USER.objectId]) {
-        if (!isActionSheetReverseSelected) {
-            shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:@"Share via Email"
-                                              otherButtonTitles:@"Facebook", @"Twitter", @"Instagram",
-                            @"Add Media After", @"Add to Folder", @"Export to PDF", @"Select Items for New Event",
-                            @"Delete", status, @"Report", nil];
-        } else {
-            shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:@"Report"
-                                              otherButtonTitles:status, @"Delete", @"Select Items for New Event", @"Export to PDF",
-                            @"Add to Folder", @"Add Media After", @"Instagram", @"Twitter", @"Facebook", @"Share via Email", nil];
-        }
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
+                                     destructiveButtonTitle:@"Share via Email"
+                                          otherButtonTitles:@"Facebook", @"Twitter", @"Instagram",
+                        @"Add Media After", @"Add to Folder", @"Export to PDF", @"Select Items for New Event",
+                        @"Delete", status, @"Report", nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShare;
     }
     else
     {
-        if (!isActionSheetReverseSelected) {
-            shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:@"Share via Email"
-                                              otherButtonTitles:@"Facebook", @"Twitter", @"Instagram", @"Export to PDF",
-                            @"Select Items for New Event", @"Report", nil];
-        } else {
-            shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
-                                         destructiveButtonTitle:@"Report"
-                                              otherButtonTitles:@"Select Items for New Event", @"Export to PDF", @"Instagram", @"Twitter",
-                            @"Facebook", @"Share via Email", nil];
-        }
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
+                                     destructiveButtonTitle:@"Share via Email"
+                                          otherButtonTitles:@"Facebook", @"Twitter", @"Instagram", @"Export to PDF",
+                        @"Select Items for New Event", @"Report", nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShareGuest;
@@ -1435,13 +1442,8 @@
     
     
     if ([user.objectId isEqualToString:USER.objectId] || authFlag) {
-        if (!isActionSheetReverseSelected) {
-            shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Add Media After", @"Use this as thumbnail",
-                            @"Delete", @"Report", nil];
-        } else {
-            shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Report" otherButtonTitles:@"Delete", @"Use this as thumbnail", @"Add Media After",
-                            @"Save to Camera roll", nil];
-        }
+        shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Add Media After", @"Use this as thumbnail",
+                        @"Delete", @"Report", nil];
         [shareAction1 setTag:kTag_Share];
         [shareAction1 showInView:self.view];
         
@@ -1692,72 +1694,30 @@
             switch (buttonIndex) {
                 case 0:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaEmail];
-                    } else {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    }
+                    [self shareViaEmail];
                 }
                     break;
                     
                 case 1:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaFacebook];
-                    } else {
-                        PFUser *user = (PFUser *)currentObject[@"user"];
-                        if ([user.objectId isEqualToString:USER.objectId]) {
-                            
-                            NSInteger status;
-                            
-                            if ([currentObject[@"openStatus"] intValue] == 1) {
-                                status = 0;
-                            }
-                            else
-                            {
-                                status = 1;
-                            }
-                            [currentObject setObject:[NSNumber numberWithInteger:status] forKey:@"openStatus"];
-                            [currentObject saveEventually:^(BOOL succeeded, NSError *error) {}];
-                        }
-                        else
-                        {
-                            [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                            [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent)
-                                                           userInfo:nil repeats:NO];
-                        }
-                    }
-                    
+                    [self shareViaFacebook];
                 }
                     break;
                     
                 case 2:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaTwitter];
-                    } else {
-                        [self deleteEvent];
-                    }
+                    [self shareViaTwitter];
                 }
                     break;
                 case 3:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaInstagram];
-                    } else {
-                        [self duplicateToNewEvent];
-                    }
+                    [self shareViaInstagram];
                 }
                     break;
                     
                 case 4:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self performSelector:@selector(showAddMediaAfter) withObject:nil afterDelay:0.1f];
-                    } else {
-                        [self performSelector:@selector(exportToPDF) withObject:nil afterDelay:0.1f];
-                    }
+                    [self performSelector:@selector(showAddMediaAfter) withObject:nil afterDelay:0.1f];
                 }
                     break;
                     
@@ -1769,72 +1729,52 @@
                     
                 case 6:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self performSelector:@selector(exportToPDF) withObject:nil afterDelay:0.1f];
-                    } else {
-                        [self performSelector:@selector(showAddMediaAfter) withObject:nil afterDelay:0.1f];
-                    }
+                    [self performSelector:@selector(exportToPDF) withObject:nil afterDelay:0.1f];
                 }
                     break;
                     
                 case 7:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self duplicateToNewEvent];
-                    } else {
-                        [self shareViaInstagram];
-                    }
+                    [self duplicateToNewEvent];
                 }
                     break;
                     
                 case 8:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self deleteEvent];
-                    } else {
-                        [self shareViaTwitter];
-                    }
+                    [self deleteEvent];
                 }
                     break;
                     
                 case 9:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        PFUser *user = (PFUser *)currentObject[@"user"];
-                        if ([user.objectId isEqualToString:USER.objectId]) {
-                            
-                            NSInteger status;
-                            
-                            if ([currentObject[@"openStatus"] intValue] == 1) {
-                                status = 0;
-                            }
-                            else
-                            {
-                                status = 1;
-                            }
-                            [currentObject setObject:[NSNumber numberWithInteger:status] forKey:@"openStatus"];
-                            [currentObject saveEventually:^(BOOL succeeded, NSError *error) {}];
+                    PFUser *user = (PFUser *)currentObject[@"user"];
+                    if ([user.objectId isEqualToString:USER.objectId]) {
+                        
+                        NSInteger status;
+                        
+                        if ([currentObject[@"openStatus"] intValue] == 1) {
+                            status = 0;
                         }
                         else
                         {
-                            [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                            [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent)
-                                                           userInfo:nil repeats:NO];
+                            status = 1;
                         }
-                    } else {
-                        [self shareViaFacebook];
+                        [currentObject setObject:[NSNumber numberWithInteger:status] forKey:@"openStatus"];
+                        [currentObject saveEventually:^(BOOL succeeded, NSError *error) {}];
+                    }
+                    else
+                    {
+                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent)
+                                                       userInfo:nil repeats:NO];
                     }
                 }
                     break;
                     
                 case 10:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    } else {
-                        [self shareViaEmail];
-                    }
+                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
                     
                 default:
@@ -1849,30 +1789,17 @@
             switch (buttonIndex) {
                 case 0:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaEmail];
-                    } else {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    }
+                    [self shareViaEmail];
                 }
                     break;
                 case 1:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaFacebook];
-                    } else {
-                        [self duplicateToNewEvent];
-                    }
+                    [self shareViaFacebook];
                 }
                     break;
                 case 2:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaTwitter];
-                    } else {
-                        [self performSelector:@selector(exportToPDF) withObject:nil afterDelay:0.1f];
-                    }
+                    [self shareViaTwitter];
                 }
                     break;
                 case 3:
@@ -1883,30 +1810,18 @@
                     
                 case 4:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self performSelector:@selector(exportToPDF) withObject:nil afterDelay:0.1f];
-                    } else {
-                        [self shareViaTwitter];
-                    }
+                    [self performSelector:@selector(exportToPDF) withObject:nil afterDelay:0.1f];
                 }
                     break;
                 case 5:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self shareViaFacebook];
-                    } else {
-                        [self duplicateToNewEvent];
-                    }
+                    [self duplicateToNewEvent];
                 }
                     break;
                     
                 case 6:{
-                    if (!isActionSheetReverseSelected) {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    } else {
-                        [self shareViaEmail];
-                    }
+                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -1919,22 +1834,13 @@
             switch (buttonIndex) {
                 case 0:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [MBProgressHUD showMessag:@"Saving Image to Camera Roll..." toView:self.view];
-                        [self saveToCameraRoll];
-                    } else {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    }
+                    [MBProgressHUD showMessag:@"Saving Image to Camera Roll..." toView:self.view];
+                    [self saveToCameraRoll];
                 }
                     break;
                 case 1:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self performSelector:@selector(showAddMediaAfter) withObject:nil afterDelay:0.1f];
-                    } else {
-                        [self deleteFeed];
-                    }
+                    [self performSelector:@selector(showAddMediaAfter) withObject:nil afterDelay:0.1f];
                 }
                     break;
                 case 2:
@@ -1944,23 +1850,14 @@
                     break;
                 case 3:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [self deleteFeed];
-                    } else {
-                        [self performSelector:@selector(showAddMediaAfter) withObject:nil afterDelay:0.1f];
-                    }
+                    [self deleteFeed];
                 }
                     break;
                     
                 case 4:
                 {
-                    if (!isActionSheetReverseSelected) {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    } else {
-                        [MBProgressHUD showMessag:@"Saving Image to Camera Roll..." toView:self.view];
-                        [self saveToCameraRoll];
-                    }
+                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -2046,71 +1943,38 @@
             switch (buttonIndex) {
                 case 0: //Text
                 {
-                    if (!isActionSheetReverseSelected) {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureText currentObject:currentObject];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                    if ([currentObject[@"openStatus"] intValue]) {
+                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureText currentObject:currentObject];
                     } else {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureVideo currentObject:currentObject];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                        [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
                 }
                     break;
                 case 1: //Image
                 {
-                    if (!isActionSheetReverseSelected) {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCapturePhoto currentObject:currentObject];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                    if ([currentObject[@"openStatus"] intValue]) {
+                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCapturePhoto currentObject:currentObject];
                     } else {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController postAudio:kTypeUploadPost mediaKind:kTypeCaptureAudio
-                                       currentObject:currentObject audioData:m_audioData];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                        [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
                 }
                     break;
                 case 2: //Audio
                 {
-                    if (!isActionSheetReverseSelected) {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController postAudio:kTypeUploadPost mediaKind:kTypeCaptureAudio
-                                       currentObject:currentObject audioData:m_audioData];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                    if ([currentObject[@"openStatus"] intValue]) {
+                        [TABController postAudio:kTypeUploadPost mediaKind:kTypeCaptureAudio
+                                   currentObject:currentObject audioData:m_audioData];
                     } else {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCapturePhoto currentObject:currentObject];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                        [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
                 }
                     break;
                 case 3: //Video
                 {
-                    if (!isActionSheetReverseSelected) {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureVideo currentObject:currentObject];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                    if ([currentObject[@"openStatus"] intValue]) {
+                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureVideo currentObject:currentObject];
                     } else {
-                        if ([currentObject[@"openStatus"] intValue]) {
-                            [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureText currentObject:currentObject];
-                        } else {
-                            [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
-                        }
+                        [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
                 }
                     break;
@@ -2530,14 +2394,8 @@
 //Add Media After
 - (void)showAddMediaAfter {
     UIActionSheet* shareAction = nil;
-    if (!isActionSheetReverseSelected) {
-        shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-                                         otherButtonTitles:@"Text", @"Image", @"Audio", @"Video", nil];
-    } else {
-        shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-                                         otherButtonTitles:@"Video", @"Audio", @"Image", @"Text", nil];
-    }
-    
+    shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
+                                     otherButtonTitles:@"Text", @"Image", @"Audio", @"Video", nil];    
     [shareAction showInView:self.view];
     shareAction.tag = kTag_AddMediaAfter;
 }
