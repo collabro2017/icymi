@@ -232,7 +232,29 @@
             if (placemarks.count > 0) {
                 CLPlacemark *placemark = placemarks.firstObject;
                 CLLocationCoordinate2D location = placemark.location.coordinate;
-                lblForLocation.text = [NSString stringWithFormat:@"%f, %f", location.latitude, location.longitude];
+                
+                int latSeconds = (int)(location.latitude * 3600);
+                int latDegrees = latSeconds / 3600;
+                latSeconds = ABS(latSeconds % 3600);
+                int latMinutes = latSeconds / 60;
+                latSeconds %= 60;
+                
+                int longSeconds = (int)(location.longitude * 3600);
+                int longDegrees = longSeconds / 3600;
+                longSeconds = ABS(longSeconds % 3600);
+                int longMinutes = longSeconds / 60;
+                longSeconds %= 60;
+                
+                NSString* result = [NSString stringWithFormat:@"%d°%d'%d\"%@ %d°%d'%d\"%@",
+                                    ABS(latDegrees),
+                                    latMinutes,
+                                    latSeconds,
+                                    latDegrees >= 0 ? @"N" : @"S",
+                                    ABS(longDegrees),
+                                    longMinutes,
+                                    longSeconds,
+                                    longDegrees >= 0 ? @"E" : @"W"];
+                lblForLocation.text = result;
             }
         }];
     } else {
