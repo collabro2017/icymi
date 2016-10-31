@@ -10,7 +10,7 @@
 #import "PBJVideoPlayerController.h"
 #import "PCSEQVisualizer.h"
 
-@interface OMMediaCell : UITableViewCell<PBJVideoPlayerControllerDelegate,AVAudioPlayerDelegate, UITextFieldDelegate>
+@interface OMMediaCell : UITableViewCell<PBJVideoPlayerControllerDelegate,AVAudioPlayerDelegate, UITextViewDelegate>
 {
     PBJVideoPlayerController *_videoPlayerController;
     UIImageView *_playButton;
@@ -27,13 +27,9 @@
     
     IBOutlet UILabel *lblForTimer;
     
-    //IBOutlet UILabel *lblForTitle;
+    IBOutlet UITextView *txtViewForTitle;
     
-    IBOutlet UITextField *lblForTitle;
-    
-    //IBOutlet UILabel *lblForDes;
-    
-    IBOutlet UITextField *lblForDes;
+    IBOutlet UITextView *txtViewForDes;
     
     IBOutlet UIView *viewForControl;
     

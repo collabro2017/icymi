@@ -21,20 +21,21 @@
 @synthesize curPostIndex, checkMode;
 
 - (void)awakeFromNib {
-    // Initialization code
+    [super awakeFromNib];
+}
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
     
     [OMGlobal setCircleView:imageViewForAvatar borderColor:nil];
     
-    lblForTitle.delegate = self;
-    lblForDes.delegate = self;
-
-//    self.contrainImageRight.constant =300;
-    
+    txtViewForTitle.delegate = self;
+    txtViewForDes.delegate = self;
 }
 
 - (IBAction)onCheckBtn:(id)sender {
     UIButton* tmp = (UIButton*)sender;
-    NSLog(@"Check Tag === %ld", [tmp tag]);
+    NSLog(@"Check Tag === %d", [tmp tag]);
     
     if([[GlobalVar getInstance].gArrPostList count] > 0)
     {
@@ -152,27 +153,27 @@
             }
             
             if ([AuthorityValue isEqualToString:@"Full"]){
-                lblForDes.enabled = YES;
-                lblForTitle.enabled = YES;
+                txtViewForTitle.editable = YES;
+                txtViewForDes.editable = YES;
             } else {
-                lblForDes.enabled = NO;
-                lblForTitle.enabled = NO;
+                txtViewForTitle.editable = NO;
+                txtViewForDes.editable = NO;
             }
             
         } else {
             
             if ([arrForTagFriends containsObject:self_user.objectId]){
-                lblForDes.enabled = YES;
-                lblForTitle.enabled = YES;
+                txtViewForTitle.editable = YES;
+                txtViewForDes.editable = YES;
             } else {
-                lblForDes.enabled = NO;
-                lblForTitle.enabled = NO;
+                txtViewForTitle.editable = NO;
+                txtViewForDes.editable = NO;
             }
         }
         
     } else {
-        lblForDes.enabled = YES;
-        lblForTitle.enabled = YES;
+        txtViewForTitle.editable = YES;
+        txtViewForDes.editable = YES;
     }
     
     user = currentObj[@"user"];
@@ -217,14 +218,11 @@
 
     //*******************
     
+    txtViewForTitle.text = currentObj[@"title"];
+    txtViewForDes.text = currentObj[@"description"];
     
-    
-    [lblForTitle setText:currentObj[@"title"]];
-    [lblForDes setText:currentObj[@"description"]];
-    
-    constraintForDescription.constant = [OMGlobal getBoundingOfString:currentObj[@"description"] width:lblForDes.frame.size.width].height + 40;
-    
-    constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:lblForTitle.frame.size.width].height;
+    constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:txtViewForTitle.frame.size.width].height + 20;
+    constraintForDescription.constant = [OMGlobal getBoundingOfString:currentObj[@"description"] width:txtViewForDes.frame.size.width].height + 30;
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"]) {
         CLGeocoder *geocoder = [[CLGeocoder alloc] init];
@@ -300,9 +298,6 @@
             }
         }
     }
-
-    
-    
     
     // Display image
     
@@ -762,111 +757,119 @@
     }
 }
 
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    
-    if (textField == lblForTitle) {
-        beforeTitle = lblForTitle.text;
+#pragma mark - Delegate methods of UITextViewDelegate
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    if (textView == txtViewForTitle) {
+        beforeTitle = txtViewForTitle.text;
     }
     
-    if (textField == lblForDes) {
-        beforeDescription = lblForDes.text;
+    if (textView == txtViewForDes) {
+        beforeDescription = txtViewForDes.text;
     }
     
-    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-        CGPoint pointInTable = [textField.superview convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
+    if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+        CGPoint pointInTable = [textView.superview convertPoint:textView.frame.origin toView:textView.superview.superview.superview.superview];
         
         NSDictionary *userInfo = @{
                                    @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
                                    @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y + 40] stringValue],
-                                   @"textFieldHeight": [[NSNumber numberWithFloat:textField.inputAccessoryView.frame.size.height] stringValue]
+                                   @"textFieldHeight": [[NSNumber numberWithFloat:textView.inputAccessoryView.frame.size.height] stringValue]
                                    };
         
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
     }
 }
 
-- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     
-    if (textField == lblForTitle) {
-        if (![beforeTitle isEqualToString:lblForTitle.text] && lblForTitle.text.length > 0){
-            currentObj[@"title"] = lblForTitle.text;
+    if ([text isEqualToString:@"\n"]) {
+        if (textView == txtViewForTitle) {
+            if (![beforeTitle isEqualToString:txtViewForTitle.text] && txtViewForTitle.text.length > 0){
+                currentObj[@"title"] = txtViewForTitle.text;
+                
+                NSLog(@"Media Cell: Add and Change Post content title");
+                
+                // for badge
+                PFUser *eventUser = currentObj[@"user"];
+                NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+                PFObject *eventObj = currentObj[@"targetEvent"];
+                arrEventTagFriends = eventObj[@"TagFriends"];
+                if(![eventUser.objectId isEqualToString:USER.objectId])
+                {
+                    [arrEventTagFriends addObject:eventUser.objectId];
+                    if ([arrEventTagFriends containsObject:USER.objectId]) {
+                        [arrEventTagFriends removeObject:USER.objectId];
+                    }
+                }
+                
+                currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+                NSLog(@"Badge for comments of Post Added");
+                
+                OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                if(appDel.network_state)
+                {
+                    [currentObj saveInBackground];
+                }
+                
+            }
             
-            
-            NSLog(@"Media Cell: Add and Change Post content title");
-            
-            // for badge
-            PFUser *eventUser = currentObj[@"user"];
-            NSMutableArray *arrEventTagFriends = [NSMutableArray array];
-            PFObject *eventObj = currentObj[@"targetEvent"];
-            arrEventTagFriends = eventObj[@"TagFriends"];
-            if(![eventUser.objectId isEqualToString:USER.objectId])
-            {
-                [arrEventTagFriends addObject:eventUser.objectId];
-                if ([arrEventTagFriends containsObject:USER.objectId]) {
-                    [arrEventTagFriends removeObject:USER.objectId];
+            [txtViewForTitle resignFirstResponder];
+        }
+        
+        if (textView == txtViewForDes) {
+            if (![beforeDescription isEqualToString:txtViewForDes.text] && txtViewForDes.text.length > 0){
+                currentObj[@"description"] = txtViewForDes.text;
+                
+                NSLog(@"Media Cell: Add and Change Post content Description");
+                
+                // for badge
+                PFUser *eventUser = currentObj[@"user"];
+                NSMutableArray *arrEventTagFriends = [NSMutableArray array];
+                PFObject *eventObj = currentObj[@"targetEvent"];
+                arrEventTagFriends = eventObj[@"TagFriends"];
+                if(![eventUser.objectId isEqualToString:USER.objectId])
+                {
+                    [arrEventTagFriends addObject:eventUser.objectId];
+                    if ([arrEventTagFriends containsObject:USER.objectId]) {
+                        [arrEventTagFriends removeObject:USER.objectId];
+                    }
+                }
+                
+                currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
+                
+                
+                OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                if(appDel.network_state)
+                {
+                    NSLog(@"Badge for comments of Post Added");
+                    [currentObj saveInBackground];
                 }
             }
             
-            currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
-            NSLog(@"Badge for comments of Post Added");
-            
-            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-            if(appDel.network_state)
-            {
-                [currentObj saveInBackground];
-            }
-            
+            [txtViewForDes resignFirstResponder];
         }
         
-        [lblForTitle resignFirstResponder];
-    }
-    
-    if (textField == lblForDes){
-        
-        if (![beforeDescription isEqualToString:lblForDes.text] && lblForDes.text.length > 0){
-            currentObj[@"description"] = lblForDes.text;
+        if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
+            CGPoint bottomPosition = [textView convertPoint:textView.frame.origin toView:textView.superview.superview.superview.superview];
             
-            NSLog(@"Media Cell: Add and Change Post content Description");
+            NSDictionary *userInfo = @{
+                                       @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
+                                       @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]
+                                       };
             
-            // for badge
-            PFUser *eventUser = currentObj[@"user"];
-            NSMutableArray *arrEventTagFriends = [NSMutableArray array];
-            PFObject *eventObj = currentObj[@"targetEvent"];
-            arrEventTagFriends = eventObj[@"TagFriends"];
-            if(![eventUser.objectId isEqualToString:USER.objectId])
-            {
-                [arrEventTagFriends addObject:eventUser.objectId];
-                if ([arrEventTagFriends containsObject:USER.objectId]) {
-                    [arrEventTagFriends removeObject:USER.objectId];
-                }
-            }
-            
-            currentObj[@"usersBadgeFlag"] = arrEventTagFriends;
-           
-            
-            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-            if(appDel.network_state)
-            {
-                 NSLog(@"Badge for comments of Post Added");
-                [currentObj saveInBackground];
-            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
         }
-        
-        [lblForDes resignFirstResponder];
+    }
+    else {
+        if ([textView isEqual:txtViewForTitle] && (textView.text.length < MAX_TITLE_LIMIT || [text isEqualToString:@""])) {
+            return YES;
+        }
+        else if ([textView isEqual:txtViewForDes] && (textView.text.length < MAX_DESCRIPTION_LIMIT || [text isEqualToString:@""])) {
+            return YES;
+        }
     }
     
-    if ([textField.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-        CGPoint bottomPosition = [textField convertPoint:textField.frame.origin toView:textField.superview.superview.superview.superview];
-        
-        NSDictionary *userInfo = @{
-                                   @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
-                                   @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]
-                                   };
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
-    }
-    
-    return YES;
+    return NO;
 }
 
 @end
