@@ -289,6 +289,8 @@
     CGPoint bottomPosition = CGPointMake(pointInTable_x, pointInTable_y);
     NSIndexPath *indexPath = [tblForDetailList indexPathForRowAtPoint:bottomPosition];
     
+    [tblForDetailList reloadData];
+    
     [tblForDetailList scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:TRUE];
     
     [GlobalVar getInstance].isPosting = NO;
@@ -1938,6 +1940,7 @@
                     break;
             }
         }
+            break;
             
         case kTag_AddMediaAfter:
         {
