@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 #import "OMBaseViewController.h"
 
-@interface OMHomeViewController : OMBaseViewController<UITableViewDataSource,UITableViewDelegate,MFMailComposeViewControllerDelegate,UIImagePickerControllerDelegate,UIDocumentInteractionControllerDelegate,UIAlertViewDelegate,UIActionSheetDelegate>
+@interface OMHomeViewController : OMBaseViewController<UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate, UIImagePickerControllerDelegate, UIDocumentInteractionControllerDelegate, UIAlertViewDelegate, UIActionSheetDelegate>
 {
     
+    IBOutlet UITableView *tableViewForFeeds;
     IBOutlet UICollectionView *collectionViewForFeed;
-    IBOutlet UITableView *tblForEventFeed;
     
     BOOL is_grid;
     

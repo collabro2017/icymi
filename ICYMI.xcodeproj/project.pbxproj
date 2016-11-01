@@ -527,6 +527,7 @@
 		E4B0BA8B1C3D116300F6CCB9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4B0BA8A1C3D116300F6CCB9 /* CoreData.framework */; };
 		E4B0BA8D1C3E09C600F6CCB9 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4B0BA8C1C3E09C600F6CCB9 /* CoreText.framework */; };
 		E4B0BA911C3E0FA100F6CCB9 /* PDFRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = E4B0BA901C3E0FA100F6CCB9 /* PDFRenderer.m */; };
+		FAAA74381DC7D0D500FC0D04 /* OMEventFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAAA74371DC7D0D500FC0D04 /* OMEventFeedCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1186,6 +1187,8 @@
 		E4B0BA8F1C3E0FA100F6CCB9 /* PDFRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFRenderer.h; sourceTree = "<group>"; };
 		E4B0BA901C3E0FA100F6CCB9 /* PDFRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFRenderer.m; sourceTree = "<group>"; };
 		F2CE93558EBA59F9A06EC676 /* Pods-ICYMI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ICYMI.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ICYMI/Pods-ICYMI.debug.xcconfig"; sourceTree = "<group>"; };
+		FAAA74361DC7D0D500FC0D04 /* OMEventFeedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMEventFeedCell.h; sourceTree = "<group>"; };
+		FAAA74371DC7D0D500FC0D04 /* OMEventFeedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMEventFeedCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2025,6 +2028,8 @@
 		3EB718D11ABF4F730050E2D2 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				FAAA74361DC7D0D500FC0D04 /* OMEventFeedCell.h */,
+				FAAA74371DC7D0D500FC0D04 /* OMEventFeedCell.m */,
 				3EB298A91ACDD83400528552 /* OMMediaCell.h */,
 				3EB298AA1ACDD83400528552 /* OMMediaCell.m */,
 				A999C2C71AD16D0C0052BFFD /* OMTextCell.h */,
@@ -2746,6 +2751,7 @@
 				3EA765951AC3DAEB005CC683 /* OMBaseNavigationController.m in Sources */,
 				3E6F5CFD1ACA9384002ABFED /* OMEditEmailCell.m in Sources */,
 				3E7E5F671AC1EBFF00349242 /* OMSearchViewController.m in Sources */,
+				FAAA74381DC7D0D500FC0D04 /* OMEventFeedCell.m in Sources */,
 				3EB718D41ABF4FD40050E2D2 /* OMFeedHeaderCell.m in Sources */,
 				3C093F9B198487A300AEBDBD /* OMCommentViewController.m in Sources */,
 				A9A9444A1AD2562F00ECD958 /* Common.m in Sources */,
@@ -2981,8 +2987,8 @@
 			baseConfigurationReference = F2CE93558EBA59F9A06EC676 /* Pods-ICYMI.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
 				COMPRESS_PNG_FILES = YES;
 				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
@@ -3002,7 +3008,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "d4b09177-09f7-480e-bc98-e87f07fe20a4";
+				PROVISIONING_PROFILE = "1bcae735-4ba5-42ee-891b-bca6f1bff49f";
 				PROVISIONING_PROFILE_SPECIFIER = Collabro_devPro_0811;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -3014,8 +3020,8 @@
 			baseConfigurationReference = 76AFDD7A7C791DFFCD1CDE8B /* Pods-ICYMI.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
 				COMPRESS_PNG_FILES = YES;
 				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
@@ -3035,7 +3041,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "6328482e-f845-4079-b9fe-50225c8ddc49";
+				PROVISIONING_PROFILE = "1bcae735-4ba5-42ee-891b-bca6f1bff49f";
 				PROVISIONING_PROFILE_SPECIFIER = Collabro_disPro;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;

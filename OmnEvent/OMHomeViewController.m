@@ -31,6 +31,7 @@
 #import "OMFeedImageCell.h"
 #import "OMFeedCommentCell.h"
 #import "OMSearchCell.h"
+#import "OMEventFeedCell.h"
 
 @interface OMHomeViewController ()<OMTagListViewControllerDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 {
@@ -39,12 +40,7 @@
     NSMutableArray *arrForTagFriends;
     NSMutableArray *arrForComments;
     NSMutableArray *arrForPosts;
-    
     NSMutableArray *arrForFirstArray;
-    
-    UIPinchGestureRecognizer *pangesture1;
-    UIPinchGestureRecognizer *pangesture2;
-    
     NSUInteger process_number;
 }
 
@@ -104,51 +100,31 @@
     currentUser = [PFUser currentUser];
     NSLog(@"current user object id = %@", currentUser.objectId);
     is_grid = YES;
-    commentLoaded = NO;
+    
+    tableViewForFeeds.delegate = self;
+    tableViewForFeeds.dataSource = self;
+    tableViewForFeeds.hidden = YES;
+    tableViewForFeeds.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableViewForFeeds.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
     arrForFeed = [NSMutableArray array];
     arrForTagFriends = [NSMutableArray array];
     arrForComments = [NSMutableArray array];
     arrCurrentTagedFriends = [NSMutableArray array];
     arrForPosts = [NSMutableArray array];
-   
-    UIButton *changeModeButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     
-    [changeModeButton addTarget:self action:@selector(changeMode:) forControlEvents:UIControlEventTouchUpInside];
-    [changeModeButton setImage:[UIImage imageNamed:@"btn_display"] forState:UIControlStateNormal];
-    UIBarButtonItem *negativeSpacer1 = [[UIBarButtonItem alloc]
-                                        initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
-                                        target:nil action:nil];
-    negativeSpacer1.width = -6;// it was -6 in iOS 6
-
-    //BBBadgeBarButtonItem *changeBtn = [[BBBadgeBarButtonItem alloc] initWithCustomUIButton:changeModeButton];
-    //self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:negativeSpacer1, changeBtn, nil];
-
- 
+    UIBarButtonItem *switchIcon = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"btn-list"] style:UIBarButtonItemStylePlain target:self action:@selector(changeMode:)];
+    self.navigationItem.leftBarButtonItem = switchIcon;
+    
+    //Add Pull to refresh on UICollectionView
     self.refreshControl1 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, collectionViewForFeed.frame.size.width, 100.0f)];
     [self.refreshControl1 addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
     [collectionViewForFeed addSubview:self.refreshControl1];
     
-//    self.refreshControl2 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, tblForEventFeed.frame.size.width, 100.0f)];
-//    
-//    [self.refreshControl2 addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
-
-//    [tblForEventFeed addSubview:self.refreshControl2];
-
-//     Do any additional setup after loading the view, typically from a nib.
-//    
-//    [self followScrollView:collectionViewForFeed];
-//    
-//    
-//    
-//    
-//    pangesture1 = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(changeDisplayViewMode:)];
-//    
-//    [tblForEventFeed addGestureRecognizer:pangesture1];
-//    pangesture2 = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(changeDisplayViewMode:)];
-//
-//    [collectionViewForFeed addGestureRecognizer:pangesture2];
-    
+    //Add Pull to refresh on UITableView
+    self.refreshControl2 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, tableViewForFeeds.frame.size.width, 100.0f)];
+    [self.refreshControl2 addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
+    [tableViewForFeeds addSubview:self.refreshControl2];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadFeedData) name:kLoadFeedData object:nil];
     
@@ -161,14 +137,12 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadEventWithGlobal) name:kLoadEventDataWithGlobal object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createDupEvent) name:kOpenPostEvent object:nil];
-    
 }
 
 //Notification Methods
 
 - (void)firstViewLoad {
     [self.navigationController popToRootViewControllerAnimated:YES];
-    //[self.navigationController popViewControllerAnimated:YES];
 }
 
 // Standard Events for new account users. This will be showed when only new account is opened the app at first.
@@ -193,7 +167,7 @@
     else
     {
         if (is_grid) [collectionViewForFeed reloadData];
-        else [tblForEventFeed reloadData];
+        else [tableViewForFeeds reloadData];
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         return;
     }
@@ -215,10 +189,9 @@
                 [arrForFeed addObject:socialtempObj];
             }
             if (is_grid) [collectionViewForFeed reloadData];
-            else [tblForEventFeed reloadData];
+            else [tableViewForFeeds reloadData];
         }
     }];
-
 }
 
 - (void)showBadge:(NSNotification *)_notification {
@@ -246,11 +219,9 @@
     
     NSLog(@"Event count && Event Global count = %i, %i",
     (int)[arrForFeed count],(int)[[GlobalVar getInstance].gArrEventList count]);
-    
  }
 
 - (void)viewDidAppear:(BOOL)animated {
-    
     [super viewDidAppear:animated];
     
     NSString *breadcrumb = [NSString stringWithFormat:@"View controller appeared on screen: %@",[self class]];
@@ -258,7 +229,6 @@
 }
 
 - (void)didReceiveMemoryWarning {
-    
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -277,8 +247,7 @@
     arrForFeed = [[GlobalVar getInstance].gArrEventList mutableCopy];
     
     if (is_grid) [collectionViewForFeed reloadData];
-    else [tblForEventFeed reloadData];
-
+    else [tableViewForFeeds reloadData];
 }
 
 - (void)loadFeedData {
@@ -358,7 +327,7 @@
     if ([arrForFirstArray count] == 0 || arrForFirstArray == nil)
     {
         if (is_grid) [collectionViewForFeed reloadData];
-        else [tblForEventFeed reloadData];
+        else [tableViewForFeeds reloadData];
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         return;
     }
@@ -410,7 +379,7 @@
     [GlobalVar getInstance].gArrEventList = [arrForFeed mutableCopy];
     
     if (is_grid) [collectionViewForFeed reloadData];
-    else [tblForEventFeed reloadData];
+    else [tableViewForFeeds reloadData];
     
 }
 
@@ -420,7 +389,7 @@
     if ([arrForFirstArray count] == 0 || [arrForFirstArray firstObject] == nil)
     {
         if (is_grid) [collectionViewForFeed reloadData];
-        else [tblForEventFeed reloadData];
+        else [tableViewForFeeds reloadData];
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         return;
     }
@@ -488,7 +457,7 @@
         if([arrForFeed count] % 6 == 0)
         {
             if (is_grid) [collectionViewForFeed reloadData];
-            else [tblForEventFeed reloadData];
+            else [tableViewForFeeds reloadData];
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         }
             
@@ -504,7 +473,7 @@
             [[NSUserDefaults standardUserDefaults] synchronize];
                 
             if (is_grid) [collectionViewForFeed reloadData];
-            else [tblForEventFeed reloadData];
+            else [tableViewForFeeds reloadData];
         }
     }];
     
@@ -548,38 +517,27 @@
     }
 }
 
-- (void)changeMode:(id)sender {
-    
+- (void)changeMode:(UIBarButtonItem *)sender {
     if (is_grid) {
-        
         [collectionViewForFeed setHidden:YES];
-        [self.view addSubview:tblForEventFeed];
-        [tblForEventFeed setHidden:NO];
-
+        [tableViewForFeeds setHidden:NO];
+        [sender setImage:[UIImage imageNamed:@"btn-tile"]];
     } else {
-        
-        [tblForEventFeed setHidden:YES];
-        [self.view addSubview:collectionViewForFeed];
+        [tableViewForFeeds setHidden:YES];
         [collectionViewForFeed setHidden:NO];
-
+        [sender setImage:[UIImage imageNamed:@"btn-list"]];
     }
     
     is_grid = !is_grid;
     [collectionViewForFeed reloadData];
-    [tblForEventFeed reloadData];
-    
+    [tableViewForFeeds reloadData];
 }
 
 #pragma mark - Tag List
-
 - (void)selectedCells:(OMTagListViewController *)tagVC didFinished:(NSMutableArray *)_dict {
-    
     [tagVC.navigationController dismissViewControllerAnimated:YES completion:^{
         arrForTagFriends = [_dict copy];
-        
-        [self addTagFriends:(NSMutableArray *)_dict];      
-        
-        
+        [self addTagFriends:(NSMutableArray *)_dict];
     }];
 }
 
@@ -591,25 +549,6 @@
     [arrForTags addObjectsFromArray:_dict];
     [currentObject setObject:arrForTags forKey:@"TagFriends"];
     [currentObject saveInBackground];
-}
-
-//Cell Count
-
-- (NSInteger)cellCount:(PFObject *)_obj {
-    
-    NSInteger rows = 0;
-    
-    rows += 1;
-    //Photo
-    
-    rows += 1;
-    //Comments
-    
-    rows += [_obj[@"commenters"] count] > 5 ? 5:[_obj[@"commenters"] count];
-    //Photo Option
-    rows += 1;
-    
-    return rows;
 }
 
 #pragma mark - UICollectionView DataSource
@@ -721,219 +660,61 @@
 }
 
 #pragma mark  UITableViewDataSource
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    if (!is_grid) {
-        
-        static NSString *CellIdentifier_ = @"PhotoCell";
-        
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier_];
-        
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier_];
-        for (int i= 0; i < 3; i++) {
-            
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-            button.bounds = CGRectMake(0, 0, kImageWidth, kImageHeight);
-            button.center = CGPointMake((kImageWidth * 0.5f + (1 + kImageWidth) * i), kImageHeight * 0.5f);
-            button.tag = indexPath.row * 3 + i;
-            
-            [button addTarget:self action:@selector(eventClick:) forControlEvents:UIControlEventTouchUpInside];
-            UIImageView *replaceView = [UIImageView new];
-            replaceView.layer.borderColor = [[UIColor whiteColor] CGColor];
-            
-            replaceView.layer.borderWidth = 1.0f;
-            if (button.tag < [arrForFeed count]) {
-                
-                PFObject *obj = [arrForFeed objectAtIndex:button.tag];
-                PFFile *postImgFile = (PFFile *)obj[@"postImage"];
-                if (postImgFile) {
-                    if (replaceView.image) {
-                        replaceView.image = nil;
-                    }
-                    [OMGlobal setImageURLWithAsync:postImgFile.url positionView:button displayImgView:replaceView];
-                    [replaceView setFrame:button.bounds];
-                    [button addSubview:replaceView];
-                    replaceView.userInteractionEnabled = NO;                    
-                    [cell addSubview:button];
-                }
-            }
-        }
-        
-        return cell;
-        
-    } else {
-        
-        PFObject *obj = [arrForFeed objectAtIndex:indexPath.section];
-        NSLog(@"%ld", (long)[self cellCount:obj]);
-        if (indexPath.row == 0) {
-            OMFeedHeaderCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedHeaderCell];
-            
-            if (cell == nil) {
-                cell = [[OMFeedHeaderCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedHeaderCell];
-            }
-            
-            [cell setDelegate:self];
-            [cell setCurrentObj:obj];
-            
-            return cell;
-        }
-        else if (indexPath.row == 1)
-        {
-            OMFeedImageCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedImageCell];
-            if (!cell) {
-                cell = [[OMFeedImageCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedImageCell];
-            }
-            [cell setDelegate:self];
-            [cell setCurrentObj:obj];
-            
-            return cell;
-        }
-        else if (indexPath.row > 1 && indexPath.row < [self cellCount:obj] - 1)
-        {
-            
-            NSInteger row = indexPath.row - 1;
-            
-            OMFeedCommentCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedCommentCell];
-            
-            if (!cell) {
-                cell = [[OMFeedCommentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedCommentCell];
-            }
-            
-            [cell setDelegate:self];
-            [cell setUser:[obj[@"commenters"] objectAtIndex:row - 1] comment:[obj[@"commentsArray"] objectAtIndex:row - 1] curObj:[arrForFeed objectAtIndex:row - 1] number:row - 1];
-            
-            return cell;
-
-        }
-        else if (indexPath.row == [self cellCount:obj] - 1)
-        {
-            OMFeedControlCell *cell = [tableView dequeueReusableCellWithIdentifier:kFeedControlCell];
-            
-            if (!cell) {
-                cell = [[OMFeedControlCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kFeedControlCell];
-            }
-            
-            [cell setDelegate:self];            
-            [cell setCurrentObj:obj];
-            
-            return cell;
-
-        }
-        
-        return nil;
-
-    }
-    return nil;
-}
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    
-//    if (is_grid) {
-//        return kImageHeight;
-//    }
-//    else
-//    {
-        PFObject *obj = [arrForFeed objectAtIndex:indexPath.section];
-        
-        if (indexPath.row == 0) {
-            
-            return [OMGlobal heightForCellWithPost:obj[@"description"]] + 45.0f;
-        }
-        else if (indexPath.row == 1)
-        {
-            return tableView.frame.size.width;
-        }
-        else if (indexPath.row > 1 && indexPath.row < [self cellCount:obj] - 1)
-        {
-            return [OMGlobal heightForCellWithPost:[obj[@"commentsArray"] objectAtIndex:indexPath.row - 2]] + 20.0f;
-        }
-        else if (indexPath.row == [self cellCount:obj] - 1)
-        {
-            return 40;
-        }
-       
-//    }
-    return 50;
-}
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (is_grid) {
-        
-        if ([arrForFeed count] % 3 == 0) {
-            return [arrForFeed count] / 3;
-        }
-        else if ([arrForFeed count] % 3 > 0)
-        {
-            return ([arrForFeed count] / 3 + 1);
-            
-        }
-        
-    }
-    else
-    {
-        PFObject *object = [arrForFeed objectAtIndex:section];        
-        return [self cellCount:object];
-    }
-    
-    return 0;
-
+    return arrForFeed.count;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    if (is_grid) {
-        return 0;
-    }
-    
-    return [arrForFeed count];
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    OMEventFeedCell *cell = [tableView dequeueReusableCellWithIdentifier:@"HomeCell"];
+    PFObject *obj = [arrForFeed objectAtIndex:indexPath.row];
+    cell.currentObj = obj;
+    return cell;
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(OMFeedImageCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    PFObject *obj = [arrForFeed objectAtIndex:indexPath.section];
-    
-    if (indexPath.row == 1)
-    {
-        
-        if ([obj[@"postType"] isEqualToString:@"video"]) {
-            PFFile *videoFile = (PFFile *)obj[@"video"];
-
-            [cell playVideo:videoFile.url];
-            
-        }
-        else if ([obj[@"postType"] isEqualToString:@"audio"])
-        {
-            
-        }
-    }
-
-
-}
-
-- (void)tableView:(UITableView *)tableView didEndDisplayingCell:(OMFeedImageCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    PFObject *obj = [arrForFeed objectAtIndex:indexPath.section];
-    
-    if (indexPath.row == 1)
-    {
-        
-        if ([obj[@"postType"] isEqualToString:@"video"]) {
-            
-            [cell stopVideo];
-            
-        }
-        else if ([obj[@"postType"] isEqualToString:@"audio"])
-        {
-            
-        }
-    }
-
-
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    PFObject *obj = [arrForFeed objectAtIndex:indexPath.row];
+    return [OMGlobal heightForCellWithPost:obj[@"eventname"]] + 66.0f;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    OMDetailEventViewController *detailEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailEventVC"];
+    OMSocialEvent *event = [arrForFeed objectAtIndex:indexPath.item];
+    
+    if (event != nil) {
+        
+        NSString *lastLoadTime_Key = [NSString stringWithFormat:@"%@-lastLoadTime", event.objectId];
+        NSDate* lastLoadTime = [NSDate date];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:lastLoadTime forKey:lastLoadTime_Key];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        
+        event.loadTimeAt = lastLoadTime;
+        if(event.badgeNewEvent >= 1) event.badgeNewEvent = 0;
+        if(event.badgeNotifier >= 1) event.badgeNotifier = 0;
+        
+        // Event Badge processing...
+        if([event[@"eventBadgeFlag"] containsObject:currentUser.objectId])
+        {
+            [event removeObject:currentUser.objectId forKey:@"eventBadgeFlag"];
+            [event saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                if(error == nil) NSLog(@"DetailEventVC: Event Badge remove when open Detail view...");
+            }];
+        }
+        
+        [arrForFeed replaceObjectAtIndex:indexPath.item withObject:event];
+        [collectionViewForFeed reloadData];
+        
+        [[GlobalVar getInstance].gArrEventList removeAllObjects];
+        [GlobalVar getInstance].gArrEventList = [arrForFeed mutableCopy];
+        
+        [GlobalVar getInstance].gEventIndex = indexPath.item;
+        
+        [detailEventVC setCurrentObject:event];
+        [self.navigationController pushViewController:detailEventVC animated:YES];
+    }
 }
 
 - (IBAction)newEventPost:(id)sender {
@@ -957,8 +738,7 @@
         default:
             break;
     }
-    [tblForEventFeed reloadData];
-    
+    [tableViewForFeeds reloadData];
 }
 
 
