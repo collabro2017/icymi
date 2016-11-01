@@ -305,8 +305,19 @@
     
     [PDFRenderer drawText:str_date inFrame:CGRectMake(200 * rScale, (nCurrOffset + 20) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor grayColor]];
     
+    
     if (currentObj[@"country"])
-        [PDFRenderer drawText:currentObj[@"country"] inFrame:CGRectMake(51 * rScale, (nCurrOffset + 40) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor grayColor]];
+    {
+        NSString *strCountryInfo = currentObj[@"country"];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"]) {
+            if (currentObj[@"countryLatLong"]) {
+                strCountryInfo = currentObj[@"countryLatLong"];
+            }
+        }
+        
+        [PDFRenderer drawText:strCountryInfo inFrame:CGRectMake(51 * rScale, (nCurrOffset + 40) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor grayColor]];
+    }
+
     
     nCurrOffset += 70;
     
