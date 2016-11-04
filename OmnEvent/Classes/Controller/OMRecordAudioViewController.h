@@ -27,6 +27,7 @@
 @property (nonatomic, strong) NSData    *audioData;
 
 @property (nonatomic, strong) PFObject *curObj;
+@property (nonatomic, assign) int postOrder;
 @property (nonatomic) kTypeUpload      uploadOption;
 @property (nonatomic) kTypeCapture      captureOption;
 @property (nonatomic) kTypeRecord       audioOption;

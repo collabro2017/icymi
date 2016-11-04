@@ -66,6 +66,7 @@
 @property (nonatomic) kTypeUpload      uploadOption;
 @property (nonatomic) kTypeCapture      captureOption;
 @property (nonatomic) PFObject          *curObj;
+@property (nonatomic, assign) int       postOrder;
 
 - (IBAction)topButtonsAction:(id)sender;
 - (IBAction)bottomButtonsAction:(id)sender;

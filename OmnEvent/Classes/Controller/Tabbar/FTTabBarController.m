@@ -81,9 +81,8 @@
 - (IBAction)showMessageAction:(id)sender {
 }
 
-- (void)newPostAction:(int)_uploadOption mediaKind:(int)_captureOption currentObject:(PFObject *)_curObj
+- (void)newPostAction:(int)_uploadOption mediaKind:(int)_captureOption currentObject:(PFObject *)_curObj postOrder:(int)_postOrder
 {
-    
     if ((kTypeCapture)_captureOption == kTypeCaptureText) {
         
         OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
@@ -91,6 +90,7 @@
         [postEventVC setUploadOption:_uploadOption];
         [postEventVC setCaptureOption:_captureOption];
         [postEventVC setCurObj:_curObj];
+        [postEventVC setPostOrder:_postOrder];
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:postEventVC];
         
         [nav setNavigationBarHidden:NO animated:YES];
@@ -107,6 +107,7 @@
             [cameraVC setUploadOption:(kTypeUpload)_uploadOption];
             [cameraVC setCaptureOption:(kTypeCapture)_captureOption];
             [cameraVC setCurObj:_curObj];
+            [cameraVC setPostOrder:_postOrder];
             
             UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraVC];
             
@@ -137,28 +138,20 @@
     
 }
 
-- (void)postAudio:(int)_uploadOption
-        mediaKind:(int)_captureOption
-    currentObject:(PFObject *)_curObj
-        audioData:(NSData *)_audioData
+- (void)postAudio:(int)_uploadOption mediaKind:(int)_captureOption currentObject:(PFObject *)_curObj
+        audioData:(NSData *)_audioData postOrder:(int)_postOrder
 {
-    
-    
+        
     OMRecordAudioViewController *recordAudioVC = [self.storyboard instantiateViewControllerWithIdentifier:@"RecordAudioVC"];
     [recordAudioVC setUploadOption:_uploadOption];
     [recordAudioVC setCaptureOption:_captureOption];
     [recordAudioVC setCurObj:_curObj];
     [recordAudioVC setAudioData:_audioData];
-
+    [recordAudioVC setPostOrder:_postOrder];
     
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:recordAudioVC];
-    
     [nav setNavigationBarHidden:NO animated:YES];
-    
     [self presentViewController:nav animated:YES completion:nil];
-
-    
-    
     
     /////
 

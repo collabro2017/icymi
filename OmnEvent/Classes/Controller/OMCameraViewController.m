@@ -647,6 +647,7 @@
     [postEventVC setUploadOption:uploadOption];
     [postEventVC setCaptureOption:captureOption];
     [postEventVC setCurObj:curObj];
+    [postEventVC setPostOrder:_postOrder];
     
     [self.navigationController pushViewController:postEventVC animated:YES];
 
@@ -663,6 +664,7 @@
     [postEventVC setUploadOption:uploadOption];
     [postEventVC setCaptureOption:captureOption];
     [postEventVC setCurObj:curObj];
+    [postEventVC setPostOrder:_postOrder];
     
     [self.navigationController pushViewController:postEventVC animated:YES];
 }

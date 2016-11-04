@@ -81,7 +81,7 @@
     NSMutableArray *arrPrevTagFriends;
     
     BOOL modeForExport;
-    
+    int selectedPostOrder;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
@@ -122,6 +122,7 @@
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"commentsArray"];
     [mainQuery orderByDescending:@"createdAt"];
+    [mainQuery orderByDescending:@"postOrder"];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
@@ -419,6 +420,7 @@
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"commentsArray"];
     [mainQuery orderByDescending:@"createdAt"];
+    [mainQuery orderByDescending:@"postOrder"];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -435,12 +437,11 @@
             
             offline_data_num = appDel.m_offlinePosts.count;
             
-            for (NSUInteger i = 0; i < offline_data_num; i++ ){
-                
+            for (NSUInteger i = 0; i < offline_data_num; i++ ) {
                 PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex: offline_data_num - i - 1];
                 PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
                 
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
+                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
                     [arrForDetail addObject:temp_object];
                     [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:offline_data_num - i - 1]];
                 }
@@ -450,6 +451,15 @@
             
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
+            }
+            
+            //Save the postOrder for those posts who don't have postOrder with null value
+            for (int i=0; i<arrForDetail.count; i++) {
+                PFObject *item = arrForDetail[i];
+                if (!item[@"postOrder"]) {
+                    item[@"postOrder"] = [NSNumber numberWithInt:i+1];
+                    [item save];
+                }
             }
             
             // Current Test feature. lets check these again.
@@ -485,6 +495,7 @@
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"commentsArray"];
     [mainQuery orderByDescending:@"createdAt"];
+    [mainQuery orderByDescending:@"postOrder"];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error || !objects) {
@@ -515,12 +526,14 @@
 
 - (IBAction)addContentsAction:(id)sender
 {
+    selectedPostOrder = -1;
     UIButton *button = (UIButton *)sender;
     if ([currentObject[@"openStatus"] intValue]) {
         switch (button.tag) {
             case 10:
             {
-                [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCapturePhoto currentObject:currentObject];
+                [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCapturePhoto currentObject:currentObject
+                                   postOrder:selectedPostOrder];
             }
                 break;
             case 11:
@@ -539,12 +552,14 @@
                 break;
             case 12:
             {
-                [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureVideo currentObject:currentObject];
+                [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureVideo currentObject:currentObject
+                                   postOrder:selectedPostOrder];
             }
                 break;
             case 13:
             {
-                [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureText currentObject:currentObject];
+                [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureText currentObject:currentObject
+                                   postOrder:selectedPostOrder];
             }
                 break;
             default:
@@ -1023,7 +1038,7 @@
             [TABController postAudio:kTypeUploadPost
                            mediaKind:kTypeCaptureAudio
                        currentObject:currentObject
-                           audioData:m_audioData];
+                           audioData:m_audioData postOrder:selectedPostOrder];
             
         }
         else
@@ -1337,12 +1352,11 @@
 
 - (void)shareEvent:(PFObject *)_obj
 {
+    selectedPostOrder = -1;
+    
     UIActionSheet *shareAction1 = nil;
-    
     NSString *status = @"Close";
-    
     if (postImgView) {
-        
         postImgView = nil;
     }
     postImgView = [[UIImageView alloc] init];
@@ -1350,7 +1364,6 @@
     [postImgView setImageWithURL:[NSURL URLWithString:file.url]];
     currentObject = _obj;
     NSLog(@"%@",_obj[@"openStatus"]);
-    
     
     if ([_obj[@"openStatus"] intValue] == 1) {
         status = @"Close";
@@ -1387,6 +1400,9 @@
 - (void)sharePost:(UITableViewCell *)_cell {
     
     if(_cell == nil) return;
+    
+    NSIndexPath *indexPath = [tblForDetailList indexPathForCell:_cell];
+    selectedPostOrder = (int)indexPath.section - 1;
     
     currentMediaCell = _cell;
     OMMediaCell* _tmpCell = (OMMediaCell*)_cell;
@@ -1452,7 +1468,8 @@
         
     } else {
         shareAction1 = [[UIActionSheet alloc] initWithTitle:@"More option" delegate:self cancelButtonTitle:@"Cancel"
-                                     destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Report", nil];
+                                     destructiveButtonTitle:@"Save to Camera roll" otherButtonTitles:@"Add Media After",
+                        @"Report", nil];
         [shareAction1 setTag:kTag_Share1];
         [shareAction1 showInView:self.view];
     }
@@ -1493,7 +1510,7 @@
             }
         }
         
-        if ([AuthorityValue isEqualToString:@"Full"]){
+        if ([AuthorityValue isEqualToString:@"Full"]) {
             authFlag = YES;
         }
         else
@@ -1658,7 +1675,7 @@
                     [TABController postAudio:kTypeUploadPost
                                    mediaKind:kTypeCaptureAudio
                                currentObject:currentObject
-                                   audioData:m_audioData];
+                                   audioData:m_audioData postOrder:selectedPostOrder];
                     
                 }
                     break;
@@ -1878,6 +1895,11 @@
                     break;
                 case 1:
                 {
+                    [self performSelector:@selector(showAddMediaAfter) withObject:nil afterDelay:0.1f];
+                }
+                    break;
+                case 2:
+                {
                     [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
                     
                     [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
@@ -1948,7 +1970,8 @@
                 case 0: //Text
                 {
                     if ([currentObject[@"openStatus"] intValue]) {
-                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureText currentObject:currentObject];
+                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureText currentObject:currentObject
+                                           postOrder:selectedPostOrder];
                     } else {
                         [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
@@ -1957,7 +1980,8 @@
                 case 1: //Image
                 {
                     if ([currentObject[@"openStatus"] intValue]) {
-                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCapturePhoto currentObject:currentObject];
+                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCapturePhoto currentObject:currentObject
+                                           postOrder:selectedPostOrder];
                     } else {
                         [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
@@ -1967,7 +1991,7 @@
                 {
                     if ([currentObject[@"openStatus"] intValue]) {
                         [TABController postAudio:kTypeUploadPost mediaKind:kTypeCaptureAudio
-                                   currentObject:currentObject audioData:m_audioData];
+                                   currentObject:currentObject audioData:m_audioData postOrder:selectedPostOrder];
                     } else {
                         [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
@@ -1976,7 +2000,8 @@
                 case 3: //Video
                 {
                     if ([currentObject[@"openStatus"] intValue]) {
-                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureVideo currentObject:currentObject];
+                        [TABController newPostAction:kTypeUploadPost mediaKind:kTypeCaptureVideo currentObject:currentObject
+                                           postOrder:selectedPostOrder];
                     } else {
                         [OMGlobal showAlertTips:@"Oops!" title:@"This event was closed."];
                     }
