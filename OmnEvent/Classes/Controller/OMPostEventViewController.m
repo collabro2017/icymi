@@ -152,7 +152,7 @@
     
     textFieldDescriptionPicker.isOptionalDropDown = NO;
     [textFieldDescriptionPicker setItemList:[NSArray arrayWithObjects:@"", @"For Reference", @"Comment", nil]];
-    strTemp = @"";
+    strTemp = @" ";
 
 }
 
@@ -1122,7 +1122,7 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
-    strTemp = @"";
+    strTemp = @" ";
     [self clearSelectListText];
 }
 
@@ -1240,7 +1240,7 @@
 -(void)doneClicked:(UIBarButtonItem*)button
 {
     lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
-    strTemp = @"";
+    strTemp = @" ";
     [self clearSelectListText];
     [self.view endEditing:YES];
 }
