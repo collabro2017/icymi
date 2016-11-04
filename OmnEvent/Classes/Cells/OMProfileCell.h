@@ -157,7 +157,7 @@
 @property (nonatomic, strong) id delegate;
 
 @property (nonatomic, strong) PFUser *user;
-@property (nonatomic, strong) PFObject *object;
+@property (nonatomic, strong) PFObject *object;      
 + (ProfileEvent *)sharedCell;
 
 

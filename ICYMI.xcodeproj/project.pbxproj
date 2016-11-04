@@ -521,6 +521,7 @@
 		A9C016311AD8770C00E7F2B1 /* OMAdditionalTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C016301AD8770C00E7F2B1 /* OMAdditionalTagViewController.m */; };
 		A9E986E61B2240E900B1BB92 /* PrivacyPolicy.docx in Resources */ = {isa = PBXBuildFile; fileRef = A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */; };
 		A9E986E91B2241D900B1BB92 /* OMPrivacyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */; };
+		B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */; };
 		B4FBBA271CCE723200BFDAD8 /* OMFeedOtherCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B4FBBA261CCE723100BFDAD8 /* OMFeedOtherCommentCell.m */; };
 		E42F747E1C8ACEC20008CC38 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E42F747D1C8ACEC20008CC38 /* Reachability.m */; };
 		E43C88021C8E735200FE77FF /* Crittercism.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E43C88011C8E735200FE77FF /* Crittercism.framework */; };
@@ -1177,6 +1178,8 @@
 		A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = PrivacyPolicy.docx; sourceTree = "<group>"; };
 		A9E986E71B2241D900B1BB92 /* OMPrivacyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPrivacyVC.h; path = Controller/OMPrivacyVC.h; sourceTree = "<group>"; };
 		A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMPrivacyVC.m; path = Controller/OMPrivacyVC.m; sourceTree = "<group>"; };
+		B46228B51DCCF93600D284D8 /* IQDropDownTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQDropDownTextField.h; sourceTree = "<group>"; };
+		B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQDropDownTextField.m; sourceTree = "<group>"; };
 		B4FBBA251CCE723100BFDAD8 /* OMFeedOtherCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMFeedOtherCommentCell.h; sourceTree = "<group>"; };
 		B4FBBA261CCE723100BFDAD8 /* OMFeedOtherCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMFeedOtherCommentCell.m; sourceTree = "<group>"; };
 		E42F747C1C8ACEC20008CC38 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -1587,6 +1590,8 @@
 		3C5E7EC1197651E3000550F6 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				B46228B51DCCF93600D284D8 /* IQDropDownTextField.h */,
+				B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */,
 				A81D7A7D1D6ECC0500D48B53 /* MBProgressHUD+Add.h */,
 				A81D7A7E1D6ECC0500D48B53 /* MBProgressHUD+Add.m */,
 				A81D7A8A1D6EFB4B00D48B53 /* TwitterCover */,
@@ -2741,6 +2746,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */,
 				3EB66CDB1AB6199C00E90054 /* DeleteButton.m in Sources */,
 				3C3D7141199A6ED700DBD54E /* OMEventCommentViewController.m in Sources */,
 				3C4059BB198B8EA50024C1AD /* OMPreviewPhotoViewController.m in Sources */,

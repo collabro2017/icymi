@@ -25,7 +25,7 @@
 
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 
-@interface OMPostEventViewController ()<CLLocationManagerDelegate,OMTagListViewControllerDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface OMPostEventViewController ()<CLLocationManagerDelegate,OMTagListViewControllerDelegate, UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, IQDropDownTextFieldDelegate>
 {
     CLPlacemark *_placeMark;
     NSString *country;
@@ -41,6 +41,8 @@
     NSMutableArray *arrPostLookedFlags;
     
     NSMutableArray *arrSelected;
+    ///
+    NSString *strTemp;
 }
 
 @property (nonatomic, strong) CLLocationManager *locationManager;
@@ -123,7 +125,35 @@
     [imageViewForPostImage addGestureRecognizer:tapGestureForBg];
     
     lblForCount.text = [NSString stringWithFormat:@"%d", MAX_DESCRIPTION_LIMIT];
-    countryLatLong = @"Unknown";
+
+    
+    /////
+    UIToolbar *toolbar = [[UIToolbar alloc] init];
+    [toolbar setBarStyle:UIBarStyleBlackTranslucent];
+    [toolbar sizeToFit];
+    UIBarButtonItem *btnFlexible = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    UIBarButtonItem *btnDone = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneClicked:)];
+    
+    [toolbar setItems:[NSArray arrayWithObjects:btnFlexible, btnDone, nil]];
+    textFieldLocationPicker.inputAccessoryView = toolbar;
+    textFieldRoomItemPicker.inputAccessoryView = toolbar;
+    textFieldDescriptionPicker.inputAccessoryView = toolbar;
+    
+    textFieldLocationPicker.delegate = self;
+    textFieldRoomItemPicker.delegate = self;
+    textFieldDescriptionPicker.delegate = self;
+    
+    textFieldLocationPicker.isOptionalDropDown = NO;
+    [textFieldLocationPicker setItemList:[NSArray arrayWithObjects:@"", @"Attic (Attic1, Attic2)", @"Basement", @"Cellar", @"Crawl space", @"Elevation (A)", @"Elevation (B)", @"Elevation (C)", @"Elevation (D)", @"1st Floor", @"2nd Floor", @"3rd Floor", @"4th Floor", @"Yard", nil]];
+    
+    textFieldRoomItemPicker.isOptionalDropDown = NO;
+    [textFieldRoomItemPicker setItemList:[NSArray arrayWithObjects:@"", @"Living Room", @"Family Room", @"Den",
+@"Foyer / Entry", @"Mud Room", @"Kitchen 1",@"Kitchen 2", @"Bathroom 1", @"Bathroom 2", @"Bathroom 3", @"Half Bathroom", @"Bedroom 1", @"Bedroom 2", @"Bedroom 3", @"Bedroom 4", @"Bedroom 5", @"Bedroom 6", @"Bedroom 7", @"Office", @"Library", @"Storage 1", @"Storage 2", @"Storage 3", @"Storage 4", @"Storage 5", @"Mechanical Room 1", @"Mechanical Room 2", @"Mechanical Room 3", @"Dining Room", @"Kitchenette", @"Hallway 1", @"Hallway 2", @"Hallway 3", @"Hallway 4", @"Garage 1", @"Garage 2", @"Garage 3", @"Garage Door 1", @"Garage Door 2", @"Garage Door 3", @"Garage Door 4", @"Deck/porch/balcony/lanai 1", @"Deck/porch/balcony/lanai 2", @"Interior Stairs 1", @"Interior Stairs 2", @"Interior Stairs 3", @"Exterior Stairs 1", @"Exterior Stairs 2", @"Exterior Stairs 3", @"Roof 1", @"Roof 2", @"Roof 3", @"Roof 4", @"Roof 5", @"Driveway", @"Electrical Panel 1", @"Electrical Panel 2", @"Electrical Panel 3", @"Electrical Meter 1", @"Electrical Meter 2", @"Electrical Meter 3", @"Water Meter 1", @"Water Meter 2", @"Water Meter 3", @"Gas Meter 1", @"Gas Meter 2", @"Gas Meter 3", @"Water Heater 1", @"Water Heater 2", @"Water Heater 3", @"Boiler 1", @"Boiler 2", @"Furnace 1", @"Furnace 2", @"Furnace 3", @"A/C condenser 1", @"A/C condenser 2", @"A/C condenser 3", @"Windows", @"Gutters / Downspouts", @"Exterior Surfaces", nil]];
+    
+    textFieldDescriptionPicker.isOptionalDropDown = NO;
+    [textFieldDescriptionPicker setItemList:[NSArray arrayWithObjects:@"", @"For Reference", @"Comment", nil]];
+    strTemp = @"";
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1091,12 +1121,13 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    
+    lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+    strTemp = @"";
+    [self clearSelectListText];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    
     [textViewForDescription becomeFirstResponder];
     
     return NO;
@@ -1187,4 +1218,36 @@
     }];
 }
 
+//-------
+-(void)textField:(nonnull IQDropDownTextField*)textField didSelectItem:(nullable NSString*)item
+{
+    //NSLog(@"%@: %@",NSStringFromSelector(_cmd),item);
+    strTemp = item;
+}
+
+-(BOOL)textField:(nonnull IQDropDownTextField*)textField canSelectItem:(nullable NSString*)item
+{
+    NSLog(@"%@: %@",NSStringFromSelector(_cmd),item);
+    return YES;
+}
+
+-(IQProposedSelection)textField:(nonnull IQDropDownTextField*)textField proposedSelectionModeForItem:(nullable NSString*)item
+{
+    NSLog(@"%@: %@",NSStringFromSelector(_cmd),item);
+    return IQProposedSelectionBoth;
+}
+
+-(void)doneClicked:(UIBarButtonItem*)button
+{
+    lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+    strTemp = @"";
+    [self clearSelectListText];
+    [self.view endEditing:YES];
+}
+-(void)clearSelectListText{
+    textFieldLocationPicker.text = @"";
+    textFieldDescriptionPicker.text = @"";
+    textFieldRoomItemPicker.text = @"";
+}
+//-------
 @end
