@@ -129,8 +129,6 @@
             
             isFriend = YES;
         }
-        
-        
     }
 }
 
