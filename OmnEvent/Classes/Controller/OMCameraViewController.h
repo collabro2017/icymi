@@ -10,10 +10,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import "SBCaptureDefine.h"
 #import "SBVideoRecorder.h"
-
+/////
+#import "PECropViewController.h"
+#import "OMDrawTextViewController.h"
+/////
 @class DeleteButton;
 
-@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate> {
+@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate, PECropViewControllerDelegate, DrawTextViewControllerDelegate> {
     
     //Tool Bar
     
@@ -58,6 +61,12 @@
     UIImagePickerController *imagePicker;
     
     MBProgressHUD *hud;
+    
+    //-------//
+    
+    IBOutlet UIButton *btnCropEdit;
+    IBOutlet UIButton *btnDrawText;
+    //////////
 }
 
 @property (nonatomic, assign) BOOL addVideoMode;
@@ -70,5 +79,12 @@
 
 - (IBAction)topButtonsAction:(id)sender;
 - (IBAction)bottomButtonsAction:(id)sender;
+
+//-------------------------//
+@property (nonatomic) BOOL cropFlag;
+- (IBAction)actionCropPhoto:(id)sender;
+- (IBAction)actionDrawText:(id)sender;
+
+
 
 @end
