@@ -38,7 +38,6 @@
     
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
-    NSLog(@"Here Video!!!");
     
     [self initViewItems];
     

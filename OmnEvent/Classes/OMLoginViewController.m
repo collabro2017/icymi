@@ -203,7 +203,7 @@
         if (!objects || [objects count] == 0) {
             
             [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-            [[[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Wrong email. No user name please." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
+            [[[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Wrong email. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
             return;
         }
         

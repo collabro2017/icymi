@@ -12,7 +12,9 @@
 #import <jot/jot.h>
 #import "UIImage+Resize.h"
 
-@interface OMDrawTextViewController ()<JotViewControllerDelegate>
+@interface OMDrawTextViewController ()<JotViewControllerDelegate>{
+    float rColor, gColor, bColor;
+}
 @property (nonatomic, strong) JotViewController *jotViewController;
 
 @property (weak, nonatomic) IBOutlet UIView *viewCanvas;
@@ -20,6 +22,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnDraw;
 @property (weak, nonatomic) IBOutlet UIButton *btnText;
 
+@property (weak, nonatomic) IBOutlet UISlider *sliderRed;
+@property (weak, nonatomic) IBOutlet UISlider *sliderGreen;
+@property (weak, nonatomic) IBOutlet UISlider *sliderBlue;
+@property (weak, nonatomic) IBOutlet UIView *viewColor;
 
 @end
 
@@ -39,9 +45,9 @@
     self.jotViewController.textEditingInsets = UIEdgeInsetsMake(12.f, 6.f, 0.f, 6.f);
     self.jotViewController.initialTextInsets = UIEdgeInsetsMake(6.f, 6.f, 6.f, 6.f);
     self.jotViewController.fitOriginalFontSizeToViewWidth = YES;
-    self.jotViewController.drawingStrokeWidth = 5.f;
-    self.jotViewController.textAlignment = NSTextAlignmentLeft;
-    self.jotViewController.drawingColor = [UIColor cyanColor];
+    self.jotViewController.drawingStrokeWidth = IS_IPAD?5.f: 3.f;
+    self.jotViewController.textAlignment = NSTextAlignmentCenter;
+    self.jotViewController.drawingColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
 
     
     //_viewCanvas.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -68,6 +74,8 @@
     }];
 
     _btnDraw.enabled = NO;
+    rColor = gColor = bColor = 0.5;
+    _viewColor.backgroundColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -92,10 +100,11 @@
 - (IBAction)actionDraw:(id)sender {
     
     self.jotViewController.state = JotViewStateDrawing;
-    self.jotViewController.drawingColor = [UIColor colorWithRed:((double)arc4random()/UINT32_MAX) green:((double)arc4random()/UINT32_MAX) blue:((double)arc4random()/UINT32_MAX) alpha:1.0];
-   
+    
     _btnText.enabled = YES;
     _btnDraw.enabled = NO;
+    
+    [self switchColorsPenText];
 }
 
 - (IBAction)actionText:(id)sender {
@@ -107,6 +116,8 @@
     
     _btnDraw.enabled = YES;
     _btnText.enabled = NO;
+
+    [self switchColorsPenText];
 }
 
 
@@ -132,4 +143,41 @@
     //Nothing
 }
 
+#pragma Color Change Actions
+- (IBAction)redChangeAction:(id)sender {
+    [self changeColorsPenAndText];
+}
+- (IBAction)greenChangeAction:(id)sender {
+    [self changeColorsPenAndText];
+}
+- (IBAction)blueChangeAction:(id)sender {
+    [self changeColorsPenAndText];
+}
+
+-(void)changeColorsPenAndText{
+    _viewColor.backgroundColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
+    
+    if ( !_btnText.enabled) {
+        self.jotViewController.textColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
+    }
+    if (!_btnDraw.enabled) {
+        self.jotViewController.drawingColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
+    }
+}
+
+-(void)switchColorsPenText{
+    float rTemp = _sliderRed.value;
+    float gTemp = _sliderGreen.value;
+    float bTemp = _sliderGreen.value;
+    
+    _sliderRed.value = rColor;
+    _sliderGreen.value = gColor;
+    _sliderBlue.value = bColor;
+    
+    rColor = rTemp;
+    gColor = gTemp;
+    bColor = bTemp;
+    
+    _viewColor.backgroundColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
+}
 @end
