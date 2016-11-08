@@ -17,7 +17,8 @@
 
 @property (weak, nonatomic) IBOutlet UIView *viewCanvas;
 @property (weak, nonatomic) IBOutlet UIButton *btnClear;
-@property (weak, nonatomic) IBOutlet UIButton *btnDrawText;
+@property (weak, nonatomic) IBOutlet UIButton *btnDraw;
+@property (weak, nonatomic) IBOutlet UIButton *btnText;
 
 
 @end
@@ -66,7 +67,7 @@
         make.edges.equalTo(self.view);
     }];
 
-    
+    _btnDraw.enabled = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -88,22 +89,26 @@
 - (IBAction)actionClear:(id)sender {
     [self.jotViewController clearAll];
 }
-- (IBAction)actionDrawText:(id)sender {
-    if (self.jotViewController.state == JotViewStateDrawing) {
-        [_btnDrawText setImage:[UIImage imageNamed:@"dt_text"] forState:UIControlStateNormal];
-        
-        if (self.jotViewController.textString.length == 0) {
-            self.jotViewController.state = JotViewStateEditingText;
-        } else {
-            self.jotViewController.state = JotViewStateText;
-        }
-        
-    } else if (self.jotViewController.state == JotViewStateText) {
-        self.jotViewController.state = JotViewStateDrawing;
-        self.jotViewController.drawingColor = [UIColor colorWithRed:((double)arc4random()/UINT32_MAX) green:((double)arc4random()/UINT32_MAX) blue:((double)arc4random()/UINT32_MAX) alpha:1.0];
-        [_btnDrawText setImage:[UIImage imageNamed:@"dt_pencil"] forState:UIControlStateNormal];
-    }
+- (IBAction)actionDraw:(id)sender {
+    
+    self.jotViewController.state = JotViewStateDrawing;
+    self.jotViewController.drawingColor = [UIColor colorWithRed:((double)arc4random()/UINT32_MAX) green:((double)arc4random()/UINT32_MAX) blue:((double)arc4random()/UINT32_MAX) alpha:1.0];
+   
+    _btnText.enabled = YES;
+    _btnDraw.enabled = NO;
 }
+
+- (IBAction)actionText:(id)sender {
+    if (self.jotViewController.textString.length == 0) {
+        self.jotViewController.state = JotViewStateEditingText;
+    } else {
+        self.jotViewController.state = JotViewStateText;
+    }
+    
+    _btnDraw.enabled = YES;
+    _btnText.enabled = NO;
+}
+
 
 - (IBAction)actionCancel:(id)sender {
     if ([self.delegate respondsToSelector:@selector(dtViewControllerDidCancel:)]) {

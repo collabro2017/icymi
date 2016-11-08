@@ -191,7 +191,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="h5l-Ah-obu">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="h5l-Ah-obu">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -890,7 +890,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ndr-Up-bRu">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Ndr-Up-bRu">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2373,7 +2373,7 @@
                 <navigationController id="3vM-mn-W0l" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="518"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Kpf-6g-V4e">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Kpf-6g-V4e">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2651,7 +2651,7 @@
                 <navigationController id="vEx-gy-TDP" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qHk-Os-jfg">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="qHk-Os-jfg">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -4057,7 +4057,7 @@
                 <navigationController id="SgL-ab-oQZ" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="iRT-5X-f0f">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="iRT-5X-f0f">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -4975,7 +4975,7 @@
         <scene sceneID="goF-QV-8D4">
             <objects>
                 <navigationController id="ypM-8d-ArT" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="j16-Fn-jFd">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="j16-Fn-jFd">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -6393,20 +6393,20 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iFE-md-OUc">
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="35" id="8QJ-nB-C9M"/>
-                                            <constraint firstAttribute="width" constant="35" id="hcH-kW-TGD"/>
+                                            <constraint firstAttribute="height" constant="25" id="dfh-um-UXO"/>
+                                            <constraint firstAttribute="width" constant="25" id="nrL-Gi-ycA"/>
                                         </constraints>
                                         <state key="normal" image="dt_pencil">
                                             <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
-                                            <action selector="actionDrawText:" destination="x9v-OT-YKE" eventType="touchUpInside" id="gws-68-cEv"/>
+                                            <action selector="actionDraw:" destination="x9v-OT-YKE" eventType="touchUpInside" id="Hap-cz-Dqe"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0U0-ra-A2A">
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="25" id="3yh-CA-5dz"/>
-                                            <constraint firstAttribute="width" constant="25" id="OmK-dS-6xn"/>
+                                            <constraint firstAttribute="height" constant="25" id="6Af-us-djI"/>
+                                            <constraint firstAttribute="width" constant="25" id="JdO-3G-X3W"/>
                                         </constraints>
                                         <state key="normal" image="dt_eraser">
                                             <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -6415,17 +6415,29 @@
                                             <action selector="actionClear:" destination="x9v-OT-YKE" eventType="touchUpInside" id="dpL-yI-boW"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PtM-k8-ws9">
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="Vwg-ha-8UU"/>
+                                            <constraint firstAttribute="width" constant="25" id="t01-hZ-TSN"/>
+                                        </constraints>
+                                        <state key="normal" image="dt_text">
+                                            <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="actionText:" destination="x9v-OT-YKE" eventType="touchUpInside" id="uPb-Z3-cOv"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="iFE-md-OUc" secondAttribute="trailing" constant="142" id="C1f-IF-myc"/>
-                                    <constraint firstItem="iFE-md-OUc" firstAttribute="top" secondItem="bkg-tR-gHC" secondAttribute="top" constant="76" id="DJm-KJ-qve"/>
-                                    <constraint firstItem="0U0-ra-A2A" firstAttribute="top" secondItem="bkg-tR-gHC" secondAttribute="top" constant="10" id="GWd-Jb-6Gr"/>
-                                    <constraint firstAttribute="bottom" secondItem="iFE-md-OUc" secondAttribute="bottom" constant="77" id="TRn-un-vWQ"/>
-                                    <constraint firstItem="0U0-ra-A2A" firstAttribute="leading" secondItem="bkg-tR-gHC" secondAttribute="leading" constant="10" id="aHV-V1-mzK"/>
-                                    <constraint firstItem="iFE-md-OUc" firstAttribute="leading" secondItem="bkg-tR-gHC" secondAttribute="leading" constant="143" id="e59-ZU-Rm1"/>
+                                    <constraint firstItem="PtM-k8-ws9" firstAttribute="top" secondItem="bkg-tR-gHC" secondAttribute="top" constant="15" id="9FZ-ki-IBe"/>
+                                    <constraint firstItem="iFE-md-OUc" firstAttribute="top" secondItem="bkg-tR-gHC" secondAttribute="top" constant="15" id="CC4-aK-1YJ"/>
+                                    <constraint firstItem="PtM-k8-ws9" firstAttribute="leading" secondItem="iFE-md-OUc" secondAttribute="trailing" constant="15" id="KMN-Wo-Bpc"/>
+                                    <constraint firstItem="iFE-md-OUc" firstAttribute="leading" secondItem="0U0-ra-A2A" secondAttribute="trailing" constant="15" id="hj7-Xv-oZ3"/>
                                     <constraint firstAttribute="height" constant="188" id="krR-wt-UPq"/>
                                     <constraint firstAttribute="width" constant="320" id="nQK-q8-9Oq"/>
+                                    <constraint firstItem="0U0-ra-A2A" firstAttribute="top" secondItem="bkg-tR-gHC" secondAttribute="top" constant="15" id="qXW-I4-xBw"/>
+                                    <constraint firstItem="0U0-ra-A2A" firstAttribute="leading" secondItem="bkg-tR-gHC" secondAttribute="leading" constant="15" id="qiL-l0-tvr"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aKE-6O-PyK">
@@ -6459,7 +6471,8 @@
                     </view>
                     <connections>
                         <outlet property="btnClear" destination="0U0-ra-A2A" id="Mr6-81-qm1"/>
-                        <outlet property="btnDrawText" destination="iFE-md-OUc" id="NGh-te-MJ1"/>
+                        <outlet property="btnDraw" destination="iFE-md-OUc" id="xih-37-GJe"/>
+                        <outlet property="btnText" destination="PtM-k8-ws9" id="EEY-bn-Obu"/>
                         <outlet property="viewCanvas" destination="aKE-6O-PyK" id="Qh0-Yg-zaf"/>
                     </connections>
                 </viewController>
@@ -7922,6 +7935,7 @@
         <image name="dt_draw" width="51" height="51"/>
         <image name="dt_eraser" width="50" height="50"/>
         <image name="dt_pencil" width="50" height="50"/>
+        <image name="dt_text" width="50" height="50"/>
         <image name="folder_icon" width="90" height="90"/>
         <image name="grid.png" width="20" height="20"/>
         <image name="icon_arrow_profile" width="8" height="15"/>
