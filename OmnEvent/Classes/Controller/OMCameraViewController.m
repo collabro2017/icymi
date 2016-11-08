@@ -20,6 +20,10 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
+//----
+#import "OMPhotoEditViewController.h"
+//----
+
 #define TIMER_INTERVAL 0.05f
 
 #define TAG_ALERTVIEW_CLOSE_CONTROLLER 10086
@@ -107,11 +111,8 @@
     
     [super viewWillAppear:animated];
     
-    if (!_cropFlag) {
-        [self refreshScreen];
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
-    }
-    
+    [self refreshScreen];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -641,7 +642,7 @@
     
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     UIImage *image = [_image resizedImageToSize:CGSizeMake(POSTIMAGE_SIZE, POSTIMAGE_SIZE)];
-    
+/*
     OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
     
     [postEventVC setImageForPost:image];
@@ -653,7 +654,19 @@
     [postEventVC setPostOrder:_postOrder];
     
     [self.navigationController pushViewController:postEventVC animated:YES];
-
+*/
+    
+    OMPhotoEditViewController *photoEditVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PhotoEditVC"];
+    
+    [photoEditVC setPreImage:image];
+    [photoEditVC setPostType:@"image"];
+    
+    [photoEditVC setUploadOption:uploadOption];
+    [photoEditVC setCaptureOption:captureOption];
+    [photoEditVC setCurObj:curObj];
+    [photoEditVC setPostOrder:_postOrder];
+    
+    [self.navigationController pushViewController:photoEditVC animated:YES];
 }
 
 - (void)showPreviewForVideo:(NSURL *)_url
@@ -1045,79 +1058,5 @@
     imageViewForRedTimer.hidden = !imageViewForRedTimer.hidden ;
     [self performSelector:@selector(animateRecordView) withObject:nil afterDelay:0.5];
 }
-
-//*******************************************************************
-#pragma mark - PECropViewControllerDelegate methods
-- (void)cropViewController:(PECropViewController *)controller didFinishCroppingImage:(UIImage *)croppedImage transform:(CGAffineTransform)transform cropRect:(CGRect)cropRect
-{
-    [controller dismissViewControllerAnimated:YES completion:NULL];
-    imageViewForPreview.image = croppedImage;
-    
-}
-
-- (void)cropViewControllerDidCancel:(PECropViewController *)controller
-{
-    [controller dismissViewControllerAnimated:YES completion:NULL];
-}
-
-#pragma mark - Crop Action methods
-- (IBAction)actionCropPhoto:(id)sender {
-    _cropFlag = YES;
-    
-    PECropViewController *controller = [[PECropViewController alloc] init];
-    controller.delegate = self;
-    controller.image = imageViewForPreview.image;
-    
-    UIImage *image = imageViewForPreview.image;
-    CGFloat width = image.size.width;
-    CGFloat height = image.size.height;
-    CGFloat length = MIN(width, height);
-    controller.imageCropRect = CGRectMake((width - length) / 2,
-                                          (height - length) / 2,
-                                          length,
-                                          length);
-    
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
-    /*
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
-    }
-    */
-    [self presentViewController:navigationController animated:YES completion:NULL];
-}
-
-#pragma mark - DrawTextViewControllerDelegate methods
-- (void)dtViewController:(OMDrawTextViewController *)controller didFinishDTImage:(UIImage *)dtImage
-{
-    [controller dismissViewControllerAnimated:YES completion:NULL];
-    CGRect frame = imageViewForPreview.frame;
-    frame = CGRectMake(0, 0, IS_IPAD?768: 320,IS_IPAD?768: 320);
-    imageViewForPreview.frame = frame;
-    imageViewForPreview.image = dtImage;
-    
-}
-
-- (void)dtViewControllerDidCancel:(OMDrawTextViewController *)controller
-{
-    [controller dismissViewControllerAnimated:YES completion:NULL];
-}
-
-- (IBAction)actionDrawText:(id)sender {
-    _cropFlag = YES;
-    
-    UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-    OMDrawTextViewController *dtConroller = [mainStoryboard instantiateViewControllerWithIdentifier:@"dtViewController"];
-    dtConroller.delegate = self;
-    UIImage *image = imageViewForPreview.image;
-    dtConroller.image = image;
-    
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dtConroller];
-    [navigationController setNavigationBarHidden:YES];
-    [self presentViewController:navigationController animated:YES completion:NULL];
-
-}
-
-
-//*******************************************************************/
 
 @end

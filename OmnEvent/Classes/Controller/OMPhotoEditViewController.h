@@ -7,8 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+/////
+#import "PECropViewController.h"
+#import "OMDrawTextViewController.h"
+/////
 
-@interface OMPhotoEditViewController : UIViewController
+@interface OMPhotoEditViewController : UIViewController<PECropViewControllerDelegate, DrawTextViewControllerDelegate>
 {
     //Top Bar
     
@@ -32,19 +36,21 @@
     
     IBOutlet UIView *viewForBottom;
     
-    IBOutlet UIView *viewForControl;
-    
-    IBOutlet UIScrollView *scrollViewForFilters;
-    
     
 }
 
 - (IBAction)backAction:(id)sender;
-
 - (IBAction)nextAction:(id)sender;
+- (IBAction)cropAction:(id)sender;
+- (IBAction)penAndTextAction:(id)sender;
 
 
 @property (strong, nonatomic) UIImage *preImage;
 
-
+@property (nonatomic) kTypeUpload      uploadOption;
+@property (nonatomic) kTypeCapture      captureOption;
+@property (nonatomic) PFObject          *curObj;
+@property (nonatomic, assign) int       postOrder;
+@property (nonatomic, strong) NSString *postType;
+@property (nonatomic) BOOL editFlag;
 @end

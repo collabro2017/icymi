@@ -10,7 +10,7 @@
 @import AssetsLibrary;
 #import <Masonry/Masonry.h>
 #import <jot/jot.h>
-
+#import "UIImage+Resize.h"
 
 @interface OMDrawTextViewController ()<JotViewControllerDelegate>
 @property (nonatomic, strong) JotViewController *jotViewController;
@@ -38,11 +38,12 @@
     self.jotViewController.textEditingInsets = UIEdgeInsetsMake(12.f, 6.f, 0.f, 6.f);
     self.jotViewController.initialTextInsets = UIEdgeInsetsMake(6.f, 6.f, 6.f, 6.f);
     self.jotViewController.fitOriginalFontSizeToViewWidth = YES;
+    self.jotViewController.drawingStrokeWidth = 5.f;
     self.jotViewController.textAlignment = NSTextAlignmentLeft;
     self.jotViewController.drawingColor = [UIColor cyanColor];
 
     
-    _viewCanvas.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    //_viewCanvas.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     CGRect frame = _viewCanvas.frame;
     frame = CGRectMake(0, 0, IS_IPAD?768: 320,IS_IPAD?768: 320);
    
@@ -114,8 +115,9 @@
     if ([self.delegate respondsToSelector:@selector(dtViewController:didFinishDTImage:)]) {
         UIImage *drawnImage = [self.jotViewController renderImageWithScale:1.0f
                                                                    onColor:self.viewCanvas.backgroundColor];
+        UIImage *squareImage = [drawnImage resizedImageToSize:CGSizeMake(2000.f, 2000.f)];
         
-        [self.delegate dtViewController:self didFinishDTImage:drawnImage];
+        [self.delegate dtViewController:self didFinishDTImage:squareImage];
     }
 }
 #pragma mark - JotViewControllerDelegate
