@@ -206,19 +206,13 @@
     
     urlForVideo = [[NSBundle mainBundle] pathForResource:@"tutorial" ofType:@"mp4"];
     
-    
     //////
     _viewControllersByIdentifier = [NSMutableDictionary dictionary];
-    
-
-    [OMGlobal setCircleView:imageViewForAvatar borderColor:[UIColor whiteColor]];
-    
     
     availableIdentifiers = @[@"kIdentifierHome",
                              @"kIdentifierSearch",
                              @"kIdentifierFriend",
                              @"kIdentifierProfile"];
-    
     
     if([tabBarButtons count]) {
         
@@ -288,6 +282,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [OMGlobal setCircleView:imageViewForAvatar borderColor:[UIColor whiteColor]];
     
     if (USER) {
         if ([USER[@"loginType"] isEqualToString:@"email"] || [USER[@"loginType"] isEqualToString:@"gmail"]) {
