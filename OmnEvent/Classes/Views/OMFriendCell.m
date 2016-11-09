@@ -14,6 +14,11 @@
 
 - (void)awakeFromNib {
     // Initialization code
+    [super awakeFromNib];
+}
+
+- (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
     
     [OMGlobal setCircleView:imageViewForAvatar borderColor:nil];
     
@@ -23,7 +28,6 @@
     [imageViewForAvatar setUserInteractionEnabled:YES];
     
     [imageViewForAvatar addGestureRecognizer:ges];
-
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
