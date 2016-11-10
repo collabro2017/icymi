@@ -521,6 +521,9 @@
 		A9C016311AD8770C00E7F2B1 /* OMAdditionalTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C016301AD8770C00E7F2B1 /* OMAdditionalTagViewController.m */; };
 		A9E986E61B2240E900B1BB92 /* PrivacyPolicy.docx in Resources */ = {isa = PBXBuildFile; fileRef = A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */; };
 		A9E986E91B2241D900B1BB92 /* OMPrivacyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */; };
+		B45ED2371DD4458000664B78 /* PhotoTweaksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */; };
+		B45ED2381DD4458000664B78 /* PhotoTweakView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2341DD4458000664B78 /* PhotoTweakView.m */; };
+		B45ED2391DD4458000664B78 /* UIColor+Tweak.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2361DD4458000664B78 /* UIColor+Tweak.m */; };
 		B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */; };
 		B4813B271DCF26C6003B2E20 /* OMDrawTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */; };
 		B4C877E91DCEC9EC0056556A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4C877D91DCEC9EC0056556A /* Localizable.strings */; };
@@ -1186,6 +1189,12 @@
 		A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = PrivacyPolicy.docx; sourceTree = "<group>"; };
 		A9E986E71B2241D900B1BB92 /* OMPrivacyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPrivacyVC.h; path = Controller/OMPrivacyVC.h; sourceTree = "<group>"; };
 		A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMPrivacyVC.m; path = Controller/OMPrivacyVC.m; sourceTree = "<group>"; };
+		B45ED2311DD4458000664B78 /* PhotoTweaksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweaksViewController.h; sourceTree = "<group>"; };
+		B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoTweaksViewController.m; sourceTree = "<group>"; };
+		B45ED2331DD4458000664B78 /* PhotoTweakView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweakView.h; sourceTree = "<group>"; };
+		B45ED2341DD4458000664B78 /* PhotoTweakView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoTweakView.m; sourceTree = "<group>"; };
+		B45ED2351DD4458000664B78 /* UIColor+Tweak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Tweak.h"; sourceTree = "<group>"; };
+		B45ED2361DD4458000664B78 /* UIColor+Tweak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Tweak.m"; sourceTree = "<group>"; };
 		B46228B51DCCF93600D284D8 /* IQDropDownTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQDropDownTextField.h; sourceTree = "<group>"; };
 		B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQDropDownTextField.m; sourceTree = "<group>"; };
 		B4813B251DCF26C6003B2E20 /* OMDrawTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMDrawTextViewController.h; sourceTree = "<group>"; };
@@ -1613,6 +1622,7 @@
 		3C5E7EC1197651E3000550F6 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				B45ED2301DD4458000664B78 /* PhotoTweaks */,
 				B4C877D81DCEC9EC0056556A /* PhotoCropEdit */,
 				B46228B51DCCF93600D284D8 /* IQDropDownTextField.h */,
 				B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */,
@@ -2266,6 +2276,19 @@
 			path = PCSEQItem;
 			sourceTree = "<group>";
 		};
+		B45ED2301DD4458000664B78 /* PhotoTweaks */ = {
+			isa = PBXGroup;
+			children = (
+				B45ED2311DD4458000664B78 /* PhotoTweaksViewController.h */,
+				B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */,
+				B45ED2331DD4458000664B78 /* PhotoTweakView.h */,
+				B45ED2341DD4458000664B78 /* PhotoTweakView.m */,
+				B45ED2351DD4458000664B78 /* UIColor+Tweak.h */,
+				B45ED2361DD4458000664B78 /* UIColor+Tweak.m */,
+			);
+			path = PhotoTweaks;
+			sourceTree = "<group>";
+		};
 		B4813B241DCF2691003B2E20 /* DrawAndText */ = {
 			isa = PBXGroup;
 			children = (
@@ -2839,6 +2862,7 @@
 				3C0A5C551978FBB4009AEC85 /* OMSocialComment.m in Sources */,
 				3E5611CB1AC49EAE00505444 /* OMProfileBioCell.m in Sources */,
 				3EB298AB1ACDD83400528552 /* OMMediaCell.m in Sources */,
+				B45ED2391DD4458000664B78 /* UIColor+Tweak.m in Sources */,
 				3C4D1F3A1987A298001622B7 /* SlideNavigationContorllerAnimatorFade.m in Sources */,
 				A9AEACFF1ADC3C3C0069C08A /* OMProfileInfoCell.m in Sources */,
 				3C0283C1198973C100EA3864 /* OMPhotoCell.m in Sources */,
@@ -2867,6 +2891,7 @@
 				3E7E5F611AC1E78E00349242 /* OMSearchCell.m in Sources */,
 				B4C877EC1DCEC9EC0056556A /* PECropViewController.m in Sources */,
 				3CFF4403198BC4E800F3A10C /* OMProfileCell.m in Sources */,
+				B45ED2371DD4458000664B78 /* PhotoTweaksViewController.m in Sources */,
 				A9A9443E1AD2368800ECD958 /* F3BarGauge.m in Sources */,
 				3C4D1F471987A55D001622B7 /* OMLeftMenuTableViewCell.m in Sources */,
 				3EB570C41AC5CD3C0033C151 /* OMCustomProfileInfoView.m in Sources */,
@@ -2885,6 +2910,7 @@
 				3C2EE60619816D9300733EED /* OMOwnerProfileViewController.m in Sources */,
 				3C0A5C4F1978FB92009AEC85 /* OMSocialTimer.m in Sources */,
 				B4C877EA1DCEC9EC0056556A /* PECropRectView.m in Sources */,
+				B45ED2381DD4458000664B78 /* PhotoTweakView.m in Sources */,
 				3EB66CDC1AB6199C00E90054 /* ProgressBar.m in Sources */,
 				3EC269A71AC793F1000CB513 /* OMPhotoEditViewController.m in Sources */,
 				3C12844E1978D6DD00EB7744 /* OMGlobal.m in Sources */,
