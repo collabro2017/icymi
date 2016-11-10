@@ -60,6 +60,7 @@
 }
 //*******************************************************************
 #pragma mark - PECropViewControllerDelegate methods
+/*
 - (void)cropViewController:(PECropViewController *)controller didFinishCroppingImage:(UIImage *)croppedImage transform:(CGAffineTransform)transform cropRect:(CGRect)cropRect
 {
     [controller dismissViewControllerAnimated:YES completion:NULL];
@@ -71,11 +72,12 @@
 {
     [controller dismissViewControllerAnimated:YES completion:NULL];
 }
+*/
 
 #pragma mark - Crop Action methods
 - (IBAction)cropAction:(id)sender {
     _editFlag = YES;
-    
+ /*
     PECropViewController *controller = [[PECropViewController alloc] init];
     controller.delegate = self;
     controller.image = imageViewForPreview.image;
@@ -91,6 +93,27 @@
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
     [self presentViewController:navigationController animated:YES completion:NULL];
+  */
+    
+    UIImage *image = imageViewForPreview.image;
+    PhotoTweaksViewController *photoTweaksViewController = [[PhotoTweaksViewController alloc] initWithImage:image];
+    photoTweaksViewController.delegate = self;
+    photoTweaksViewController.autoSaveToLibray = NO;
+    photoTweaksViewController.maxRotationAngle = M_PI_4;
+    
+    [self.navigationController pushViewController:photoTweaksViewController animated:YES];
+}
+
+#pragma mark - PhotoTweaksViewControllerDelegate methods
+- (void)photoTweaksController:(PhotoTweaksViewController *)controller didFinishWithCroppedImage:(UIImage *)croppedImage
+{
+    [controller.navigationController popViewControllerAnimated:YES];
+    imageViewForPreview.image = croppedImage;
+}
+
+- (void)photoTweaksControllerDidCancel:(PhotoTweaksViewController *)controller
+{
+    [controller.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - DrawTextViewControllerDelegate methods
