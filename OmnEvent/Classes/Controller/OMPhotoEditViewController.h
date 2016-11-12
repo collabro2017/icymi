@@ -11,9 +11,10 @@
 //#import "PECropViewController.h"
 #import "OMDrawTextViewController.h"
 #import "PhotoTweaksViewController.h"
+#import "OMAddTextViewController.h"
 /////
 
-@interface OMPhotoEditViewController : UIViewController<PhotoTweaksViewControllerDelegate, DrawTextViewControllerDelegate>
+@interface OMPhotoEditViewController : UIViewController<PhotoTweaksViewControllerDelegate, DrawTextViewControllerDelegate, AddTextViewControllerDelegate>
 {
     //Top Bar
     

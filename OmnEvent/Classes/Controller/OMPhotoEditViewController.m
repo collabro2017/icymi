@@ -8,6 +8,7 @@
 
 #import "OMPhotoEditViewController.h"
 #import "OMPostEventViewController.H"
+
 @interface OMPhotoEditViewController ()
 
 @end
@@ -59,41 +60,10 @@
     
 }
 //*******************************************************************
-#pragma mark - PECropViewControllerDelegate methods
-/*
-- (void)cropViewController:(PECropViewController *)controller didFinishCroppingImage:(UIImage *)croppedImage transform:(CGAffineTransform)transform cropRect:(CGRect)cropRect
-{
-    [controller dismissViewControllerAnimated:YES completion:NULL];
-    imageViewForPreview.image = croppedImage;
-    
-}
-
-- (void)cropViewControllerDidCancel:(PECropViewController *)controller
-{
-    [controller dismissViewControllerAnimated:YES completion:NULL];
-}
-*/
 
 #pragma mark - Crop Action methods
 - (IBAction)cropAction:(id)sender {
     _editFlag = YES;
- /*
-    PECropViewController *controller = [[PECropViewController alloc] init];
-    controller.delegate = self;
-    controller.image = imageViewForPreview.image;
-    
-    UIImage *image = imageViewForPreview.image;
-    CGFloat width = image.size.width;
-    CGFloat height = image.size.height;
-    CGFloat length = MIN(width, height);
-    controller.imageCropRect = CGRectMake((width - length) / 2,
-                                          (height - length) / 2,
-                                          length,
-                                          length);
-    
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
-    [self presentViewController:navigationController animated:YES completion:NULL];
-  */
     
     UIImage *image = imageViewForPreview.image;
     PhotoTweaksViewController *photoTweaksViewController = [[PhotoTweaksViewController alloc] initWithImage:image];
@@ -146,5 +116,33 @@
     [self presentViewController:navigationController animated:YES completion:NULL];
 }
 
+- (IBAction)addTextAction:(id)sender {
+    _editFlag = YES;
+    
+    OMAddTextViewController *dtConroller = [self.storyboard instantiateViewControllerWithIdentifier:@"AddTextVC"];
+    dtConroller.delegate = self;
+    UIImage *image = imageViewForPreview.image;
+    dtConroller.image = image;
+    
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:dtConroller];
+    [navigationController setNavigationBarHidden:YES];
+    [self presentViewController:navigationController animated:YES completion:NULL];
+}
+
+#pragma mark - AddTextViewControllerDelegate methods
+- (void)atViewController:(OMAddTextViewController *)controller didFinishDTImage:(UIImage *)dtImage
+{
+    [controller dismissViewControllerAnimated:YES completion:NULL];
+    CGRect frame = imageViewForPreview.frame;
+    frame = CGRectMake(0, 0, IS_IPAD?768: 320,IS_IPAD?768: 320);
+    imageViewForPreview.frame = frame;
+    imageViewForPreview.image = dtImage;
+    
+}
+
+- (void)atViewControllerDidCancel:(OMAddTextViewController *)controller
+{
+    [controller dismissViewControllerAnimated:YES completion:NULL];
+}
 //*******************************************************************/
 @end

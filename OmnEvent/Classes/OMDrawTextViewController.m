@@ -12,15 +12,11 @@
 #import <jot/jot.h>
 #import "UIImage+Resize.h"
 
-@interface OMDrawTextViewController ()<JotViewControllerDelegate>{
-    float rColor, gColor, bColor;
-}
+@interface OMDrawTextViewController ()<JotViewControllerDelegate>
 @property (nonatomic, strong) JotViewController *jotViewController;
 
 @property (weak, nonatomic) IBOutlet UIView *viewCanvas;
 @property (weak, nonatomic) IBOutlet UIButton *btnClear;
-@property (weak, nonatomic) IBOutlet UIButton *btnDraw;
-@property (weak, nonatomic) IBOutlet UIButton *btnText;
 
 @property (weak, nonatomic) IBOutlet UISlider *sliderRed;
 @property (weak, nonatomic) IBOutlet UISlider *sliderGreen;
@@ -73,8 +69,7 @@
         make.edges.equalTo(self.view);
     }];
 
-    _btnDraw.enabled = NO;
-    rColor = gColor = bColor = 0.5;
+
     _viewColor.backgroundColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
 }
 
@@ -96,28 +91,6 @@
 
 - (IBAction)actionClear:(id)sender {
     [self.jotViewController clearAll];
-}
-- (IBAction)actionDraw:(id)sender {
-    
-    self.jotViewController.state = JotViewStateDrawing;
-    
-    _btnText.enabled = YES;
-    _btnDraw.enabled = NO;
-    
-    [self switchColorsPenText];
-}
-
-- (IBAction)actionText:(id)sender {
-    if (self.jotViewController.textString.length == 0) {
-        self.jotViewController.state = JotViewStateEditingText;
-    } else {
-        self.jotViewController.state = JotViewStateText;
-    }
-    
-    _btnDraw.enabled = YES;
-    _btnText.enabled = NO;
-
-    [self switchColorsPenText];
 }
 
 
@@ -145,39 +118,19 @@
 
 #pragma Color Change Actions
 - (IBAction)redChangeAction:(id)sender {
-    [self changeColorsPenAndText];
+    [self changeColors];
 }
 - (IBAction)greenChangeAction:(id)sender {
-    [self changeColorsPenAndText];
+    [self changeColors];
 }
 - (IBAction)blueChangeAction:(id)sender {
-    [self changeColorsPenAndText];
+    [self changeColors];
 }
 
--(void)changeColorsPenAndText{
+-(void)changeColors{
     _viewColor.backgroundColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
-    
-    if ( !_btnText.enabled) {
-        self.jotViewController.textColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
-    }
-    if (!_btnDraw.enabled) {
-        self.jotViewController.drawingColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
-    }
+   
+    self.jotViewController.drawingColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
 }
 
--(void)switchColorsPenText{
-    float rTemp = _sliderRed.value;
-    float gTemp = _sliderGreen.value;
-    float bTemp = _sliderGreen.value;
-    
-    _sliderRed.value = rColor;
-    _sliderGreen.value = gColor;
-    _sliderBlue.value = bColor;
-    
-    rColor = rTemp;
-    gColor = gTemp;
-    bColor = bTemp;
-    
-    _viewColor.backgroundColor = [UIColor colorWithRed:_sliderRed.value green:_sliderGreen.value blue:_sliderBlue.value alpha:1.f];
-}
 @end
