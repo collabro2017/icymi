@@ -191,7 +191,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="h5l-Ah-obu">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="h5l-Ah-obu">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -890,7 +890,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Ndr-Up-bRu">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Ndr-Up-bRu">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2373,7 +2373,7 @@
                 <navigationController id="3vM-mn-W0l" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="518"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Kpf-6g-V4e">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Kpf-6g-V4e">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -2651,7 +2651,7 @@
                 <navigationController id="vEx-gy-TDP" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qHk-Os-jfg">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="qHk-Os-jfg">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -4057,7 +4057,7 @@
                 <navigationController id="SgL-ab-oQZ" sceneMemberID="viewController">
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="iRT-5X-f0f">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="iRT-5X-f0f">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -4975,7 +4975,7 @@
         <scene sceneID="goF-QV-8D4">
             <objects>
                 <navigationController id="ypM-8d-ArT" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="j16-Fn-jFd">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="j16-Fn-jFd">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -6498,13 +6498,23 @@
                                     <constraint firstItem="0U0-ra-A2A" firstAttribute="leading" secondItem="bkg-tR-gHC" secondAttribute="leading" constant="15" id="qiL-l0-tvr"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aKE-6O-PyK">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aKE-6O-PyK" customClass="JCDrawView">
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3hC-5S-kIk"/>
+                                </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="3hC-5S-kIk" secondAttribute="bottom" id="77e-TF-4aG"/>
                                     <constraint firstAttribute="width" constant="320" id="Kvb-QX-b3g"/>
+                                    <constraint firstItem="3hC-5S-kIk" firstAttribute="top" secondItem="aKE-6O-PyK" secondAttribute="top" id="Otq-Ye-2gQ"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="320" id="cu7-v2-6kW"/>
+                                    <constraint firstAttribute="trailing" secondItem="3hC-5S-kIk" secondAttribute="trailing" id="d7u-wR-lL6"/>
+                                    <constraint firstItem="3hC-5S-kIk" firstAttribute="leading" secondItem="aKE-6O-PyK" secondAttribute="leading" id="hXc-UZ-PLG"/>
                                     <constraint firstAttribute="width" secondItem="aKE-6O-PyK" secondAttribute="height" multiplier="1:1" id="t9Z-oi-uEu"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="320" id="yt6-iD-ZYv"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="drawImageView1" destination="3hC-5S-kIk" id="OCH-5n-bMj"/>
+                                </connections>
                             </view>
                         </subviews>
                         <constraints>
@@ -6532,7 +6542,7 @@
                         <outlet property="sliderBlue" destination="ECr-vy-V58" id="3R2-mr-fjh"/>
                         <outlet property="sliderGreen" destination="WnK-dc-eRB" id="FRq-Gn-c4G"/>
                         <outlet property="sliderRed" destination="8As-sA-TiQ" id="kox-YE-ldf"/>
-                        <outlet property="viewCanvas" destination="aKE-6O-PyK" id="Qh0-Yg-zaf"/>
+                        <outlet property="viewCanvas" destination="aKE-6O-PyK" id="gdo-LT-Pm4"/>
                         <outlet property="viewColor" destination="qER-YQ-BCH" id="oPw-Se-I3u"/>
                     </connections>
                 </viewController>

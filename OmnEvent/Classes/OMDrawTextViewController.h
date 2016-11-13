@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "JCDrawView.h"
 @protocol DrawTextViewControllerDelegate;
 
 @interface OMDrawTextViewController : UIViewController

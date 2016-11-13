@@ -528,6 +528,7 @@
 		B45ED2551DD70B4900664B78 /* IQLabelView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B45ED2501DD70B4900664B78 /* IQLabelView.bundle */; };
 		B45ED2561DD70B4900664B78 /* IQLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2521DD70B4900664B78 /* IQLabelView.m */; };
 		B45ED2571DD70B4900664B78 /* UITextField+DynamicFontSize.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2541DD70B4900664B78 /* UITextField+DynamicFontSize.m */; };
+		B45ED25C1DD85A3100664B78 /* JCDrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED25B1DD85A3100664B78 /* JCDrawView.m */; };
 		B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */; };
 		B4813B271DCF26C6003B2E20 /* OMDrawTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */; };
 		B4C877E91DCEC9EC0056556A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4C877D91DCEC9EC0056556A /* Localizable.strings */; };
@@ -1206,6 +1207,8 @@
 		B45ED2521DD70B4900664B78 /* IQLabelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQLabelView.m; sourceTree = "<group>"; };
 		B45ED2531DD70B4900664B78 /* UITextField+DynamicFontSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+DynamicFontSize.h"; sourceTree = "<group>"; };
 		B45ED2541DD70B4900664B78 /* UITextField+DynamicFontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+DynamicFontSize.m"; sourceTree = "<group>"; };
+		B45ED25A1DD85A3100664B78 /* JCDrawView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDrawView.h; sourceTree = "<group>"; };
+		B45ED25B1DD85A3100664B78 /* JCDrawView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDrawView.m; sourceTree = "<group>"; };
 		B46228B51DCCF93600D284D8 /* IQDropDownTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQDropDownTextField.h; sourceTree = "<group>"; };
 		B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQDropDownTextField.m; sourceTree = "<group>"; };
 		B4813B251DCF26C6003B2E20 /* OMDrawTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMDrawTextViewController.h; sourceTree = "<group>"; };
@@ -2326,6 +2329,8 @@
 		B4813B241DCF2691003B2E20 /* DrawAndText */ = {
 			isa = PBXGroup;
 			children = (
+				B45ED25A1DD85A3100664B78 /* JCDrawView.h */,
+				B45ED25B1DD85A3100664B78 /* JCDrawView.m */,
 				B4813B251DCF26C6003B2E20 /* OMDrawTextViewController.h */,
 				B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */,
 			);
@@ -3009,6 +3014,7 @@
 				3E7E5F6A1AC1FE1C00349242 /* OMFriendViewController.m in Sources */,
 				3C0283BA198960D800EA3864 /* OMEventCells.m in Sources */,
 				3EC765A01AC9415000A3F1F5 /* OMPostEventViewController.m in Sources */,
+				B45ED25C1DD85A3100664B78 /* JCDrawView.m in Sources */,
 				3C5E7E9C197628DF000550F6 /* OMHomeViewController.m in Sources */,
 				3EB66CD31AB6186700E90054 /* SBCaptureToolKit.m in Sources */,
 				A81D7A951D6EFB4C00D48B53 /* UIScrollView+TwitterCover.m in Sources */,

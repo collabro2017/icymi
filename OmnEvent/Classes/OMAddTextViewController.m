@@ -60,7 +60,8 @@
 }
 
 - (IBAction)actionDone:(id)sender {
-    
+    //hide editing status.
+    [currentlyEditingLabel hideEditingHandles];
     if ([self.delegate respondsToSelector:@selector(dtViewController:didFinishDTImage:)]) {
                 
         [self.delegate atViewController:self didFinishDTImage:[self visibleImage]];
