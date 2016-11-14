@@ -39,7 +39,6 @@
     [super viewDidLoad];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     
-    
     [self initViewItems];
     
     [self performSelectorOnMainThread:@selector(initRecorder) withObject:nil waitUntilDone:NO];

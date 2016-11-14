@@ -58,6 +58,7 @@
     UIImagePickerController *imagePicker;
     
     MBProgressHUD *hud;
+    
 }
 
 @property (nonatomic, assign) BOOL addVideoMode;
@@ -70,5 +71,9 @@
 
 - (IBAction)topButtonsAction:(id)sender;
 - (IBAction)bottomButtonsAction:(id)sender;
+
+
+
+
 
 @end

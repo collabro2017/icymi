@@ -521,7 +521,23 @@
 		A9C016311AD8770C00E7F2B1 /* OMAdditionalTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C016301AD8770C00E7F2B1 /* OMAdditionalTagViewController.m */; };
 		A9E986E61B2240E900B1BB92 /* PrivacyPolicy.docx in Resources */ = {isa = PBXBuildFile; fileRef = A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */; };
 		A9E986E91B2241D900B1BB92 /* OMPrivacyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */; };
+		B45ED2371DD4458000664B78 /* PhotoTweaksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */; };
+		B45ED2381DD4458000664B78 /* PhotoTweakView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2341DD4458000664B78 /* PhotoTweakView.m */; };
+		B45ED2391DD4458000664B78 /* UIColor+Tweak.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2361DD4458000664B78 /* UIColor+Tweak.m */; };
+		B45ED24E1DD7098500664B78 /* OMAddTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED24D1DD7098500664B78 /* OMAddTextViewController.m */; };
+		B45ED2551DD70B4900664B78 /* IQLabelView.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B45ED2501DD70B4900664B78 /* IQLabelView.bundle */; };
+		B45ED2561DD70B4900664B78 /* IQLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2521DD70B4900664B78 /* IQLabelView.m */; };
+		B45ED2571DD70B4900664B78 /* UITextField+DynamicFontSize.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2541DD70B4900664B78 /* UITextField+DynamicFontSize.m */; };
+		B45ED25C1DD85A3100664B78 /* JCDrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED25B1DD85A3100664B78 /* JCDrawView.m */; };
 		B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */; };
+		B4813B271DCF26C6003B2E20 /* OMDrawTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */; };
+		B4C877E91DCEC9EC0056556A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B4C877D91DCEC9EC0056556A /* Localizable.strings */; };
+		B4C877EA1DCEC9EC0056556A /* PECropRectView.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C877DE1DCEC9EC0056556A /* PECropRectView.m */; };
+		B4C877EB1DCEC9EC0056556A /* PECropView.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C877E01DCEC9EC0056556A /* PECropView.m */; };
+		B4C877EC1DCEC9EC0056556A /* PECropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C877E21DCEC9EC0056556A /* PECropViewController.m */; };
+		B4C877ED1DCEC9EC0056556A /* PEResizeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C877E41DCEC9EC0056556A /* PEResizeControl.m */; };
+		B4C877EE1DCEC9EC0056556A /* UIImage+PECrop.m in Sources */ = {isa = PBXBuildFile; fileRef = B4C877E61DCEC9EC0056556A /* UIImage+PECrop.m */; };
+		B4C877EF1DCEC9EC0056556A /* PEPhotoCropEditor.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B4C877E81DCEC9EC0056556A /* PEPhotoCropEditor.bundle */; };
 		B4FBBA271CCE723200BFDAD8 /* OMFeedOtherCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B4FBBA261CCE723100BFDAD8 /* OMFeedOtherCommentCell.m */; };
 		E42F747E1C8ACEC20008CC38 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = E42F747D1C8ACEC20008CC38 /* Reachability.m */; };
 		E43C88021C8E735200FE77FF /* Crittercism.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E43C88011C8E735200FE77FF /* Crittercism.framework */; };
@@ -1178,8 +1194,38 @@
 		A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = PrivacyPolicy.docx; sourceTree = "<group>"; };
 		A9E986E71B2241D900B1BB92 /* OMPrivacyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPrivacyVC.h; path = Controller/OMPrivacyVC.h; sourceTree = "<group>"; };
 		A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMPrivacyVC.m; path = Controller/OMPrivacyVC.m; sourceTree = "<group>"; };
+		B45ED2311DD4458000664B78 /* PhotoTweaksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweaksViewController.h; sourceTree = "<group>"; };
+		B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoTweaksViewController.m; sourceTree = "<group>"; };
+		B45ED2331DD4458000664B78 /* PhotoTweakView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweakView.h; sourceTree = "<group>"; };
+		B45ED2341DD4458000664B78 /* PhotoTweakView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoTweakView.m; sourceTree = "<group>"; };
+		B45ED2351DD4458000664B78 /* UIColor+Tweak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Tweak.h"; sourceTree = "<group>"; };
+		B45ED2361DD4458000664B78 /* UIColor+Tweak.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Tweak.m"; sourceTree = "<group>"; };
+		B45ED24C1DD7098500664B78 /* OMAddTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMAddTextViewController.h; sourceTree = "<group>"; };
+		B45ED24D1DD7098500664B78 /* OMAddTextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMAddTextViewController.m; sourceTree = "<group>"; };
+		B45ED2501DD70B4900664B78 /* IQLabelView.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = IQLabelView.bundle; sourceTree = "<group>"; };
+		B45ED2511DD70B4900664B78 /* IQLabelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQLabelView.h; sourceTree = "<group>"; };
+		B45ED2521DD70B4900664B78 /* IQLabelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQLabelView.m; sourceTree = "<group>"; };
+		B45ED2531DD70B4900664B78 /* UITextField+DynamicFontSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+DynamicFontSize.h"; sourceTree = "<group>"; };
+		B45ED2541DD70B4900664B78 /* UITextField+DynamicFontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+DynamicFontSize.m"; sourceTree = "<group>"; };
+		B45ED25A1DD85A3100664B78 /* JCDrawView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCDrawView.h; sourceTree = "<group>"; };
+		B45ED25B1DD85A3100664B78 /* JCDrawView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCDrawView.m; sourceTree = "<group>"; };
 		B46228B51DCCF93600D284D8 /* IQDropDownTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IQDropDownTextField.h; sourceTree = "<group>"; };
 		B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQDropDownTextField.m; sourceTree = "<group>"; };
+		B4813B251DCF26C6003B2E20 /* OMDrawTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMDrawTextViewController.h; sourceTree = "<group>"; };
+		B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMDrawTextViewController.m; sourceTree = "<group>"; };
+		B4C877DA1DCEC9EC0056556A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B4C877DB1DCEC9EC0056556A /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B4C877DD1DCEC9EC0056556A /* PECropRectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PECropRectView.h; sourceTree = "<group>"; };
+		B4C877DE1DCEC9EC0056556A /* PECropRectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PECropRectView.m; sourceTree = "<group>"; };
+		B4C877DF1DCEC9EC0056556A /* PECropView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PECropView.h; sourceTree = "<group>"; };
+		B4C877E01DCEC9EC0056556A /* PECropView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PECropView.m; sourceTree = "<group>"; };
+		B4C877E11DCEC9EC0056556A /* PECropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PECropViewController.h; sourceTree = "<group>"; };
+		B4C877E21DCEC9EC0056556A /* PECropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PECropViewController.m; sourceTree = "<group>"; };
+		B4C877E31DCEC9EC0056556A /* PEResizeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PEResizeControl.h; sourceTree = "<group>"; };
+		B4C877E41DCEC9EC0056556A /* PEResizeControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PEResizeControl.m; sourceTree = "<group>"; };
+		B4C877E51DCEC9EC0056556A /* UIImage+PECrop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+PECrop.h"; sourceTree = "<group>"; };
+		B4C877E61DCEC9EC0056556A /* UIImage+PECrop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+PECrop.m"; sourceTree = "<group>"; };
+		B4C877E81DCEC9EC0056556A /* PEPhotoCropEditor.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = PEPhotoCropEditor.bundle; sourceTree = "<group>"; };
 		B4FBBA251CCE723100BFDAD8 /* OMFeedOtherCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMFeedOtherCommentCell.h; sourceTree = "<group>"; };
 		B4FBBA261CCE723100BFDAD8 /* OMFeedOtherCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMFeedOtherCommentCell.m; sourceTree = "<group>"; };
 		E42F747C1C8ACEC20008CC38 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -1590,6 +1636,9 @@
 		3C5E7EC1197651E3000550F6 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				B45ED24F1DD70B4900664B78 /* IQLabelView */,
+				B45ED2301DD4458000664B78 /* PhotoTweaks */,
+				B4C877D81DCEC9EC0056556A /* PhotoCropEdit */,
 				B46228B51DCCF93600D284D8 /* IQDropDownTextField.h */,
 				B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */,
 				A81D7A7D1D6ECC0500D48B53 /* MBProgressHUD+Add.h */,
@@ -1904,6 +1953,8 @@
 		3EB66C441AB60F0100E90054 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				B45ED24B1DD7095D00664B78 /* AddText */,
+				B4813B241DCF2691003B2E20 /* DrawAndText */,
 				3EB66C451AB60F2C00E90054 /* OMCameraViewController.h */,
 				3EB66C461AB60F2C00E90054 /* OMCameraViewController.m */,
 				8FBFC43E1D2906A300E33CD7 /* OMCameraPhotoViewController.h */,
@@ -2241,6 +2292,86 @@
 			path = PCSEQItem;
 			sourceTree = "<group>";
 		};
+		B45ED2301DD4458000664B78 /* PhotoTweaks */ = {
+			isa = PBXGroup;
+			children = (
+				B45ED2311DD4458000664B78 /* PhotoTweaksViewController.h */,
+				B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */,
+				B45ED2331DD4458000664B78 /* PhotoTweakView.h */,
+				B45ED2341DD4458000664B78 /* PhotoTweakView.m */,
+				B45ED2351DD4458000664B78 /* UIColor+Tweak.h */,
+				B45ED2361DD4458000664B78 /* UIColor+Tweak.m */,
+			);
+			path = PhotoTweaks;
+			sourceTree = "<group>";
+		};
+		B45ED24B1DD7095D00664B78 /* AddText */ = {
+			isa = PBXGroup;
+			children = (
+				B45ED24C1DD7098500664B78 /* OMAddTextViewController.h */,
+				B45ED24D1DD7098500664B78 /* OMAddTextViewController.m */,
+			);
+			name = AddText;
+			sourceTree = "<group>";
+		};
+		B45ED24F1DD70B4900664B78 /* IQLabelView */ = {
+			isa = PBXGroup;
+			children = (
+				B45ED2501DD70B4900664B78 /* IQLabelView.bundle */,
+				B45ED2511DD70B4900664B78 /* IQLabelView.h */,
+				B45ED2521DD70B4900664B78 /* IQLabelView.m */,
+				B45ED2531DD70B4900664B78 /* UITextField+DynamicFontSize.h */,
+				B45ED2541DD70B4900664B78 /* UITextField+DynamicFontSize.m */,
+			);
+			path = IQLabelView;
+			sourceTree = "<group>";
+		};
+		B4813B241DCF2691003B2E20 /* DrawAndText */ = {
+			isa = PBXGroup;
+			children = (
+				B45ED25A1DD85A3100664B78 /* JCDrawView.h */,
+				B45ED25B1DD85A3100664B78 /* JCDrawView.m */,
+				B4813B251DCF26C6003B2E20 /* OMDrawTextViewController.h */,
+				B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */,
+			);
+			name = DrawAndText;
+			sourceTree = "<group>";
+		};
+		B4C877D81DCEC9EC0056556A /* PhotoCropEdit */ = {
+			isa = PBXGroup;
+			children = (
+				B4C877D91DCEC9EC0056556A /* Localizable.strings */,
+				B4C877DC1DCEC9EC0056556A /* Lib */,
+				B4C877E71DCEC9EC0056556A /* Resources */,
+			);
+			path = PhotoCropEdit;
+			sourceTree = "<group>";
+		};
+		B4C877DC1DCEC9EC0056556A /* Lib */ = {
+			isa = PBXGroup;
+			children = (
+				B4C877DD1DCEC9EC0056556A /* PECropRectView.h */,
+				B4C877DE1DCEC9EC0056556A /* PECropRectView.m */,
+				B4C877DF1DCEC9EC0056556A /* PECropView.h */,
+				B4C877E01DCEC9EC0056556A /* PECropView.m */,
+				B4C877E11DCEC9EC0056556A /* PECropViewController.h */,
+				B4C877E21DCEC9EC0056556A /* PECropViewController.m */,
+				B4C877E31DCEC9EC0056556A /* PEResizeControl.h */,
+				B4C877E41DCEC9EC0056556A /* PEResizeControl.m */,
+				B4C877E51DCEC9EC0056556A /* UIImage+PECrop.h */,
+				B4C877E61DCEC9EC0056556A /* UIImage+PECrop.m */,
+			);
+			path = Lib;
+			sourceTree = "<group>";
+		};
+		B4C877E71DCEC9EC0056556A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B4C877E81DCEC9EC0056556A /* PEPhotoCropEditor.bundle */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		CC164C17D1ED2A76D7A74FD6 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -2314,6 +2445,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ja,
 			);
 			mainGroup = 3C5E7E76197628DF000550F6;
 			productRefGroup = 3C5E7E80197628DF000550F6 /* Products */;
@@ -2388,6 +2520,7 @@
 				3CC69233199FBE350064B4D0 /* UG.png in Resources */,
 				3CC691A1199FBE350064B4D0 /* GI.png in Resources */,
 				3CC691A3199FBE350064B4D0 /* GM.png in Resources */,
+				B45ED2551DD70B4900664B78 /* IQLabelView.bundle in Resources */,
 				3EB66CCC1AB6186700E90054 /* video_icon.png in Resources */,
 				3CC6923B199FBE350064B4D0 /* VG.png in Resources */,
 				3EB66CAA1AB6186700E90054 /* record_focus_highlighted.png in Resources */,
@@ -2444,6 +2577,7 @@
 				3CC6915F199FBE350064B4D0 /* AX.png in Resources */,
 				3CC69229199FBE350064B4D0 /* TL.png in Resources */,
 				3CC691C2199FBE350064B4D0 /* KG.png in Resources */,
+				B4C877EF1DCEC9EC0056556A /* PEPhotoCropEditor.bundle in Resources */,
 				3CC69213199FBE350064B4D0 /* SE.png in Resources */,
 				3CC69210199FBE350064B4D0 /* SB.png in Resources */,
 				3EB66CB21AB6186700E90054 /* record_icon_hook_highlighted_bg.png in Resources */,
@@ -2676,6 +2810,7 @@
 				3CC69184199FBE350064B4D0 /* CY.png in Resources */,
 				3EB66C9F1AB6186700E90054 /* record_delete_normal@2x.png in Resources */,
 				3CC69185199FBE350064B4D0 /* CZ.png in Resources */,
+				B4C877E91DCEC9EC0056556A /* Localizable.strings in Resources */,
 				3C2FC3531998EE67008D5069 /* OMIndividualEventCell.xib in Resources */,
 				3EB66CAD1AB6186700E90054 /* record_focus_normal@2x.png in Resources */,
 				3CC69169199FBE350064B4D0 /* BJ.png in Resources */,
@@ -2746,15 +2881,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B4C877EE1DCEC9EC0056556A /* UIImage+PECrop.m in Sources */,
 				B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */,
 				3EB66CDB1AB6199C00E90054 /* DeleteButton.m in Sources */,
 				3C3D7141199A6ED700DBD54E /* OMEventCommentViewController.m in Sources */,
 				3C4059BB198B8EA50024C1AD /* OMPreviewPhotoViewController.m in Sources */,
+				B45ED2571DD70B4900664B78 /* UITextField+DynamicFontSize.m in Sources */,
+				B4C877ED1DCEC9EC0056556A /* PEResizeControl.m in Sources */,
 				3EC765A31AC9521F00A3F1F5 /* UIImage+Crop.m in Sources */,
+				B45ED2561DD70B4900664B78 /* IQLabelView.m in Sources */,
 				3CF2A40B1989CAA8002D42A3 /* OMNewEventPostViewController.m in Sources */,
 				3CB392CB19A63D790056A096 /* OMForgotPasswordViewController.m in Sources */,
 				6CD6E7681B5B3F650074578C /* OMSocialEvent.m in Sources */,
 				3EA765951AC3DAEB005CC683 /* OMBaseNavigationController.m in Sources */,
+				B45ED24E1DD7098500664B78 /* OMAddTextViewController.m in Sources */,
 				3E6F5CFD1ACA9384002ABFED /* OMEditEmailCell.m in Sources */,
 				3E7E5F671AC1EBFF00349242 /* OMSearchViewController.m in Sources */,
 				FAAA74381DC7D0D500FC0D04 /* OMEventFeedCell.m in Sources */,
@@ -2765,6 +2905,7 @@
 				3C0A5C551978FBB4009AEC85 /* OMSocialComment.m in Sources */,
 				3E5611CB1AC49EAE00505444 /* OMProfileBioCell.m in Sources */,
 				3EB298AB1ACDD83400528552 /* OMMediaCell.m in Sources */,
+				B45ED2391DD4458000664B78 /* UIColor+Tweak.m in Sources */,
 				3C4D1F3A1987A298001622B7 /* SlideNavigationContorllerAnimatorFade.m in Sources */,
 				A9AEACFF1ADC3C3C0069C08A /* OMProfileInfoCell.m in Sources */,
 				3C0283C1198973C100EA3864 /* OMPhotoCell.m in Sources */,
@@ -2783,6 +2924,7 @@
 				3C4D1F3D1987A298001622B7 /* SlideNavigationContorllerAnimatorSlide.m in Sources */,
 				3EB718D71ABF4FE70050E2D2 /* OMFeedImageCell.m in Sources */,
 				A9AEACFC1ADC16030069C08A /* OMLikersViewController.m in Sources */,
+				B4813B271DCF26C6003B2E20 /* OMDrawTextViewController.m in Sources */,
 				A9A944591AD2879E00ECD958 /* OMEventListCell.m in Sources */,
 				3C5E7E93197628DF000550F6 /* OMAppDelegate.m in Sources */,
 				3C4D1F4A1987AF56001622B7 /* OMLeftMenuViewController.m in Sources */,
@@ -2790,7 +2932,9 @@
 				3E6F5CFA1ACA936F002ABFED /* OMEditUsernameCell.m in Sources */,
 				3EB66CD21AB6186700E90054 /* SBCaptureConnection.m in Sources */,
 				3E7E5F611AC1E78E00349242 /* OMSearchCell.m in Sources */,
+				B4C877EC1DCEC9EC0056556A /* PECropViewController.m in Sources */,
 				3CFF4403198BC4E800F3A10C /* OMProfileCell.m in Sources */,
+				B45ED2371DD4458000664B78 /* PhotoTweaksViewController.m in Sources */,
 				A9A9443E1AD2368800ECD958 /* F3BarGauge.m in Sources */,
 				3C4D1F471987A55D001622B7 /* OMLeftMenuTableViewCell.m in Sources */,
 				3EB570C41AC5CD3C0033C151 /* OMCustomProfileInfoView.m in Sources */,
@@ -2808,6 +2952,8 @@
 				3CB78B5D1978F30A00D12B34 /* OMEventListViewController.m in Sources */,
 				3C2EE60619816D9300733EED /* OMOwnerProfileViewController.m in Sources */,
 				3C0A5C4F1978FB92009AEC85 /* OMSocialTimer.m in Sources */,
+				B4C877EA1DCEC9EC0056556A /* PECropRectView.m in Sources */,
+				B45ED2381DD4458000664B78 /* PhotoTweakView.m in Sources */,
 				3EB66CDC1AB6199C00E90054 /* ProgressBar.m in Sources */,
 				3EC269A71AC793F1000CB513 /* OMPhotoEditViewController.m in Sources */,
 				3C12844E1978D6DD00EB7744 /* OMGlobal.m in Sources */,
@@ -2862,11 +3008,13 @@
 				A9193FC71AD0F74A00692A50 /* OMDetailHeaderCell.m in Sources */,
 				3C4D1F411987A298001622B7 /* SlideNavigationController.m in Sources */,
 				8F18CABB1CF78E90005021BB /* NSString+MD5.m in Sources */,
+				B4C877EB1DCEC9EC0056556A /* PECropView.m in Sources */,
 				A81D7A7F1D6ECC0500D48B53 /* MBProgressHUD+Add.m in Sources */,
 				3EC673BF1AB82C2E00EB1216 /* OMSettingsViewController.m in Sources */,
 				3E7E5F6A1AC1FE1C00349242 /* OMFriendViewController.m in Sources */,
 				3C0283BA198960D800EA3864 /* OMEventCells.m in Sources */,
 				3EC765A01AC9415000A3F1F5 /* OMPostEventViewController.m in Sources */,
+				B45ED25C1DD85A3100664B78 /* JCDrawView.m in Sources */,
 				3C5E7E9C197628DF000550F6 /* OMHomeViewController.m in Sources */,
 				3EB66CD31AB6186700E90054 /* SBCaptureToolKit.m in Sources */,
 				A81D7A951D6EFB4C00D48B53 /* UIScrollView+TwitterCover.m in Sources */,
@@ -2910,6 +3058,15 @@
 				3C5E7EAE197628E0000550F6 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		B4C877D91DCEC9EC0056556A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B4C877DA1DCEC9EC0056556A /* en */,
+				B4C877DB1DCEC9EC0056556A /* ja */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
