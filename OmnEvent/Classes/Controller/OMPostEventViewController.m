@@ -152,8 +152,12 @@
     
     textFieldDescriptionPicker.isOptionalDropDown = NO;
     [textFieldDescriptionPicker setItemList:[NSArray arrayWithObjects:@"", @"For Reference", @"Comment", nil]];
-    strTemp = @" ";
+    strTemp = @"";
 
+    ////-----------
+    UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.view addGestureRecognizer:singleFingerTap];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1121,8 +1125,16 @@
 
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
-    strTemp = @" ";
+    if (![strTemp isEqualToString:@""]) {
+        if ([lblForTitle.text isEqualToString:@""]) {
+            lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+        }
+        else{
+            lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, @";", strTemp];
+        }
+        strTemp = @"";
+    }
+
     [self clearSelectListText];
 }
 
@@ -1155,10 +1167,19 @@
     
     NSUInteger max_num = MAX_DESCRIPTION_LIMIT;
     
-    lblForCount.text = [NSString stringWithFormat:@"%lu",max_num - textView.text.length];
+    lblForCount.text = [NSString stringWithFormat:@"%u",max_num - textView.text.length];
     
     if ([lblForCount.text isEqualToString:@"0"]) {
         
+        if ([textViewForDescription becomeFirstResponder]) {
+            
+            [textViewForDescription resignFirstResponder];
+        }
+        if ([lblForTitle becomeFirstResponder]) {
+            
+            [lblForTitle resignFirstResponder];
+        }
+
         lblForCount.textColor = [UIColor redColor];
     }
 }
@@ -1239,8 +1260,16 @@
 
 -(void)doneClicked:(UIBarButtonItem*)button
 {
-    lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
-    strTemp = @" ";
+    if (![strTemp isEqualToString:@""]) {
+        if ([lblForTitle.text isEqualToString:@""]) {
+            lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+        }
+        else{
+            lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, @";", strTemp];
+        }
+        strTemp = @"";
+    }
+    
     [self clearSelectListText];
     [self.view endEditing:YES];
 }
@@ -1250,4 +1279,18 @@
     textFieldRoomItemPicker.text = @"";
 }
 //-------
+//The event handling method.
+-(void)handleSingleTap:(UITapGestureRecognizer *)recognizer{
+    
+    if ([textViewForDescription becomeFirstResponder]) {
+        
+        [textViewForDescription resignFirstResponder];
+    }
+    if ([lblForTitle becomeFirstResponder]) {
+        
+        [lblForTitle resignFirstResponder];
+    }
+
+}
+
 @end

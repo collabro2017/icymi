@@ -20,6 +20,10 @@
 #import <MediaPlayer/MediaPlayer.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 
+//----
+#import "OMPhotoEditViewController.h"
+//----
+
 #define TIMER_INTERVAL 0.05f
 
 #define TAG_ALERTVIEW_CLOSE_CONTROLLER 10086
@@ -63,7 +67,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    
+    NSLog(@"Here Photo!");
     isPhotoMode = YES;
     
     defaultValue = constraintForVideoControl.constant;
@@ -638,7 +642,7 @@
     
     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     UIImage *image = [_image resizedImageToSize:CGSizeMake(POSTIMAGE_SIZE, POSTIMAGE_SIZE)];
-    
+/*
     OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
     
     [postEventVC setImageForPost:image];
@@ -650,7 +654,19 @@
     [postEventVC setPostOrder:_postOrder];
     
     [self.navigationController pushViewController:postEventVC animated:YES];
-
+*/
+    
+    OMPhotoEditViewController *photoEditVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PhotoEditVC"];
+    
+    [photoEditVC setPreImage:image];
+    [photoEditVC setPostType:@"image"];
+    
+    [photoEditVC setUploadOption:uploadOption];
+    [photoEditVC setCaptureOption:captureOption];
+    [photoEditVC setCurObj:curObj];
+    [photoEditVC setPostOrder:_postOrder];
+    
+    [self.navigationController pushViewController:photoEditVC animated:YES];
 }
 
 - (void)showPreviewForVideo:(NSURL *)_url
@@ -961,7 +977,7 @@
     switch (button.tag) {
         case TAG_PHOTO_BUTTON:
         {
-            
+            NSLog(@"Here Capture!!!");
             //Capture Action : if camera button -> Photo , else video button //
             if (isPhotoMode) {
                 
@@ -1042,7 +1058,5 @@
     imageViewForRedTimer.hidden = !imageViewForRedTimer.hidden ;
     [self performSelector:@selector(animateRecordView) withObject:nil afterDelay:0.5];
 }
-
-
 
 @end
