@@ -188,6 +188,7 @@
 }
 
 - (IBAction)showPopupAction:(id)sender {
+    
 }
 
 - (void)showNotification:(NSNotification *)_notification
@@ -294,7 +295,6 @@
             
             
             PFFile *avatarFile = (PFFile *)USER[@"ProfileImage"];
-            
             if (avatarFile) {
                 
                 [imageViewForAvatar setImageWithURL:[NSURL URLWithString:avatarFile.url]];
