@@ -53,7 +53,6 @@
     
 }
 
-/*
 -(void)viewWillLayoutSubviews{
     if (IS_IPAD) {
         CGRect frame = self.searchBarForEvent.frame;
@@ -65,8 +64,6 @@
         }
     }
 }
-*/
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
