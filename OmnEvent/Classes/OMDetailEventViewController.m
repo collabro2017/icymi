@@ -432,7 +432,7 @@
             if([arrForDetail count] != 0)[arrForDetail removeAllObjects];
             if([offlineURLs count] != 0)[offlineURLs removeAllObjects];
             
-            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
+            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
             
             offline_data_num = appDel.m_offlinePosts.count;
             
@@ -2258,7 +2258,7 @@
     return pdfFilePath;
 }
 
-- (NSUInteger) DeviceSystemMajorVersion {
+-(NSUInteger) DeviceSystemMajorVersion {
     
     static NSUInteger _deviceSystemMajorVersion = -1;
     
