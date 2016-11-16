@@ -353,6 +353,7 @@
     
     int nDescTitleHeight = 20;//[OMGlobal heightForCellWithPost:currentObj[@"title"]] ;
     
+    
     if (currentObj[@"title"])
         [PDFRenderer drawText:currentObj[@"title"] inFrame:CGRectMake(25 * rScale, (nCurrOffset + 20) * rScale, 250 * rScale, nDescTitleHeight * rScale) fontName:@"Roboto-Regular" fontSize:11 * rScale fontColor:[UIColor blackColor]];
     
