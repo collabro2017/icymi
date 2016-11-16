@@ -292,7 +292,11 @@
                 }
 
             }];
-                   }
+            
+            //---------------------------------------------------//
+            [self backAction];
+            //---------------------------------------------------//
+        }
         else if (error)
         {
             //[OMGlobal showAlertTips:error.localizedDescription title:@"Oops!"];
