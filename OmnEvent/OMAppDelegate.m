@@ -355,5 +355,4 @@
     return (FTTabBarController *) self.window.rootViewController;
     
 }
-
 @end

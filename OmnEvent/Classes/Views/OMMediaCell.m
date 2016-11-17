@@ -85,7 +85,8 @@
 
 - (void)setCurrentObj:(PFObject *)obj {
     
-    currentObj = obj;
+    //PFObject *object = obj;
+    //currentObj = obj;
     
     [btnCheckForExport setTag:curPostIndex];
     [btnForVideoPlay setHidden:YES];
@@ -118,7 +119,7 @@
     [imageViewForMedia setUserInteractionEnabled:YES];
     
     
-    PFObject *eventObj = currentObj[@"targetEvent"];
+    PFObject *eventObj = obj[@"targetEvent"];
     
     
     PFUser *eventUser = eventObj[@"user"];
@@ -176,7 +177,7 @@
         txtViewForDes.editable = YES;
     }
     
-    user = currentObj[@"user"];
+    user = obj[@"user"];
     
     //Display avatar image
     
@@ -204,33 +205,33 @@
     
     [lblForUsername setText:user.username];
     
-    [lblForTimer setText:[OMGlobal showTime:currentObj.createdAt]];
+    [lblForTimer setText:[OMGlobal showTime:obj.createdAt]];
     
     //******************
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
 //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
     [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
 
-    NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
+    NSString *str_date = [dateFormat stringFromDate:obj.createdAt];
     [lblForTimer setText:str_date];
     
     [lblForTimer setTextColor:HEXCOLOR(0x6F7179FF)];
 
     //*******************
     
-    txtViewForTitle.text = currentObj[@"title"];
-    txtViewForDes.text = currentObj[@"description"];
+    txtViewForTitle.text = obj[@"title"];
+    txtViewForDes.text = obj[@"description"];
     
     constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:txtViewForTitle.frame.size.width].height + 20;
     constraintForDescription.constant = [OMGlobal getBoundingOfString:currentObj[@"description"] width:txtViewForDes.frame.size.width].height + 30;
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"]) {
-        if (currentObj[@"countryLatLong"]) {
-            lblForLocation.text = currentObj[@"countryLatLong"];
+        if (obj[@"countryLatLong"] && ![obj[@"countryLatLong"] isEqualToString:@""]) {
+            lblForLocation.text = obj[@"countryLatLong"];
         }
         else {
             CLGeocoder *geocoder = [[CLGeocoder alloc] init];
-            [geocoder geocodeAddressString:currentObj[@"country"] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+            [geocoder geocodeAddressString:obj[@"country"] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
                 if (placemarks.count > 0) {
                     CLPlacemark *placemark = placemarks.firstObject;
                     CLLocationCoordinate2D location = placemark.location.coordinate;
@@ -258,13 +259,19 @@
                                         longDegrees >= 0 ? @"E" : @"W"];
                     lblForLocation.text = result;
                     
-                    currentObj[@"countryLatLong"] = result;
-                    [currentObj saveInBackground];
+                    obj[@"countryLatLong"] = result;
+                    [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if (succeeded) {
+                            NSLog(@"=========================================== Success!!!");
+                        }else{
+                            NSLog(@"=========================================== Error : %@", error.localizedDescription);
+                        }
+                    }];
                 }
             }];
         }
     } else {
-        [lblForLocation setText:currentObj[@"country"]];
+        [lblForLocation setText:obj[@"country"]];
     }
     
     // for badge processing
@@ -276,10 +283,10 @@
         if (socialTemp.badgeCount > 0) {
             
             OMSocialEvent *socialEventObj = (OMSocialEvent*)eventObj;
-            if(currentObj != nil)
+            if(obj != nil)
             {
                 NSMutableArray *temp = [[NSMutableArray alloc] init];
-                temp = [currentObj[@"usersBadgeFlag"] mutableCopy];
+                temp = [obj[@"usersBadgeFlag"] mutableCopy];
                 
                 if ([temp containsObject:self_user.objectId])
                 {
@@ -287,8 +294,8 @@
                     [lblForTimer setTextColor:[UIColor redColor]];
                     
                     [temp removeObject:self_user.objectId];
-                    currentObj[@"usersBadgeFlag"] = temp;
-                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    obj[@"usersBadgeFlag"] = temp;
+                    [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                         if(error == nil)
                         {
                             NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
@@ -339,17 +346,17 @@
 
     [_videoPlayerController.view setHidden:YES];
     
-    PFFile *postImgFile = (PFFile *)currentObj[@"thumbImage"];
+    PFFile *postImgFile = (PFFile *)obj[@"thumbImage"];
     
     if (postImgFile) {
         [imageViewForMedia setImageWithURL:[NSURL URLWithString:postImgFile.url] placeholderImage:nil];
     }
     
-    if ([currentObj[@"postType"] isEqualToString:@"video"]) {
+    if ([obj[@"postType"] isEqualToString:@"video"]) {
         [btnForVideoPlay setHidden:NO];
         [_videoPlayerController.view setHidden:NO];
         
-        PFFile *videoFile = (PFFile *)currentObj[@"postFile"];
+        PFFile *videoFile = (PFFile *)obj[@"postFile"];
         
         if (_videoPlayerController) {
             
@@ -373,7 +380,7 @@
         [viewForMedia bringSubviewToFront:btnForVideoPlay];
         [viewForMedia bringSubviewToFront:btnCheckForExport];
         
-    } else if ([currentObj[@"postType"] isEqualToString:@"photo"]) {
+    } else if ([obj[@"postType"] isEqualToString:@"photo"]) {
         
         [btnForVideoPlay setHidden:YES];
         [_videoPlayerController.view setHidden:YES];
@@ -390,14 +397,14 @@
         
         if (!postImgFile) {
             
-            PFFile *postFile = (PFFile *)currentObj[@"postFile"];
+            PFFile *postFile = (PFFile *)obj[@"postFile"];
             
             if (postFile) {
                 [imageViewForMedia setImageWithURL:[NSURL URLWithString:postFile.url]];
             }
         }
         
-    } else if ([currentObj[@"postType"] isEqualToString:@"audio"]) {
+    } else if ([obj[@"postType"] isEqualToString:@"audio"]) {
         
         [_videoPlayerController.view setHidden:YES];
         [btnForVideoPlay setHidden:YES];
@@ -408,7 +415,7 @@
             _videoPlayerController = nil;
         }
         
-        PFFile *thumbImageFile = (PFFile *)currentObj[@"thumbImage"];
+        PFFile *thumbImageFile = (PFFile *)obj[@"thumbImage"];
         
         if (thumbImageFile){
             
@@ -440,7 +447,7 @@
 
     } else {
         
-        PFFile *postFile = (PFFile *)currentObj[@"postFile"];
+        PFFile *postFile = (PFFile *)obj[@"postFile"];
         
         if (postFile) {
             [imageViewForMedia setImageWithURL:[NSURL URLWithString:postFile.url]];
@@ -453,9 +460,9 @@
     
     //display comment count
     
-    if (currentObj[@"commentsUsers"]) {
+    if (obj[@"commentsUsers"]) {
         
-        [btnForCommentCount setTitle:[NSString stringWithFormat:@"%lu",(unsigned long) [currentObj[@"commentsUsers"] count]] forState:UIControlStateNormal];
+        [btnForCommentCount setTitle:[NSString stringWithFormat:@"%lu",(unsigned long) [obj[@"commentsUsers"] count]] forState:UIControlStateNormal];
         
     } else
         [btnForCommentCount setTitle:[NSString stringWithFormat:@"0"] forState:UIControlStateNormal];
@@ -463,7 +470,7 @@
     //display like status
     
     if (currentObj[@"likers"]) {
-        likeCount = [currentObj[@"likers"] count];
+        likeCount = [obj[@"likers"] count];
     } else {
         likeCount = 0;
     }
@@ -471,16 +478,16 @@
     likeUserArray = [NSMutableArray array];
     likerArr = [NSMutableArray array];
     
-    if (currentObj[@"likers"] && currentObj[@"likeUserArray"]) {
+    if (obj[@"likers"] && obj[@"likeUserArray"]) {
         
         [btnForLikeCount setTitle:[NSString stringWithFormat:@"%ld",(long)likeCount] forState:UIControlStateNormal];
-        [likeUserArray addObjectsFromArray:currentObj[@"likers"]];
-        [likerArr addObjectsFromArray:currentObj[@"likeUserArray"]];
+        [likeUserArray addObjectsFromArray:obj[@"likers"]];
+        [likerArr addObjectsFromArray:obj[@"likeUserArray"]];
 
     } else
         [btnForLikeCount setTitle:@"0" forState:UIControlStateNormal];
     
-    if (currentObj[@"likers"]) {
+    if (obj[@"likers"]) {
     }
     
     if ([likeUserArray containsObject:USER.objectId]) {

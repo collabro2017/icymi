@@ -7,6 +7,8 @@
 //
 
 #import "PDFRenderer.h"
+//-----------------------
+#import "OMAppDelegate.h"
 
 @implementation PDFRenderer
 
@@ -293,6 +295,7 @@
     int nCurrOffset = nCurrentOffset;
     float rScale = 612.0f / 320;
     
+    
     if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
@@ -328,17 +331,22 @@
     NSLog(@"str_date = %@",str_date);
     
     [PDFRenderer drawText:str_date inFrame:CGRectMake(200 * rScale, (nCurrOffset + 20) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor grayColor]];
-    
+ 
     
     if (currentObj[@"country"])
     {
         NSString *strCountryInfo = currentObj[@"country"];
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"]) {
-            if (currentObj[@"countryLatLong"]) {
+            
+            if (currentObj[@"countryLatLong"] && ![currentObj[@"countryLatLong"] isEqualToString:@""]) {
                 strCountryInfo = currentObj[@"countryLatLong"];
             }
+            //-------------------------------//
+            else
+                strCountryInfo = [[NSUserDefaults standardUserDefaults] stringForKey:currentObj[@"country"]];
+            
         }
-        
+
         [PDFRenderer drawText:strCountryInfo inFrame:CGRectMake(51 * rScale, (nCurrOffset + 40) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor grayColor]];
     }
 
@@ -851,4 +859,5 @@
     // Close the PDF context and write the contents out.
     UIGraphicsEndPDFContext();
 }
+
 @end
