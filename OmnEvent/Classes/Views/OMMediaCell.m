@@ -85,6 +85,7 @@
 
 - (void)setCurrentObj:(PFObject *)obj {
     
+    //PFObject *object = obj;
     currentObj = obj;
     
     [btnCheckForExport setTag:curPostIndex];
@@ -106,6 +107,9 @@
     }
     [btnCheckForExport setHidden:!checkMode];
     
+    //----------------------------------------//
+    NSLog(@"================================ %d", checkMode);
+    //----------------------------------------//
 
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showDetailPage:)];
     gesture.numberOfTapsRequired = 1;
@@ -225,7 +229,7 @@
     constraintForDescription.constant = [OMGlobal getBoundingOfString:currentObj[@"description"] width:txtViewForDes.frame.size.width].height + 30;
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"]) {
-        if (currentObj[@"countryLatLong"]) {
+        if (currentObj[@"countryLatLong"] && ![currentObj[@"countryLatLong"] isEqualToString:@""]) {
             lblForLocation.text = currentObj[@"countryLatLong"];
         }
         else {
@@ -259,7 +263,13 @@
                     lblForLocation.text = result;
                     
                     currentObj[@"countryLatLong"] = result;
-                    [currentObj saveInBackground];
+                    [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if (succeeded) {
+                            NSLog(@"=========================================== Success!!!");
+                        }else{
+                            NSLog(@"=========================================== Error : %@", error.localizedDescription);
+                        }
+                    }];
                 }
             }];
         }
@@ -287,8 +297,8 @@
                     [lblForTimer setTextColor:[UIColor redColor]];
                     
                     [temp removeObject:self_user.objectId];
-                    currentObj[@"usersBadgeFlag"] = temp;
-                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    obj[@"usersBadgeFlag"] = temp;
+                    [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                         if(error == nil)
                         {
                             NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
@@ -318,7 +328,10 @@
         [_playButton removeFromSuperview];
         _playButton = nil;
     }
-    
+    //-------------------------------------------------//
+    // Fixed the blue check button.
+    /////////////////////////////////////////////////////
+    /*
     if ([self viewWithTag:10]) {
         
         UIButton *button = (UIButton *)[self viewWithTag:10];
@@ -327,7 +340,7 @@
         button = nil;
         
     }
-    
+    //----------------------------------------------//*/
     if ([imageViewForMedia viewWithTag:11]) {
         
         PCSEQVisualizer *tempEQ = (PCSEQVisualizer *)[imageViewForMedia viewWithTag:11];

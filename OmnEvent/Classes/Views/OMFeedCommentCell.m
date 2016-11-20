@@ -532,7 +532,10 @@
         NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
         //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
         [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
-        NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
+        //-----------------------------------------------------------------------
+        //NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
+        NSString *str_date = [dateFormat stringFromDate:commentObj.createdAt];
+        //-----------------------------------------------------------------------
         [lblForTime setText:str_date];
         
     }];

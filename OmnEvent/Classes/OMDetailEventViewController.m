@@ -80,6 +80,10 @@
     
     NSMutableArray *arrPrevTagFriends;
     
+    // temp array for geolocation editing
+    NSMutableArray *arrTemp;
+    NSMutableArray *arrTargetForGeo;
+    
     BOOL modeForExport;
     int selectedPostOrder;
 }
@@ -182,6 +186,9 @@
     // global array Init
     [GlobalVar getInstance].gArrPostList = [[NSMutableArray alloc] init];
     [GlobalVar getInstance].gArrSelectedList = [[NSMutableArray alloc] init];
+    
+    arrTemp = [NSMutableArray array];
+    arrTargetForGeo = [NSMutableArray array];
     
     [doneView setHidden:YES];
     modeForExport = NO;
@@ -432,7 +439,7 @@
             if([arrForDetail count] != 0)[arrForDetail removeAllObjects];
             if([offlineURLs count] != 0)[offlineURLs removeAllObjects];
             
-            OMAppDelegate* appDel = [UIApplication sharedApplication].delegate;
+            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
             
             offline_data_num = appDel.m_offlinePosts.count;
             
@@ -1194,7 +1201,7 @@
                     [cell setCurPostIndex:indexPath.section - 1];
                     [cell setCheckMode:modeForExport];
                     [cell setCurrentObj:tempObj];
-                    
+                    //cell.currentObj = tempObj;
                     
                     [cell setNeedsLayout];
                     [cell layoutIfNeeded];
@@ -2095,36 +2102,135 @@
             return [obj2.createdAt compare:obj1.createdAt];
         }];
         
-        NSMutableDictionary* contentPDF = [[NSMutableDictionary alloc] init];
+        //-----------------------------------------//
+        arrTemp = [sortedArray mutableCopy];
+        [arrTargetForGeo removeAllObjects];
+        //-----------------------------------------//
+        [self getLocationFromObject];
         
-        [contentPDF setObject:currentObject forKey:@"currentObject"];
-        [contentPDF setObject:sortedArray forKey:@"arrDetail"];
-        
-        [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
-        pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
-        
-        //Preview the PDF
-        QLPreviewController *previewController = [[QLPreviewController alloc] init];
-        [previewController setDelegate:self];
-        [previewController setDataSource:self];
-        
-        if ([self DeviceSystemMajorVersion] >= 7) {
-            previewController.transitioningDelegate = self;
-            previewController.modalPresentationStyle = UIModalPresentationCustom;
-        } else {
-            previewController.modalPresentationStyle = UIModalPresentationFormSheet;
-        }
-        
-        [self presentViewController:previewController animated:YES completion:^{
-            
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-        }];
     }
     else
     {
         [self onCancelForExport:nil];
     }
     
+}
+
+- (void)printPDF
+{
+    NSMutableDictionary* contentPDF = [[NSMutableDictionary alloc] init];
+    
+    [contentPDF setObject:currentObject forKey:@"currentObject"];
+    [contentPDF setObject:arrTargetForGeo forKey:@"arrDetail"];
+    
+    [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
+    pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
+    
+    //Preview the PDF
+    QLPreviewController *previewController = [[QLPreviewController alloc] init];
+    [previewController setDelegate:self];
+    [previewController setDataSource:self];
+    
+    if ([self DeviceSystemMajorVersion] >= 7) {
+        previewController.transitioningDelegate = self;
+        previewController.modalPresentationStyle = UIModalPresentationCustom;
+    } else {
+        previewController.modalPresentationStyle = UIModalPresentationFormSheet;
+    }
+    
+    [self presentViewController:previewController animated:YES completion:^{
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    }];
+
+}
+
+-(void)getLocationFromObject{
+    
+    if([arrTemp count] <= 0)
+    {
+        NSLog(@"completion ****");
+        [self printPDF];
+        return;
+    }
+    else
+    {
+        PFObject *tempObj = (PFObject*)[arrTemp firstObject];
+        
+        if (tempObj[@"countryLatLong"] && ![tempObj[@"countryLatLong"] isEqualToString:@""]) {
+            
+            [arrTargetForGeo addObject:tempObj];
+            [arrTemp removeObject:tempObj];
+            
+            NSLog(@"has long-----");
+            
+            [self getLocationFromObject];
+        }
+        else{
+            
+            if (tempObj[@"country"] && ![tempObj[@"country"] isEqualToString:@"Unknown"]) {
+                CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+                NSLog(@"country +++++%@", tempObj[@"country"]);
+                [geocoder geocodeAddressString:tempObj[@"country"] completionHandler:^(NSArray<CLPlacemark *> * _Nullable placemarks, NSError * _Nullable error) {
+                    
+                    if (placemarks.count > 0) {
+                        CLPlacemark *placemark = placemarks.firstObject;
+                        CLLocationCoordinate2D location = placemark.location.coordinate;
+                        
+                        int latSeconds = (int)(location.latitude * 3600);
+                        int latDegrees = latSeconds / 3600;
+                        latSeconds = ABS(latSeconds % 3600);
+                        int latMinutes = latSeconds / 60;
+                        latSeconds %= 60;
+                        
+                        int longSeconds = (int)(location.longitude * 3600);
+                        int longDegrees = longSeconds / 3600;
+                        longSeconds = ABS(longSeconds % 3600);
+                        int longMinutes = longSeconds / 60;
+                        longSeconds %= 60;
+                        
+                        NSString* result = [NSString stringWithFormat:@"%d°%d'%d\"%@ %d°%d'%d\"%@",
+                                            ABS(latDegrees),
+                                            latMinutes,
+                                            latSeconds,
+                                            latDegrees >= 0 ? @"N" : @"S",
+                                            ABS(longDegrees),
+                                            longMinutes,
+                                            longSeconds,
+                                            longDegrees >= 0 ? @"E" : @"W"];
+                        
+                        tempObj[@"countryLatLong"] = result;
+                        [arrTargetForGeo addObject:tempObj];
+                        [arrTemp removeObject:tempObj];
+                        NSLog(@"passed ----- ");
+                        [self getLocationFromObject];
+                   }
+                    else
+                    {
+                        tempObj[@"countryLatLong"] = @"Unknown";
+                        [arrTargetForGeo addObject:tempObj];
+                        [arrTemp removeObject:tempObj];
+                        [self getLocationFromObject];
+                        
+                    }
+                }];
+
+            }
+            else{
+                
+                tempObj[@"countryLatLong"] = @"Unknown";
+                [arrTargetForGeo addObject:tempObj];
+                [arrTemp removeObject:tempObj];
+                
+                NSLog(@"has long-----");
+                [self getLocationFromObject];
+            }
+            
+            
+        }
+  
+    }
+
 }
 
 //for duplication
@@ -2190,30 +2296,11 @@
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
-    NSMutableDictionary* contentPDF = [[NSMutableDictionary alloc] init];
-    
-    [contentPDF setObject:currentObject forKey:@"currentObject"];
-    [contentPDF setObject:arrForDetail forKey:@"arrDetail"];
-    
-    [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
-    pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
-    
-    //Preview the PDF
-    QLPreviewController *previewController = [[QLPreviewController alloc] init];
-    [previewController setDelegate:self];
-    [previewController setDataSource:self];
-    
-    if ([self DeviceSystemMajorVersion] >= 7) {
-        previewController.transitioningDelegate = self;
-        previewController.modalPresentationStyle = UIModalPresentationCustom;
-    } else {
-        previewController.modalPresentationStyle = UIModalPresentationFormSheet;
-    }
-    
-    [self presentViewController:previewController animated:YES completion:^{
-        
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-    }];
+    //-----------------------------------------//
+    arrTemp = [arrForDetail mutableCopy];
+    [arrTargetForGeo removeAllObjects];
+    //-----------------------------------------//
+    [self getLocationFromObject];
     
 }
 
@@ -2258,7 +2345,7 @@
     return pdfFilePath;
 }
 
-- (NSUInteger) DeviceSystemMajorVersion {
+-(NSUInteger) DeviceSystemMajorVersion {
     
     static NSUInteger _deviceSystemMajorVersion = -1;
     
@@ -2829,7 +2916,5 @@
         NSLog(@"Skipped Auto Refreshing due to in posting!!");
     }
 }
-
-
 
 @end
