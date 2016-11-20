@@ -55,12 +55,13 @@
     [OMSocialEvent registerSubclass];
     [ParseCrashReporting enable];
     [Parse enableLocalDatastore];
-    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
-        configuration.applicationId = PARSE_APP_ID;
-        configuration.clientKey = CLIENT_KEY;
-        configuration.server = @"http://localhost:1337/parse";
-    }]];
-    
+    [Parse setApplicationId:PARSE_APP_ID clientKey:CLIENT_KEY];
+//    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
+//        configuration.applicationId = PARSE_APP_ID;
+//        configuration.clientKey = CLIENT_KEY;
+//        configuration.server = @"http://icymi-server.us-east-1.elasticbeanstalk.com/parse";
+//    }]];
+//    
     if (IS_UPLOADING)
         [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
