@@ -6935,15 +6935,30 @@
                                             <constraint firstAttribute="height" constant="115" id="Tgy-96-6fC"/>
                                         </constraints>
                                     </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="99F-LH-7Hh">
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="30" id="HKE-Le-FNT"/>
+                                            <constraint firstAttribute="width" constant="45" id="WaR-x3-4vk"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" title="Pano">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="actionPanoramCapture:" destination="OVm-2c-yBL" eventType="touchUpInside" id="VNu-vg-OY1"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="kt9-9C-wqO" secondAttribute="trailing" id="6Zb-LC-XoU"/>
                                     <constraint firstAttribute="centerY" secondItem="SJY-sh-4vY" secondAttribute="centerY" constant="-1" id="D3b-4z-ICF"/>
                                     <constraint firstItem="SJY-sh-4vY" firstAttribute="leading" secondItem="qhw-MR-dcX" secondAttribute="trailing" id="D6z-Si-ca4"/>
                                     <constraint firstAttribute="height" constant="208" id="EwT-pf-SEg"/>
+                                    <constraint firstAttribute="trailing" secondItem="99F-LH-7Hh" secondAttribute="trailing" constant="15" id="IQu-9M-igy"/>
                                     <constraint firstItem="qhw-MR-dcX" firstAttribute="leading" secondItem="bic-2s-Xcu" secondAttribute="leading" id="LhO-T2-ddY"/>
                                     <constraint firstAttribute="trailing" secondItem="nri-WH-qQe" secondAttribute="trailing" id="NVN-i6-5ys"/>
                                     <constraint firstAttribute="bottom" secondItem="kt9-9C-wqO" secondAttribute="bottom" id="QXY-QP-xex"/>
+                                    <constraint firstItem="99F-LH-7Hh" firstAttribute="top" secondItem="bic-2s-Xcu" secondAttribute="top" constant="15" id="VKZ-HQ-XzH"/>
                                     <constraint firstAttribute="centerX" secondItem="SJY-sh-4vY" secondAttribute="centerX" id="VqM-3g-Cv1"/>
                                     <constraint firstItem="nri-WH-qQe" firstAttribute="centerY" secondItem="SJY-sh-4vY" secondAttribute="centerY" constant="-0.5" id="WZc-PE-c8z"/>
                                     <constraint firstItem="nri-WH-qQe" firstAttribute="leading" secondItem="SJY-sh-4vY" secondAttribute="trailing" id="YJV-ZF-lwN"/>
@@ -7076,6 +7091,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J2b-ls-Z0S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-4219" y="-3767"/>
+        </scene>
+        <!--Pano View Controller-->
+        <scene sceneID="aFW-LQ-Pfb">
+            <objects>
+                <viewController storyboardIdentifier="panoViewController" id="dEh-ns-cbi" customClass="OMPanoViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wg3-RB-W5t"/>
+                        <viewControllerLayoutGuide type="bottom" id="NSP-Jh-WdG"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="LeF-cs-7T0">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zh5-dS-8Bh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-4967" y="-3767"/>
         </scene>
         <!--Photo Edit View Controller-->
         <scene sceneID="M2j-iO-TG3">
@@ -7237,7 +7270,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PaX-8a-egF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3749" y="-3538"/>
+            <point key="canvasLocation" x="-3783" y="-3538"/>
         </scene>
         <!--Record Audio View Controller-->
         <scene sceneID="gwg-1U-rnf">

@@ -24,6 +24,9 @@
 #import "OMPhotoEditViewController.h"
 //----
 
+//-----------------------------------------
+#import "OMPanoViewController.h"
+
 #define TIMER_INTERVAL 0.05f
 
 #define TAG_ALERTVIEW_CLOSE_CONTROLLER 10086
@@ -1058,5 +1061,19 @@
     imageViewForRedTimer.hidden = !imageViewForRedTimer.hidden ;
     [self performSelector:@selector(animateRecordView) withObject:nil afterDelay:0.5];
 }
+
+//--------------------------
+- (IBAction)actionPanoramCapture:(id)sender {
+    
+    OMPanoViewController *panoVC = [self.storyboard instantiateViewControllerWithIdentifier:@"panoViewController"];
+    [panoVC setUploadOption:uploadOption];
+    [panoVC setCaptureOption:captureOption];
+    [panoVC setCurObj:curObj];
+    [panoVC setPostOrder:_postOrder];
+    
+    [self.navigationController pushViewController:panoVC animated:YES];
+
+}
+
 
 @end
