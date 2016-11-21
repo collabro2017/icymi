@@ -96,7 +96,13 @@
     [self setLineWidth:1.0];
     
     if ([touch tapCount] == 1) {
-        UIGraphicsBeginImageContext(self.drawImageView1.frame.size);
+        
+        if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
+            UIGraphicsBeginImageContextWithOptions(self.drawImageView1.frame.size, self.drawImageView1.opaque, 0);
+        } else {
+            UIGraphicsBeginImageContext(self.drawImageView1.frame.size);
+        }
+        
         CGContextRef context = UIGraphicsGetCurrentContext();
         
         [[self currentColor] setStroke];
@@ -111,7 +117,7 @@
         
         CGContextSetLineCap(context, kCGLineCapRound);
         
-        CGContextSetLineWidth(context, 4.0);
+        CGContextSetLineWidth(context, IS_IPAD?4.0 :2.0);
         
         CGContextStrokePath(context);
         
