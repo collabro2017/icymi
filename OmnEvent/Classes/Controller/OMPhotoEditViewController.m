@@ -34,9 +34,21 @@
     }
     
 }
+/*
+-(void)viewDidLayoutSubviews{
+    
+    float rate = _preImage.size.width/_preImage.size.height;
+    float height = IS_IPAD?768: 320;
+    CGSize scrollFrame = CGSizeMake(height * rate, height);
+    scrollView.contentSize = scrollFrame;
+    scrollView.scrollEnabled = YES;
+    
+    imageViewForPreview.frame = CGRectMake(0, 0, height * rate, height);
+    imageViewForPreview.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    imageViewForPreview.contentMode = UIViewContentModeScaleAspectFit;
 
-
-
+}
+*/
 - (IBAction)backAction:(id)sender {
     
     [self.navigationController popViewControllerAnimated:YES];

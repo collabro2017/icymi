@@ -248,19 +248,22 @@
     NSString *ename = [TMP_DIR stringByAppendingPathComponent:@"equi.jpeg"];
     [[Monitor instance] genEquiAt:ename withHeight:800 andWidth:0 andMaxWidth:0];
     
-    //--------------------------------
+    //*
+    //--------------------------------//
     
     OMPhotoEditViewController *photoEditVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PhotoEditVC"];
     
     [photoEditVC setPreImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:ename]]];
     [photoEditVC setPostType:@"image"];
-    //*
+    
     [photoEditVC setUploadOption:self.uploadOption];
     [photoEditVC setCaptureOption:self.captureOption];
     [photoEditVC setCurObj:self.curObj];
     [photoEditVC setPostOrder:_postOrder];
-    //*/
+    
     [self.navigationController pushViewController:photoEditVC animated:YES];
+    //--------------------------------//
+    //*/
     /*
      ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
      [library writeImageDataToSavedPhotosAlbum:[NSData dataWithContentsOfFile:ename] metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {

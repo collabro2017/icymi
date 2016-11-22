@@ -41,8 +41,9 @@
     // calculate mid point
     CGPoint mid1 = [self calculateMidPointForPoint:self.previousPoint andPoint:self.prePreviousPoint];
     CGPoint mid2 = [self calculateMidPointForPoint:currentPoint andPoint:self.previousPoint];
+        
+    UIGraphicsBeginImageContextWithOptions(self.drawImageView1.bounds.size, NO, 0);
     
-    UIGraphicsBeginImageContext(self.drawImageView1.frame.size);
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     [[self currentColor] setStroke];
@@ -87,7 +88,6 @@
 - (CGPoint)calculateMidPointForPoint:(CGPoint)p1 andPoint:(CGPoint)p2 {
     return CGPointMake((p1.x+p2.x)/2, (p1.y+p2.y)/2);
 }
-
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     
     UITouch *touch = [touches anyObject];
@@ -96,13 +96,8 @@
     [self setLineWidth:1.0];
     
     if ([touch tapCount] == 1) {
-        
-        if ([UIScreen instancesRespondToSelector:@selector(scale)]) {
-            UIGraphicsBeginImageContextWithOptions(self.drawImageView1.frame.size, self.drawImageView1.opaque, 0);
-        } else {
-            UIGraphicsBeginImageContext(self.drawImageView1.frame.size);
-        }
-        
+        //UIGraphicsBeginImageContextWithOptions(self.drawImageView1.bounds.size, YES, [UIScreen mainScreen].scale);
+        UIGraphicsBeginImageContextWithOptions(self.drawImageView1.bounds.size, NO, 0);
         CGContextRef context = UIGraphicsGetCurrentContext();
         
         [[self currentColor] setStroke];

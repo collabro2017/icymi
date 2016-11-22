@@ -37,8 +37,9 @@
     
     
     IBOutlet UIView *viewForBottom;
+    //----------------------------------------
     
-    
+    IBOutlet UIScrollView *scrollView;
 }
 
 - (IBAction)backAction:(id)sender;
