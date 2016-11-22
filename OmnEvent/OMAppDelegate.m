@@ -59,7 +59,7 @@
 //    [Parse initializeWithConfiguration:[ParseClientConfiguration configurationWithBlock:^(id<ParseMutableClientConfiguration> configuration) {
 //        configuration.applicationId = PARSE_APP_ID;
 //        configuration.clientKey = CLIENT_KEY;
-//        configuration.server = @"http://icymi-server.us-east-1.elasticbeanstalk.com/parse";
+//        configuration.server = @"http://icymi-env.us-east-1.elasticbeanstalk.com/parse";
 //    }]];
 //    
     if (IS_UPLOADING)
