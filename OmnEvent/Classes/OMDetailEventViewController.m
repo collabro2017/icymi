@@ -179,7 +179,11 @@
     [super viewDidLoad];
     [self initializeNavBar];
     [self addRefreshControlToTable];
+
     
+    //----------------------------
+    //[tblForDetailList setEditing:YES];
+    //----------------------------------------------------------//
     
     // Do any additional setup after loading the view.
     
@@ -2517,8 +2521,7 @@
 //Add Media After
 - (void)showAddMediaAfter {
     UIActionSheet* shareAction = nil;
-    shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-                                     otherButtonTitles:@"Text", @"Image", @"Audio", @"Video", nil];    
+    shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Text", @"Image", @"Audio", @"Video", nil];
     [shareAction showInView:self.view];
     shareAction.tag = kTag_AddMediaAfter;
 }
@@ -2544,7 +2547,7 @@
             {
                 
                 [MBProgressHUD showMessag:@"Deleting..." toView:self.view];
-                OMAppDelegate * appDel = [UIApplication sharedApplication].delegate;
+                OMAppDelegate * appDel = (OMAppDelegate*)[UIApplication sharedApplication].delegate;
                 
                 // In Case Online Mode
                 if(appDel.network_state)
@@ -2917,4 +2920,31 @@
     }
 }
 
+//----------------------------------------------------------//
+//---delegate method
+//*
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0 || indexPath.row != 0) {
+        return NO;
+    }else return YES;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0 || indexPath.row != 0) {
+        return NO;
+    }else return YES;
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    
+    NSLog(@"prev === %ld, to === %ld", sourceIndexPath.row, destinationIndexPath.row);
+}
+- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleNone;
+}
+
+- (BOOL)tableView:(UITableView*)tableView shouldIndentWhileEditingRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    return NO;
+}
+//*/
 @end

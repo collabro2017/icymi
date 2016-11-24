@@ -521,6 +521,19 @@
 		A9C016311AD8770C00E7F2B1 /* OMAdditionalTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9C016301AD8770C00E7F2B1 /* OMAdditionalTagViewController.m */; };
 		A9E986E61B2240E900B1BB92 /* PrivacyPolicy.docx in Resources */ = {isa = PBXBuildFile; fileRef = A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */; };
 		A9E986E91B2241D900B1BB92 /* OMPrivacyVC.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */; };
+		B40B56121DE591C50016E121 /* ZCLocalized.strings in Resources */ = {isa = PBXBuildFile; fileRef = B40B55FB1DE591C50016E121 /* ZCLocalized.strings */; };
+		B40B56131DE591C50016E121 /* SelectionOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B40B55FE1DE591C50016E121 /* SelectionOverlay.png */; };
+		B40B56141DE591C50016E121 /* SelectionOverlay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B40B55FF1DE591C50016E121 /* SelectionOverlay@2x.png */; };
+		B40B56151DE591C50016E121 /* SelectionOverlay~iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = B40B56001DE591C50016E121 /* SelectionOverlay~iOS7.png */; };
+		B40B56161DE591C50016E121 /* SelectionOverlay~iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B40B56011DE591C50016E121 /* SelectionOverlay~iOS7@2x.png */; };
+		B40B56171DE591C50016E121 /* VideoOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = B40B56021DE591C50016E121 /* VideoOverlay.png */; };
+		B40B56181DE591C50016E121 /* VideoOverlay@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B40B56031DE591C50016E121 /* VideoOverlay@2x.png */; };
+		B40B56191DE591C50016E121 /* ZCAlbumPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B56051DE591C50016E121 /* ZCAlbumPickerController.m */; };
+		B40B561A1DE591C50016E121 /* ZCAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B56071DE591C50016E121 /* ZCAsset.m */; };
+		B40B561B1DE591C50016E121 /* ZCAssetCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B56091DE591C50016E121 /* ZCAssetCell.m */; };
+		B40B561C1DE591C50016E121 /* ZCAssetTablePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B560B1DE591C50016E121 /* ZCAssetTablePicker.m */; };
+		B40B561D1DE591C50016E121 /* ZCHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B560D1DE591C50016E121 /* ZCHelper.m */; };
+		B40B561E1DE591C50016E121 /* ZCImagePickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B560F1DE591C50016E121 /* ZCImagePickerController.m */; };
 		B45ED2371DD4458000664B78 /* PhotoTweaksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */; };
 		B45ED2381DD4458000664B78 /* PhotoTweakView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2341DD4458000664B78 /* PhotoTweakView.m */; };
 		B45ED2391DD4458000664B78 /* UIColor+Tweak.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2361DD4458000664B78 /* UIColor+Tweak.m */; };
@@ -1208,6 +1221,27 @@
 		A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = PrivacyPolicy.docx; sourceTree = "<group>"; };
 		A9E986E71B2241D900B1BB92 /* OMPrivacyVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OMPrivacyVC.h; path = Controller/OMPrivacyVC.h; sourceTree = "<group>"; };
 		A9E986E81B2241D900B1BB92 /* OMPrivacyVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = OMPrivacyVC.m; path = Controller/OMPrivacyVC.m; sourceTree = "<group>"; };
+		B40B55FC1DE591C50016E121 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ZCLocalized.strings; sourceTree = "<group>"; };
+		B40B55FE1DE591C50016E121 /* SelectionOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SelectionOverlay.png; sourceTree = "<group>"; };
+		B40B55FF1DE591C50016E121 /* SelectionOverlay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SelectionOverlay@2x.png"; sourceTree = "<group>"; };
+		B40B56001DE591C50016E121 /* SelectionOverlay~iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SelectionOverlay~iOS7.png"; sourceTree = "<group>"; };
+		B40B56011DE591C50016E121 /* SelectionOverlay~iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SelectionOverlay~iOS7@2x.png"; sourceTree = "<group>"; };
+		B40B56021DE591C50016E121 /* VideoOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = VideoOverlay.png; sourceTree = "<group>"; };
+		B40B56031DE591C50016E121 /* VideoOverlay@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "VideoOverlay@2x.png"; sourceTree = "<group>"; };
+		B40B56041DE591C50016E121 /* ZCAlbumPickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZCAlbumPickerController.h; sourceTree = "<group>"; };
+		B40B56051DE591C50016E121 /* ZCAlbumPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZCAlbumPickerController.m; sourceTree = "<group>"; };
+		B40B56061DE591C50016E121 /* ZCAsset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZCAsset.h; sourceTree = "<group>"; };
+		B40B56071DE591C50016E121 /* ZCAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZCAsset.m; sourceTree = "<group>"; };
+		B40B56081DE591C50016E121 /* ZCAssetCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZCAssetCell.h; sourceTree = "<group>"; };
+		B40B56091DE591C50016E121 /* ZCAssetCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZCAssetCell.m; sourceTree = "<group>"; };
+		B40B560A1DE591C50016E121 /* ZCAssetTablePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZCAssetTablePicker.h; sourceTree = "<group>"; };
+		B40B560B1DE591C50016E121 /* ZCAssetTablePicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZCAssetTablePicker.m; sourceTree = "<group>"; };
+		B40B560C1DE591C50016E121 /* ZCHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZCHelper.h; sourceTree = "<group>"; };
+		B40B560D1DE591C50016E121 /* ZCHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZCHelper.m; sourceTree = "<group>"; };
+		B40B560E1DE591C50016E121 /* ZCImagePickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZCImagePickerController.h; sourceTree = "<group>"; };
+		B40B560F1DE591C50016E121 /* ZCImagePickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZCImagePickerController.m; sourceTree = "<group>"; };
+		B40B56101DE591C50016E121 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/ZCLocalized.strings"; sourceTree = "<group>"; };
+		B40B56111DE591C50016E121 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/ZCLocalized.strings"; sourceTree = "<group>"; };
 		B45ED2311DD4458000664B78 /* PhotoTweaksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweaksViewController.h; sourceTree = "<group>"; };
 		B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoTweaksViewController.m; sourceTree = "<group>"; };
 		B45ED2331DD4458000664B78 /* PhotoTweakView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweakView.h; sourceTree = "<group>"; };
@@ -1994,6 +2028,7 @@
 		3EB66C441AB60F0100E90054 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				B40B55F91DE591980016E121 /* CameraRoll */,
 				B4C3874C1DE2A43900483162 /* panorama */,
 				B45ED24B1DD7095D00664B78 /* AddText */,
 				B4813B241DCF2691003B2E20 /* DrawAndText */,
@@ -2334,6 +2369,48 @@
 			path = PCSEQItem;
 			sourceTree = "<group>";
 		};
+		B40B55F91DE591980016E121 /* CameraRoll */ = {
+			isa = PBXGroup;
+			children = (
+				B40B55FA1DE591C50016E121 /* ZCImagePickerController */,
+			);
+			name = CameraRoll;
+			sourceTree = "<group>";
+		};
+		B40B55FA1DE591C50016E121 /* ZCImagePickerController */ = {
+			isa = PBXGroup;
+			children = (
+				B40B55FB1DE591C50016E121 /* ZCLocalized.strings */,
+				B40B55FD1DE591C50016E121 /* Images */,
+				B40B56041DE591C50016E121 /* ZCAlbumPickerController.h */,
+				B40B56051DE591C50016E121 /* ZCAlbumPickerController.m */,
+				B40B56061DE591C50016E121 /* ZCAsset.h */,
+				B40B56071DE591C50016E121 /* ZCAsset.m */,
+				B40B56081DE591C50016E121 /* ZCAssetCell.h */,
+				B40B56091DE591C50016E121 /* ZCAssetCell.m */,
+				B40B560A1DE591C50016E121 /* ZCAssetTablePicker.h */,
+				B40B560B1DE591C50016E121 /* ZCAssetTablePicker.m */,
+				B40B560C1DE591C50016E121 /* ZCHelper.h */,
+				B40B560D1DE591C50016E121 /* ZCHelper.m */,
+				B40B560E1DE591C50016E121 /* ZCImagePickerController.h */,
+				B40B560F1DE591C50016E121 /* ZCImagePickerController.m */,
+			);
+			path = ZCImagePickerController;
+			sourceTree = "<group>";
+		};
+		B40B55FD1DE591C50016E121 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				B40B55FE1DE591C50016E121 /* SelectionOverlay.png */,
+				B40B55FF1DE591C50016E121 /* SelectionOverlay@2x.png */,
+				B40B56001DE591C50016E121 /* SelectionOverlay~iOS7.png */,
+				B40B56011DE591C50016E121 /* SelectionOverlay~iOS7@2x.png */,
+				B40B56021DE591C50016E121 /* VideoOverlay.png */,
+				B40B56031DE591C50016E121 /* VideoOverlay@2x.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
 		B45ED2301DD4458000664B78 /* PhotoTweaks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2511,6 +2588,8 @@
 				en,
 				Base,
 				ja,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 3C5E7E76197628DF000550F6;
 			productRefGroup = 3C5E7E80197628DF000550F6 /* Products */;
@@ -2564,6 +2643,7 @@
 				3CC691F9199FBE350064B4D0 /* NZ.png in Resources */,
 				3EB66C9B1AB6186700E90054 /* record_close_normal@2x.png in Resources */,
 				3CC69175199FBE350064B4D0 /* CC.png in Resources */,
+				B40B56121DE591C50016E121 /* ZCLocalized.strings in Resources */,
 				8F3A280A1CF602A800999200 /* Roboto-LightItalic.ttf in Resources */,
 				3CC691E5199FBE350064B4D0 /* MR.png in Resources */,
 				8F3A28091CF602A800999200 /* Roboto-Light.ttf in Resources */,
@@ -2586,12 +2666,14 @@
 				3CC691A1199FBE350064B4D0 /* GI.png in Resources */,
 				3CC691A3199FBE350064B4D0 /* GM.png in Resources */,
 				B45ED2551DD70B4900664B78 /* IQLabelView.bundle in Resources */,
+				B40B56171DE591C50016E121 /* VideoOverlay.png in Resources */,
 				3EB66CCC1AB6186700E90054 /* video_icon.png in Resources */,
 				3CC6923B199FBE350064B4D0 /* VG.png in Resources */,
 				3EB66CAA1AB6186700E90054 /* record_focus_highlighted.png in Resources */,
 				3CC69218199FBE350064B4D0 /* SK.png in Resources */,
 				3CC691C7199FBE350064B4D0 /* KP.png in Resources */,
 				3CC691E9199FBE350064B4D0 /* MV.png in Resources */,
+				B40B56181DE591C50016E121 /* VideoOverlay@2x.png in Resources */,
 				3CC6917D199FBE350064B4D0 /* CM.png in Resources */,
 				3CC69242199FBE350064B4D0 /* YE.png in Resources */,
 				3CC69173199FBE350064B4D0 /* BZ.png in Resources */,
@@ -2686,6 +2768,7 @@
 				3CC691F0199FBE350064B4D0 /* NE.png in Resources */,
 				3CC691F2199FBE350064B4D0 /* NG.png in Resources */,
 				3EB66CCF1AB6186700E90054 /* video_longvideo_btn_pause@2x.png in Resources */,
+				B40B56151DE591C50016E121 /* SelectionOverlay~iOS7.png in Resources */,
 				3CC69225199FBE350064B4D0 /* TG.png in Resources */,
 				3CC691D3199FBE350064B4D0 /* LT.png in Resources */,
 				3CC691D2199FBE350064B4D0 /* LS.png in Resources */,
@@ -2752,6 +2835,7 @@
 				3CC69182199FBE350064B4D0 /* CV.png in Resources */,
 				3CC691B6199FBE350064B4D0 /* IM.png in Resources */,
 				3CC6920A199FBE350064B4D0 /* RE.png in Resources */,
+				B40B56141DE591C50016E121 /* SelectionOverlay@2x.png in Resources */,
 				3CC69221199FBE350064B4D0 /* SZ.png in Resources */,
 				3EB66CCE1AB6186700E90054 /* video_longvideo_btn_pause.png in Resources */,
 				3EB66CB11AB6186700E90054 /* record_icon_hook@2x.png in Resources */,
@@ -2799,6 +2883,7 @@
 				3CC691EF199FBE350064B4D0 /* NC.png in Resources */,
 				3CC691FB199FBE350064B4D0 /* PA.png in Resources */,
 				3CC69196199FBE350064B4D0 /* FM.png in Resources */,
+				B40B56161DE591C50016E121 /* SelectionOverlay~iOS7@2x.png in Resources */,
 				3EB66CCD1AB6186700E90054 /* video_icon@2x.png in Resources */,
 				3CC691D6199FBE350064B4D0 /* LY.png in Resources */,
 				3CC6922D199FBE350064B4D0 /* TR.png in Resources */,
@@ -2893,6 +2978,7 @@
 				3CC69172199FBE350064B4D0 /* BY.png in Resources */,
 				3CC691F7199FBE350064B4D0 /* NR.png in Resources */,
 				3CC69155199FBE350064B4D0 /* AL.png in Resources */,
+				B40B56131DE591C50016E121 /* SelectionOverlay.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2952,6 +3038,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B4C877EE1DCEC9EC0056556A /* UIImage+PECrop.m in Sources */,
+				B40B561E1DE591C50016E121 /* ZCImagePickerController.m in Sources */,
 				B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */,
 				3EB66CDB1AB6199C00E90054 /* DeleteButton.m in Sources */,
 				3C3D7141199A6ED700DBD54E /* OMEventCommentViewController.m in Sources */,
@@ -3010,6 +3097,7 @@
 				3C4D1F471987A55D001622B7 /* OMLeftMenuTableViewCell.m in Sources */,
 				3EB570C41AC5CD3C0033C151 /* OMCustomProfileInfoView.m in Sources */,
 				A9193FCA1AD1305B00692A50 /* OMMessageViewController.m in Sources */,
+				B40B561C1DE591C50016E121 /* ZCAssetTablePicker.m in Sources */,
 				E4B0BA911C3E0FA100F6CCB9 /* PDFRenderer.m in Sources */,
 				6C9CA1C41B4664DB00806F96 /* OMTutorialVC.m in Sources */,
 				3C0A5C5E1978FC17009AEC85 /* OMSocialPhoto.m in Sources */,
@@ -3049,10 +3137,12 @@
 				3C5E7E8F197628DF000550F6 /* main.m in Sources */,
 				A9E986E91B2241D900B1BB92 /* OMPrivacyVC.m in Sources */,
 				3C029231197F5C2E0007ECCD /* OMAddFriendViewController.m in Sources */,
+				B40B56191DE591C50016E121 /* ZCAlbumPickerController.m in Sources */,
 				3E6F5CF41ACA933D002ABFED /* OMEditAvatarCell.m in Sources */,
 				3E6F5D001ACA9393002ABFED /* OMEditPasswordCell.m in Sources */,
 				A9193FBE1AD0ACCF00692A50 /* AMScrollingNavbarViewController.m in Sources */,
 				3E89300C1ACA91DC002E1909 /* OMEditProfileViewController.m in Sources */,
+				B40B561D1DE591C50016E121 /* ZCHelper.m in Sources */,
 				A9AEAD021ADC5A790069C08A /* OMPushServiceManager.m in Sources */,
 				3C4D1F3E1987A298001622B7 /* SlideNavigationContorllerAnimatorSlideAndFade.m in Sources */,
 				3CB78B5A1978F2F000D12B34 /* OMNewPostViewController.m in Sources */,
@@ -3070,6 +3160,7 @@
 				A9C016311AD8770C00E7F2B1 /* OMAdditionalTagViewController.m in Sources */,
 				3C0283C4198973FC00EA3864 /* OMPhotoViewController.m in Sources */,
 				3C093F9F19848B3900AEBDBD /* YFInputBar.m in Sources */,
+				B40B561A1DE591C50016E121 /* ZCAsset.m in Sources */,
 				3C4D1F3C1987A298001622B7 /* SlideNavigationContorllerAnimatorScaleAndFade.m in Sources */,
 				3C5E7EC4197651F6000550F6 /* OMLoginViewController.m in Sources */,
 				3C1284471978C90500EB7744 /* OMEventCell.m in Sources */,
@@ -3086,6 +3177,7 @@
 				A81D7A7F1D6ECC0500D48B53 /* MBProgressHUD+Add.m in Sources */,
 				3EC673BF1AB82C2E00EB1216 /* OMSettingsViewController.m in Sources */,
 				3E7E5F6A1AC1FE1C00349242 /* OMFriendViewController.m in Sources */,
+				B40B561B1DE591C50016E121 /* ZCAssetCell.m in Sources */,
 				3C0283BA198960D800EA3864 /* OMEventCells.m in Sources */,
 				3EC765A01AC9415000A3F1F5 /* OMPostEventViewController.m in Sources */,
 				B45ED25C1DD85A3100664B78 /* JCDrawView.m in Sources */,
@@ -3132,6 +3224,16 @@
 				3C5E7EAE197628E0000550F6 /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		B40B55FB1DE591C50016E121 /* ZCLocalized.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B40B55FC1DE591C50016E121 /* en */,
+				B40B56101DE591C50016E121 /* zh-Hans */,
+				B40B56111DE591C50016E121 /* zh-Hant */,
+			);
+			name = ZCLocalized.strings;
 			sourceTree = "<group>";
 		};
 		B4C877D91DCEC9EC0056556A /* Localizable.strings */ = {

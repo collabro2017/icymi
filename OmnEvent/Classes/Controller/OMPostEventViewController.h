@@ -54,6 +54,8 @@
 @property (nonatomic) kTypeUpload       uploadOption;
 @property (nonatomic) kTypeCapture      captureOption;
 @property (nonatomic) kTypeRecord       audioOption;
+//-----------------------------------------------------
+@property (nonatomic, strong) NSMutableArray *imageArray;
 
 typedef void(^CallBackFunc)(BOOL success);
 

@@ -29,6 +29,8 @@
 {
     [super viewWillAppear:animated];
     
+    //imageViewForPreview.contentMode = UIViewContentModeScaleAspectFit;
+    
     if (!_editFlag) {
         [imageViewForPreview setImage:_preImage];
     }
@@ -48,7 +50,7 @@
     imageViewForPreview.contentMode = UIViewContentModeScaleAspectFit;
 
 }
-*/
+//*/
 - (IBAction)backAction:(id)sender {
     
     [self.navigationController popViewControllerAnimated:YES];
@@ -149,7 +151,6 @@
     frame = CGRectMake(0, 0, IS_IPAD?768: 320,IS_IPAD?768: 320);
     imageViewForPreview.frame = frame;
     imageViewForPreview.image = dtImage;
-    
 }
 
 - (void)atViewControllerDidCancel:(OMAddTextViewController *)controller

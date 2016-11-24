@@ -102,18 +102,40 @@
     {
 //        if(_captureOption == kTypeCaptureVideo)
         {
-            OMCameraViewController *cameraVC = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
+            //---------------------------------------------------------------------------------------//
+            if (_uploadOption == 1 && _captureOption == 2) {    // event && photo capture activity.
+                actionSheet = [[UIActionSheet alloc] initWithTitle:@"Select the Capture Mode"
+                                                          delegate:self
+                                                 cancelButtonTitle:@"Cancel"
+                                            destructiveButtonTitle:@"Camera"
+                                                 otherButtonTitles:@"Camera roll", nil];
+                
+                _tempCurObj = _curObj;
+                _tempPostOrder = _postOrder;
+                _tempCaptureOption = _captureOption;
+                _tempUploadOption = _uploadOption;
+                
+                
+                // In this case the device is an iPad.&& In this case the device is an iPhone/iPod Touch.
+                [actionSheet showInView:self.view];
+                
+            }else{
+                
+                OMCameraViewController *cameraVC = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
+                
+                [cameraVC setUploadOption:(kTypeUpload)_uploadOption];
+                [cameraVC setCaptureOption:(kTypeCapture)_captureOption];
+                [cameraVC setCurObj:_curObj];
+                [cameraVC setPostOrder:_postOrder];
+                
+                UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraVC];
+                
+                [nav setNavigationBarHidden:YES animated:YES];
+                
+                [self presentViewController:nav animated:YES completion:nil];
+            }
             
-            [cameraVC setUploadOption:(kTypeUpload)_uploadOption];
-            [cameraVC setCaptureOption:(kTypeCapture)_captureOption];
-            [cameraVC setCurObj:_curObj];
-            [cameraVC setPostOrder:_postOrder];
-            
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraVC];
-            
-            [nav setNavigationBarHidden:YES animated:YES];
-            
-            [self presentViewController:nav animated:YES completion:nil];
+            //--------------------------------------------------------------------------------------//
         }
 //        else if(_captureOption == kTypeCapturePhoto)
 //        {
@@ -237,9 +259,6 @@
     ////////
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showNotification:) name:kLoadEventData object:nil];
-    
-    
-    
     
 }
 
@@ -413,4 +432,127 @@
 - (IBAction)showTutorialVideoAction:(id)sender {
     [TABController presentMoviePlayerViewControllerAnimated:player];
 }
+
+//----------------------------------------------------------------//
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    NSLog(@"------------------------ button index : %d", buttonIndex);
+    if (buttonIndex == 0) { // Camera
+        
+        if (IS_IPAD) {
+            [self performSelector:@selector(openCameraWindow:) withObject:nil afterDelay:0.5];
+        }else{
+            OMCameraViewController *cameraVC = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
+            
+            [cameraVC setUploadOption:(kTypeUpload)_tempUploadOption];
+            [cameraVC setCaptureOption:(kTypeCapture)_tempCaptureOption];
+            [cameraVC setCurObj:_tempCurObj];
+            [cameraVC setPostOrder:_tempPostOrder];
+            
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraVC];
+            
+            [nav setNavigationBarHidden:YES animated:YES];
+            
+            [self presentViewController:nav animated:YES completion:nil];
+        }
+        
+    }
+    if (buttonIndex == 1) { // Camera roll
+        [self launchImagePickerViewController];
+    }
+}
+
+-(void)openCameraWindow:(id)sender{
+    OMCameraViewController *cameraVC = [self.storyboard instantiateViewControllerWithIdentifier:@"CameraVC"];
+    
+    [cameraVC setUploadOption:(kTypeUpload)_tempUploadOption];
+    [cameraVC setCaptureOption:(kTypeCapture)_tempCaptureOption];
+    [cameraVC setCurObj:_tempCurObj];
+    [cameraVC setPostOrder:_tempPostOrder];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:cameraVC];
+    
+    [nav setNavigationBarHidden:YES animated:YES];
+    
+    [self presentViewController:nav animated:YES completion:nil];
+}
+
+#pragma mark - ZCImagePickerControllerDelegate
+
+- (void)zcImagePickerController:(ZCImagePickerController *)imagePickerController didFinishPickingMediaWithInfo:(NSArray *)info {
+    [self dismissPickerView];
+    
+    
+    _imageArray = [NSMutableArray array];
+    
+    for (NSDictionary *imageDic in info) {
+        
+        UIImage *image = [imageDic objectForKey:UIImagePickerControllerOriginalImage];
+        
+        [_imageArray addObject:image];
+    }
+    
+    [self postingImagesToServer];
+    
+}
+
+- (void)zcImagePickerControllerDidCancel:(ZCImagePickerController *)imagePickerController {
+    [self dismissPickerView];
+}
+
+#pragma mark - Private Methods
+
+- (void)launchImagePickerViewController {
+    ZCImagePickerController *imagePickerController = [[ZCImagePickerController alloc] init];
+    imagePickerController.imagePickerDelegate = self;
+    imagePickerController.maximumAllowsSelectionCount = 5;
+    imagePickerController.mediaType = ZCMediaAllAssets;
+    
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        
+        // You should present the image picker in a popover on iPad.
+        
+        _popoverController = [[UIPopoverController alloc] initWithContentViewController:imagePickerController];
+        
+        [self performSelector:@selector(openPopOniPad:) withObject:nil afterDelay:0.5];
+        
+    }
+    else {
+        // Full screen on iPhone and iPod Touch.
+        
+        [self.view.window.rootViewController presentViewController:imagePickerController animated:YES completion:NULL];
+    }
+}
+
+- (void)dismissPickerView {
+    if (_popoverController) {
+        [_popoverController dismissPopoverAnimated:YES];
+    }
+    else {
+        [self dismissViewControllerAnimated:YES completion:NULL];
+    }
+}
+
+-(void)openPopOniPad:(id)sender{
+    CGRect rect = CGRectMake(self.view.bounds.size.width/2, self.view.bounds.size.width/2, 1, 1);
+    [_popoverController presentPopoverFromRect:rect inView:self.view permittedArrowDirections:0 animated:YES];
+}
+
+//posting
+-(void)postingImagesToServer{
+    OMPostEventViewController *postEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PostEventVC"];
+    
+    [postEventVC setUploadOption:_tempUploadOption];
+    [postEventVC setCaptureOption:_tempCaptureOption];
+    [postEventVC setCurObj:_tempCurObj];
+    [postEventVC setPostOrder:_tempPostOrder];
+    [postEventVC setImageArray:_imageArray];
+    
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:postEventVC];
+    
+    [nav setNavigationBarHidden:NO animated:YES];
+    
+    [self presentViewController:nav animated:YES completion:nil];
+}
+
 @end
