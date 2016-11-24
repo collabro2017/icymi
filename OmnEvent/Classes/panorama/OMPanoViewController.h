@@ -11,6 +11,12 @@
 #import "DMD_LITE.h"
 @class PLITInfoView;
 
+@protocol OMPanoViewControllerDelegate <NSObject>
+
+-(void)didFinishCapture:(UIImage*)image;
+
+@end
+
 @interface OMPanoViewController : UIViewController <MonitorDelegate, UIGestureRecognizerDelegate>
 {
     ShooterView *_shooterView;
@@ -21,11 +27,6 @@
     NSTimer *_vibrationTimer;
 }
 
-@property (nonatomic) kTypeUpload      uploadOption;
-@property (nonatomic) kTypeCapture      captureOption;
-@property (nonatomic) PFObject          *curObj;
-@property (nonatomic, assign) int       postOrder;
-@property (nonatomic, strong) NSString *postType;
-@property (nonatomic) BOOL editFlag;
+@property (nonatomic) id<OMPanoViewControllerDelegate> delegate;
 
 @end

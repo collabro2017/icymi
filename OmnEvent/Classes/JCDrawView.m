@@ -80,7 +80,6 @@
     
     CGContextSetLineWidth(context, self.lineWidth);
     CGContextStrokePath(context);
-    
     self.drawImageView1.image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
 }

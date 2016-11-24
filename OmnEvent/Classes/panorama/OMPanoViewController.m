@@ -248,38 +248,12 @@
     NSString *ename = [TMP_DIR stringByAppendingPathComponent:@"equi.jpeg"];
     [[Monitor instance] genEquiAt:ename withHeight:800 andWidth:0 andMaxWidth:0];
     
-    //*
-    //--------------------------------//
+    if (_delegate && [_delegate respondsToSelector:@selector(didFinishCapture:)]) {
+        [self.navigationController popViewControllerAnimated:YES];
+        [_delegate didFinishCapture:[UIImage imageWithData:[NSData dataWithContentsOfFile:ename]]];
+    }
     
-    OMPhotoEditViewController *photoEditVC = [self.storyboard instantiateViewControllerWithIdentifier:@"PhotoEditVC"];
     
-    [photoEditVC setPreImage:[UIImage imageWithData:[NSData dataWithContentsOfFile:ename]]];
-    [photoEditVC setPostType:@"image"];
-    
-    [photoEditVC setUploadOption:self.uploadOption];
-    [photoEditVC setCaptureOption:self.captureOption];
-    [photoEditVC setCurObj:self.curObj];
-    [photoEditVC setPostOrder:_postOrder];
-    
-    [self.navigationController pushViewController:photoEditVC animated:YES];
-    //--------------------------------//
-    //*/
-    /*
-     ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-     [library writeImageDataToSavedPhotosAlbum:[NSData dataWithContentsOfFile:ename] metadata:nil completionBlock:^(NSURL *assetURL, NSError *error) {
-     if (assetURL)
-     {
-     [[[UIAlertView alloc] initWithTitle:nil message:@"Image saved to camera roll." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil]  show];
-     }
-     else if (error)
-     {
-     if (error.code == ALAssetsLibraryAccessUserDeniedError || error.code == ALAssetsLibraryAccessGloballyDeniedError)
-     {
-     [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Permission needed to access camera roll." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-     }
-     }
-     }];
-     //*/
 }
 
 @end
