@@ -609,11 +609,19 @@
             post[@"countryLatLong"] = countryLatLong;
             
             NSMutableArray *allPosts = curObj[@"postedObjects"];
+            
+                      
             NSNumber *postOrder = [NSNumber numberWithInt:1];
             if (self.postOrder == -1) {
                 PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
-                int newOrder = [item[@"postOrder"] intValue] + 1;
-                postOrder = [NSNumber numberWithInt:newOrder];
+                
+                if ([item isEqual:[NSNull null]]) {
+                    postOrder = [NSNumber numberWithInt:(int)allPosts.count];
+                }else{
+                    int newOrder = [item[@"postOrder"] intValue] + 1;
+                    postOrder = [NSNumber numberWithInt:newOrder];
+                }
+                
             }
             else if (allPosts.count > 0) {
                 PFObject *item = allPosts[self.postOrder];
@@ -851,8 +859,12 @@
         NSNumber *postOrder = [NSNumber numberWithInt:1];
         if (self.postOrder == -1) {
             PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
-            int newOrder = [item[@"postOrder"] intValue] + 1;
-            postOrder = [NSNumber numberWithInt:newOrder];
+            if ([item isEqual:[NSNull null]]) {
+                postOrder = [NSNumber numberWithInt:(int)allPosts.count];
+            }else{
+                int newOrder = [item[@"postOrder"] intValue] + 1;
+                postOrder = [NSNumber numberWithInt:newOrder];
+            }
         }
         else if (allPosts.count > 0) {
             PFObject *item = allPosts[self.postOrder];
