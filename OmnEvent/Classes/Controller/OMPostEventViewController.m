@@ -1362,13 +1362,23 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     if (![strTemp isEqualToString:@""]) {
-        if ([lblForTitle.text isEqualToString:@""]) {
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+        if (![strTemp isEqualToString:@""]) {
+            
+            if ([lblForTitle.text isEqualToString:@""]) {
+                lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+            }
+            else{
+                NSString *lastChar = [lblForTitle.text substringFromIndex:[lblForTitle.text length] - 1];
+                if ([lastChar isEqualToString:@";"]) {
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+                }else{
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@%@", lblForTitle.text, @";", strTemp, @";"];
+                }
+                
+            }
+            strTemp = @"";
         }
-        else{
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, @";", strTemp];
-        }
-        strTemp = @"";
+        
     }
 
     [self clearSelectListText];
@@ -1497,13 +1507,23 @@
 -(void)doneClicked:(UIBarButtonItem*)button
 {
     if (![strTemp isEqualToString:@""]) {
-        if ([lblForTitle.text isEqualToString:@""]) {
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+        if (![strTemp isEqualToString:@""]) {
+            
+            if ([lblForTitle.text isEqualToString:@""]) {
+                lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+            }
+            else{
+                NSString *lastChar = [lblForTitle.text substringFromIndex:[lblForTitle.text length] - 1];
+                if ([lastChar isEqualToString:@";"]) {
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+                }else{
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@%@", lblForTitle.text, @";", strTemp, @";"];
+                }
+                
+            }
+            strTemp = @"";
         }
-        else{
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, @";", strTemp];
-        }
-        strTemp = @"";
+
     }
     
     [self clearSelectListText];
