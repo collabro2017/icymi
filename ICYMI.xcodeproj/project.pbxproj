@@ -580,6 +580,7 @@
 		B40B56BF1DE6EB570016E121 /* UIView+Frame.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B568E1DE6EB570016E121 /* UIView+Frame.m */; };
 		B40B56C01DE6EB570016E121 /* _CLImageDrawViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B56911DE6EB570016E121 /* _CLImageDrawViewController.m */; };
 		B40B56C11DE6EB570016E121 /* _CLImageEditorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B40B56931DE6EB570016E121 /* _CLImageEditorViewController.m */; };
+		B42058491DE87A800060F0A0 /* UIButton+Badge.m in Sources */ = {isa = PBXBuildFile; fileRef = B42058481DE87A800060F0A0 /* UIButton+Badge.m */; };
 		B45ED2371DD4458000664B78 /* PhotoTweaksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */; };
 		B45ED2381DD4458000664B78 /* PhotoTweakView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2341DD4458000664B78 /* PhotoTweakView.m */; };
 		B45ED2391DD4458000664B78 /* UIColor+Tweak.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED2361DD4458000664B78 /* UIColor+Tweak.m */; };
@@ -1381,6 +1382,8 @@
 		B40B56911DE6EB570016E121 /* _CLImageDrawViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _CLImageDrawViewController.m; sourceTree = "<group>"; };
 		B40B56921DE6EB570016E121 /* _CLImageEditorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _CLImageEditorViewController.h; path = ../Utility/CLImageEditor/ViewController/_CLImageEditorViewController.h; sourceTree = "<group>"; };
 		B40B56931DE6EB570016E121 /* _CLImageEditorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _CLImageEditorViewController.m; path = ../Utility/CLImageEditor/ViewController/_CLImageEditorViewController.m; sourceTree = "<group>"; };
+		B42058471DE87A800060F0A0 /* UIButton+Badge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Badge.h"; sourceTree = "<group>"; };
+		B42058481DE87A800060F0A0 /* UIButton+Badge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Badge.m"; sourceTree = "<group>"; };
 		B45ED2311DD4458000664B78 /* PhotoTweaksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweaksViewController.h; sourceTree = "<group>"; };
 		B45ED2321DD4458000664B78 /* PhotoTweaksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoTweaksViewController.m; sourceTree = "<group>"; };
 		B45ED2331DD4458000664B78 /* PhotoTweakView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoTweakView.h; sourceTree = "<group>"; };
@@ -1850,6 +1853,7 @@
 		3C5E7EC1197651E3000550F6 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				B42058461DE87A800060F0A0 /* ButtonBadge */,
 				B40B56221DE6EB570016E121 /* CLImageEditor */,
 				B45ED24F1DD70B4900664B78 /* IQLabelView */,
 				B45ED2301DD4458000664B78 /* PhotoTweaks */,
@@ -2809,6 +2813,15 @@
 			path = ViewController;
 			sourceTree = "<group>";
 		};
+		B42058461DE87A800060F0A0 /* ButtonBadge */ = {
+			isa = PBXGroup;
+			children = (
+				B42058471DE87A800060F0A0 /* UIButton+Badge.h */,
+				B42058481DE87A800060F0A0 /* UIButton+Badge.m */,
+			);
+			path = ButtonBadge;
+			sourceTree = "<group>";
+		};
 		B45ED2301DD4458000664B78 /* PhotoTweaks */ = {
 			isa = PBXGroup;
 			children = (
@@ -3580,6 +3593,7 @@
 				3E89300C1ACA91DC002E1909 /* OMEditProfileViewController.m in Sources */,
 				B40B561D1DE591C50016E121 /* ZCHelper.m in Sources */,
 				A9AEAD021ADC5A790069C08A /* OMPushServiceManager.m in Sources */,
+				B42058491DE87A800060F0A0 /* UIButton+Badge.m in Sources */,
 				3C4D1F3E1987A298001622B7 /* SlideNavigationContorllerAnimatorSlideAndFade.m in Sources */,
 				3CB78B5A1978F2F000D12B34 /* OMNewPostViewController.m in Sources */,
 				3E6F5CF71ACA935C002ABFED /* OMEditNameCell.m in Sources */,

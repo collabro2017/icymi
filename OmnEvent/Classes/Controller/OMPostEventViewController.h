@@ -56,6 +56,7 @@
 @property (nonatomic) kTypeRecord       audioOption;
 //-----------------------------------------------------
 @property (nonatomic, strong) NSMutableArray *imageArray;
+@property (nonatomic, assign) BOOL panoFlag;
 
 typedef void(^CallBackFunc)(BOOL success);
 

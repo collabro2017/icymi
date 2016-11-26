@@ -75,7 +75,8 @@
 - (IBAction)topButtonsAction:(id)sender;
 - (IBAction)bottomButtonsAction:(id)sender;
 
-
+//--------------------------------------------------
+@property (nonatomic, assign) BOOL panoFlag;
 
 
 

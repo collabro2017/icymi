@@ -706,6 +706,10 @@
             [postEventVC setCaptureOption:captureOption];
             [postEventVC setCurObj:curObj];
             [postEventVC setPostOrder:_postOrder];
+            if (self.panoFlag == YES) {
+                [postEventVC setPanoFlag:YES];
+                self.panoFlag = NO;
+            }
             
             [self.navigationController pushViewController:postEventVC animated:YES];
             
@@ -1124,6 +1128,10 @@
         [[CLImageEditorTheme theme] setToolbarColor:[[UIColor blackColor] colorWithAlphaComponent:0.8]];
         [[CLImageEditorTheme theme] setToolbarTextColor:[UIColor whiteColor]];
         [[CLImageEditorTheme theme] setToolIconColor:@"white"];
+        
+        //-------------------------------------------------------------
+        self.panoFlag = YES;
+        
         [self presentViewController:editor animated:YES completion:nil];
     }
 }

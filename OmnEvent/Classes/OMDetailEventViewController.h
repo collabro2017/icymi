@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "OMBaseViewController.h"
+//------------------------------
+#import "UIButton+Badge.h"
 
 @interface OMDetailEventViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,UIAlertViewDelegate,UIDocumentInteractionControllerDelegate,MPMediaPickerControllerDelegate>
 {
@@ -40,6 +42,8 @@
     IBOutlet UIButton *btnForNetState;
     IBOutlet UIButton *btnReverse;
     BOOL isActionSheetReverseSelected;
+    //------------------
+    IBOutlet UIButton *btnNotification;
 }
 
 @property (nonatomic, retain) UIDocumentInteractionController *dic;

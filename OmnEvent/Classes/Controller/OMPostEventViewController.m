@@ -1010,7 +1010,7 @@
                         {
                             [allPosts insertObject:post atIndex:self.postOrder+1];
                             curObj[@"postedObjects"] = allPosts;
-                            //                                [curObj addObject:post forKey:@"postedObjects"];
+                            // [curObj addObject:post forKey:@"postedObjects"];
                             [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                                 [GlobalVar getInstance].isPosting = NO;
                                 if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");

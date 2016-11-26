@@ -180,6 +180,24 @@
     [self initializeNavBar];
     [self addRefreshControlToTable];
 
+    /*
+    UILabel *lbl_card_count = [[UILabel alloc]initWithFrame:CGRectMake(10,0, 14, 14)];
+    lbl_card_count.textColor = [UIColor whiteColor];
+    lbl_card_count.textAlignment = NSTextAlignmentCenter;
+    lbl_card_count.text = @"3";
+    lbl_card_count.layer.borderWidth = 1;
+    lbl_card_count.layer.cornerRadius = 8;
+    lbl_card_count.layer.masksToBounds = YES;
+    lbl_card_count.layer.borderColor =[[UIColor clearColor] CGColor];
+    lbl_card_count.layer.shadowColor = [[UIColor clearColor] CGColor];
+    lbl_card_count.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    lbl_card_count.layer.shadowOpacity = 0.0;
+    lbl_card_count.backgroundColor = [UIColor redColor];
+    lbl_card_count.font = [UIFont fontWithName:@"ArialMT" size:11];
+    
+    [btnNotification addSubview:lbl_card_count];
+    //*/
+    
     
     // Do any additional setup after loading the view.
     
@@ -1396,7 +1414,7 @@
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
                                      destructiveButtonTitle:@"Share via Email"
                                           otherButtonTitles:@"Facebook", @"Twitter", @"Instagram", @"Export to PDF",
-                        @"Select Items for New Event", @"Report", nil];
+                        @"Select Items for New Event", @"Report", @"Move",nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShareGuest;
@@ -1858,6 +1876,16 @@
                     [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
                     [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
+                    break;
+                case 7:
+                    //--------------------------------------------//
+                {
+                    [tblForDetailList setEditing:!tblForDetailList.editing];
+                    [autoRefreshTimer invalidate];
+                    [tblForDetailList reloadData];
+                }
+                    break;
+                    //--------------------------------------------//
                 default:
                     break;
             }
