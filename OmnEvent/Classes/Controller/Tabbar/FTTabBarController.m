@@ -234,7 +234,7 @@
     _viewControllersByIdentifier = [NSMutableDictionary dictionary];
     
 
-    [OMGlobal setCircleView:imageViewForAvatar borderColor:[UIColor whiteColor]];
+    //[OMGlobal setCircleView:imageViewForAvatar borderColor:[UIColor whiteColor]];
     
     
     availableIdentifiers = @[@"kIdentifierHome",

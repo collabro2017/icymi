@@ -297,8 +297,8 @@
                     [lblForTimer setTextColor:[UIColor redColor]];
                     
                     [temp removeObject:self_user.objectId];
-                    obj[@"usersBadgeFlag"] = temp;
-                    [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    currentObj[@"usersBadgeFlag"] = temp;
+                    [currentObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                         if(error == nil)
                         {
                             NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");

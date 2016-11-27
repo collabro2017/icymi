@@ -197,6 +197,8 @@
     
     [btnNotification addSubview:lbl_card_count];
     //*/
+    //btnNotification.badgeValue = @"3";
+    //btnNotification.badgeBGColor = [UIColor redColor];
     
     // Do any additional setup after loading the view.
     
