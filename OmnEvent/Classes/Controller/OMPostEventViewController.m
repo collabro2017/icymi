@@ -648,11 +648,23 @@
                 {
                     post[@"postType"]       = @"photo";                    
                     //image upload
+                    /*
                     PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
                     post[@"postFile"]       = postFile;
                     PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([_imageForPost resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
                     post[@"thumbImage"]     = thumbFile;
-                    
+                    //*/
+                    if (self.panoFlag == YES) {
+                        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
+                        post[@"postFile"]       = postFile;
+                        PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7f)];
+                        post[@"thumbImage"]     = thumbFile;
+                    }else{
+                        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
+                        post[@"postFile"]       = postFile;
+                        PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([_imageForPost resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+                        post[@"thumbImage"]     = thumbFile;
+                    }
                     
                 }
                     break;
