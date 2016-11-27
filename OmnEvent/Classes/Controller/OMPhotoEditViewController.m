@@ -29,14 +29,28 @@
 {
     [super viewWillAppear:animated];
     
+    //imageViewForPreview.contentMode = UIViewContentModeScaleAspectFit;
+    
     if (!_editFlag) {
         [imageViewForPreview setImage:_preImage];
     }
     
 }
+/*
+-(void)viewDidLayoutSubviews{
+    
+    float rate = _preImage.size.width/_preImage.size.height;
+    float height = IS_IPAD?768: 320;
+    CGSize scrollFrame = CGSizeMake(height * rate, height);
+    scrollView.contentSize = scrollFrame;
+    scrollView.scrollEnabled = YES;
+    
+    imageViewForPreview.frame = CGRectMake(0, 0, height * rate, height);
+    imageViewForPreview.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    imageViewForPreview.contentMode = UIViewContentModeScaleAspectFit;
 
-
-
+}
+//*/
 - (IBAction)backAction:(id)sender {
     
     [self.navigationController popViewControllerAnimated:YES];
@@ -137,7 +151,6 @@
     frame = CGRectMake(0, 0, IS_IPAD?768: 320,IS_IPAD?768: 320);
     imageViewForPreview.frame = frame;
     imageViewForPreview.image = dtImage;
-    
 }
 
 - (void)atViewControllerDidCancel:(OMAddTextViewController *)controller

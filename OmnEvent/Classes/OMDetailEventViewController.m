@@ -179,7 +179,26 @@
     [super viewDidLoad];
     [self initializeNavBar];
     [self addRefreshControlToTable];
+
+    /*
+    UILabel *lbl_card_count = [[UILabel alloc]initWithFrame:CGRectMake(10,0, 14, 14)];
+    lbl_card_count.textColor = [UIColor whiteColor];
+    lbl_card_count.textAlignment = NSTextAlignmentCenter;
+    lbl_card_count.text = @"3";
+    lbl_card_count.layer.borderWidth = 1;
+    lbl_card_count.layer.cornerRadius = 8;
+    lbl_card_count.layer.masksToBounds = YES;
+    lbl_card_count.layer.borderColor =[[UIColor clearColor] CGColor];
+    lbl_card_count.layer.shadowColor = [[UIColor clearColor] CGColor];
+    lbl_card_count.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    lbl_card_count.layer.shadowOpacity = 0.0;
+    lbl_card_count.backgroundColor = [UIColor redColor];
+    lbl_card_count.font = [UIFont fontWithName:@"ArialMT" size:11];
     
+    [btnNotification addSubview:lbl_card_count];
+    //*/
+    //btnNotification.badgeValue = @"3";
+    //btnNotification.badgeBGColor = [UIColor redColor];
     
     // Do any additional setup after loading the view.
     
@@ -504,6 +523,7 @@
     [mainQuery orderByDescending:@"postOrder"];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         if (error || !objects) {
             return;
         }
@@ -1386,7 +1406,7 @@
                                      destructiveButtonTitle:@"Share via Email"
                                           otherButtonTitles:@"Facebook", @"Twitter", @"Instagram",
                         @"Add Media After", @"Add to Folder", @"Export to PDF", @"Select Items for New Event",
-                        @"Delete", status, @"Report", nil];
+                        @"Delete", status, @"Report", @"Move",nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShare;
@@ -1396,7 +1416,7 @@
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
                                      destructiveButtonTitle:@"Share via Email"
                                           otherButtonTitles:@"Facebook", @"Twitter", @"Instagram", @"Export to PDF",
-                        @"Select Items for New Event", @"Report", nil];
+                        @"Select Items for New Event", @"Report", @"Move",nil];
         
         [shareAction1 showInView:self.view];
         shareAction1.tag = kTag_EventShareGuest;
@@ -1802,7 +1822,16 @@
                     [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
                     [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
-                    
+                    break;
+                //--------------------------------------------//
+                case 11:
+                {
+                    [tblForDetailList setEditing:!tblForDetailList.editing];
+                    [autoRefreshTimer invalidate];
+                    [tblForDetailList reloadData];
+                }
+                    break;
+                //--------------------------------------------//
                 default:
                     break;
             }
@@ -1849,6 +1878,16 @@
                     [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
                     [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
+                    break;
+                case 7:
+                    //--------------------------------------------//
+                {
+                    [tblForDetailList setEditing:!tblForDetailList.editing];
+                    [autoRefreshTimer invalidate];
+                    [tblForDetailList reloadData];
+                }
+                    break;
+                    //--------------------------------------------//
                 default:
                     break;
             }
@@ -2517,8 +2556,7 @@
 //Add Media After
 - (void)showAddMediaAfter {
     UIActionSheet* shareAction = nil;
-    shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil
-                                     otherButtonTitles:@"Text", @"Image", @"Audio", @"Video", nil];    
+    shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Text", @"Image", @"Audio", @"Video", nil];
     [shareAction showInView:self.view];
     shareAction.tag = kTag_AddMediaAfter;
 }
@@ -2544,7 +2582,7 @@
             {
                 
                 [MBProgressHUD showMessag:@"Deleting..." toView:self.view];
-                OMAppDelegate * appDel = [UIApplication sharedApplication].delegate;
+                OMAppDelegate * appDel = (OMAppDelegate*)[UIApplication sharedApplication].delegate;
                 
                 // In Case Online Mode
                 if(appDel.network_state)
@@ -2915,6 +2953,61 @@
     {
         NSLog(@"Skipped Auto Refreshing due to in posting!!");
     }
+}
+
+//----------------------------------------------------------//
+//---delegate method
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0 || indexPath.row != 0) {
+        return NO;
+    }else return YES;
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+        if (destinationIndexPath.section == 0) {
+                NSLog(@"Exception : Event Section");
+            [tblForDetailList reloadData];
+        }else {
+            [arrForDetail exchangeObjectAtIndex:sourceIndexPath.section-1 withObjectAtIndex:destinationIndexPath.section-1];
+            
+            
+            
+            PFObject *t1 = [arrForDetail objectAtIndex:(sourceIndexPath.section-1)];
+            PFObject *t2 = [arrForDetail objectAtIndex:(destinationIndexPath.section-1)];
+            
+            NSNumber *temp = t1[@"postOrder"];
+            t1[@"postOrder"] = t2[@"postOrder"];
+            t2[@"postOrder"] = temp;
+            
+            [t1 save];
+            [t2 save];
+            
+            // Current Test feature. lets check these again.
+            PFUser *eventUser = currentObject[@"user"];
+            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
+            if([eventUser.objectId isEqualToString: USER.objectId] && appDel.network_state)
+            {
+                currentObject[@"postedObjects"] = arrForDetail;
+                [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    if(error == nil) NSLog(@"DetailEventVC: added Post objs on postedObjects on Event");
+                }];
+            }
+            
+            [tblForDetailList setEditing:!tblForDetailList.editing];
+            autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
+            [tblForDetailList reloadData];
+            NSLog(@"prev === %ld, to === %ld", (long)sourceIndexPath.row, (long)destinationIndexPath.row);
+        }
+    
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView*)tableView editingStyleForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    return UITableViewCellEditingStyleNone;
+}
+
+- (BOOL)tableView:(UITableView*)tableView shouldIndentWhileEditingRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
+    return NO;
 }
 
 @end

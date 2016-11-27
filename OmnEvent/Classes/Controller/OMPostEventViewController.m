@@ -334,7 +334,11 @@
             break;
             
         default:
-            [self.navigationController popViewControllerAnimated:YES];
+            if ([_imageArray count] > 0) {
+                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+            }else{
+                [self.navigationController popViewControllerAnimated:YES];
+            }
             
             break;
     }
@@ -365,9 +369,16 @@
         [lblForTitle resignFirstResponder];
     }
     
-    [MBProgressHUD showMessag:@"Uploading..." toView:self.view];
+    //------------------------------------------//
+    if ([_imageArray count] > 0) {
+        [self uploadBulkImages];
+        
+        return;
+    }
+    //------------------------------------------//
     
     // New Create Event and Uploading...
+    [MBProgressHUD showMessag:@"Uploading..." toView:self.view];
     
     switch (uploadOption) {
         case kTypeUploadEvent:
@@ -598,11 +609,19 @@
             post[@"countryLatLong"] = countryLatLong;
             
             NSMutableArray *allPosts = curObj[@"postedObjects"];
+            
+                      
             NSNumber *postOrder = [NSNumber numberWithInt:1];
             if (self.postOrder == -1) {
                 PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
-                int newOrder = [item[@"postOrder"] intValue] + 1;
-                postOrder = [NSNumber numberWithInt:newOrder];
+                
+                if ([item isEqual:[NSNull null]]) {
+                    postOrder = [NSNumber numberWithInt:(int)allPosts.count];
+                }else{
+                    int newOrder = [item[@"postOrder"] intValue] + 1;
+                    postOrder = [NSNumber numberWithInt:newOrder];
+                }
+                
             }
             else if (allPosts.count > 0) {
                 PFObject *item = allPosts[self.postOrder];
@@ -629,11 +648,23 @@
                 {
                     post[@"postType"]       = @"photo";                    
                     //image upload
+                    /*
                     PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
                     post[@"postFile"]       = postFile;
                     PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([_imageForPost resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
                     post[@"thumbImage"]     = thumbFile;
-                    
+                    //*/
+                    if (self.panoFlag == YES) {
+                        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
+                        post[@"postFile"]       = postFile;
+                        PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7f)];
+                        post[@"thumbImage"]     = thumbFile;
+                    }else{
+                        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
+                        post[@"postFile"]       = postFile;
+                        PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([_imageForPost resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+                        post[@"thumbImage"]     = thumbFile;
+                    }
                     
                 }
                     break;
@@ -817,6 +848,220 @@
             break;
     }
 }
+
+//------------------------------------------------------------------------------------------------------//
+-(void)uploadBulkImages{
+    [MBProgressHUD showMessag:@"Uploading..." toView:self.view];
+    
+    if ([_imageArray count] > 0){
+        UIImage *tempImage = (UIImage*)[_imageArray firstObject];
+        
+        [GlobalVar getInstance].isPosting = YES;
+        
+        if ([_imageArray count] == 1 ) {
+            NSLog(@"");
+        }
+        PFObject *post = [PFObject objectWithClassName:@"Post"];
+        
+        post[@"user"]           = USER;
+        post[@"targetEvent"]    = curObj; // Event obj
+        post[@"title"]          = @"";
+        post[@"description"]    = @"";
+        post[@"country"]        = lblForLocation.text;
+        post[@"countryLatLong"] = countryLatLong;
+        
+        NSMutableArray *allPosts = curObj[@"postedObjects"];
+        NSNumber *postOrder = [NSNumber numberWithInt:1];
+        if (self.postOrder == -1) {
+            PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
+            if ([item isEqual:[NSNull null]]) {
+                postOrder = [NSNumber numberWithInt:(int)allPosts.count];
+            }else{
+                int newOrder = [item[@"postOrder"] intValue] + 1;
+                postOrder = [NSNumber numberWithInt:newOrder];
+            }
+        }
+        else if (allPosts.count > 0) {
+            PFObject *item = allPosts[self.postOrder];
+            postOrder = item[@"postOrder"];
+        }
+        post[@"postOrder"] = postOrder;
+        
+        //for badge
+        arrPostLookedFlags = [arrCurTaggedFriends mutableCopy];
+        PFUser *eventUser = curObj[@"user"];
+        if(![eventUser.objectId isEqualToString:USER.objectId])
+        {
+            [arrPostLookedFlags addObject:eventUser.objectId];
+            if ([arrPostLookedFlags containsObject:USER.objectId]) {
+                [arrPostLookedFlags removeObject:USER.objectId];
+            }
+        }
+
+        NSLog(@"PostEventVC: Tagged Friend = %@", arrPostLookedFlags);
+        if([arrPostLookedFlags count] > 0) post[@"usersBadgeFlag"] = arrPostLookedFlags;
+        
+        /**********************************************/
+        post[@"postType"]       = @"photo";
+        //image upload
+        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
+        post[@"postFile"]       = postFile;
+        PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+        post[@"thumbImage"]     = thumbFile;
+        /**********************************************/
+        
+        //Request a background execution task to allow us to finish uploading the photo even if the app is background
+        
+        self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+        }];
+        
+        BOOL enable_location = NO;//[CLLocationManager locationServicesEnabled];
+        
+        if (enable_location) {
+            [PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+                if (!error) {
+                    post[@"location"] = geoPoint;
+                    
+                    [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                        [GlobalVar getInstance].isPosting = NO;
+                        if (succeeded) {
+                            
+                            NSLog(@"Success ---- Post");
+                            
+                            //Increment the postOrder for other posts
+                            for (int i=0; i<=self.postOrder; i++) {
+                                PFObject *item = allPosts[i];
+                                [item incrementKey:@"postOrder"];
+                                [item save];
+                            }
+                            
+                            // add one Post on Event postedObject field: for badge
+                            if(![curObj[@"postedObjects"] containsObject:post])
+                            {
+                                [allPosts insertObject:post atIndex:self.postOrder+1];
+                                curObj[@"postedObjects"] = allPosts;
+                                //                                    [curObj addObject:post forKey:@"postedObjects"];
+                                [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                                    if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");
+                                }];
+                            }
+                            
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+                            //[self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                            
+                            [_imageArray removeObject:[_imageArray firstObject]];
+                            [self uploadBulkImages];
+                            
+                        }
+                        else
+                        {
+                            [OMGlobal showAlertTips:@"Uploading Failed." title:nil];
+                        }
+                        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+                    }];
+                }
+                else
+                {
+                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                    [OMGlobal showAlertTips:@"An error occured in getting current location" title:nil];
+                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+                }
+            }];
+        }
+        else
+        {
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            
+            if (!appDel.network_state) {
+                
+                
+                NSLog(@"Is Offline Mode");
+                
+                [appDel.m_offlinePosts addObject:post];
+                
+                if (_outPutURL != nil){
+                    [appDel.m_offlinePostURLs addObject:_outPutURL];
+                } else {
+                    NSURL *baseURL = [NSURL fileURLWithPath:@"file://path/to/user/"];
+                    [appDel.m_offlinePostURLs addObject:baseURL];
+                }
+                
+                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                //[self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+                
+                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                
+                [_imageArray removeObject:[_imageArray firstObject]];
+                [self uploadBulkImages];
+                
+                
+            } else {
+                
+                NSLog(@"Is Online Mode");
+                [GlobalVar getInstance].isPosting = YES;
+                
+                [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                    
+                    if (succeeded) {
+                        NSLog(@"Success ---- Post");
+                        
+                        //Increment the postOrder for other posts
+                        for (int i=0; i<=self.postOrder; i++) {
+                            PFObject *item = allPosts[i];
+                            if ([item isEqual:[NSNull null]]) continue;
+                            
+                            [item incrementKey:@"postOrder"];
+                            [item save];
+                        }
+                        
+                        // add one Post on Event postedObject field: for badge
+                        if(![curObj[@"postedObjects"] containsObject:post])
+                        {
+                            [allPosts insertObject:post atIndex:self.postOrder+1];
+                            curObj[@"postedObjects"] = allPosts;
+                            // [curObj addObject:post forKey:@"postedObjects"];
+                            [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                                
+                                if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");
+                            }];
+                        }
+                        else
+                        {
+                            
+                        }
+                    
+                        
+                        [_imageArray removeObject:tempImage];
+                        [self uploadBulkImages];
+                        
+                    }
+                    else
+                    {
+                        
+                        [OMGlobal showAlertTips:@"Uploading Failed." title:nil];
+                        
+                        [_imageArray removeObject:tempImage];
+                        [self uploadBulkImages];
+                    }
+                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+                }];
+            }////////////////////////////////////////////////////////////////
+        }
+    }else{
+        
+        [GlobalVar getInstance].isPosting = NO;
+        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+            
+    }
+}
+//------------------------------------------------------------------------------------------------------//
 
 - (void)dupPostForNewEvent:(PFObject*)targetEvent
 {
@@ -1126,13 +1371,23 @@
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
     if (![strTemp isEqualToString:@""]) {
-        if ([lblForTitle.text isEqualToString:@""]) {
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+        if (![strTemp isEqualToString:@""]) {
+            
+            if ([lblForTitle.text isEqualToString:@""]) {
+                lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+            }
+            else{
+                NSString *lastChar = [lblForTitle.text substringFromIndex:[lblForTitle.text length] - 1];
+                if ([lastChar isEqualToString:@";"]) {
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+                }else{
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@%@", lblForTitle.text, @";", strTemp, @";"];
+                }
+                
+            }
+            strTemp = @"";
         }
-        else{
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, @";", strTemp];
-        }
-        strTemp = @"";
+        
     }
 
     [self clearSelectListText];
@@ -1261,13 +1516,23 @@
 -(void)doneClicked:(UIBarButtonItem*)button
 {
     if (![strTemp isEqualToString:@""]) {
-        if ([lblForTitle.text isEqualToString:@""]) {
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@", lblForTitle.text, strTemp];
+        if (![strTemp isEqualToString:@""]) {
+            
+            if ([lblForTitle.text isEqualToString:@""]) {
+                lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+            }
+            else{
+                NSString *lastChar = [lblForTitle.text substringFromIndex:[lblForTitle.text length] - 1];
+                if ([lastChar isEqualToString:@";"]) {
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, strTemp, @";"];
+                }else{
+                    lblForTitle.text = [NSString stringWithFormat:@"%@%@%@%@", lblForTitle.text, @";", strTemp, @";"];
+                }
+                
+            }
+            strTemp = @"";
         }
-        else{
-            lblForTitle.text = [NSString stringWithFormat:@"%@%@%@", lblForTitle.text, @";", strTemp];
-        }
-        strTemp = @"";
+
     }
     
     [self clearSelectListText];

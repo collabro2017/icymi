@@ -10,10 +10,13 @@
 #import <AVFoundation/AVFoundation.h>
 #import "SBCaptureDefine.h"
 #import "SBVideoRecorder.h"
+//------------------------
+#import "CLImageEditor.h"
+#import "OMPanoViewController.h"
 
 @class DeleteButton;
 
-@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate> {
+@interface OMCameraViewController : UIViewController<SBVideoRecorderDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate, CLImageEditorDelegate, OMPanoViewControllerDelegate> {
     
     //Tool Bar
     
@@ -72,7 +75,8 @@
 - (IBAction)topButtonsAction:(id)sender;
 - (IBAction)bottomButtonsAction:(id)sender;
 
-
+//--------------------------------------------------
+@property (nonatomic, assign) BOOL panoFlag;
 
 
 
