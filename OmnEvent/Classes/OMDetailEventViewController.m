@@ -198,7 +198,6 @@
     [btnNotification addSubview:lbl_card_count];
     //*/
     
-    
     // Do any additional setup after loading the view.
     
     // global array Init
@@ -522,6 +521,7 @@
     [mainQuery orderByDescending:@"postOrder"];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         if (error || !objects) {
             return;
         }

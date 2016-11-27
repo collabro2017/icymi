@@ -846,6 +846,9 @@
         
         [GlobalVar getInstance].isPosting = YES;
         
+        if ([_imageArray count] == 1 ) {
+            NSLog(@"");
+        }
         PFObject *post = [PFObject objectWithClassName:@"Post"];
         
         post[@"user"]           = USER;
@@ -933,12 +936,8 @@
                                 }];
                             }
                             
-                            
-                            
                             [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
                             //[self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                            
-                            
                             
                             [_imageArray removeObject:[_imageArray firstObject]];
                             [self uploadBulkImages];
@@ -971,7 +970,6 @@
                 
                 [appDel.m_offlinePosts addObject:post];
                 
-                
                 if (_outPutURL != nil){
                     [appDel.m_offlinePostURLs addObject:_outPutURL];
                 } else {
@@ -983,6 +981,7 @@
                 //[self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
                 
+                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 
                 [_imageArray removeObject:[_imageArray firstObject]];
                 [self uploadBulkImages];
@@ -992,6 +991,7 @@
                 
                 NSLog(@"Is Online Mode");
                 [GlobalVar getInstance].isPosting = YES;
+                
                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     
@@ -1001,6 +1001,8 @@
                         //Increment the postOrder for other posts
                         for (int i=0; i<=self.postOrder; i++) {
                             PFObject *item = allPosts[i];
+                            if ([item isEqual:[NSNull null]]) continue;
+                            
                             [item incrementKey:@"postOrder"];
                             [item save];
                         }
@@ -1012,43 +1014,38 @@
                             curObj[@"postedObjects"] = allPosts;
                             // [curObj addObject:post forKey:@"postedObjects"];
                             [curObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                                [GlobalVar getInstance].isPosting = NO;
+                                
                                 if(error == nil) NSLog(@"PostEventVC:Badge Processing - Added one Post Obj on Event Field");
                             }];
                         }
                         else
                         {
-                            [GlobalVar getInstance].isPosting = NO;
+                            
                         }
+                    
                         
-                        if (_outPutURL) {
-                            [OMGlobal removeImage:_outPutURL.path];
-                        }
-                        
-                        [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                            [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-                        }];
-                        
-                        //[self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
-                        
-                        
-                        [_imageArray removeObject:[_imageArray firstObject]];
+                        [_imageArray removeObject:tempImage];
                         [self uploadBulkImages];
                         
                     }
                     else
                     {
-                        [GlobalVar getInstance].isPosting = NO;
+                        
                         [OMGlobal showAlertTips:@"Uploading Failed." title:nil];
+                        
+                        [_imageArray removeObject:tempImage];
+                        [self uploadBulkImages];
                     }
                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
                 }];
             }////////////////////////////////////////////////////////////////
         }
     }else{
+        
+        [GlobalVar getInstance].isPosting = NO;
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
             
     }
 }
