@@ -304,12 +304,16 @@
                             NSLog(@"DetailEventVC: Post Badge remove when open Detail view...");
                             [NSTimer scheduledTimerWithTimeInterval: 2.0 target: self selector: @selector(delayChangeTextColor:) userInfo: nil repeats: NO];
                             [GlobalVar getInstance].isPosting = NO;
+                            
                         }
                     }];
                     
                     if(socialEventObj.badgeCount >= 1) socialEventObj.badgeCount -= 1;
                     [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:curEventIndex withObject:socialEventObj];
-                    
+                    //---------------------------------------------
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"descount_bagdes" object:nil];
+                    });
                 }
                 
                 //[[NSNotificationCenter defaultCenter] postNotificationName:kLoadEventDataWithGlobal object:nil];

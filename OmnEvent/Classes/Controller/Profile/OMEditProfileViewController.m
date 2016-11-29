@@ -164,10 +164,6 @@
     self.title = @"Edit Profile";
 
 }
-- (void)backAction
-{
-    [self.navigationController popViewControllerAnimated:YES];
-}
 
 - (void)displayUserInfo
 {

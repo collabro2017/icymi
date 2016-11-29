@@ -10,6 +10,7 @@
 #import "OMBaseViewController.h"
 //------------------------------
 #import "UIButton+Badge.h"
+#import "OMSocialEvent.h"
 
 @interface OMDetailEventViewController : UIViewController<UITableViewDelegate,UITableViewDataSource,UINavigationControllerDelegate,UIImagePickerControllerDelegate,UIActionSheetDelegate,UIAlertViewDelegate,UIDocumentInteractionControllerDelegate,MPMediaPickerControllerDelegate>
 {
@@ -44,6 +45,7 @@
     BOOL isActionSheetReverseSelected;
     //------------------
     IBOutlet UIButton *btnNotification;
+    UILabel *lbl_card_count;
 }
 
 @property (nonatomic, retain) UIDocumentInteractionController *dic;
