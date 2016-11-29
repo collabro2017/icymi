@@ -591,6 +591,9 @@
 		B45ED25C1DD85A3100664B78 /* JCDrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = B45ED25B1DD85A3100664B78 /* JCDrawView.m */; };
 		B46228B71DCCF93600D284D8 /* IQDropDownTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */; };
 		B4813B271DCF26C6003B2E20 /* OMDrawTextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */; };
+		B484A91C1DEC611500C14D35 /* OMEventNotiViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B484A91B1DEC611500C14D35 /* OMEventNotiViewController.m */; };
+		B484A9201DEC62FC00C14D35 /* OMNotiMediaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B484A91F1DEC62FC00C14D35 /* OMNotiMediaCell.m */; };
+		B484A9231DEC632500C14D35 /* OMNotiTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B484A9221DEC632500C14D35 /* OMNotiTextCell.m */; };
 		B4C3875B1DE2A43900483162 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B4C3874D1DE2A43900483162 /* Crashlytics.framework */; };
 		B4C3875C1DE2A43900483162 /* DMDAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B4C3874F1DE2A43900483162 /* DMDAssets.bundle */; };
 		B4C3875D1DE2A43900483162 /* gallery.png in Resources */ = {isa = PBXBuildFile; fileRef = B4C387501DE2A43900483162 /* gallery.png */; };
@@ -1403,6 +1406,12 @@
 		B46228B61DCCF93600D284D8 /* IQDropDownTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IQDropDownTextField.m; sourceTree = "<group>"; };
 		B4813B251DCF26C6003B2E20 /* OMDrawTextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMDrawTextViewController.h; sourceTree = "<group>"; };
 		B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMDrawTextViewController.m; sourceTree = "<group>"; };
+		B484A91A1DEC611500C14D35 /* OMEventNotiViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMEventNotiViewController.h; sourceTree = "<group>"; };
+		B484A91B1DEC611500C14D35 /* OMEventNotiViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMEventNotiViewController.m; sourceTree = "<group>"; };
+		B484A91E1DEC62FC00C14D35 /* OMNotiMediaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMNotiMediaCell.h; sourceTree = "<group>"; };
+		B484A91F1DEC62FC00C14D35 /* OMNotiMediaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMNotiMediaCell.m; sourceTree = "<group>"; };
+		B484A9211DEC632500C14D35 /* OMNotiTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMNotiTextCell.h; sourceTree = "<group>"; };
+		B484A9221DEC632500C14D35 /* OMNotiTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMNotiTextCell.m; sourceTree = "<group>"; };
 		B4C3874D1DE2A43900483162 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		B4C3874E1DE2A43900483162 /* DMD_LITE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMD_LITE.h; sourceTree = "<group>"; };
 		B4C3874F1DE2A43900483162 /* DMDAssets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DMDAssets.bundle; sourceTree = "<group>"; };
@@ -1651,6 +1660,8 @@
 				A9193FC91AD1305B00692A50 /* OMMessageViewController.m */,
 				0A22E8B71B834CF900DD6638 /* OMTagFolderViewController.h */,
 				0A22E8B81B834D8A00DD6638 /* OMTagFolderViewController.m */,
+				B484A91A1DEC611500C14D35 /* OMEventNotiViewController.h */,
+				B484A91B1DEC611500C14D35 /* OMEventNotiViewController.m */,
 			);
 			name = HomeGroup;
 			sourceTree = "<group>";
@@ -2305,6 +2316,7 @@
 		3EB718D11ABF4F730050E2D2 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				B484A91D1DEC62BF00C14D35 /* EventNotification */,
 				FAAA74361DC7D0D500FC0D04 /* OMEventFeedCell.h */,
 				FAAA74371DC7D0D500FC0D04 /* OMEventFeedCell.m */,
 				3EB298A91ACDD83400528552 /* OMMediaCell.h */,
@@ -2867,6 +2879,17 @@
 				B4813B261DCF26C6003B2E20 /* OMDrawTextViewController.m */,
 			);
 			name = DrawAndText;
+			sourceTree = "<group>";
+		};
+		B484A91D1DEC62BF00C14D35 /* EventNotification */ = {
+			isa = PBXGroup;
+			children = (
+				B484A91E1DEC62FC00C14D35 /* OMNotiMediaCell.h */,
+				B484A91F1DEC62FC00C14D35 /* OMNotiMediaCell.m */,
+				B484A9211DEC632500C14D35 /* OMNotiTextCell.h */,
+				B484A9221DEC632500C14D35 /* OMNotiTextCell.m */,
+			);
+			name = EventNotification;
 			sourceTree = "<group>";
 		};
 		B4C3874C1DE2A43900483162 /* panorama */ = {
@@ -3468,6 +3491,7 @@
 				3CB392CB19A63D790056A096 /* OMForgotPasswordViewController.m in Sources */,
 				6CD6E7681B5B3F650074578C /* OMSocialEvent.m in Sources */,
 				B40B56BF1DE6EB570016E121 /* UIView+Frame.m in Sources */,
+				B484A91C1DEC611500C14D35 /* OMEventNotiViewController.m in Sources */,
 				3EA765951AC3DAEB005CC683 /* OMBaseNavigationController.m in Sources */,
 				B45ED24E1DD7098500664B78 /* OMAddTextViewController.m in Sources */,
 				B4C387671DE2A63100483162 /* OMPanoViewController.m in Sources */,
@@ -3600,6 +3624,7 @@
 				B40B56A51DE6EB570016E121 /* CLFilterBase.m in Sources */,
 				3E6F5D031ACA93A9002ABFED /* OMEditLocationCell.m in Sources */,
 				3C0464DA19A78F970027988F /* INSSearchBar.m in Sources */,
+				B484A9231DEC632500C14D35 /* OMNotiTextCell.m in Sources */,
 				B4C387641DE2A43900483162 /* PLITViewerVC.mm in Sources */,
 				3C0A5C491978FB69009AEC85 /* OMSocialProfile.m in Sources */,
 				A9193FCD1AD1359500692A50 /* OMMessageCell.m in Sources */,
@@ -3625,6 +3650,7 @@
 				B4FBBA271CCE723200BFDAD8 /* OMFeedOtherCommentCell.m in Sources */,
 				3C1284511978D82B00EB7744 /* MHTextField.m in Sources */,
 				3C0A5C61197916FF009AEC85 /* OMSocialManager.m in Sources */,
+				B484A9201DEC62FC00C14D35 /* OMNotiMediaCell.m in Sources */,
 				3C4D1F3B1987A298001622B7 /* SlideNavigationContorllerAnimatorScale.m in Sources */,
 				A9193FC71AD0F74A00692A50 /* OMDetailHeaderCell.m in Sources */,
 				B40B56A61DE6EB570016E121 /* CLFilterTool.m in Sources */,

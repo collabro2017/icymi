@@ -610,6 +610,7 @@
         
         [GlobalVar getInstance].gEventIndex = indexPath.item;
         
+                
         [detailEventVC setCurrentObject:event];
         [self.navigationController pushViewController:detailEventVC animated:YES];
         

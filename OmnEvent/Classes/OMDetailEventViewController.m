@@ -39,6 +39,8 @@
 #import "PDFRenderer.h"
 #import "OMAppDelegate.h"
 #import "Reachability.h"
+//--------------------------------------------------
+#import "OMEventNotiViewController.h"
 
 #define kTag_NewPhoto           4000
 #define kTag_NewVideo           5000
@@ -180,26 +182,6 @@
     [self initializeNavBar];
     [self addRefreshControlToTable];
 
-    /*
-    UILabel *lbl_card_count = [[UILabel alloc]initWithFrame:CGRectMake(10,0, 14, 14)];
-    lbl_card_count.textColor = [UIColor whiteColor];
-    lbl_card_count.textAlignment = NSTextAlignmentCenter;
-    lbl_card_count.text = @"3";
-    lbl_card_count.layer.borderWidth = 1;
-    lbl_card_count.layer.cornerRadius = 8;
-    lbl_card_count.layer.masksToBounds = YES;
-    lbl_card_count.layer.borderColor =[[UIColor clearColor] CGColor];
-    lbl_card_count.layer.shadowColor = [[UIColor clearColor] CGColor];
-    lbl_card_count.layer.shadowOffset = CGSizeMake(0.0, 0.0);
-    lbl_card_count.layer.shadowOpacity = 0.0;
-    lbl_card_count.backgroundColor = [UIColor redColor];
-    lbl_card_count.font = [UIFont fontWithName:@"ArialMT" size:11];
-    
-    [btnNotification addSubview:lbl_card_count];
-    //*/
-    //btnNotification.badgeValue = @"3";
-    //btnNotification.badgeBGColor = [UIColor redColor];
-    
     // Do any additional setup after loading the view.
     
     // global array Init
@@ -243,6 +225,9 @@
     [self loadContents];
     arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
     
+    //processing bagde
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -251,6 +236,9 @@
     [autoRefreshTimer invalidate];
     autoRefreshTimer = nil;
     NSLog(@"Auto Refresh timer - stoped!");
+    
+    //processing bagde
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
 }
 
 - (void)firstViewLoad {
@@ -273,6 +261,9 @@
     }
     
     autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
+    
+    //---------------------------------------------//
+    [self initializeBadges];
 }
 
 - (void)didReceiveMemoryWarning
@@ -3008,6 +2999,84 @@
 
 - (BOOL)tableView:(UITableView*)tableView shouldIndentWhileEditingRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     return NO;
+}
+
+//----------------------------------------------------------------//
+-(void)initializeBadges{
+    
+    lbl_card_count = [[UILabel alloc]initWithFrame:CGRectMake(10,0, 14, 14)];
+    lbl_card_count.textColor = [UIColor whiteColor];
+    lbl_card_count.textAlignment = NSTextAlignmentCenter;
+    lbl_card_count.text = @"3";
+    lbl_card_count.layer.borderWidth = 1;
+    lbl_card_count.layer.cornerRadius = 8;
+    lbl_card_count.layer.masksToBounds = YES;
+    lbl_card_count.layer.borderColor =[[UIColor clearColor] CGColor];
+    lbl_card_count.layer.shadowColor = [[UIColor clearColor] CGColor];
+    lbl_card_count.layer.shadowOffset = CGSizeMake(0.0, 0.0);
+    lbl_card_count.layer.shadowOpacity = 0.0;
+    lbl_card_count.backgroundColor = [UIColor redColor];
+    lbl_card_count.font = [UIFont fontWithName:@"ArialMT" size:11];
+    
+    [btnNotification addSubview:lbl_card_count];
+    
+    OMSocialEvent *temp = (OMSocialEvent*)currentObject;
+    
+    if (temp.badgeCount == 0) {
+        
+        [lbl_card_count setHidden:YES];
+        btnNotification.enabled = NO;
+        
+        if(temp.badgeNotifier > 0)
+        {
+            [lbl_card_count setHidden:NO];
+            [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeNotifier]];
+            btnNotification.enabled = YES;
+        }
+        
+    } else {
+        [lbl_card_count setHidden:NO];
+        [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeCount]];
+        btnNotification.enabled = YES;
+    }
+    
+}
+
+- (IBAction)actionShowingNewActivities:(id)sender {
+    
+    OMEventNotiViewController *notiVC = [self.storyboard instantiateViewControllerWithIdentifier:@"NotiEventVC"];
+    notiVC.event = (OMSocialEvent*)currentObject;
+    notiVC.curEventIndex = curEventIndex;
+    
+    [self.navigationController pushViewController:notiVC animated:YES];
+}
+
+-(void)processBadges:(NSNotification*)not{
+    //Remove the notification.
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
+    
+    OMSocialEvent *temp = (OMSocialEvent*)[[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
+    
+    if (temp.badgeCount == 0) {
+        
+        [lbl_card_count setHidden:YES];
+        btnNotification.enabled = NO;
+        
+        if(temp.badgeNotifier > 0)
+        {
+            [lbl_card_count setHidden:NO];
+            [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeNotifier]];
+            btnNotification.enabled = YES;
+        }
+        
+    } else {
+        [lbl_card_count setHidden:NO];
+        [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeCount]];
+        btnNotification.enabled = YES;
+    }
+    
+    //Register again.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
 }
 
 @end
