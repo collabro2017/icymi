@@ -1817,7 +1817,7 @@
                 //--------------------------------------------//
                 case 11:
                 {
-                    [tblForDetailList setEditing:!tblForDetailList.editing];
+                    [tblForDetailList setEditing:!tblForDetailList.editing animated:YES];
                     [autoRefreshTimer invalidate];
                     [tblForDetailList reloadData];
                 }
@@ -1873,7 +1873,7 @@
                 case 7:
                     //--------------------------------------------//
                 {
-                    [tblForDetailList setEditing:!tblForDetailList.editing];
+                    [tblForDetailList setEditing:!tblForDetailList.editing animated:YES];
                     [autoRefreshTimer invalidate];
                     [tblForDetailList reloadData];
                 }
@@ -2985,7 +2985,7 @@
                 }];
             }
             
-            [tblForDetailList setEditing:!tblForDetailList.editing];
+            [tblForDetailList setEditing:!tblForDetailList.editing animated:YES];
             autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
             [tblForDetailList reloadData];
             NSLog(@"prev === %ld, to === %ld", (long)sourceIndexPath.row, (long)destinationIndexPath.row);
