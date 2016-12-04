@@ -3003,11 +3003,12 @@
 
 //----------------------------------------------------------------//
 -(void)initializeBadges{
+    [lbl_card_count removeFromSuperview];
     
     lbl_card_count = [[UILabel alloc]initWithFrame:CGRectMake(10,0, 14, 14)];
     lbl_card_count.textColor = [UIColor whiteColor];
     lbl_card_count.textAlignment = NSTextAlignmentCenter;
-    lbl_card_count.text = @"3";
+    lbl_card_count.text = @"0";
     lbl_card_count.layer.borderWidth = 1;
     lbl_card_count.layer.cornerRadius = 8;
     lbl_card_count.layer.masksToBounds = YES;
@@ -3020,20 +3021,14 @@
     
     [btnNotification addSubview:lbl_card_count];
     
+    [lbl_card_count setHidden:YES];
+    
     OMSocialEvent *temp = (OMSocialEvent*)currentObject;
     
     if (temp.badgeCount == 0) {
         
         [lbl_card_count setHidden:YES];
         btnNotification.enabled = NO;
-        
-        if(temp.badgeNotifier > 0)
-        {
-            [lbl_card_count setHidden:NO];
-            [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeNotifier]];
-            btnNotification.enabled = YES;
-        }
-        
     } else {
         [lbl_card_count setHidden:NO];
         [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeCount]];

@@ -217,17 +217,20 @@
                     if(error == nil)
                     {
                         [arrNotifyActivity removeObject:obj];
+                        
+                        [notiTable reloadData];
+                        
+                        if(_event.badgeCount >= 1) _event.badgeCount -= 1;
+                        [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:_curEventIndex withObject:_event];
+                        
+                        [GlobalVar getInstance].isPosting = NO;
                         if ([arrNotifyActivity count] == 0) {
                             [self backAction];
                         }
-                        [notiTable reloadData];
-                        
-                        [GlobalVar getInstance].isPosting = NO;
                     }
                 }];
                 
-                if(_event.badgeCount >= 1) _event.badgeCount -= 1;
-                [[GlobalVar getInstance].gArrEventList replaceObjectAtIndex:_curEventIndex withObject:_event];
+                
                 
             }
             
