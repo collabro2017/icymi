@@ -138,6 +138,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadEventWithGlobal) name:kLoadEventDataWithGlobal object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(createDupEvent) name:kOpenPostEvent object:nil];
+    
+    
 }
 
 //Notification Methods
@@ -381,6 +383,11 @@
     
     if (is_grid) [collectionViewForFeed reloadData];
     else [tableViewForFeeds reloadData];
+   
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (is_grid) [collectionViewForFeed reloadData];
+        else [tableViewForFeeds reloadData];
+    });
     
 }
 
@@ -562,7 +569,7 @@
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    OMSocialEvent *obj = (OMSocialEvent *)[arrForFeed objectAtIndex:indexPath.item];
+    OMSocialEvent *obj = (OMSocialEvent *)[arrForFeed objectAtIndex:indexPath.row];
     
     OMSearchCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kSearchCell forIndexPath:indexPath];
     [cell setDelegate:self];

@@ -36,7 +36,7 @@
     } else {
         [btnForVideo setHidden:YES];
     }
-    
+        
     if (_currentObj.badgeCount == 0) {
         
         [lblForBadge setHidden:YES];
