@@ -3012,7 +3012,7 @@
 				TargetAttributes = {
 					3C5E7E7E197628DF000550F6 = {
 						DevelopmentTeam = 6M75VL4633;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -3815,7 +3815,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3826,7 +3826,7 @@
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Classes/panorama",
@@ -3838,8 +3838,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "738b39d9-2369-4930-857f-80170aee2615";
+				PROVISIONING_PROFILE_SPECIFIER = Collabro_devPro_0811;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -3851,9 +3851,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COMPRESS_PNG_FILES = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3864,7 +3864,7 @@
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Classes/panorama",
@@ -3876,8 +3876,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE = "6328482e-f845-4079-b9fe-50225c8ddc49";
+				PROVISIONING_PROFILE_SPECIFIER = Collabro_disPro;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
