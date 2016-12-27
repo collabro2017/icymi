@@ -621,6 +621,8 @@
 		E4B0BA8B1C3D116300F6CCB9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4B0BA8A1C3D116300F6CCB9 /* CoreData.framework */; };
 		E4B0BA8D1C3E09C600F6CCB9 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4B0BA8C1C3E09C600F6CCB9 /* CoreText.framework */; };
 		E4B0BA911C3E0FA100F6CCB9 /* PDFRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = E4B0BA901C3E0FA100F6CCB9 /* PDFRenderer.m */; };
+		FA0FAFBD1E124A6C00316A65 /* OMTermsAndConditionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FA0FAFBC1E124A6C00316A65 /* OMTermsAndConditionsViewController.m */; };
+		FA0FAFBF1E124A9400316A65 /* terms_and_conditions.txt in Resources */ = {isa = PBXBuildFile; fileRef = FA0FAFBE1E124A9400316A65 /* terms_and_conditions.txt */; };
 		FAAA74381DC7D0D500FC0D04 /* OMEventFeedCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FAAA74371DC7D0D500FC0D04 /* OMEventFeedCell.m */; };
 /* End PBXBuildFile section */
 
@@ -1454,6 +1456,9 @@
 		E4B0BA8F1C3E0FA100F6CCB9 /* PDFRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFRenderer.h; sourceTree = "<group>"; };
 		E4B0BA901C3E0FA100F6CCB9 /* PDFRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFRenderer.m; sourceTree = "<group>"; };
 		F2CE93558EBA59F9A06EC676 /* Pods-ICYMI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ICYMI.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ICYMI/Pods-ICYMI.debug.xcconfig"; sourceTree = "<group>"; };
+		FA0FAFBB1E124A6C00316A65 /* OMTermsAndConditionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMTermsAndConditionsViewController.h; sourceTree = "<group>"; };
+		FA0FAFBC1E124A6C00316A65 /* OMTermsAndConditionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMTermsAndConditionsViewController.m; sourceTree = "<group>"; };
+		FA0FAFBE1E124A9400316A65 /* terms_and_conditions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = terms_and_conditions.txt; sourceTree = "<group>"; };
 		FAAA74361DC7D0D500FC0D04 /* OMEventFeedCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMEventFeedCell.h; sourceTree = "<group>"; };
 		FAAA74371DC7D0D500FC0D04 /* OMEventFeedCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMEventFeedCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1690,6 +1695,8 @@
 				3EC673BE1AB82C2E00EB1216 /* OMSettingsViewController.m */,
 				3EABA90B1AB893B900EBD7B0 /* OMChangePasswordViewController.h */,
 				3EABA90C1AB893B900EBD7B0 /* OMChangePasswordViewController.m */,
+				FA0FAFBB1E124A6C00316A65 /* OMTermsAndConditionsViewController.h */,
+				FA0FAFBC1E124A6C00316A65 /* OMTermsAndConditionsViewController.m */,
 			);
 			name = Profile;
 			sourceTree = "<group>";
@@ -2171,6 +2178,7 @@
 		3EAD0D7F1ABC7C1A001280A1 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				FA0FAFBE1E124A9400316A65 /* terms_and_conditions.txt */,
 				A9E986E51B2240E900B1BB92 /* PrivacyPolicy.docx */,
 				A81D7A801D6EF3B400D48B53 /* play_button@2x.png */,
 				8F3A27E31CF602A800999200 /* Font */,
@@ -3226,6 +3234,7 @@
 				3CC69195199FBE350064B4D0 /* FK.png in Resources */,
 				8F3A27FC1CF602A800999200 /* HELVETICA NEUE CE 75 BOLD.TTF in Resources */,
 				3EB66CD11AB6186700E90054 /* video_longvideo_btn_shoot@2x.png in Resources */,
+				FA0FAFBF1E124A9400316A65 /* terms_and_conditions.txt in Resources */,
 				3CC69235199FBE350064B4D0 /* US.png in Resources */,
 				3CC6917A199FBE350064B4D0 /* CI.png in Resources */,
 				3CC69222199FBE350064B4D0 /* TC.png in Resources */,
@@ -3449,7 +3458,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		6FBD8A97EE955709A159C67F /* [CP] Copy Pods Resources */ = {
@@ -3531,6 +3540,7 @@
 				3C4D1F3D1987A298001622B7 /* SlideNavigationContorllerAnimatorSlide.m in Sources */,
 				B40B56951DE6EB570016E121 /* CLImageEditor.m in Sources */,
 				3EB718D71ABF4FE70050E2D2 /* OMFeedImageCell.m in Sources */,
+				FA0FAFBD1E124A6C00316A65 /* OMTermsAndConditionsViewController.m in Sources */,
 				B40B56B01DE6EB570016E121 /* CLEmoticonTool.m in Sources */,
 				B40B56C01DE6EB570016E121 /* _CLImageDrawViewController.m in Sources */,
 				B40B56BD1DE6EB570016E121 /* UIDevice+SystemVersion.m in Sources */,
@@ -3826,7 +3836,7 @@
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Classes/panorama",
@@ -3864,7 +3874,7 @@
 				GCC_PREFIX_HEADER = "OmnEvent/ICYMI-Prefix.pch";
 				GCC_WARN_UNDECLARED_SELECTOR = NO;
 				INFOPLIST_FILE = "OmnEvent/ICYMI-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/OmnEvent/Classes/panorama",

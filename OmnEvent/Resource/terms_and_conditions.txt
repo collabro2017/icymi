@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Terms and Conditions</title>
+<style>
+
+body {color:#505561; font-family:Georgia; font-size:120%;}
+p.heading{color:#000000; font-family:Georgia-Bold;}
+
+</style>
+</head>
+
+<body>
+
+<p class='heading'><strong>End user license agreement for Visionary Technology Management Mobile Applications (ICYMI and IntelliSpeX)</strong></p>
+
+<p>Last update – December</p>
+
+<p>This End User License Agreement (“Agreement”) sets forth the terms and conditions governing the use of any Visionary Technology Management, LLC mobile application downloaded or otherwise acquired by you (the “App”) that is designed to operate on any device you own or control which runs any non-Apple Inc. mobile operating system (“Device”).</p>
+
+<p>By using this App, you agree to be bound by the terms and conditions of this Agreement.</p>
+
+<p>You acknowledge that this Agreement is entered into by and between you and the Visionary Technology Management, LLC affiliate identified in the App as licensor of the App, and not with any third party Device platform or associated service provider or telecommunications carrier or the third party from whom you are downloading this App or any of their affiliates (each, a “Service Provider”, collectively, “Service Providers”). You also acknowledge that Service Providers have no obligation hereunder to furnish any maintenance and support services with respect to the App unless you are under a separate business agreement. If documentation is provided with the App, you may copy and use the documentation for your internal, reference purposes.</p>
+
+<p>You must also comply with the usage rules established by any Service Providers that apply to your Device ("Usage Rules"). Such Usage Rules are incorporated herein by reference. It is your responsibility to determine what Usage Rules apply to your use of the App, as they may be applicable to you depending on (i) your Device, (ii) the method by which you downloaded or otherwise acquired the App, and (iii) the third party from whom you downloaded or otherwise acquired the App. Any third party Device platform or the third party from whom you are downloading this App may make it a condition of their agreements with you, that the App made available through such distribution service, be downloaded, installed and used only on certain proprietary handheld software platforms operating on a Device.</p>
+
+<p>If you do not wish to accept this Agreement, do not use the App.</p>
+
+<p class='heading'><strong>Changes</strong></p>
+
+<p>Visionary Technology Management, LLC reserves the right to update, revise, supplement and otherwise modify this Agreement from time to time. Any such changes to this Agreement will be effective immediately for new users and thirty (30) days after notification (including by posting a notice on the applicable Visionary Technology Management, LLC website) for current users. Registered users are encouraged to review this Agreement periodically for changes. If you do not wish to accept any change, please uninstall and discontinue using the App. Your continued use of the App following the thirty (30) day notice period constitutes your acceptance of those changes.</p>
+
+<p class='heading'><strong>Security</strong></p>
+
+<p>The information that the App collects may be stored locally on your Device and may be transmitted to our servers in countries of the European Union (“EU”), the United States (“U.S.”), and/or other countries where Visionary Technology Management, its affiliates or any of their service providers operate. The transmission of information over wireless and wired networks is not inherently secure. Visionary Technology Management, LLC uses many tools to help protect your personal information against unauthorized access and disclosure. However, we do not guarantee that your personal information or private communications will always remain private when using the App.</p>
+
+<p class='heading'><strong>Privacy</strong></p>
+
+<p>All photos, comments, activity sheets, and other content is owned by Visionary Technology Management, LLC.  As such Visionary Techology Management may delete, edit, modify, reuse or otherwise repurpose the content created and stored on ICYMI, IntelliSpeX or other Visionary Technology Management mobile applications in any way Visionary Technology Management, LLC chooses or needs.</p>
+
+<p class='heading'><strong>User control and uninstall</strong></p>
+
+<p>You can access and change user settings for the App or delete your search history from the options/settings menu on your Device. Uninstallation methods vary depending on your Device. To uninstall the App, please consult your Device manual.</p>
+
+<p class='heading'><strong>Grant of license</strong></p>
+
+<p>Visionary Technology Management, LLC grants to you a non-transferable, non-exclusive and revocable license to install one copy of the App on your Device (except that one copy of the App made available and downloaded from the Apple App store without requiring payment of any additional fees to Visionary Technology Management, LLC (from either Windows Phone Marketplace’s owner or operator or you) and use the App according to the terms and conditions set forth in this Agreement. The App is licensed, not sold, to you. Except as expressly granted by this Agreement or otherwise by Visionary Technology Management, LLC or its licensors in writing, you acquire no right, title or license in the App or any data, software, content, application or materials accessed from or incorporated in the App. This Agreement does not give you any rights to any updates or upgrades to the App or to any maintenance releases, patches, fixes, extensions or enhancements (collectively, “Updates”) to the App developed by Visionary Technology Management, LLC or its suppliers or licensors at any time in the future. Except as required under applicable law, this license does not entitle you to receive any maintenance or support services with respect to the App. Visionary Technology Management, LLC may provide Updates and/or support. If provided by Elsevier, Updates may be delivered automatically or you may be notified when a new Update is ready to be installed, or we make such Updates available for download. You authorize Visionary Technology Management, LLC to deliver automatically any Update if we believe it is necessary to provide for the continued functionality of the App or for any reasonable business purpose. Your use of the Updates will be governed by this Agreement unless you are asked to agree to new or additional terms at the time of download or installation. You also agree that you may have to enter into a renewed version of this Agreement if you want to download, install or use a new or modified version of the App.</p>
+
+<p class='heading'><strong>License restrictions</strong></p>
+
+<p>You agree to the following license restrictions: (a) to use the App solely for your personal use; (b) to not install or use a copy of the App on a device that you do not own or control; (c) to not duplicate, copy or distribute the App, except as necessary to use it on your Device; (d) to not license, sell, rent, lease, lend, transfer, assign, distribute, host, outsource, disclose or otherwise commercially exploit the App or make the App available to any third party; (e) to not use the App for any fraudulent, unlawful or illegal activity or in any way that could harm the App or impair anyone else’s use of it or a wireless network or to try to gain unauthorized access to any service, data, account or network by any means; (f) to not modify, translate, or create derivative works based on the App or disassemble, decompile or reverse engineer any part of the App, except and only to the extent that applicable law expressly permits, despite this limitation; (g) to not work around any technical limitations in the App; (h) to preserve all copyright and other proprietary rights notices on the App and all copies thereof; and to comply with all term and conditions as established by the Apple App Store and it’s owners.</p>
+
+<p class='heading'><strong>Term and termination</strong></p>
+
+<p>The license is effective for an indefinite period of time, until Visionary Technology Management, LLC terminates it, or until you provide notice to Visionary Technology Management of your decision to terminate it. Your rights under this license will terminate automatically without notice to you if you fail to comply with any of the provisions of this Agreement. Visionary Technology Management, LLC reserves the right to suspend, discontinue, enhance, update or otherwise modify the App, or its availability to you, at any time without notice and to suspend, delete, edit, or modify content you may have stored at anytime on the application without limitation. Upon termination of the license to the App, you will cease all use of the App.</p>
+
+<p class='heading'><strong>Warranty</strong></p>
+
+<p>The App is provided subject to the ‘Disclaimer of Warranties and Liability’ section of the Visionary Technology Management, LLC Website Terms and Conditions. Service Providers have no warranty obligation hereunder and give no guarantees with respect to the App or in relation to the sale, distribution or use thereof. Any claims, losses, liabilities, damages, costs or expenses attributable to any failure to conform to Visionary Technology Managment’s warranty will be Visionary Technology Management’s sole responsibility. To the extent permitted by applicable law, Service Providers exclude any implied warranties or conditions, including, without limitation, any implied warranties or conditions of quality, performance, results, durability, title, merchantability, fitness for a particular purpose and non-infringement arising by statute or otherwise in law or from a course of dealing or usage of trade arising out of or related to this Agreement or arising out of or related to any associated programs, processes, products or services or their performance or their failure to perform. Service Providers shall not be responsible for any breach of this Agreement.</p>
+
+<p class='heading'><strong>Product claims</strong></p>
+
+<p>You acknowledge that Visionary Technology Management, not any Service Provider, is responsible for addressing any claim you or any third party may have relating to the App or your possession and/or use of the App, including but not limited to: (i) product liability claims; (ii) any claim that the App fails to conform to any applicable legal or regulatory requirement; and (iii) claims arising under consumer protection or similar legislation.</p>
+
+<p class='heading'><strong>Intellectual property rights</strong></p>
+
+<p>You acknowledge that, in the event of any third party claim that the App or your possession and/or use of the App infringes that third party’s intellectual property rights, Visionary Technology Management, not any Service Provider, will be solely responsible for the investigation, defense, settlement and discharge of any such intellectual property infringement claim.</p>
+
+<p class='heading'><strong>Third party beneficiary</strong></p>
+
+<p>You acknowledge and agree that Service Providers are third party beneficiaries of these terms and upon your acceptance of the terms of this Agreement, Service Providers will have the right (and are deemed to have accepted the right) to enforce these terms against you as a third party beneficiary thereof.</p>
+
+<p class='heading'><strong>Product questions and contact</strong></p>
+
+<p>The Visionary Technology Management, LLC / company that licenses the App, not any Service Provider, is responsible for addressing any questions, comments or claims relating to the App and/or your use of the App. See below the Visionary Technology Management, LLC companies and address to which you can direct your questions:</p>
+<p>Visionary Technology Management, </p>
+
+<p class='heading'><strong>Legal compliance</strong></p>
+
+<p>You represent and warrant that (i) you are not located in a country that is subject to a U.S. Government embargo, or that has been designated by the U.S. Government as a “terrorist supporting” country; (ii) you are not listed on any U.S. Government list of prohibited or restricted parties; and (iii) you will comply with all relevant U.N. and EU sanctions and embargoes.</p>
+
+</body>
+</html>
