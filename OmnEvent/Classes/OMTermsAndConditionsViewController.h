@@ -10,4 +10,6 @@
 
 @interface OMTermsAndConditionsViewController : UIViewController
 
+@property (nonatomic, assign) BOOL isToolbarShown;
+
 @end

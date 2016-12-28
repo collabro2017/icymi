@@ -2566,7 +2566,7 @@
         <!--Terms And Conditions View Controller-->
         <scene sceneID="d6d-60-q6R">
             <objects>
-                <viewController id="TfP-VK-G8A" customClass="OMTermsAndConditionsViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TermsVC" id="TfP-VK-G8A" customClass="OMTermsAndConditionsViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Um6-cJ-4Z7"/>
                         <viewControllerLayoutGuide type="bottom" id="GPr-Kg-Qcn"/>
@@ -2574,9 +2574,31 @@
                     <view key="view" contentMode="scaleToFill" id="6lh-xV-brF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mWL-ja-YBw">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem title="Disagree" id="JMq-6H-yy3">
+                                        <connections>
+                                            <action selector="onBarBtnDisagreeTapped:" destination="TfP-VK-G8A" id="sP6-tz-Qao"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="tNo-40-DP8"/>
+                                    <barButtonItem title="Agree" id="EiV-Iv-kdR">
+                                        <connections>
+                                            <action selector="onBarBtnAgreeTapped:" destination="TfP-VK-G8A" id="KcL-TM-zo8"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="jVB-R2-d29"/>
+                    <connections>
+                        <outlet property="bottomToolbar" destination="mWL-ja-YBw" id="XzL-3z-lhG"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nxS-v1-TlP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -4505,7 +4527,7 @@
                                                             </constraints>
                                                         </imageView>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unknown" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lkF-T9-xke">
-                                                            <rect key="frame" x="64" y="28.5" width="178" height="21"/>
+                                                            <rect key="frame" x="64" y="28" width="178" height="21"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="21" id="hpQ-mZ-SjF"/>
                                                             </constraints>
@@ -6294,17 +6316,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0dE-Xy-hhc">
-                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
                                                 </imageView>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="i06-I4-hBs">
-                                                    <rect key="frame" x="8" y="5" width="35" height="35"/>
+                                                    <rect key="frame" x="8" y="4" width="35" height="35"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="35" id="G9c-IN-W4o"/>
                                                         <constraint firstAttribute="width" constant="35" id="WdU-se-T3M"/>
                                                     </constraints>
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="02B-TS-q86">
-                                                    <rect key="frame" x="8" y="5" width="35" height="35"/>
+                                                    <rect key="frame" x="8" y="4" width="35" height="35"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="35" id="Bex-5B-INe"/>
                                                         <constraint firstAttribute="height" constant="35" id="DKX-9z-RjO"/>
@@ -6317,7 +6339,7 @@
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qsY-3K-MIF">
-                                                    <rect key="frame" x="54" y="12" width="181" height="21"/>
+                                                    <rect key="frame" x="54" y="11" width="181" height="21"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="181" id="6rt-Rs-qwm"/>
                                                         <constraint firstAttribute="height" constant="21" id="vj8-69-gh3"/>
@@ -8782,7 +8804,7 @@
                                         <rect key="frame" x="15" y="7" width="277" height="126"/>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Have you tagged friends to share this ICYMI?" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ruf-P4-6WN">
-                                        <rect key="frame" x="48.5" y="46" width="199" height="47"/>
+                                        <rect key="frame" x="49" y="46" width="199" height="47"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="199" id="e1A-yB-37B"/>
                                         </constraints>

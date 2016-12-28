@@ -60,6 +60,7 @@
 //
 
 #define LOG_IN  @"LoggedIn"
+#define AGREEMENT_AGREED  @"AGREEMENT_AGREED"
 #define kImageWidth  106
 #define kImageHeight 106
 

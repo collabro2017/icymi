@@ -20,6 +20,7 @@
 #import <Crittercism/Crittercism.h>
 
 #import <GoogleSignIn/GoogleSignIn.h>
+#import "OMTermsAndConditionsViewController.h"
 
 // Test
 
@@ -89,8 +90,6 @@
     //[GIDSignIn sharedInstance].delegate = self;
     
     //Enable public read access by default, with any newly created PFObjects belonging to the current user
-    
-    [PFUser enableAutomaticUser];
     
     PFACL *defaultACL = [PFACL ACL];
     
@@ -175,7 +174,11 @@
     }
     
     PFUser *currentUser = [PFUser currentUser];
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:LOG_IN] && currentUser ) {
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:LOG_IN] && currentUser) {
+        
+        if (![[NSUserDefaults standardUserDefaults] boolForKey:AGREEMENT_AGREED]) {
+            [self showAgreementVC];
+        }
         
         if(![GlobalVar getInstance].isEventLoading)
             [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
@@ -191,17 +194,7 @@
     }
     else
     {
-        
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
-        
-        OMWelcomeViewController *welcomeVC = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeVC"];
-        
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:welcomeVC];
-        [nav setNavigationBarHidden:YES];
-        
-        [self.window.rootViewController presentViewController:nav animated:NO completion:nil];
-        [self.window makeKeyAndVisible];
-        
+        [self showWelcomeVC];
     }
 }
 
@@ -343,7 +336,6 @@
     //    }
 }
 
-
 #pragma mark - ()
 
 - (void)subscribeFinished:(NSNumber *)result error:(NSError *)error{
@@ -360,6 +352,24 @@
 - (FTTabBarController *)tabBarController
 {
     return (FTTabBarController *) self.window.rootViewController;
-    
 }
+
+- (void)showWelcomeVC {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
+    OMWelcomeViewController *welcomeVC = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeVC"];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:welcomeVC];
+    [nav setNavigationBarHidden:YES];
+    [self.window.rootViewController presentViewController:nav animated:NO completion:nil];
+    [self.window makeKeyAndVisible];
+}
+
+- (void)showAgreementVC {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main_iPhone" bundle:nil];
+    OMTermsAndConditionsViewController *termsVC = [storyboard instantiateViewControllerWithIdentifier:@"TermsVC"];
+    termsVC.isToolbarShown = YES;
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:termsVC];
+    [self.window.rootViewController presentViewController:nav animated:YES completion:nil];
+    [self.window makeKeyAndVisible];
+}
+
 @end
