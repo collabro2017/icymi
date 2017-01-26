@@ -7,13 +7,10 @@
 //
 
 #import "OMTermsAndConditionsViewController.h"
-#import <WebKit/WebKit.h>
 
-@interface OMTermsAndConditionsViewController ()<WKNavigationDelegate, UIAlertViewDelegate>
+@interface OMTermsAndConditionsViewController ()
 
-#define PRIVACY_URL @"http://test.intellispex.com/info/privacy"
 @property (weak, nonatomic) IBOutlet UIToolbar *bottomToolbar;
-@property (strong, nonatomic) WKWebView *webView;
 
 @end
 
@@ -39,14 +36,17 @@
     else {
         rect.size.height -= 44;
     }
-    self.bottomToolbar.hidden = YES;
     
-    //Create the web view to load the page.
-    self.webView = [[WKWebView alloc] initWithFrame:rect];
-    self.webView.navigationDelegate = self;
-    [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:PRIVACY_URL]]];
-    [self.view addSubview:self.webView];
-    [MBProgressHUD showHUDAddedTo:self.webView animated:YES];
+    UITextView *textView = [[UITextView alloc] initWithFrame:rect];
+    
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"terms_and_conditions" ofType:@"txt"];
+    NSString *privacyPolicyText = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithData:[privacyPolicyText dataUsingEncoding:NSUnicodeStringEncoding] options:@{NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+    textView.attributedText = attributedString;
+    textView.editable = NO;
+    textView.selectable = NO;
+    
+    [self.view addSubview:textView];
 }
 
 - (void)backAction {
@@ -84,37 +84,13 @@
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Terms and Conditions" message:@"I agree to Terms and Conditions." preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                       handler:^(UIAlertAction * _Nonnull action) {
+                                                          
+        
     }]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:AGREEMENT_AGREED];
         [[NSUserDefaults standardUserDefaults] synchronize];
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-    }]];
-    [self presentViewController:alertController animated:YES completion:nil];
-}
-
-#pragma mark - Delegate method of WKNavigationDelegate
-- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
-    [MBProgressHUD hideHUDForView:self.webView animated:YES];
-    self.bottomToolbar.hidden = !self.isToolbarShown;
-}
-
-- (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error {
-    [MBProgressHUD hideHUDForView:self.webView animated:YES];
-    [self showErrorAlertWithRetryButton];
-}
-
-- (void)webView:(WKWebView *)webView didFailNavigation:(WKNavigation *)navigation withError:(NSError *)error {
-    [MBProgressHUD hideHUDForView:self.webView animated:YES];
-    [self showErrorAlertWithRetryButton];
-}
-
-- (void)showErrorAlertWithRetryButton {
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Network Error" message:@"The Internet connection appears to be offline." preferredStyle:UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Retry" style:UIAlertActionStyleDefault
-                                                      handler:^(UIAlertAction * _Nonnull action) {
-        [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:PRIVACY_URL]]];
-        [MBProgressHUD showHUDAddedTo:self.webView animated:YES];
     }]];
     [self presentViewController:alertController animated:YES completion:nil];
 }
