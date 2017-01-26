@@ -141,6 +141,15 @@
     
     [GlobalVar getInstance].gArrEventList = [[NSMutableArray alloc] init];
     
+    //Check for app version
+    NSString *saveAppVersion = [[NSUserDefaults standardUserDefaults] stringForKey:@"APP_VERSION"];
+    NSString *currentAppVersion = [[NSBundle mainBundle].infoDictionary objectForKey:@"CFBundleShortVersionString"];
+    if (![currentAppVersion isEqualToString:saveAppVersion]) {
+        [[NSUserDefaults standardUserDefaults] setObject:currentAppVersion forKey:@"APP_VERSION"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:AGREEMENT_AGREED];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
     return YES;
 }
 
