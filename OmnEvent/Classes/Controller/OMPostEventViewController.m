@@ -158,6 +158,8 @@
     UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     [self.view addGestureRecognizer:singleFingerTap];
     
+    //Initialize the variable with empty string
+    countryLatLong = @"";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -1235,15 +1237,13 @@
 - (void)selectedCells:(OMTagListViewController *)fsCategoryVC didFinished:(NSMutableArray *)_dict
 {
     [fsCategoryVC.navigationController dismissViewControllerAnimated:YES completion:^{
-        arrForTaggedFriend = [_dict copy];
-        
+        arrForTaggedFriend = [_dict copy];        
         int i = 0;
         [arrForTaggedFriendAuthor removeAllObjects];
         while (i < [arrForTaggedFriend count] ) {
             [arrForTaggedFriendAuthor addObject:@"Full"];
             i++;
         }
-        
     }];
 }
 
