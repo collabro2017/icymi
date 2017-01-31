@@ -149,8 +149,13 @@
                 //Apply Sorting
                 NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES
                                                                         selector:@selector(caseInsensitiveCompare:)];
-                [arrForObjects sortUsingDescriptors:@[sort]];
                 [arrForFriends sortUsingDescriptors:@[sort]];
+                
+                [arrForObjects sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                    PFUser *toUser1 = obj1[@"ToUser"];
+                    PFUser *toUser2 = obj2[@"ToUser"];
+                    return [toUser1.username caseInsensitiveCompare:toUser2.username];
+                }];
                 
                 [tblForFriend reloadData];
             }
@@ -266,8 +271,12 @@
                  //Apply Sorting
                  NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"username" ascending:YES
                                                                          selector:@selector(caseInsensitiveCompare:)];
-                 [arrForObjects sortUsingDescriptors:@[sort]];
                  [arrForFriends sortUsingDescriptors:@[sort]];
+                 [arrForObjects sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                     PFUser *toUser1 = obj1[@"ToUser"];
+                     PFUser *toUser2 = obj2[@"ToUser"];
+                     return [toUser1.username caseInsensitiveCompare:toUser2.username];
+                 }];
                  
                  [tblForFriend reloadData];
                  
@@ -407,7 +416,6 @@
             
             for (PFUser *aUser in objects) {
                 NSString* strVisibility = [aUser objectForKey:@"visibility"];
-                NSLog(@"Visibility = %@", strVisibility);
                 
                 if (![strVisibility isEqualToString:@"Hidden"]) {
                     
