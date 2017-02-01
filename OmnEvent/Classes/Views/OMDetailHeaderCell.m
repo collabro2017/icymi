@@ -93,7 +93,7 @@
         imageViewForPost.image = nil;
     }
     
-    PFFile *postImgFile = (PFFile *)_currentObj[@"postImage"];
+    PFFile *postImgFile = (PFFile *)_currentObj[@"thumbImage"];
     if (postImgFile) {
         
         [imageViewForPost setImageWithURL:[NSURL URLWithString:postImgFile.url]];
