@@ -1237,12 +1237,22 @@
 - (void)selectedCells:(OMTagListViewController *)fsCategoryVC didFinished:(NSMutableArray *)_dict
 {
     [fsCategoryVC.navigationController dismissViewControllerAnimated:YES completion:^{
-        arrForTaggedFriend = [_dict copy];        
-        int i = 0;
+        [arrForTaggedFriend removeAllObjects];
         [arrForTaggedFriendAuthor removeAllObjects];
-        while (i < [arrForTaggedFriend count] ) {
-            [arrForTaggedFriendAuthor addObject:@"Full"];
-            i++;
+        for (int i=0; i<3; i++) {
+            NSArray *list = _dict[i];
+            if (list.count > 0) {
+                for (PFUser *user in list) {
+                    [arrForTaggedFriend addObject:user];
+                    if (i==0) {
+                        [arrForTaggedFriendAuthor addObject:@"Full"];
+                    } else if (i==1) {
+                        [arrForTaggedFriendAuthor addObject:@"View Only"];
+                    } else if (i==2) {
+                        [arrForTaggedFriendAuthor addObject:@"Comment Only"];
+                    }
+                }
+            }
         }
     }];
 }

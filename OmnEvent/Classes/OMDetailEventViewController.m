@@ -867,20 +867,35 @@
 - (void)selectedCells:(OMAdditionalTagViewController *)tagVC didFinished:(NSMutableArray *)_dict
 {
     [tagVC.navigationController dismissViewControllerAnimated:YES completion:^{
+        NSMutableArray *tagFriends = [NSMutableArray array];
+        NSMutableArray *authorities = [NSMutableArray array];
         
-        [self addTagFriends:_dict];
+        for (int i=0; i<3; i++) {
+            NSArray *list = _dict[i];
+            if (list.count > 0) {
+                for (PFUser *user in list) {
+                    [tagFriends addObject:user];
+                    if (i==0) {
+                        [authorities addObject:@"Full"];
+                    } else if (i==1) {
+                        [authorities addObject:@"View Only"];
+                    } else if (i==2) {
+                        [authorities addObject:@"Comment Only"];
+                    }
+                }
+            }
+        }
+        
+        NSMutableArray *data = [NSMutableArray array];
+        [data addObject:tagFriends];
+        [data addObject:authorities];
+        [self addTagFriends:data];
     }];
 }
 
 // In case to change the Tag for Friends.
 - (void)addTagFriends:(NSMutableArray *)_dict {
-    
-    NSMutableArray *temp_array = [NSMutableArray array];
-    temp_array = [_dict copy];
-    
-    NSMutableArray *arrChangedTagFriends = [NSMutableArray array];
-    arrChangedTagFriends = [[temp_array objectAtIndex:0] mutableCopy];
-    
+    NSMutableArray *arrChangedTagFriends = [_dict objectAtIndex:0];
     NSMutableArray *arrAdds = [NSMutableArray array];
     NSMutableArray *arrDels = [NSMutableArray array];
     
@@ -888,14 +903,13 @@
     if([arrPrevTagFriends count] > 0)
     {
         // If exist the new friends?
-        for (NSString *addId in arrChangedTagFriends) {
-            
+        for (PFUser *addId in arrChangedTagFriends) {
             if(![arrPrevTagFriends containsObject:addId]) {
                 [arrAdds addObject:addId];
             }
         }
         
-        for (NSString *deledtedId in arrPrevTagFriends) {
+        for (PFUser *deledtedId in arrPrevTagFriends) {
             if (![arrChangedTagFriends containsObject:deledtedId]) {
                 [arrDels addObject:deledtedId];
             }
@@ -906,21 +920,19 @@
         [arrAdds addObjectsFromArray:arrChangedTagFriends];
     }
     
-    
-    currentObject[@"TagFriends"] = [temp_array objectAtIndex:0];
-    currentObject[@"TagFriendAuthorities"] = [temp_array objectAtIndex:1];
-    
+    currentObject[@"TagFriends"] = [_dict objectAtIndex:0];
+    currentObject[@"TagFriendAuthorities"] = [_dict objectAtIndex:1];
     
     // Event Badge Processing...for badge
     if([currentObject[@"eventBadgeFlag"] count] > 0)
     {
-        for (NSString *temp in arrDels) {
+        for (PFUser *temp in arrDels) {
             if ([currentObject[@"eventBadgeFlag"] containsObject:temp]) {
                 [currentObject removeObject:temp forKey:@"eventBadgeFlag"];
             }
         }
         
-        for (NSString *temp in arrAdds) {
+        for (PFUser *temp in arrAdds) {
             if (![currentObject[@"eventBadgeFlag"] containsObject:temp]) {
                 [currentObject addObject:temp forKey:@"eventBadgeFlag"];
             }
@@ -930,48 +942,19 @@
     {
         [currentObject addObjectsFromArray:arrAdds forKey:@"eventBadgeFlag"];
     }
+    
     NSLog(@"Newly added friends: %@", arrAdds);
     NSLog(@"Deleted friends: %@", arrDels);
+    
     [GlobalVar getInstance].isPosting = YES;
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
         [GlobalVar getInstance].isPosting = NO;
         if(error) NSLog(@"Event updated for tag: %@", error.description);
         if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an eventBadgeFlage of Event Fields");
-        
-        //[OMPushServiceManager sharedInstance] sendGroupInviteNotification:(NSString *) groupId:(NSString *) userList:(NSMutableArray *)
-        
-        // Post Badge Processing...//for badge
-        /*
-         for (PFObject *postObj in currentObject[@"postedObjects"]) {
-         if(![postObj isEqual:[NSNull null]] && postObj != nil)
-         {
-         for (NSString *temp in arrDels) {
-         if ([postObj[@"usersBadgeFlag"] containsObject:temp]) {
-         [postObj removeObject:temp forKey:@"@usersBadgeFlag"];
-         }
-         }
-         for (NSString *temp in arrAdds) {
-         if (![postObj[@"usersBadgeFlag"] containsObject:temp]) {
-         [postObj addObject:temp forKey:@"@usersBadgeFlag"];
-         }
-         }
-         }
-         [postObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-         if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an usersBadgeFlag of Posts");
-         }];
-         }
-         */
-        
-        
-        
     }];
-    
 }
 
-
 #pragma mark - MPMediaPickerController Delegate
-
 - (void)mediaPicker:(MPMediaPickerController *)_mediaPicker didPickMediaItems:(MPMediaItemCollection *)mediaItemCollection
 {
     NSMutableData *songData;
