@@ -867,8 +867,8 @@
         
         post[@"user"]           = USER;
         post[@"targetEvent"]    = curObj; // Event obj
-        post[@"title"]          = @"";
-        post[@"description"]    = @"";
+        post[@"title"]          = lblForTitle.text;
+        post[@"description"]    = textViewForDescription.text;
         post[@"country"]        = lblForLocation.text;
         post[@"countryLatLong"] = countryLatLong;
         
