@@ -2894,7 +2894,7 @@
         
         [self reloadContents];
         
-        if (networkStatus != NotReachable)
+        if (networkStatus != NotReachable && appDel.network_state) //Check both Reachability & Network Status
         {
             OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
             

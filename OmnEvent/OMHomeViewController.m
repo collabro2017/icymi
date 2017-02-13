@@ -348,9 +348,9 @@
                     
                        if(postObj[@"usersBadgeFlag"] && [postObj[@"usersBadgeFlag"] count] > 0)
                         {
-                            for(NSString *userId in postObj[@"usersBadgeFlag"])
+                            for(PFUser *user in postObj[@"usersBadgeFlag"])
                             {
-                                if ([userId isEqualToString:currentUser.objectId]) {
+                                if ([user.objectId isEqualToString:currentUser.objectId]) {
                                     postBadgeCount++;
                                     NSLog(@"---found badge count----%i",(int) postBadgeCount);
                                 }
@@ -368,7 +368,7 @@
         eventObj.badgeCount = postBadgeCount;
         if(eventObj[@"eventBadgeFlag"] != nil && [eventObj[@"eventBadgeFlag"] count] > 0)
         {
-            if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId])
+            if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser])
             {
                      eventObj.badgeNewEvent = 1;
             }
