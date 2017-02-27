@@ -874,7 +874,7 @@
             NSArray *list = _dict[i];
             if (list.count > 0) {
                 for (PFUser *user in list) {
-                    [tagFriends addObject:user];
+                    [tagFriends addObject:user.objectId];
                     if (i==0) {
                         [authorities addObject:@"Full"];
                     } else if (i==1) {
@@ -903,13 +903,13 @@
     if([arrPrevTagFriends count] > 0)
     {
         // If exist the new friends?
-        for (PFUser *addId in arrChangedTagFriends) {
+        for (NSString *addId in arrChangedTagFriends) {
             if(![arrPrevTagFriends containsObject:addId]) {
                 [arrAdds addObject:addId];
             }
         }
         
-        for (PFUser *deledtedId in arrPrevTagFriends) {
+        for (NSString *deledtedId in arrPrevTagFriends) {
             if (![arrChangedTagFriends containsObject:deledtedId]) {
                 [arrDels addObject:deledtedId];
             }
@@ -926,13 +926,13 @@
     // Event Badge Processing...for badge
     if([currentObject[@"eventBadgeFlag"] count] > 0)
     {
-        for (PFUser *temp in arrDels) {
+        for (NSString *temp in arrDels) {
             if ([currentObject[@"eventBadgeFlag"] containsObject:temp]) {
                 [currentObject removeObject:temp forKey:@"eventBadgeFlag"];
             }
         }
         
-        for (PFUser *temp in arrAdds) {
+        for (NSString *temp in arrAdds) {
             if (![currentObject[@"eventBadgeFlag"] containsObject:temp]) {
                 [currentObject addObject:temp forKey:@"eventBadgeFlag"];
             }

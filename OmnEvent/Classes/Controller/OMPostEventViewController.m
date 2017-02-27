@@ -1243,7 +1243,7 @@
             NSArray *list = _dict[i];
             if (list.count > 0) {
                 for (PFUser *user in list) {
-                    [arrForTaggedFriend addObject:user];
+                    [arrForTaggedFriend addObject:user.objectId];
                     if (i==0) {
                         [arrForTaggedFriendAuthor addObject:@"Full"];
                     } else if (i==1) {

@@ -30,6 +30,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     arrForFriend = [NSMutableArray array];
     fullUsers = [NSMutableArray array];
     viewOnlyUsers = [NSMutableArray array];
@@ -38,7 +39,9 @@
     // Do any additional setup after loading the view.
     
     [self initializeControls];
+    
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                           target:self
                                                                                           action:@selector(cancel:)];
@@ -107,13 +110,13 @@
     [mainQ orderByDescending:@"createdAt"];
     
     [mainQ findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         
         if (objects == nil || [objects count] == 0) {
             return ;
         }
         
-        if (!error) {            
+        if (!error) {
             NSMutableArray *strUserObjectIds = [[NSMutableArray alloc] init];
             [arrForFriend removeAllObjects];
             
@@ -126,7 +129,6 @@
                     }
                 }
             }
-            
             [strUserObjectIds removeAllObjects];
             strUserObjectIds = nil;
             
@@ -144,7 +146,44 @@
                         if (taggedFriendAuthorities != nil && taggedFriendAuthorities.count > 0) {
                             if (tagFriends.count != taggedFriendAuthorities.count) {
                                 //Tag friends are there but their authority is not set. Then set it to Full
-                                for (PFUser *user in tagFriends) {
+                                for (NSString *userId in tagFriends) {
+                                    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.objectId==%@",userId];
+                                    NSArray *filterEntry = [arrForFriend filteredArrayUsingPredicate:predicate];
+                                    if (filterEntry.count == 1) {
+                                        [fullUsers addObject:filterEntry.firstObject];
+                                        [arrForFriend removeObject:filterEntry.firstObject];
+                                    }
+                                }
+                            }
+                            else {
+                                //Tag friends and their Authority are their so now filter it.
+                                for (int i=0; i<tagFriends.count; i++) {
+                                    NSString *userId = [tagFriends objectAtIndex:i];
+                                    NSString *authority = [taggedFriendAuthorities objectAtIndex:i];
+                                    PFUser *user = [self getUserFromObjectId:userId];
+                                    if (user != nil) {
+                                        if ([authority isEqualToString:@"Full"]) {
+                                            [fullUsers addObject:user];
+                                        }
+                                        else if ([authority isEqualToString:@"View Only"]) {
+                                            [viewOnlyUsers addObject:user];
+                                        }
+                                        else if ([authority isEqualToString:@"Comment Only"]) {
+                                            [commentOnlyUsers addObject:user];
+                                        }
+                                        
+                                        if ([arrForFriend containsObject:user]) {
+                                            [arrForFriend removeObject:user];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            //Tag friends are there but their authority is not set. Then set it to Full
+                            for (NSString *userId in tagFriends) {
+                                PFUser *user = [self getUserFromObjectId:userId];
+                                if (user != nil) {
                                     if ([arrForFriend containsObject:user]) {
                                         [fullUsers addObject:user];
                                         [arrForFriend removeObject:user];
@@ -153,30 +192,13 @@
                                     }
                                 }
                             }
-                            else {
-                                //Tag friends and their Authority are their so now filter it.
-                                for (int i=0; i<tagFriends.count; i++) {
-                                    PFUser *user = [tagFriends objectAtIndex:i];
-                                    NSString *authority = [taggedFriendAuthorities objectAtIndex:i];
-                                    if ([authority isEqualToString:@"Full"]) {
-                                        [fullUsers addObject:user];
-                                    }
-                                    else if ([authority isEqualToString:@"View Only"]) {
-                                        [viewOnlyUsers addObject:user];
-                                    }
-                                    else if ([authority isEqualToString:@"Comment Only"]) {
-                                        [commentOnlyUsers addObject:user];
-                                    }
-                                    
-                                    if ([arrForFriend containsObject:user]) {
-                                        [arrForFriend removeObject:user];
-                                    }
-                                }
-                            }
                         }
-                        else {
-                            //Tag friends are there but their authority is not set. Then set it to Full
-                            for (PFUser *user in tagFriends) {
+                    }
+                    else {
+                        //Tag friends are there but their authority is not set. Then set it to Full
+                        for (NSString *userId in tagFriends) {
+                            PFUser *user = [self getUserFromObjectId:userId];
+                            if (user != nil) {
                                 if ([arrForFriend containsObject:user]) {
                                     [fullUsers addObject:user];
                                     [arrForFriend removeObject:user];
@@ -186,19 +208,25 @@
                             }
                         }
                     }
-                    else {
-                        //Tag friends are there but their authority is not set. Then set it to Full
-                        for (PFUser *user in tagFriends) {
-                            if ([arrForFriend containsObject:user]) {
-                                [fullUsers addObject:user];
-                                [arrForFriend removeObject:user];
-                            } else {
-                                [fullUsers addObject:user];
-                            }
-                        }
-                    }
                 }
             }
+            
+            //Apply Sorting
+            [arrForFriend sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+                return [user1.username caseInsensitiveCompare:user2.username];
+            }];
+            
+            [fullUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+                return [user1.username caseInsensitiveCompare:user2.username];
+            }];
+            
+            [commentOnlyUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+                return [user1.username caseInsensitiveCompare:user2.username];
+            }];
+            
+            [viewOnlyUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+                return [user1.username caseInsensitiveCompare:user2.username];
+            }];
             
             [tblForTagFriend reloadData];
         }
@@ -209,9 +237,7 @@
     [UIView animateWithDuration:0.2f animations:^{
         [custominvitationPickerView setFrame:CGRectMake(custominvitationPickerView.frame.origin.x, [UIScreen mainScreen].bounds.size.height - custominvitationPickerView.frame.size.height, custominvitationPickerView.frame.size.width, custominvitationPickerView.frame.size.height)];
         isPickerViewAlreadyOpened = YES;
-    } completion:^(BOOL finished) {
-        
-    }];
+    } completion:nil];
 }
 
 - (void)doneButtonClikedDismissPickerView {
@@ -222,9 +248,7 @@
     [UIView animateWithDuration:0.2f animations:^{
         [custominvitationPickerView setFrame:rectForCustomPickerView];
         isPickerViewAlreadyOpened = NO;
-    } completion:^(BOOL finished) {
-        
-    }];
+    } completion:nil];
     
     if (selectedIndex.section == 0) {
         if ([AuthorityValue isEqualToString:@"View Only"]) {
@@ -280,6 +304,23 @@
         }
     }
     
+    //Apply Sorting
+    [arrForFriend sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
+    [fullUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
+    [commentOnlyUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
+    [viewOnlyUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
     [tblForTagFriend reloadData];
 }
 
@@ -324,14 +365,11 @@
     
     if (indexPath.section == 0) {
         [cell setObject:[fullUsers objectAtIndex:indexPath.row]];
-    }
-    else if (indexPath.section == 1) {
+    } else if (indexPath.section == 1) {
         [cell setObject:[viewOnlyUsers objectAtIndex:indexPath.row]];
-    }
-    else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2) {
         [cell setObject:[commentOnlyUsers objectAtIndex:indexPath.row]];
-    }
-    else {
+    } else {
         [cell setObject:[arrForFriend objectAtIndex:indexPath.row]];
     }
     
@@ -345,6 +383,7 @@
     if (isPickerViewAlreadyOpened == YES) {
         return;
     }
+    
     selectedIndex = indexPath;
     [self showPickerView];
     [tableView reloadData];
@@ -414,6 +453,15 @@
         default:
             break;
     }
+}
+
+- (PFUser *)getUserFromObjectId:(NSString *)objectId {
+    for (PFUser *user in arrForFriend) {
+        if ([user.objectId isEqualToString:objectId]) {
+            return user;
+        }
+    }
+    return nil;
 }
 
 @end

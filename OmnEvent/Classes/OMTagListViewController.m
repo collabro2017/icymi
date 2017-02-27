@@ -14,6 +14,7 @@
     UIPickerView *invitationPicker;
     UIView *custominvitationPickerView;
     CGRect rectForCustomPickerView;
+    
     BOOL isPickerViewAlreadyOpened;
     NSString *AuthorityValue;
     
@@ -27,15 +28,6 @@
 
 @implementation OMTagListViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -44,10 +36,13 @@
     viewOnlyUsers = [NSMutableArray array];
     commentOnlyUsers = [NSMutableArray array];
     selectedIndex = nil;
+    
     // Do any additional setup after loading the view.
     
     [self initializeControls];
+    
     [self.navigationController.navigationBar setTintColor:[UIColor whiteColor]];
+    
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                           target:self
                                                                                           action:@selector(cancel:)];
@@ -60,6 +55,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     [self loadFriends];
 }
 
@@ -76,7 +72,7 @@
 
 - (void)initializeControls
 {
-    custominvitationPickerView = [[UIView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height + 200, self.view.frame.size.width, 150 + 40  )];
+    custominvitationPickerView = [[UIView alloc] initWithFrame:CGRectMake(0, [UIScreen mainScreen].bounds.size.height + 200, self.view.frame.size.width, 150 + 40)];
     
     rectForCustomPickerView = custominvitationPickerView.frame;
     
@@ -109,11 +105,10 @@
     }
 }
 
-
 - (void)loadFriends
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-
+    
     PFQuery *mainQ = [PFQuery queryWithClassName:kClassFollower];
     [mainQ whereKey:@"FromUser" equalTo:USER];
     [mainQ includeKey:@"FromUser"];
@@ -121,27 +116,23 @@
     [mainQ orderByDescending:@"createdAt"];
     
     [mainQ findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-
-        if (objects == nil || [objects count] == 0) {
-            return;
-        }
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         
+        if (objects == nil || [objects count] == 0) {
+            return ;
+        }
         if (!error) {
-            NSMutableArray *strUserObjectIds = [[NSMutableArray alloc] init];
             [arrForFriend removeAllObjects];
-            
             for (PFObject *obj in objects) {
-                if (obj[@"ToUser"]) {
-                    PFUser *user = obj[@"ToUser"];
-                    if (![user.objectId isEqualToString:USER.objectId] && ![strUserObjectIds containsObject:user.objectId]) {
-                        [strUserObjectIds addObject:user.objectId];
-                        [arrForFriend addObject:user];
-                    }
-                }
-            }            
-            [strUserObjectIds removeAllObjects];
-            strUserObjectIds = nil;
+                if (obj[@"ToUser"])
+                    [arrForFriend addObject:obj[@"ToUser"]];
+            }
+            
+            //Apply Sorting
+            [arrForFriend sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+                return [user1.username caseInsensitiveCompare:user2.username];
+            }];
+            
             [tblForFriendList reloadData];
         }
     }];
@@ -153,12 +144,11 @@
         [custominvitationPickerView setFrame:CGRectMake(custominvitationPickerView.frame.origin.x, [UIScreen mainScreen].bounds.size.height - custominvitationPickerView.frame.size.height, custominvitationPickerView.frame.size.width, custominvitationPickerView.frame.size.height)];
         isPickerViewAlreadyOpened = YES;
         
-    } completion:^(BOOL finished) {
-        
-    }];
+    } completion:nil];
 }
 
-- (void)doneButtonClikedDismissPickerView {
+- (void)doneButtonClikedDismissPickerView
+{
     if (AuthorityValue == nil || [AuthorityValue isEqualToString:@""]){
         AuthorityValue = @"Full";
     }
@@ -166,9 +156,7 @@
     [UIView animateWithDuration:0.2f animations:^{
         [custominvitationPickerView setFrame:rectForCustomPickerView];
         isPickerViewAlreadyOpened = NO;
-    } completion:^(BOOL finished) {
-        
-    }];
+    } completion:nil];
     
     if (selectedIndex.section == 0) {
         if ([AuthorityValue isEqualToString:@"View Only"]) {
@@ -224,6 +212,23 @@
         }
     }
     
+    //Apply Sorting
+    [arrForFriend sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
+    [fullUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
+    [commentOnlyUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
+    [viewOnlyUsers sortUsingComparator:^NSComparisonResult(PFUser *user1, PFUser *user2) {
+        return [user1.username caseInsensitiveCompare:user2.username];
+    }];
+    
     [tblForFriendList reloadData];
 }
 
@@ -267,19 +272,17 @@
     
     if (indexPath.section == 0) {
         [cell setObject:[fullUsers objectAtIndex:indexPath.row]];
-    }
-    else if (indexPath.section == 1) {
+    } else if (indexPath.section == 1) {
         [cell setObject:[viewOnlyUsers objectAtIndex:indexPath.row]];
-    }
-    else if (indexPath.section == 2) {
+    } else if (indexPath.section == 2) {
         [cell setObject:[commentOnlyUsers objectAtIndex:indexPath.row]];
-    }
-    else {
+    } else {
         [cell setObject:[arrForFriend objectAtIndex:indexPath.row]];
     }
     
     cell.delegate = self;
     cell.accessoryType = UITableViewCellAccessoryNone;
+    
     return cell;
 }
 
@@ -334,11 +337,11 @@
     }
     
     return nil;
-
+    
 }
 
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
     switch (row) {
         case 0:
         {
