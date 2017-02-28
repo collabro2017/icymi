@@ -348,9 +348,9 @@
                     
                        if(postObj[@"usersBadgeFlag"] && [postObj[@"usersBadgeFlag"] count] > 0)
                         {
-                            for(PFUser *user in postObj[@"usersBadgeFlag"])
+                            for(NSString *user in postObj[@"usersBadgeFlag"])
                             {
-                                if ([user.objectId isEqualToString:currentUser.objectId]) {
+                                if ([user isEqualToString:currentUser.objectId]) {
                                     postBadgeCount++;
                                     NSLog(@"---found badge count----%i",(int) postBadgeCount);
                                 }
