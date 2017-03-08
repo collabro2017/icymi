@@ -121,6 +121,7 @@
     self.refreshControl1 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, collectionViewForFeed.frame.size.width, 100.0f)];
     [self.refreshControl1 addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
     [collectionViewForFeed addSubview:self.refreshControl1];
+    collectionViewForFeed.alwaysBounceVertical = YES;
     
     //Add Pull to refresh on UITableView
     self.refreshControl2 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, tableViewForFeeds.frame.size.width, 100.0f)];
