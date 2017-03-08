@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="mIQ-Ad-mgQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="mIQ-Ad-mgQ">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -3344,7 +3344,7 @@
                                             <constraint firstAttribute="width" constant="20" id="UKG-fT-fXI"/>
                                             <constraint firstAttribute="height" constant="20" id="cjC-Cx-uej"/>
                                         </constraints>
-                                        <state key="normal" image="icon_notification"/>
+                                        <state key="normal" backgroundImage="icon_bell"/>
                                         <connections>
                                             <action selector="actionShowingNewActivities:" destination="y7e-16-ruc" eventType="touchUpInside" id="dql-5i-fHo"/>
                                         </connections>
@@ -9182,12 +9182,12 @@
         <image name="folder_icon" width="90" height="90"/>
         <image name="grid.png" width="20" height="20"/>
         <image name="icon_arrow_profile" width="8" height="15"/>
+        <image name="icon_bell" width="11" height="12"/>
         <image name="icon_email" width="17" height="13"/>
         <image name="icon_like_profile" width="21" height="21"/>
         <image name="icon_lock" width="17" height="21"/>
         <image name="icon_love_profile" width="23" height="21"/>
         <image name="icon_map_friend" width="5" height="7"/>
-        <image name="icon_notification" width="22" height="23"/>
         <image name="icon_signout_profile" width="20" height="20"/>
         <image name="icon_username" width="15" height="16"/>
         <image name="layer_login" width="281" height="87"/>
