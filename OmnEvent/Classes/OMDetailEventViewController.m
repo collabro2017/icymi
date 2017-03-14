@@ -60,7 +60,7 @@
 #define kTag_PDF_Select         30000
 
 
-@interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate>
+@interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate, OMEventNotiViewControllerDelegate>
 {
     
     AVAudioPlayer *audioPlayer;
@@ -224,21 +224,6 @@
     // DetailEvent contents Loading...
     [self loadContents];
     arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
-    
-    //processing bagde
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
-    
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    [autoRefreshTimer invalidate];
-    autoRefreshTimer = nil;
-    NSLog(@"Auto Refresh timer - stoped!");
-    
-    //processing bagde
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
 }
 
 - (void)firstViewLoad {
@@ -264,6 +249,20 @@
     
     //---------------------------------------------//
     [self initializeBadges];
+    
+    //processing bagde
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [autoRefreshTimer invalidate];
+    autoRefreshTimer = nil;
+    NSLog(@"Auto Refresh timer - stoped!");
+    
+    //processing bagde
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -1131,7 +1130,6 @@
             if ([tempObj[@"postType"] isEqualToString:@"text"])
             {
                 if (indexPath.row == 0) {
-                    
                     OMTextCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextCell];
                     
                     if (cell == nil) {
@@ -3025,14 +3023,11 @@
     OMEventNotiViewController *notiVC = [self.storyboard instantiateViewControllerWithIdentifier:@"NotiEventVC"];
     notiVC.event = (OMSocialEvent*)currentObject;
     notiVC.curEventIndex = curEventIndex;
-    
+    notiVC.delegate = self;
     [self.navigationController pushViewController:notiVC animated:YES];
 }
 
--(void)processBadges:(NSNotification*)not{
-    //Remove the notification.
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
-    
+-(void)processBadges:(NSNotification*)not{    
     OMSocialEvent *temp = (OMSocialEvent*)[[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
     
     if (temp.badgeCount == 0) {
@@ -3052,9 +3047,16 @@
         [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeCount]];
         btnNotification.enabled = YES;
     }
-    
-    //Register again.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
+}
+
+#pragma mark - Delegate method of OMEventNotiViewController
+- (void)notificationSelected:(PFObject *)post {
+    NSInteger section = [arrForDetail indexOfObject:post];
+    if (section != NSNotFound) {
+        [self processBadges:nil];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:section+1];
+        [self.tblForDetailList scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
 
 @end
