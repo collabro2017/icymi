@@ -336,6 +336,7 @@
         return;
     }
     
+    int notificationCount = 0;
     for( OMSocialEvent *eventObj in arrForFirstArray)
     {
         NSInteger postBadgeCount = 0;
@@ -377,8 +378,11 @@
         
         [arrForFeed addObject:eventObj];
         
+        if (eventObj.badgeCount > 0) {
+            notificationCount++;
+        }
     }
-    
+    [self setBadgeCounter:notificationCount];
     [[GlobalVar getInstance].gArrEventList removeAllObjects];
     [GlobalVar getInstance].gArrEventList = [arrForFeed mutableCopy];
     
@@ -389,7 +393,6 @@
         if (is_grid) [collectionViewForFeed reloadData];
         else [tableViewForFeeds reloadData];
     });
-    
 }
 
 // Recurrent processing until arrForFirstArray is empty

@@ -22,4 +22,6 @@
 
 - (void)changeTitle:(NSString *)_title;
 
+- (void)setBadgeCounter:(int)count;
+
 @end
