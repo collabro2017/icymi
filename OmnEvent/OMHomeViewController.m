@@ -223,7 +223,17 @@
     
     NSLog(@"Event count && Event Global count = %i, %i",
     (int)[arrForFeed count],(int)[[GlobalVar getInstance].gArrEventList count]);
- }
+    
+    if (arrForFeed.count > 0) {
+        int notificationsCount = 0;
+        for (OMSocialEvent *event in arrForFeed) {
+            if (event.badgeCount > 0) {
+                notificationsCount++;
+            }
+        }
+        [self setBadgeCounter:notificationsCount];
+    }
+}
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
