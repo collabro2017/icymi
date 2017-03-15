@@ -1317,7 +1317,16 @@
             }
             else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {
-                return 180;
+                NSMutableArray *arr = [[NSMutableArray alloc]init];
+                
+                if (tempObj[@"commentsArray"]) {
+                    arr = tempObj[@"commentsArray"];
+                }
+                
+                PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
+                NSString* strComments =  _obj[@"Comments"];
+                
+                return [OMGlobal heightForCellWithPost:strComments] + 30;
             }
         }
         else
