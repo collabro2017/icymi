@@ -35,7 +35,7 @@
 - (void)setUser:(PFUser *)user comment:(NSString *)_comment curObj:(PFObject *)_obj number:(NSUInteger)_number {
     
     [commentTextView sizeToFit];
-    [lblForTime setHidden:YES];
+    [lblForTime setHidden:NO];
     currentUser = user;
     currentObj = _obj;
     comment_number = _number;
@@ -149,7 +149,7 @@
        commentType:(NSInteger)curType number:(NSUInteger)_number
 {
     [commentTextView sizeToFit];
-    [lblForTime setHidden:YES];
+    [lblForTime setHidden:NO];
     
     currentType = kTypeEventComment;
     comment_number = _number;
@@ -246,6 +246,11 @@
                                 
                                 [commentTextView setText:_comment];
                                 [lblForUsername setText:currentUser.username];
+
+                                NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+                                [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];
+                                NSString *str_date = [dateFormat stringFromDate:currentCommentObj.createdAt];
+                                [lblForTime setText:str_date];
                             }
                         }];
                     }];
@@ -287,6 +292,11 @@
                             constraintForCommentHeight.constant = height;
                             [commentTextView setText:_comment];
                             [lblForUsername setText:currentUser.username];
+                            
+                            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+                            [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];
+                            NSString *str_date = [dateFormat stringFromDate:currentCommentObj.createdAt];
+                            [lblForTime setText:str_date];
                         }
                     }];
                 }];
