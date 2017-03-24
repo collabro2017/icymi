@@ -54,41 +54,33 @@
 @synthesize arrForFeed,dic;
 
 - (void)reload:(__unused id)sender {
-    
     [(UIRefreshControl*)sender beginRefreshing];
-    
-    // Display data from Local Datastore —> RETURN & update TableView
-
     PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
-    //[mainQuery includeKey:@"likeUserArray"];//???
-    
+    [mainQuery setLimit:1000];
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
         [(UIRefreshControl*)sender endRefreshing];
-        if (error == nil) {
-  
+        if (error == nil)
+        {
             if([arrForFeed count] != 0) [arrForFeed removeAllObjects];
             for (PFObject *obj in objects) {
-                
                 OMSocialEvent * socialtempObj = (OMSocialEvent*) obj;
                 PFUser *user = socialtempObj[@"user"];
                 
                 // Filtering Event: Own Events or User's Events including me in TagFriends
-                if ([socialtempObj[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] )
+                if ([socialtempObj[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId])
                 {
                     if (user != nil && user.username != nil) {
                         [arrForFeed addObject:socialtempObj];
                     }
                 }
-              }
+            }
             
             arrForFirstArray = [arrForFeed copy];
             [arrForFeed removeAllObjects];
             [self estimateBadgeCount1];
-            
         }
     }];
 }
@@ -199,21 +191,25 @@
 }
 
 - (void)showBadge:(NSNotification *)_notification {
-    NSDictionary *userInfo = _notification.userInfo;
+//    NSDictionary *userInfo = _notification.userInfo;
+//    if ([userInfo objectForKey:@"request"]) {
+//        NSString *idOfTargetEvent = [userInfo objectForKey:@"request"];
+//        for (OMSocialEvent *event in arrForFeed) {
+//            if ([event.objectId isEqualToString:idOfTargetEvent]) {
+//                PFUser *eventuser = event[@"user"];
+//                if(![eventuser.objectId isEqualToString:currentUser.objectId])
+//                {
+//                    event.badgeNotifier = 1;
+//                }
+//            }
+//        }
+//       [collectionViewForFeed reloadData];
+//    }
     
-    if ([userInfo objectForKey:@"request"]) {
-        
-        NSString *idOfTargetEvent = [userInfo objectForKey:@"request"];
-        for (OMSocialEvent *event in arrForFeed) {
-            if ([event.objectId isEqualToString:idOfTargetEvent]) {
-                PFUser *eventuser = event[@"user"];
-                if(![eventuser.objectId isEqualToString:currentUser.objectId])
-                {
-                    event.badgeNotifier = 1;
-                }
-            }
-        }
-       [collectionViewForFeed reloadData];
+    if (is_grid) {
+        [self reload:self.refreshControl1];
+    } else {
+        [self reload:self.refreshControl2];
     }
 }
 
