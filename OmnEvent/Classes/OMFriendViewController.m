@@ -176,6 +176,7 @@
     [mainQ includeKey:@"FromUser"];
     [mainQ includeKey:@"ToUser"];
     [mainQ orderByDescending:@"username"];
+    [mainQ whereKey:@"FromUser" equalTo:[PFUser currentUser]];
     
     [mainQ findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error)
      {
@@ -202,9 +203,7 @@
                  [arrForFriends removeAllObjects];
                  [arrForPeople removeAllObjects];
                  [arrForObjects removeAllObjects];
-                 
-                 
-                 NSLog(@"Current USer = %@",USER);
+                 NSMutableArray *strUserObjectIds = [NSMutableArray array];
                  
                  for (PFObject *obj in objects)
                  {
@@ -213,13 +212,18 @@
                      
                      if ([user.objectId isEqualToString:kIDOfCurrentUser] && !([[((PFUser *)obj[@"ToUser"]) objectForKey:@"visibility"] isEqualToString:@"Hidden"]))
                      {
-                         if (obj[@"ToUser"])
-                         {
+                         //Fix issue for multiple friends
+                         PFUser *user = obj[@"ToUser"];
+                         if (![user.objectId isEqualToString:USER.objectId] && ![strUserObjectIds containsObject:user.objectId]) {
+                             [strUserObjectIds addObject:user.objectId];
                              [arrForObjects addObject:obj];
-                             [arrForFriends addObject:obj[@"ToUser"]];
+                             [arrForFriends addObject:user];
                          }
                      }
                  }
+                 
+                 [strUserObjectIds removeAllObjects];
+                 strUserObjectIds = nil;
                  
                  NSMutableArray *tempArrForObjects = [NSMutableArray array];
                  NSMutableArray *tempArrForFriends = [NSMutableArray array];
