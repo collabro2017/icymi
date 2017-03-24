@@ -93,6 +93,7 @@
     index = _index;
     searchMode = _searchMode;
     [lblForUsername setText:user.username];
+    imageViewForAvatar.image = [UIImage imageNamed:@""];
     
     if (user[@"Location"] != NULL) [lblForLocation setText:user[@"Location"]];
     

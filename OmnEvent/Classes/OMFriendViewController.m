@@ -18,8 +18,8 @@
     NSMutableArray *arrForFriends;
     NSMutableArray *arrForPeople;
     NSMutableArray *arrForObjects;
-    
     NSMutableArray *arrSearchString;
+    BOOL isShowProfileOpened;
 }
 
 @property (readwrite, nonatomic, strong) UIRefreshControl *refreshControl;
@@ -354,9 +354,14 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    [self reload:nil];
-    
+    if (!isShowProfileOpened) {
+        [self reload:nil];
+    }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    isShowProfileOpened = NO;
 }
 
 - (void)loadFriendsData:(NSString *)text
@@ -503,12 +508,13 @@
     {
         if (nUserType == 2)
         {
-            OMOtherProfileViewController *otherProfileVC = [self.storyboard instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
+            isShowProfileOpened = YES;
+            OMOtherProfileViewController *otherProfileVC = [self.storyboard
+                                                            instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
             otherProfileVC.is_type = 0;
             otherProfileVC.userType = nUserType;
             [otherProfileVC setTargetUser:aUser];
             otherProfileVC.isPrivate = NO;
-            
             [self.navigationController pushViewController:otherProfileVC animated:YES];
         }
         else
@@ -518,23 +524,23 @@
     }
     else if ([strVisibility isEqualToString:@"Private"])
     {
+        isShowProfileOpened = YES;
         OMOtherProfileViewController *otherProfileVC = [self.storyboard instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
         otherProfileVC.is_type = 0;
         otherProfileVC.userType = nUserType;
         [otherProfileVC setTargetUser:aUser];
         otherProfileVC.isPrivate = YES;
-        
         [self.navigationController pushViewController:otherProfileVC animated:YES];
     }
     else if ([strVisibility isEqualToString:@"Public"])
     {
-    OMOtherProfileViewController *otherProfileVC = [self.storyboard instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
-    otherProfileVC.is_type = 0;
+        isShowProfileOpened = YES;
+        OMOtherProfileViewController *otherProfileVC = [self.storyboard instantiateViewControllerWithIdentifier:@"OtherProfileVC"];
+        otherProfileVC.is_type = 0;
         otherProfileVC.userType = nUserType;
         [otherProfileVC setTargetUser:aUser];
         otherProfileVC.isPrivate = NO;
-    
-    [self.navigationController pushViewController:otherProfileVC animated:YES];
+        [self.navigationController pushViewController:otherProfileVC animated:YES];
     }
 }
 
