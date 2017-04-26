@@ -616,14 +616,10 @@
             NSNumber *postOrder = [NSNumber numberWithInt:1];
             if (self.postOrder == -1) {
                 PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
-                
-                if ([item isEqual:[NSNull null]]) {
-                    postOrder = [NSNumber numberWithInt:(int)allPosts.count];
-                }else{
+                if (item != nil || ![item isEqual:[NSNull null]]) {
                     int newOrder = [item[@"postOrder"] intValue] + 1;
                     postOrder = [NSNumber numberWithInt:newOrder];
-                }
-                
+                }                
             }
             else if (allPosts.count > 0) {
                 PFObject *item = allPosts[self.postOrder];
@@ -876,9 +872,7 @@
         NSNumber *postOrder = [NSNumber numberWithInt:1];
         if (self.postOrder == -1) {
             PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
-            if ([item isEqual:[NSNull null]]) {
-                postOrder = [NSNumber numberWithInt:(int)allPosts.count];
-            }else{
+            if (item != nil || ![item isEqual:[NSNull null]]) {
                 int newOrder = [item[@"postOrder"] intValue] + 1;
                 postOrder = [NSNumber numberWithInt:newOrder];
             }
@@ -991,6 +985,19 @@
                     [appDel.m_offlinePostURLs addObject:baseURL];
                 }
                 
+                //Increment the postOrder for other posts
+                for (int i=0; i<=self.postOrder; i++) {
+                    PFObject *item = allPosts[i];
+                    if ([item isEqual:[NSNull null]] || item == nil) continue;
+                    [item incrementKey:@"postOrder"];
+                }
+                
+                // add one Post on Event postedObject field: for badge
+                if(![curObj[@"postedObjects"] containsObject:post]) {
+                    [allPosts insertObject:post atIndex:self.postOrder+1];
+                    curObj[@"postedObjects"] = allPosts;
+                }
+                
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 //[self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
@@ -1015,7 +1022,7 @@
                         //Increment the postOrder for other posts
                         for (int i=0; i<=self.postOrder; i++) {
                             PFObject *item = allPosts[i];
-                            if ([item isEqual:[NSNull null]]) continue;
+                            if ([item isEqual:[NSNull null]] || item == nil) continue;
                             
                             [item incrementKey:@"postOrder"];
                             [item save];
