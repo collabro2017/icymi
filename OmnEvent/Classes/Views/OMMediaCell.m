@@ -332,6 +332,8 @@
         [_playButton removeFromSuperview];
         _playButton = nil;
     }
+    btnForPlay.hidden = YES;
+    
     //-------------------------------------------------//
     // Fixed the blue check button.
     /////////////////////////////////////////////////////
@@ -391,7 +393,6 @@
         [viewForMedia bringSubviewToFront:btnCheckForExport];
         
     } else if ([currentObj[@"postType"] isEqualToString:@"photo"]) {
-        
         [btnForVideoPlay setHidden:YES];
         [_videoPlayerController.view setHidden:YES];
         
@@ -441,6 +442,7 @@
         btnForPlay.tag = 10;
         btnForPlay.center = imageViewForMedia.center;
         [btnForPlay setImage:[UIImage imageNamed:@"btn_playaudio"] forState:UIControlStateNormal];
+        btnForPlay.hidden = NO;
         [viewForMedia addSubview:btnForPlay];
         
         [btnForPlay addTarget:self action:@selector(playAudio) forControlEvents:UIControlEventTouchUpInside];
