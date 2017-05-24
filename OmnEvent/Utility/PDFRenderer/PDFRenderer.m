@@ -573,8 +573,16 @@
         [PDFRenderer drawImage:newImage inRect:frame];
     }
     
-    
-    [PDFRenderer drawText:user.username inFrame:CGRectMake(51 * rScale, 40 * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Medium" fontSize:15 * rScale fontColor:[UIColor whiteColor]];
+    NSString *profileMode = contentDic[@"profileMode"];
+    if ([profileMode isEqualToString:@"company_profile"]) {
+        NSString *companyName = contentDic[@"companyName"];
+        NSString *text = [NSString stringWithFormat:@"%@ | Company: %@", user.username, companyName];
+        [PDFRenderer drawText:text inFrame:CGRectMake(51 * rScale, 40 * rScale, 211 * rScale, 21 * rScale)
+                     fontName:@"Roboto-Medium" fontSize:15 * rScale fontColor:[UIColor whiteColor]];
+    } else {
+        [PDFRenderer drawText:user.username inFrame:CGRectMake(51 * rScale, 40 * rScale, 211 * rScale, 21 * rScale)
+                     fontName:@"Roboto-Medium" fontSize:15 * rScale fontColor:[UIColor whiteColor]];
+    }
     
     [PDFRenderer drawRect:CGRectMake(8 * rScale, 281 * rScale, 180 * rScale, 31 * rScale)];
     

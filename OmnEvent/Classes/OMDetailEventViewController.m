@@ -58,6 +58,7 @@
 #define kTag_DupEvent           20001
 
 #define kTag_PDF_Select         30000
+#define kTag_PDF_Profile_Mode   40000
 
 
 @interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate, OMEventNotiViewControllerDelegate>
@@ -88,6 +89,9 @@
     
     BOOL modeForExport;
     int selectedPostOrder;
+    
+    NSString *exportModeOfPDF;
+    NSString *profileModeInPDF;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
@@ -2031,17 +2035,45 @@
             }
         }
             break;
+            
         case kTag_PDF_Select:
         {
             switch (buttonIndex) {
                 case 0:
-                    [self exportToPDFAll];
+                    exportModeOfPDF = @"all";
+                    [self performSelector:@selector(profileModeForPDF) withObject:nil afterDelay:0.1];
                     break;
                 case 1:
-                    [self exportToPDFWithSelect];
+                    exportModeOfPDF = @"custom";
+                    [self performSelector:@selector(profileModeForPDF) withObject:nil afterDelay:0.1];
                     break;
                 default:
                     break;
+            }
+        }
+            break;
+            
+        case kTag_PDF_Profile_Mode:
+        {
+            
+            switch (buttonIndex) {
+                case 0:
+                    profileModeInPDF = @"user_profile";
+                    break;
+                case 1:
+                    profileModeInPDF = @"company_profile";
+                    break;
+                default:
+                    profileModeInPDF = @"";
+                    break;
+            }
+            
+            if (![profileModeInPDF isEqualToString:@""]) {
+                if ([exportModeOfPDF isEqualToString:@"all"]) {
+                    [self exportToPDFAll];
+                } else if ([exportModeOfPDF isEqualToString:@"custom"]) {
+                    [self exportToPDFWithSelect];
+                }
             }
         }
             break;
@@ -2198,6 +2230,8 @@
     
     [contentPDF setObject:currentObject forKey:@"currentObject"];
     [contentPDF setObject:arrTargetForGeo forKey:@"arrDetail"];
+    [contentPDF setObject:PFUser.currentUser[@"company"] forKey:@"companyName"];
+    [contentPDF setObject:profileModeInPDF forKey:@"profileMode"];
     
     [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
     pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
@@ -2340,13 +2374,18 @@
     }
 }
 
--(void) exportToPDF {
+- (void) profileModeForPDF {
+    UIActionSheet* shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Display User Profile", @"Display Name + Company", nil];
     
+    [shareAction showInView:self.view];
+    shareAction.tag = kTag_PDF_Profile_Mode;
+}
+
+- (void) exportToPDF {
     UIActionSheet* shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Select All" otherButtonTitles:@"Select Items", nil];
     
     [shareAction showInView:self.view];
     shareAction.tag = kTag_PDF_Select;
-    
 }
 
 - (void) exportToPDFWithSelect
