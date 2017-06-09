@@ -546,38 +546,41 @@
     }
     //
     
-    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
-        
-        PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
-        
-        if (avatarFile) {
-            
-            UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];
-            
+    NSString *profileMode = contentDic[@"profileMode"];
+    if (![profileMode isEqualToString:@"company_profile"]) {
+        if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
+            PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
+            if (avatarFile) {
+                UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:avatarFile.url]]];
+                CGRect frame = CGRectMake(8 * rScale, 8 * rScale, 35 * rScale, 35 * rScale);
+                UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale)
+                                                   withCornerRadius:(35 * rScale / 2)];
+                [PDFRenderer drawImage:newImage inRect:frame];
+            }
+        }
+        else if ([user[@"loginType"] isEqualToString:@"facebook"])
+        {
+            UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:user[@"profileURL"]]]];
             CGRect frame = CGRectMake(8 * rScale, 8 * rScale, 35 * rScale, 35 * rScale);
-            
-            UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale) withCornerRadius:(35 * rScale / 2)];
-            
+            UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale)
+                                               withCornerRadius:(35 * rScale / 2)];
             [PDFRenderer drawImage:newImage inRect:frame];
-            
         }
     }
-    else if ([user[@"loginType"] isEqualToString:@"facebook"])
-    {
-        UIImage* avatarImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:user[@"profileURL"]]]];
-        
-        CGRect frame = CGRectMake(8 * rScale, 8 * rScale, 35 * rScale, 35 * rScale);
-        
-        UIImage* newImage = [self roundedRectImageFromImage:avatarImage size:CGSizeMake(35* rScale, 35 * rScale) withCornerRadius:(35 * rScale / 2)];
-        
-        [PDFRenderer drawImage:newImage inRect:frame];
-    }
     
-    NSString *profileMode = contentDic[@"profileMode"];
     if ([profileMode isEqualToString:@"company_profile"]) {
         NSString *companyName = contentDic[@"companyName"];
         NSString *text = [NSString stringWithFormat:@"%@ | Company: %@", user.username, companyName];
-        [PDFRenderer drawText:text inFrame:CGRectMake(51 * rScale, 40 * rScale, 211 * rScale, 21 * rScale)
+        int txtH = [OMGlobal getBoundingOfString:text width:211].height;
+        int y = 40;
+        if (txtH > 16) {
+            y = 60;
+            txtH += 10;
+        } else {
+            txtH = 21;
+        }
+        
+        [PDFRenderer drawText:text inFrame:CGRectMake(51 * rScale, y * rScale, 211 * rScale, txtH * rScale)
                      fontName:@"Roboto-Medium" fontSize:15 * rScale fontColor:[UIColor whiteColor]];
     } else {
         [PDFRenderer drawText:user.username inFrame:CGRectMake(51 * rScale, 40 * rScale, 211 * rScale, 21 * rScale)
