@@ -2149,8 +2149,12 @@
 {
     OMMediaCell* tmpCell = (OMMediaCell*)currentMediaCell;
     UIImage* cellImage = tmpCell.imageViewForMedia.image;
-    PFFile *postFile = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([cellImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
-    currentObject[@"thumbImage"] = postFile;
+    PFFile *postFile1 = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([cellImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+    currentObject[@"thumbImage"] = postFile1;
+    
+    PFFile *postFile = [PFFile fileWithName:@"postImage.jpg" data:UIImagePNGRepresentation(cellImage)];
+    currentObject[@"postImage"] = postFile;
+    
     [MBProgressHUD showMessag:@"Changing thumbnail Image..." toView:self.view];
     
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
