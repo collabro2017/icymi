@@ -507,7 +507,7 @@
 - (void)launchImagePickerViewController {
     ZCImagePickerController *imagePickerController = [[ZCImagePickerController alloc] init];
     imagePickerController.imagePickerDelegate = self;
-    imagePickerController.maximumAllowsSelectionCount = 5;
+    imagePickerController.maximumAllowsSelectionCount = 10;
     imagePickerController.mediaType = ZCMediaAllAssets;
     
     if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
