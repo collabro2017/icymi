@@ -2252,11 +2252,11 @@
         previewController.modalPresentationStyle = UIModalPresentationFormSheet;
     }
     
-    [self presentViewController:previewController animated:YES completion:^{
-        
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-    }];
-
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self presentViewController:previewController animated:YES completion:^{
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        }];
+    });
 }
 
 -(void)getLocationFromObject{
