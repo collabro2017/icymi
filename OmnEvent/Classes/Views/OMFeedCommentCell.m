@@ -40,7 +40,7 @@
     currentObj = _obj;
     comment_number = _number;
     event_flag = YES;
-    
+    imageViewForProfile.image = nil;
     PFUser *self_user = [PFUser currentUser];
     
     if (![currentUser.objectId isEqualToString:self_user.objectId]){
@@ -154,6 +154,7 @@
     currentType = kTypeEventComment;
     comment_number = _number;
     event_flag = YES;
+    imageViewForProfile.image = nil;
     
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo:user];
@@ -307,9 +308,8 @@
 
 - (void)configurateCell:(PFObject *)tempObj
 {
-    
     currentObj = tempObj;
-    
+    imageViewForProfile.image = nil;
     currentUser = currentObj[@"Commenter"];
     
     if ([currentUser[@"loginType"] isEqualToString:@"email"] || [currentUser[@"loginType"] isEqualToString:@"gmail"]) {
@@ -341,8 +341,8 @@
 // for post comment cell
 - (void)configCell:(PFObject *)tempObj EventObject:(PFObject *) eventObject commentType:(NSInteger)curType
 {
-    
     currentType = curType;
+    imageViewForProfile.image = nil;
     //currentType = kTypePostComment;
     currentObj = tempObj;
     
@@ -447,7 +447,7 @@
 {
     currentType = curType;
     //currentType = kTypePostComment;
-    
+    imageViewForProfile.image = nil;
     currentObj = postObj;
     commentObj = comObj;
     
