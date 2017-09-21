@@ -1321,18 +1321,19 @@
             
             if (indexPath.row == 0)
             {
-                OMMediaCell *_cell = (OMMediaCell *)cell;
-                if (_cell)
-                {
-                    if ([tempObj[@"postType"] isEqualToString:@"video"])
+                if ([cell isKindOfClass:[OMMediaCell class]]) {
+                    OMMediaCell *_cell = (OMMediaCell *)cell;
+                    if (_cell)
                     {
-                        [_cell stopVideo];
-                    }
-                    else if ([tempObj[@"postType"] isEqualToString:@"audio"]) {
-                        [_cell stopAudio];
+                        if ([tempObj[@"postType"] isEqualToString:@"video"])
+                        {
+                            [_cell stopVideo];
+                        }
+                        else if ([tempObj[@"postType"] isEqualToString:@"audio"]) {
+                            [_cell stopAudio];
+                        }
                     }
                 }
-                
             }
             else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {
