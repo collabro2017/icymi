@@ -17,7 +17,7 @@
 #define MAX_AUDIO_DUR 60
 
 #define MAX_TITLE_LIMIT         280
-#define MAX_DESCRIPTION_LIMIT   420
+#define MAX_DESCRIPTION_LIMIT   1000
 #define MAX_COMMENT_LIMIT       420
 
 #define KEY_GOOGLE_CLIENTID @"529263599195-49fbgf7g1dlahc52el3sdfoge4co4d38.apps.googleusercontent.com"

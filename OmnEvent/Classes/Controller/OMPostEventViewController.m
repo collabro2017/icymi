@@ -124,6 +124,7 @@
     [tapGestureForBg setDelegate:self];
     [imageViewForPostImage addGestureRecognizer:tapGestureForBg];
     
+    lblForCount.adjustsFontSizeToFitWidth = YES;
     lblForCount.text = [NSString stringWithFormat:@"%d", MAX_DESCRIPTION_LIMIT];
 
     
