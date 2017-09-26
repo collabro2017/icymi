@@ -130,9 +130,25 @@ typedef enum {
         [MBProgressHUD hideHUDForView:self.view animated:YES];
         if (!error) {
             [arrForFollowings removeAllObjects];
-            [arrForFollowings addObjectsFromArray:objects];
+            for (PFObject *object in objects) {
+                if ([[object objectForKey:@"ToUser"] isKindOfClass:[PFUser class]]) {
+                    PFUser *toUser1 = (PFUser *)object[@"ToUser"];
+                    BOOL found = NO;
+                    for (PFObject *obj in arrForFollowings) {
+                        if ([[obj objectForKey:@"ToUser"] isKindOfClass:[PFUser class]]) {
+                            PFUser *toUser2 = (PFUser *)obj[@"ToUser"];
+                            if ([toUser1.objectId isEqualToString:toUser2.objectId]) {
+                                found = YES;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found) {
+                        [arrForFollowings addObject:object];
+                    }
+                }
+            }
             [tblForOtherProfile reloadData];
-            
         }
     }];
 }
