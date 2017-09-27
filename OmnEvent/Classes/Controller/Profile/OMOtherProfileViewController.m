@@ -51,7 +51,7 @@ typedef enum {
     arrForPhoto         = [NSMutableArray array];
     arrForFollowers     = [NSMutableArray array];
     arrForFollowings    = [NSMutableArray array];
-    [self.navigationController setNavigationBarHidden:YES];
+    
     // Do any additional setup after loading the view.
     
     
@@ -73,6 +73,11 @@ typedef enum {
     else{
         [_lblPrivateDesc setHidden:NO];
     }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -515,11 +520,19 @@ typedef enum {
     switch ((TableRows)is_type) {
         case TableRowsEvent:
         {
-            OMDetailEventViewController *detailEventVC = [self.storyboard instantiateViewControllerWithIdentifier:@"DetailEventVC"];
-            
-            [detailEventVC setCurrentObject:[arrForEvent objectAtIndex:indexPath.row]];
-            
-            [self.navigationController pushViewController:detailEventVC animated:YES];
+            PFObject *eventObj = [arrForEvent objectAtIndex:indexPath.row];
+            NSArray<NSString *> *tagFrnds = (NSArray<NSString *>*)eventObj[@"TagFriends"];
+            if ([tagFrnds containsObject:USER.objectId]) {
+                OMDetailEventViewController *detailEventVC = [self.storyboard
+                                                              instantiateViewControllerWithIdentifier:@"DetailEventVC"];
+                [detailEventVC setCurrentObject:[arrForEvent objectAtIndex:indexPath.row]];
+                [self.navigationController pushViewController:detailEventVC animated:YES];
+            } else {
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Oops!"
+                                                                    message:@"Oh, You are not tagged by post owner." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                [alertView show];
+                alertView = nil;
+            }
         }
             break;
         case TableRowsFriend:
@@ -528,16 +541,12 @@ typedef enum {
             break;
         case TableRowsFavorite:
         {
-            
         }
             break;
         default:
             break;
     }
-
 }
-
-
 
 //- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 //{
