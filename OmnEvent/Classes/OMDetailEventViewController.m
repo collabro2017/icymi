@@ -2847,7 +2847,9 @@
         if (currentMediaCell)
         {
             OMMediaCell* tmpCell = (OMMediaCell* )currentMediaCell;
-            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:tmpCell.imageViewForMedia];
+            UIImageView *imgView = [[UIImageView alloc] initWithImage:tmpCell.imageViewForMedia.image];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:imgView];
         }
         else
             return nil;
@@ -2860,7 +2862,9 @@
         if (currentMediaCell)
         {
             OMMediaCell* tmpCell = (OMMediaCell* )currentMediaCell;
-            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:tmpCell.imageViewForMedia];
+            UIImageView *imgView = [[UIImageView alloc] initWithImage:tmpCell.imageViewForMedia.image];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:imgView];
         }
         else
             return nil;
