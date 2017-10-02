@@ -126,11 +126,6 @@
     
     [PDFRenderer drawText:user.username inFrame:CGRectMake(51 * rScale, (nCurrOffset + 20) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor blackColor]];
     
-    int nDesHeight = [OMGlobal getBoundingOfString:currentObj[@"title"] width:250].height;
-    //---------------------------------------------------------------------//
-    [PDFRenderer drawText:currentObj[@"title"] inFrame:CGRectMake(51 * rScale, (nCurrOffset + nDesHeight + 40) * rScale, 250 * rScale, nDesHeight * rScale) fontName:@"HelveticaNeue-Light" fontSize:12 * rScale fontColor:[UIColor grayColor]];
-    //---------------------------------------------------------------------//
-    
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];
     
@@ -139,8 +134,16 @@
     
     [PDFRenderer drawText:str_date inFrame:CGRectMake(200 * rScale, (nCurrOffset + 20) * rScale, 211 * rScale, 21 * rScale) fontName:@"Roboto-Regular" fontSize:12 * rScale fontColor:[UIColor grayColor]];
     
-    //-------------------------------------------------------------//
-    nCurrOffset += nDesHeight;
+    int nTitleHeight = [OMGlobal getBoundingOfString:currentObj[@"title"] width:250].height;
+    if (((nCurrOffset + nTitleHeight) * rScale) > PDF_CONTENT_HEIGHT)
+    {
+        UIGraphicsBeginPDFPageWithInfo(CGRectMake(0, 0, PDF_PAGE_WIDTH, PDF_PAGE_HEIGHT), nil); // start second page
+        nCurrOffset = PDF_START_OffSet;
+    }
+    
+    [PDFRenderer drawText:currentObj[@"title"] inFrame:CGRectMake(51 * rScale, (nCurrOffset + nTitleHeight + 40) * rScale, 250 * rScale, nTitleHeight * rScale) fontName:@"HelveticaNeue-Light" fontSize:12 * rScale fontColor:[UIColor grayColor]];
+
+    nCurrOffset += nTitleHeight;
     nCurrOffset += 40;
     
     int nDescHeight = [OMGlobal getBoundingOfString:currentObj[@"description"] width:250].height;
