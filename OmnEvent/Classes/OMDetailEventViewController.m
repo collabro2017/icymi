@@ -2750,23 +2750,17 @@
                 [hud show:YES];
                 
                 [GlobalVar getInstance].isPosting = YES;
-                [currentObject deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                [currentObject setObject:[dateFormatter stringFromDate:[NSDate date]] forKey:@"deletedAt"];
+                [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                     [hud hide:YES];
                     [GlobalVar getInstance].isPosting = NO;
                     if (succeeded) {
-                        
-                        // for me
-                        for (PFObject *postObj in currentObject[@"postedObjects"]) {
-                            [postObj deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                                if(error == nil) NSLog(@"DetailEventVC:Deleting - Delete PostObjs linked CurEvent");
-                            }];
-                        }
-                        
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
-                        
                         [self.navigationController popViewControllerAnimated:YES];
-                        
                     }
                 }];
             }

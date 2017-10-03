@@ -55,11 +55,18 @@
 
 - (void)reload:(__unused id)sender {
     [(UIRefreshControl*)sender beginRefreshing];
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
     [mainQuery setLimit:1000];
+    
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [(UIRefreshControl*)sender endRefreshing];
         if (error == nil)
@@ -151,11 +158,17 @@
     PFQuery *query = [PFUser query];
     [query whereKey:@"username" equalTo:ADMIN_USER_NAME];
     PFUser *standUser = (PFUser*)[query getFirstObject];
-
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
+    [mainQuery setLimit:1000];
     
     if(standUser != nil){
         [mainQuery whereKey:@"user" equalTo:standUser];
@@ -272,13 +285,17 @@
     }
     [MBProgressHUD showMessag:@"Loading..." toView:self.view];
     
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
     
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
-    //[mainQuery whereKey:@"user" equalTo:USER];
     [mainQuery setLimit:1000];
+    
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
