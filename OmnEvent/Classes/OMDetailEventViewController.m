@@ -1852,8 +1852,7 @@
                     }
                     else
                     {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent)
+                        [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportEvent)
                                                        userInfo:nil repeats:NO];
                     }
                 }
@@ -1861,8 +1860,7 @@
                     
                 case 10:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
                     break;
                 //--------------------------------------------//
@@ -1917,8 +1915,8 @@
                     break;
                     
                 case 6:{
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    //Report Event by Guest/Tag user
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
                     break;
                 case 7:
@@ -1963,8 +1961,8 @@
                     
                 case 4:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    //Report Post by Guest/Tag user
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -1987,10 +1985,7 @@
                     break;
                 case 2:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -2010,10 +2005,8 @@
                     
                 case 1:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    
+                    //Report Post
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -2023,13 +2016,9 @@
         case kTag_TextShare1:
         {
             switch (buttonIndex) {
-                    
                 case 0:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    
+                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -2134,12 +2123,72 @@
 }
 
 //Report
-
 - (void)reportEvent
 {
-    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-    
-    [OMGlobal showAlertTips:@"Reported successfully. Your report will be reviewed by Administrator." title:nil];
+    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+    PFQuery *query = [PFQuery queryWithClassName:@"ReportedContent"];
+    [query whereKey:@"targetEvent" equalTo:currentObject];
+    [query whereKey:@"targetPost" equalTo:[NSNull null]];
+    [query whereKey:@"reportedBy" equalTo:[PFUser currentUser]];
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        if (!error) {
+            if (number == 0) {
+                PFObject *obj = [PFObject objectWithClassName:@"ReportedContent"];
+                obj[@"targetEvent"] = currentObject;
+                obj[@"reportedBy"] = [PFUser currentUser];
+                [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    if (succeeded) {
+                        [OMGlobal showAlertTips:@"Reported successfully. Your report will be reviewed by Administrator." title:nil];
+                    } else {
+                        [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+                    }
+                }];
+            } else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [OMGlobal showAlertTips:@"You have already reported this event. Your report will be reviewed by Administrator."
+                                  title:nil];
+            }
+        } else {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+        }
+    }];
+}
+
+//Report Event's post
+- (void)reportPost
+{
+    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+    PFQuery *query = [PFQuery queryWithClassName:@"ReportedContent"];
+    [query whereKey:@"targetEvent" equalTo:currentObject];
+    [query whereKey:@"targetPost" equalTo:tempObejct];
+    [query whereKey:@"reportedBy" equalTo:[PFUser currentUser]];
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        if (!error) {
+            if (number == 0) {
+                PFObject *obj = [PFObject objectWithClassName:@"ReportedContent"];
+                obj[@"targetEvent"] = currentObject;
+                obj[@"targetPost"] = tempObejct;
+                obj[@"reportedBy"] = [PFUser currentUser];
+                [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    if (succeeded) {
+                        [OMGlobal showAlertTips:@"Post reported successfully. Your report will be reviewed by Administrator." title:nil];
+                    } else {
+                        [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+                    }
+                }];
+            } else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [OMGlobal showAlertTips:@"You have already reported this post. Your report will be reviewed by Administrator."
+                                  title:nil];
+            }
+        } else {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+        }
+    }];
 }
 
 #pragma mark ActionSheet Actions
@@ -2159,10 +2208,8 @@
     [MBProgressHUD showMessag:@"Changing thumbnail Image..." toView:self.view];
     
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         [tblForDetailList reloadData];
-        
     }];
 }
 
