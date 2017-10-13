@@ -797,27 +797,40 @@
 
 - (void)tagPeople {
     
-    NSMutableArray *arrForTaggedFriend = [NSMutableArray array];
+    NSArray *arrForTaggedFriend = [NSArray array];
+    NSArray *arrTagFriendAuthorities = [NSArray array];
+    
     if (currentObject[@"TagFriends"]) {
         arrForTaggedFriend = currentObject[@"TagFriends"];
     }
     
+    if (currentObject[@"TagFriendAuthorities"]) {
+        arrTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+    }
+    
     PFUser *postUser = currentObject[@"user"];
     
-    //if ([arrForTaggedFriend containsObject:USER.objectId] || [postUser.objectId isEqualToString:USER.objectId])
-    if ([postUser.objectId isEqualToString:USER.objectId])
+    if ([arrForTaggedFriend containsObject:USER.objectId]) {
+        NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
+        NSString *strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
+        if ([strAuthLevel isEqualToString:@"Full"]) {
+            OMAdditionalTagViewController *tagListVC = [self.storyboard instantiateViewControllerWithIdentifier:@"AdditionalTagVC"];
+            tagListVC.delegate = self;
+            [tagListVC setCurrentObject:currentObject];
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:tagListVC];
+            [TABController presentViewController:nav animated:YES completion:nil];
+        }
+    }
+    else if ([postUser.objectId isEqualToString:USER.objectId])
     {
-        
         OMAdditionalTagViewController *tagListVC = [self.storyboard instantiateViewControllerWithIdentifier:@"AdditionalTagVC"];
         tagListVC.delegate = self;
         [tagListVC setCurrentObject:currentObject];
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:tagListVC];
         [TABController presentViewController:nav animated:YES completion:nil];
-        
     } else {
         [OMGlobal showAlertTips:@"Oh, You were not tagged by Post owner." title:@"Oops!"];
     }
-    
 }
 
 #pragma mark - UIActionSheet Delegate
@@ -1442,8 +1455,20 @@
     }
     
     PFUser *user = (PFUser *)_obj[@"user"];
+    NSArray *arrForTaggedFriend = [NSArray array];
+    NSArray *arrTagFriendAuthorities = [NSArray array];
     
-    if ([user.objectId isEqualToString:USER.objectId]) {
+    if (currentObject[@"TagFriends"]) {
+        arrForTaggedFriend = currentObject[@"TagFriends"];
+    }
+    
+    if (currentObject[@"TagFriendAuthorities"]) {
+        arrTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+    }
+    NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
+    NSString *strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
+    
+    if ([user.objectId isEqualToString:USER.objectId] || [strAuthLevel isEqualToString:@"Full"]) {
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
                                      destructiveButtonTitle:@"Share via Email"
                                           otherButtonTitles:@"Facebook", @"Twitter", @"Instagram",

@@ -119,15 +119,21 @@
         if (!error) {
             NSMutableArray *strUserObjectIds = [[NSMutableArray alloc] init];
             [arrForFriend removeAllObjects];
+            NSString *eventCreatorId = [currentObject[@"user"] objectId];
             
             for (PFObject *obj in objects) {
                 if (obj[@"ToUser"]) {
                     PFUser *user = obj[@"ToUser"];
-                    if (![user.objectId isEqualToString:USER.objectId] && ![strUserObjectIds containsObject:user.objectId]) {
+                    if (![user.objectId isEqualToString:USER.objectId] && ![strUserObjectIds containsObject:user.objectId]
+                        && ![eventCreatorId isEqualToString:user.objectId]) {
                         [strUserObjectIds addObject:user.objectId];
                         [arrForFriend addObject:user];
                     }
                 }
+            }
+            
+            if (![eventCreatorId isEqualToString:USER.objectId]) {
+                [arrForFriend addObject:USER];
             }
             [strUserObjectIds removeAllObjects];
             strUserObjectIds = nil;
