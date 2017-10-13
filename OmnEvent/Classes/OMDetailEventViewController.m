@@ -1163,9 +1163,9 @@
             }
             
             
-            NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
+            PFObject *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
             
-            NSString *objectId = [temp objectForKey:@"objectId"];
+            NSString *objectId = temp.objectId;
             if (objectId == nil){
                 objectId = [[currentObject[@"commenters"] objectAtIndex:indexPath.row - 2] objectId];
             }
