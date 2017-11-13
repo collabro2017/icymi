@@ -1462,11 +1462,17 @@
         arrForTaggedFriend = currentObject[@"TagFriends"];
     }
     
-    if (currentObject[@"TagFriendAuthorities"]) {
-        arrTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+    NSString *strAuthLevel = @"";
+    
+    if ([arrForTaggedFriend containsObject:USER.objectId]) {
+        
+        if (currentObject[@"TagFriendAuthorities"]) {
+            arrTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+        }
+        
+        NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
+        strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
     }
-    NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
-    NSString *strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
     
     if ([user.objectId isEqualToString:USER.objectId] || [strAuthLevel isEqualToString:@"Full"]) {
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
