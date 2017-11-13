@@ -42,6 +42,7 @@
     NSMutableArray *arrForPosts;
     NSMutableArray *arrForFirstArray;
     NSUInteger process_number;
+    BOOL  progressAVDisplayed;
 }
 
 @property (readwrite, nonatomic, strong) UIRefreshControl *refreshControl1;
@@ -283,7 +284,15 @@
     {
         [self standardEventLoad];
     }
-    [MBProgressHUD showMessag:@"Loading..." toView:self.view];
+    
+    if(arrForFeed != nil && arrForFeed.count > 0) {
+        progressAVDisplayed = false;
+    }
+    else{
+        
+        progressAVDisplayed = true;
+        [MBProgressHUD showMessag:@"Loading..." toView:self.view];
+    }
     
     PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
     [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
@@ -298,8 +307,9 @@
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-        
+        if(progressAVDisplayed == true) {
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        }
         [GlobalVar getInstance].isEventLoading = NO;
         
         if (error == nil)
