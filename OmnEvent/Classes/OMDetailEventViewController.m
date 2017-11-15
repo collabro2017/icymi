@@ -1475,7 +1475,7 @@
     }
     
     NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
-    NSString *strAuthLevel = @"";
+    strAuthLevel = @"";
     if (index != NSNotFound) {
         strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
     }    
