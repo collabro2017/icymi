@@ -1,1 +1,4 @@
 Pods/*
+.DS_Store
+ICYMI.xcodeproj/project.xcworkspace/xcuserdata/Song.xcuserdatad/UserInterfaceState.xcuserstate
+Podfile.lock

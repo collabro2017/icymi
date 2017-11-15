@@ -84,7 +84,7 @@
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Terms and Conditions" message:@"I agree to Terms and Conditions." preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                       handler:^(UIAlertAction * _Nonnull action) {
-    }]];
+                                                      }]];
     [alertController addAction:[UIAlertAction actionWithTitle:@"Agree" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [[NSUserDefaults standardUserDefaults] setBool:YES forKey:AGREEMENT_AGREED];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -115,6 +115,7 @@
                                                       handler:^(UIAlertAction * _Nonnull action) {
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:PRIVACY_URL]]];
         [MBProgressHUD showHUDAddedTo:self.webView animated:YES];
+
     }]];
     [self presentViewController:alertController animated:YES completion:nil];
 }

@@ -1184,6 +1184,7 @@
 		6CD6E7661B5B3F650074578C /* OMSocialEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMSocialEvent.h; sourceTree = "<group>"; };
 		6CD6E7671B5B3F650074578C /* OMSocialEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMSocialEvent.m; sourceTree = "<group>"; };
 		76AFDD7A7C791DFFCD1CDE8B /* Pods-ICYMI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ICYMI.release.xcconfig"; path = "Pods/Target Support Files/Pods-ICYMI/Pods-ICYMI.release.xcconfig"; sourceTree = "<group>"; };
+		797185361F9211E400AAE9E2 /* ICYMI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ICYMI.entitlements; sourceTree = "<group>"; };
 		8F18CAB61CF78E90005021BB /* FTWCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTWCache.h; sourceTree = "<group>"; };
 		8F18CAB71CF78E90005021BB /* FTWCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FTWCache.m; sourceTree = "<group>"; };
 		8F18CAB81CF78E90005021BB /* NSString+MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+MD5.h"; sourceTree = "<group>"; };
@@ -1742,6 +1743,7 @@
 		3C5E7E76197628DF000550F6 = {
 			isa = PBXGroup;
 			children = (
+				797185361F9211E400AAE9E2 /* ICYMI.entitlements */,
 				3C5E7E88197628DF000550F6 /* OmnEvent */,
 				3C5E7EAA197628E0000550F6 /* OmnEventTests */,
 				3C5E7E81197628DF000550F6 /* Frameworks */,
@@ -2998,6 +3000,7 @@
 				3C5E7E7D197628DF000550F6 /* Resources */,
 				16DDBE52417113BE5C9FEC97 /* [CP] Embed Pods Frameworks */,
 				6FBD8A97EE955709A159C67F /* [CP] Copy Pods Resources */,
+				FA6BBCA71FBC5D5500644897 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -3021,6 +3024,11 @@
 					3C5E7E7E197628DF000550F6 = {
 						DevelopmentTeam = 6M75VL4633;
 						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -3452,13 +3460,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ICYMI-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6FBD8A97EE955709A159C67F /* [CP] Copy Pods Resources */ = {
@@ -3467,14 +3478,34 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-ICYMI/Pods-ICYMI-resources.sh",
+				"${PODS_ROOT}/PBJVision/Source/Shaders/Shader.fsh",
+				"${PODS_ROOT}/PBJVision/Source/Shaders/Shader.vsh",
+				"${PODS_ROOT}/UzysAssetsPickerController/UzysAssetsPickerController/Library/UzysAssetsPickerController.xib",
+				"${PODS_ROOT}/UzysAssetsPickerController/UzysAssetsPickerController/Library/UzysAssetPickerController.bundle",
+				"${PODS_ROOT}/Vertigo/Vertigo/TGRImageViewController.xib",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ICYMI/Pods-ICYMI-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		FA6BBCA71FBC5D5500644897 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" 0a067d8721bdd88d80a9416ee132a539959e6208 517ed5abf03f1600173dff459a5ab148706414390403cb788c4e8af94aa0ce79";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3822,8 +3853,10 @@
 			baseConfigurationReference = F2CE93558EBA59F9A06EC676 /* Pods-ICYMI.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ICYMI.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				COMPRESS_PNG_FILES = YES;
 				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
@@ -3848,7 +3881,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "738b39d9-2369-4930-857f-80170aee2615";
+				PROVISIONING_PROFILE = "2136cbf8-256e-4952-ace4-288411e92f62";
 				PROVISIONING_PROFILE_SPECIFIER = Collabro_devPro_0811;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
@@ -3860,8 +3893,10 @@
 			baseConfigurationReference = 76AFDD7A7C791DFFCD1CDE8B /* Pods-ICYMI.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ICYMI.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Blake Ratcliff (87E9534LVP)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				COMPRESS_PNG_FILES = YES;
 				DEVELOPMENT_TEAM = 6M75VL4633;
 				ENABLE_BITCODE = NO;
@@ -3886,7 +3921,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.collabro.collabroinc;
 				PRODUCT_NAME = ICYMI;
-				PROVISIONING_PROFILE = "6328482e-f845-4079-b9fe-50225c8ddc49";
+				PROVISIONING_PROFILE = "b78095cb-504b-4105-8b0c-1752ce346bbb";
 				PROVISIONING_PROFILE_SPECIFIER = Collabro_disPro;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;

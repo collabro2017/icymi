@@ -124,6 +124,7 @@
     [tapGestureForBg setDelegate:self];
     [imageViewForPostImage addGestureRecognizer:tapGestureForBg];
     
+    lblForCount.adjustsFontSizeToFitWidth = YES;
     lblForCount.text = [NSString stringWithFormat:@"%d", MAX_DESCRIPTION_LIMIT];
 
     
@@ -158,6 +159,8 @@
     UITapGestureRecognizer *singleFingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     [self.view addGestureRecognizer:singleFingerTap];
     
+    //Initialize the variable with empty string
+    countryLatLong = @"";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -614,14 +617,10 @@
             NSNumber *postOrder = [NSNumber numberWithInt:1];
             if (self.postOrder == -1) {
                 PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
-                
-                if ([item isEqual:[NSNull null]]) {
-                    postOrder = [NSNumber numberWithInt:(int)allPosts.count];
-                }else{
+                if (item != nil || ![item isEqual:[NSNull null]]) {
                     int newOrder = [item[@"postOrder"] intValue] + 1;
                     postOrder = [NSNumber numberWithInt:newOrder];
-                }
-                
+                }                
             }
             else if (allPosts.count > 0) {
                 PFObject *item = allPosts[self.postOrder];
@@ -865,8 +864,8 @@
         
         post[@"user"]           = USER;
         post[@"targetEvent"]    = curObj; // Event obj
-        post[@"title"]          = @"";
-        post[@"description"]    = @"";
+        post[@"title"]          = lblForTitle.text;
+        post[@"description"]    = textViewForDescription.text;
         post[@"country"]        = lblForLocation.text;
         post[@"countryLatLong"] = countryLatLong;
         
@@ -874,9 +873,7 @@
         NSNumber *postOrder = [NSNumber numberWithInt:1];
         if (self.postOrder == -1) {
             PFObject *item = allPosts.firstObject; //First Element will contain the object with highest postOrder
-            if ([item isEqual:[NSNull null]]) {
-                postOrder = [NSNumber numberWithInt:(int)allPosts.count];
-            }else{
+            if (item != nil || ![item isEqual:[NSNull null]]) {
                 int newOrder = [item[@"postOrder"] intValue] + 1;
                 postOrder = [NSNumber numberWithInt:newOrder];
             }
@@ -989,6 +986,19 @@
                     [appDel.m_offlinePostURLs addObject:baseURL];
                 }
                 
+                //Increment the postOrder for other posts
+                for (int i=0; i<=self.postOrder; i++) {
+                    PFObject *item = allPosts[i];
+                    if ([item isEqual:[NSNull null]] || item == nil) continue;
+                    [item incrementKey:@"postOrder"];
+                }
+                
+                // add one Post on Event postedObject field: for badge
+                if(![curObj[@"postedObjects"] containsObject:post]) {
+                    [allPosts insertObject:post atIndex:self.postOrder+1];
+                    curObj[@"postedObjects"] = allPosts;
+                }
+                
                 [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                 //[self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
@@ -1013,7 +1023,7 @@
                         //Increment the postOrder for other posts
                         for (int i=0; i<=self.postOrder; i++) {
                             PFObject *item = allPosts[i];
-                            if ([item isEqual:[NSNull null]]) continue;
+                            if ([item isEqual:[NSNull null]] || item == nil) continue;
                             
                             [item incrementKey:@"postOrder"];
                             [item save];
@@ -1235,15 +1245,23 @@
 - (void)selectedCells:(OMTagListViewController *)fsCategoryVC didFinished:(NSMutableArray *)_dict
 {
     [fsCategoryVC.navigationController dismissViewControllerAnimated:YES completion:^{
-        arrForTaggedFriend = [_dict copy];
-        
-        int i = 0;
+        [arrForTaggedFriend removeAllObjects];
         [arrForTaggedFriendAuthor removeAllObjects];
-        while (i < [arrForTaggedFriend count] ) {
-            [arrForTaggedFriendAuthor addObject:@"Full"];
-            i++;
+        for (int i=0; i<3; i++) {
+            NSArray *list = _dict[i];
+            if (list.count > 0) {
+                for (PFUser *user in list) {
+                    [arrForTaggedFriend addObject:user.objectId];
+                    if (i==0) {
+                        [arrForTaggedFriendAuthor addObject:@"Full"];
+                    } else if (i==1) {
+                        [arrForTaggedFriendAuthor addObject:@"View Only"];
+                    } else if (i==2) {
+                        [arrForTaggedFriendAuthor addObject:@"Comment Only"];
+                    }
+                }
+            }
         }
-        
     }];
 }
 

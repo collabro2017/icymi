@@ -42,6 +42,7 @@
     NSMutableArray *arrForPosts;
     NSMutableArray *arrForFirstArray;
     NSUInteger process_number;
+    BOOL  progressAVDisplayed;
 }
 
 @property (readwrite, nonatomic, strong) UIRefreshControl *refreshControl1;
@@ -54,41 +55,40 @@
 @synthesize arrForFeed,dic;
 
 - (void)reload:(__unused id)sender {
-    
     [(UIRefreshControl*)sender beginRefreshing];
     
-    // Display data from Local Datastore —> RETURN & update TableView
-
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
-    //[mainQuery includeKey:@"likeUserArray"];//???
+    [mainQuery setLimit:1000];
     
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
         [(UIRefreshControl*)sender endRefreshing];
-        if (error == nil) {
-  
+        if (error == nil)
+        {
             if([arrForFeed count] != 0) [arrForFeed removeAllObjects];
             for (PFObject *obj in objects) {
-                
                 OMSocialEvent * socialtempObj = (OMSocialEvent*) obj;
                 PFUser *user = socialtempObj[@"user"];
                 
                 // Filtering Event: Own Events or User's Events including me in TagFriends
-                if ([socialtempObj[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId] )
+                if ([socialtempObj[@"TagFriends"] containsObject:USER.objectId] || [user.objectId isEqualToString:USER.objectId])
                 {
                     if (user != nil && user.username != nil) {
                         [arrForFeed addObject:socialtempObj];
                     }
                 }
-              }
+            }
             
             arrForFirstArray = [arrForFeed copy];
             [arrForFeed removeAllObjects];
             [self estimateBadgeCount1];
-            
         }
     }];
 }
@@ -121,6 +121,7 @@
     self.refreshControl1 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, collectionViewForFeed.frame.size.width, 100.0f)];
     [self.refreshControl1 addTarget:self action:@selector(reload:) forControlEvents:UIControlEventValueChanged];
     [collectionViewForFeed addSubview:self.refreshControl1];
+    collectionViewForFeed.alwaysBounceVertical = YES;
     
     //Add Pull to refresh on UITableView
     self.refreshControl2 = [[UIRefreshControl alloc] initWithFrame:CGRectMake(0, 0, tableViewForFeeds.frame.size.width, 100.0f)];
@@ -158,11 +159,17 @@
     PFQuery *query = [PFUser query];
     [query whereKey:@"username" equalTo:ADMIN_USER_NAME];
     PFUser *standUser = (PFUser*)[query getFirstObject];
-
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
+    [mainQuery setLimit:1000];
     
     if(standUser != nil){
         [mainQuery whereKey:@"user" equalTo:standUser];
@@ -198,21 +205,25 @@
 }
 
 - (void)showBadge:(NSNotification *)_notification {
-    NSDictionary *userInfo = _notification.userInfo;
+//    NSDictionary *userInfo = _notification.userInfo;
+//    if ([userInfo objectForKey:@"request"]) {
+//        NSString *idOfTargetEvent = [userInfo objectForKey:@"request"];
+//        for (OMSocialEvent *event in arrForFeed) {
+//            if ([event.objectId isEqualToString:idOfTargetEvent]) {
+//                PFUser *eventuser = event[@"user"];
+//                if(![eventuser.objectId isEqualToString:currentUser.objectId])
+//                {
+//                    event.badgeNotifier = 1;
+//                }
+//            }
+//        }
+//       [collectionViewForFeed reloadData];
+//    }
     
-    if ([userInfo objectForKey:@"request"]) {
-        
-        NSString *idOfTargetEvent = [userInfo objectForKey:@"request"];
-        for (OMSocialEvent *event in arrForFeed) {
-            if ([event.objectId isEqualToString:idOfTargetEvent]) {
-                PFUser *eventuser = event[@"user"];
-                if(![eventuser.objectId isEqualToString:currentUser.objectId])
-                {
-                    event.badgeNotifier = 1;
-                }
-            }
-        }
-       [collectionViewForFeed reloadData];
+    if (is_grid) {
+        [self reload:self.refreshControl1];
+    } else {
+        [self reload:self.refreshControl2];
     }
 }
 
@@ -222,7 +233,17 @@
     
     NSLog(@"Event count && Event Global count = %i, %i",
     (int)[arrForFeed count],(int)[[GlobalVar getInstance].gArrEventList count]);
- }
+    
+    if (arrForFeed.count > 0) {
+        int notificationsCount = 0;
+        for (OMSocialEvent *event in arrForFeed) {
+            if (event.badgeCount > 0) {
+                notificationsCount++;
+            }
+        }
+        [self setBadgeCounter:notificationsCount];
+    }
+}
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -263,19 +284,32 @@
     {
         [self standardEventLoad];
     }
-    [MBProgressHUD showMessag:@"Loading..." toView:self.view];
     
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    if(arrForFeed != nil && arrForFeed.count > 0) {
+        progressAVDisplayed = false;
+    }
+    else{
+        
+        progressAVDisplayed = true;
+        [MBProgressHUD showMessag:@"Loading..." toView:self.view];
+    }
     
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
     [mainQuery includeKey:@"postedObjects"];
-    //[mainQuery whereKey:@"user" equalTo:USER];
     [mainQuery setLimit:1000];
+    
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-        
+        if(progressAVDisplayed == true) {
+            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        }
         [GlobalVar getInstance].isEventLoading = NO;
         
         if (error == nil)
@@ -335,6 +369,7 @@
         return;
     }
     
+    int notificationCount = 0;
     for( OMSocialEvent *eventObj in arrForFirstArray)
     {
         NSInteger postBadgeCount = 0;
@@ -348,9 +383,9 @@
                     
                        if(postObj[@"usersBadgeFlag"] && [postObj[@"usersBadgeFlag"] count] > 0)
                         {
-                            for(NSString *userId in postObj[@"usersBadgeFlag"])
+                            for(NSString *user in postObj[@"usersBadgeFlag"])
                             {
-                                if ([userId isEqualToString:currentUser.objectId]) {
+                                if ([user isEqualToString:currentUser.objectId]) {
                                     postBadgeCount++;
                                     NSLog(@"---found badge count----%i",(int) postBadgeCount);
                                 }
@@ -368,7 +403,7 @@
         eventObj.badgeCount = postBadgeCount;
         if(eventObj[@"eventBadgeFlag"] != nil && [eventObj[@"eventBadgeFlag"] count] > 0)
         {
-            if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser.objectId])
+            if ([eventObj[@"eventBadgeFlag"] containsObject:currentUser])
             {
                      eventObj.badgeNewEvent = 1;
             }
@@ -376,8 +411,11 @@
         
         [arrForFeed addObject:eventObj];
         
+        if (eventObj.badgeCount > 0) {
+            notificationCount++;
+        }
     }
-    
+    [self setBadgeCounter:notificationCount];
     [[GlobalVar getInstance].gArrEventList removeAllObjects];
     [GlobalVar getInstance].gArrEventList = [arrForFeed mutableCopy];
     
@@ -388,7 +426,6 @@
         if (is_grid) [collectionViewForFeed reloadData];
         else [tableViewForFeeds reloadData];
     });
-    
 }
 
 // Recurrent processing until arrForFirstArray is empty

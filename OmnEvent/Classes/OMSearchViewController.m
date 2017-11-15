@@ -28,12 +28,17 @@
 @synthesize searchBarForEvent;
 - (void)reload:(__unused id)sender
 {
-    
     [(UIRefreshControl*)sender beginRefreshing];
     
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
+    
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         
         [(UIRefreshControl*)sender endRefreshing];
@@ -127,7 +132,6 @@
 
 - (void)searchRequestWithKey:(NSString *)searchKey
 {
-    
     PFQuery *eventQuery = [PFQuery queryWithClassName:kClassEvent];
     [eventQuery whereKey:@"eventname" hasPrefix:searchKey];
     
@@ -136,8 +140,6 @@
     
     PFQuery *eventQueryLowerCase = [PFQuery queryWithClassName:kClassEvent];
     [eventQueryLowerCase whereKey:@"eventname" hasPrefix:[searchKey lowercaseString]];
-    
-    
     
     PFQuery *descriptionQuery = [PFQuery queryWithClassName:kClassEvent];
     [descriptionQuery whereKey:@"description" hasPrefix:searchKey];
@@ -148,8 +150,13 @@
     PFQuery *descriptionQueryLowerCase = [PFQuery queryWithClassName:kClassEvent];
     [descriptionQueryLowerCase whereKey:@"description" hasPrefix:[searchKey lowercaseString]];
     
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:kClassEvent];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
     
-    PFQuery *query = [PFQuery orQueryWithSubqueries:@[ eventQuery, eventQueryCapitalized, eventQueryLowerCase, descriptionQuery, descriptionQueryCapitalized, descriptionQueryLowerCase]];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:kClassEvent];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *query = [PFQuery orQueryWithSubqueries:@[eventQuery, eventQueryCapitalized, eventQueryLowerCase, descriptionQuery, descriptionQueryCapitalized, descriptionQueryLowerCase, subQuery1, subQuery2]];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"user"];
 
@@ -230,9 +237,15 @@
 {
     [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Event"];
+    PFQuery *subQuery1 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery1 whereKeyDoesNotExist:@"deletedAt"];
+    PFQuery *subQuery2 = [PFQuery queryWithClassName:@"Event"];
+    [subQuery2 whereKey:@"deletedAt" equalTo:@""];
+    
+    PFQuery *mainQuery = [PFQuery orQueryWithSubqueries:@[subQuery1, subQuery2]];
     [mainQuery orderByDescending:@"createdAt"];
     [mainQuery includeKey:@"user"];
+    
     [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
         

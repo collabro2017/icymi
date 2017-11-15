@@ -258,7 +258,7 @@ static GlobalVar *_instance = nil;
     
     
     CGRect textRect = [str boundingRectWithSize:CGSizeMake([UIScreen mainScreen].bounds.size.width - 60.0f, CGFLOAT_MAX)
-                                         options:NSStringDrawingUsesLineFragmentOrigin
+                                         options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
                                       attributes:attributes
                                          context:nil];
     CGSize sizeToFit = textRect.size;
@@ -276,7 +276,7 @@ static GlobalVar *_instance = nil;
     CGFloat messageMaxWidth = _width;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 70000
     sizeToFit = [text boundingRectWithSize: CGSizeMake(messageMaxWidth, CGFLOAT_MAX)
-                                   options: NSStringDrawingUsesLineFragmentOrigin
+                                   options: NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
                                 attributes: @{ NSFontAttributeName : [UIFont systemFontOfSize:14.0f] }
                                    context: nil].size;
 #else

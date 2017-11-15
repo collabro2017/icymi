@@ -58,9 +58,10 @@
 #define kTag_DupEvent           20001
 
 #define kTag_PDF_Select         30000
+#define kTag_PDF_Profile_Mode   40000
 
 
-@interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate>
+@interface OMDetailEventViewController ()<AVAudioPlayerDelegate,OMAdditionalTagViewControllerDelegate,MFMessageComposeViewControllerDelegate,MFMailComposeViewControllerDelegate, OMTagFolderViewControllerDelegate, UIViewControllerTransitioningDelegate, UIPickerViewDataSource,UIPickerViewDelegate, QLPreviewControllerDataSource, QLPreviewControllerDelegate, OMEventNotiViewControllerDelegate>
 {
     
     AVAudioPlayer *audioPlayer;
@@ -88,6 +89,9 @@
     
     BOOL modeForExport;
     int selectedPostOrder;
+    
+    NSString *exportModeOfPDF;
+    NSString *profileModeInPDF;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
@@ -140,22 +144,34 @@
         else
         {
             [arrForDetail removeAllObjects];
+            [arrForDetail addObjectsFromArray:objects];
             
             OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
             offline_data_num = appDel.m_offlinePosts.count;
             
-            for (NSUInteger i = 0; i < offline_data_num; i ++){
-                
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex: offline_data_num - i - 1];
+            for (NSUInteger i = 0; i < offline_data_num; i ++) {
+                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
                 PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
                 
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]){
+                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
                     [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:offline_data_num - i - 1]];
+                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
                 }
             }
             
-            [arrForDetail addObjectsFromArray:objects];
+            //Sort Posts on postOrder
+            if (appDel.m_offlinePosts.count > 0) {
+                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                    NSNumber *postOrder1 = obj1[@"postOrder"];
+                    NSNumber *postOrder2 = obj2[@"postOrder"];
+                    if (postOrder1.intValue > postOrder2.intValue) {
+                        return NSOrderedAscending;
+                    } else if (postOrder1.intValue < postOrder2.intValue) {
+                        return NSOrderedDescending;
+                    }
+                    return NSOrderedSame;
+                }];
+            }
             
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
@@ -224,21 +240,6 @@
     // DetailEvent contents Loading...
     [self loadContents];
     arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
-    
-    //processing bagde
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
-    
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    [autoRefreshTimer invalidate];
-    autoRefreshTimer = nil;
-    NSLog(@"Auto Refresh timer - stoped!");
-    
-    //processing bagde
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
 }
 
 - (void)firstViewLoad {
@@ -264,6 +265,20 @@
     
     //---------------------------------------------//
     [self initializeBadges];
+    
+    //processing bagde
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [autoRefreshTimer invalidate];
+    autoRefreshTimer = nil;
+    NSLog(@"Auto Refresh timer - stoped!");
+    
+    //processing bagde
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -449,21 +464,34 @@
             if([arrForDetail count] != 0)[arrForDetail removeAllObjects];
             if([offlineURLs count] != 0)[offlineURLs removeAllObjects];
             
-            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
+            if([objects count] > 0) [arrForDetail addObjectsFromArray:objects];
             
+            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
             offline_data_num = appDel.m_offlinePosts.count;
             
             for (NSUInteger i = 0; i < offline_data_num; i++ ) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex: offline_data_num - i - 1];
+                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
                 PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
                 
                 if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
                     [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:offline_data_num - i - 1]];
+                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
                 }
             }
             
-            if([objects count] > 0) [arrForDetail addObjectsFromArray:objects];
+            //Sort Posts on postOrder
+            if (appDel.m_offlinePosts.count > 0) {
+                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                    NSNumber *postOrder1 = obj1[@"postOrder"];
+                    NSNumber *postOrder2 = obj2[@"postOrder"];
+                    if (postOrder1.intValue > postOrder2.intValue) {
+                        return NSOrderedAscending;
+                    } else if (postOrder1.intValue < postOrder2.intValue) {
+                        return NSOrderedDescending;
+                    }
+                    return NSOrderedSame;
+                }];
+            }
             
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
@@ -480,12 +508,14 @@
             
             // Current Test feature. lets check these again.
             PFUser *eventUser = currentObject[@"user"];
-            if([eventUser.objectId isEqualToString: USER.objectId] && appDel.network_state)
+            if([eventUser.objectId isEqualToString: USER.objectId])
             {
                 currentObject[@"postedObjects"] = arrForDetail;
-                [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                    if(error == nil) NSLog(@"DetailEventVC: added Post objs on postedObjects on Event");
-                }];
+                if (appDel.network_state) {
+                    [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                        if(error == nil) NSLog(@"DetailEventVC: added Post objs on postedObjects on Event");
+                    }];
+                }
             }
             
             [tblForDetailList reloadData];
@@ -522,8 +552,33 @@
         {
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
+            
             OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            [arrForDetail addObjectsFromArray:appDel.m_offlinePosts];
+            offline_data_num = appDel.m_offlinePosts.count;
+            
+            for (NSUInteger i = 0; i < offline_data_num; i ++) {
+                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
+                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
+                
+                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
+                    [arrForDetail addObject:temp_object];
+                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
+                }
+            }
+            
+            //Sort Posts on postOrder
+            if (appDel.m_offlinePosts.count > 0) {
+                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                    NSNumber *postOrder1 = obj1[@"postOrder"];
+                    NSNumber *postOrder2 = obj2[@"postOrder"];
+                    if (postOrder1.intValue > postOrder2.intValue) {
+                        return NSOrderedAscending;
+                    } else if (postOrder1.intValue < postOrder2.intValue) {
+                        return NSOrderedDescending;
+                    }
+                    return NSOrderedSame;
+                }];
+            }
             
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
@@ -644,17 +699,21 @@
                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
                 }];
                 
+                if ([currentObject[@"postedObjects"] containsObject:post]) {
+                    [currentObject[@"postedObjects"] removeObject:post];
+                }
                 
                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                    [GlobalVar getInstance].isPosting = NO;
                     if (succeeded) {
                         NSLog(@"Success ---- Post");
                         
                         
                         // add new Post object on postedObjects array: for badge
                         [currentObject[@"postedObjects"] addObject:post];
+                        [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                            [GlobalVar getInstance].isPosting = NO;
+                        }];
                         
                         [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                             
@@ -738,27 +797,40 @@
 
 - (void)tagPeople {
     
-    NSMutableArray *arrForTaggedFriend = [NSMutableArray array];
+    NSArray *arrForTaggedFriend = [NSArray array];
+    NSArray *arrTagFriendAuthorities = [NSArray array];
+    
     if (currentObject[@"TagFriends"]) {
         arrForTaggedFriend = currentObject[@"TagFriends"];
     }
     
+    if (currentObject[@"TagFriendAuthorities"]) {
+        arrTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+    }
+    
     PFUser *postUser = currentObject[@"user"];
     
-    //if ([arrForTaggedFriend containsObject:USER.objectId] || [postUser.objectId isEqualToString:USER.objectId])
-    if ([postUser.objectId isEqualToString:USER.objectId])
+    if ([arrForTaggedFriend containsObject:USER.objectId]) {
+        NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
+        NSString *strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
+        if ([strAuthLevel isEqualToString:@"Full"]) {
+            OMAdditionalTagViewController *tagListVC = [self.storyboard instantiateViewControllerWithIdentifier:@"AdditionalTagVC"];
+            tagListVC.delegate = self;
+            [tagListVC setCurrentObject:currentObject];
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:tagListVC];
+            [TABController presentViewController:nav animated:YES completion:nil];
+        }
+    }
+    else if ([postUser.objectId isEqualToString:USER.objectId])
     {
-        
         OMAdditionalTagViewController *tagListVC = [self.storyboard instantiateViewControllerWithIdentifier:@"AdditionalTagVC"];
         tagListVC.delegate = self;
         [tagListVC setCurrentObject:currentObject];
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:tagListVC];
         [TABController presentViewController:nav animated:YES completion:nil];
-        
     } else {
         [OMGlobal showAlertTips:@"Oh, You were not tagged by Post owner." title:@"Oops!"];
     }
-    
 }
 
 #pragma mark - UIActionSheet Delegate
@@ -867,20 +939,35 @@
 - (void)selectedCells:(OMAdditionalTagViewController *)tagVC didFinished:(NSMutableArray *)_dict
 {
     [tagVC.navigationController dismissViewControllerAnimated:YES completion:^{
+        NSMutableArray *tagFriends = [NSMutableArray array];
+        NSMutableArray *authorities = [NSMutableArray array];
         
-        [self addTagFriends:_dict];
+        for (int i=0; i<3; i++) {
+            NSArray *list = _dict[i];
+            if (list.count > 0) {
+                for (PFUser *user in list) {
+                    [tagFriends addObject:user.objectId];
+                    if (i==0) {
+                        [authorities addObject:@"Full"];
+                    } else if (i==1) {
+                        [authorities addObject:@"View Only"];
+                    } else if (i==2) {
+                        [authorities addObject:@"Comment Only"];
+                    }
+                }
+            }
+        }
+        
+        NSMutableArray *data = [NSMutableArray array];
+        [data addObject:tagFriends];
+        [data addObject:authorities];
+        [self addTagFriends:data];
     }];
 }
 
 // In case to change the Tag for Friends.
 - (void)addTagFriends:(NSMutableArray *)_dict {
-    
-    NSMutableArray *temp_array = [NSMutableArray array];
-    temp_array = [_dict copy];
-    
-    NSMutableArray *arrChangedTagFriends = [NSMutableArray array];
-    arrChangedTagFriends = [[temp_array objectAtIndex:0] mutableCopy];
-    
+    NSMutableArray *arrChangedTagFriends = [_dict objectAtIndex:0];
     NSMutableArray *arrAdds = [NSMutableArray array];
     NSMutableArray *arrDels = [NSMutableArray array];
     
@@ -889,7 +976,6 @@
     {
         // If exist the new friends?
         for (NSString *addId in arrChangedTagFriends) {
-            
             if(![arrPrevTagFriends containsObject:addId]) {
                 [arrAdds addObject:addId];
             }
@@ -906,10 +992,8 @@
         [arrAdds addObjectsFromArray:arrChangedTagFriends];
     }
     
-    
-    currentObject[@"TagFriends"] = [temp_array objectAtIndex:0];
-    currentObject[@"TagFriendAuthorities"] = [temp_array objectAtIndex:1];
-    
+    currentObject[@"TagFriends"] = [_dict objectAtIndex:0];
+    currentObject[@"TagFriendAuthorities"] = [_dict objectAtIndex:1];
     
     // Event Badge Processing...for badge
     if([currentObject[@"eventBadgeFlag"] count] > 0)
@@ -930,48 +1014,19 @@
     {
         [currentObject addObjectsFromArray:arrAdds forKey:@"eventBadgeFlag"];
     }
+    
     NSLog(@"Newly added friends: %@", arrAdds);
     NSLog(@"Deleted friends: %@", arrDels);
+    
     [GlobalVar getInstance].isPosting = YES;
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
         [GlobalVar getInstance].isPosting = NO;
         if(error) NSLog(@"Event updated for tag: %@", error.description);
         if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an eventBadgeFlage of Event Fields");
-        
-        //[OMPushServiceManager sharedInstance] sendGroupInviteNotification:(NSString *) groupId:(NSString *) userList:(NSMutableArray *)
-        
-        // Post Badge Processing...//for badge
-        /*
-         for (PFObject *postObj in currentObject[@"postedObjects"]) {
-         if(![postObj isEqual:[NSNull null]] && postObj != nil)
-         {
-         for (NSString *temp in arrDels) {
-         if ([postObj[@"usersBadgeFlag"] containsObject:temp]) {
-         [postObj removeObject:temp forKey:@"@usersBadgeFlag"];
-         }
-         }
-         for (NSString *temp in arrAdds) {
-         if (![postObj[@"usersBadgeFlag"] containsObject:temp]) {
-         [postObj addObject:temp forKey:@"@usersBadgeFlag"];
-         }
-         }
-         }
-         [postObj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-         if(error == nil) NSLog(@"DetailEventVC:Badge Processing - Updated an usersBadgeFlag of Posts");
-         }];
-         }
-         */
-        
-        
-        
     }];
-    
 }
 
-
 #pragma mark - MPMediaPickerController Delegate
-
 - (void)mediaPicker:(MPMediaPickerController *)_mediaPicker didPickMediaItems:(MPMediaItemCollection *)mediaItemCollection
 {
     NSMutableData *songData;
@@ -1121,9 +1176,9 @@
             }
             
             
-            NSDictionary *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
+            PFObject *temp = [currentObject[@"commenters"] objectAtIndex:indexPath.row - 2];
             
-            NSString *objectId = [temp objectForKey:@"objectId"];
+            NSString *objectId = temp.objectId;
             if (objectId == nil){
                 objectId = [[currentObject[@"commenters"] objectAtIndex:indexPath.row - 2] objectId];
             }
@@ -1148,7 +1203,6 @@
             if ([tempObj[@"postType"] isEqualToString:@"text"])
             {
                 if (indexPath.row == 0) {
-                    
                     OMTextCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextCell];
                     
                     if (cell == nil) {
@@ -1280,18 +1334,19 @@
             
             if (indexPath.row == 0)
             {
-                OMMediaCell *_cell = (OMMediaCell *)cell;
-                if (_cell)
-                {
-                    if ([tempObj[@"postType"] isEqualToString:@"video"])
+                if ([cell isKindOfClass:[OMMediaCell class]]) {
+                    OMMediaCell *_cell = (OMMediaCell *)cell;
+                    if (_cell)
                     {
-                        [_cell stopVideo];
-                    }
-                    else if ([tempObj[@"postType"] isEqualToString:@"audio"]) {
-                        [_cell stopAudio];
+                        if ([tempObj[@"postType"] isEqualToString:@"video"])
+                        {
+                            [_cell stopVideo];
+                        }
+                        else if ([tempObj[@"postType"] isEqualToString:@"audio"]) {
+                            [_cell stopAudio];
+                        }
                     }
                 }
-                
             }
             else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {
@@ -1336,7 +1391,16 @@
             }
             else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
             {
-                return 180;
+                NSMutableArray *arr = [[NSMutableArray alloc]init];
+                
+                if (tempObj[@"commentsArray"]) {
+                    arr = tempObj[@"commentsArray"];
+                }
+                
+                PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
+                NSString* strComments =  _obj[@"Comments"];
+                
+                return [OMGlobal heightForCellWithPost:strComments] + 30;
             }
         }
         else
@@ -1391,8 +1455,32 @@
     }
     
     PFUser *user = (PFUser *)_obj[@"user"];
+    NSArray *arrForTaggedFriend = [NSArray array];
+    NSArray *arrTagFriendAuthorities = [NSArray array];
     
-    if ([user.objectId isEqualToString:USER.objectId]) {
+    if (currentObject[@"TagFriends"]) {
+        arrForTaggedFriend = currentObject[@"TagFriends"];
+    }
+    
+    NSString *strAuthLevel = @"";
+    
+    if ([arrForTaggedFriend containsObject:USER.objectId]) {
+        
+        if (currentObject[@"TagFriendAuthorities"]) {
+            arrTagFriendAuthorities = currentObject[@"TagFriendAuthorities"];
+        }
+        
+        NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
+        strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
+    }
+    
+    NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
+    strAuthLevel = @"";
+    if (index != NSNotFound) {
+        strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
+    }    
+    
+    if ([user.objectId isEqualToString:USER.objectId] || [strAuthLevel isEqualToString:@"Full"]) {
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
                                      destructiveButtonTitle:@"Share via Email"
                                           otherButtonTitles:@"Facebook", @"Twitter", @"Instagram",
@@ -1801,8 +1889,7 @@
                     }
                     else
                     {
-                        [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                        [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent)
+                        [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportEvent)
                                                        userInfo:nil repeats:NO];
                     }
                 }
@@ -1810,8 +1897,7 @@
                     
                 case 10:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
                     break;
                 //--------------------------------------------//
@@ -1866,8 +1952,8 @@
                     break;
                     
                 case 6:{
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    //Report Event by Guest/Tag user
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
                 }
                     break;
                 case 7:
@@ -1912,8 +1998,8 @@
                     
                 case 4:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
+                    //Report Post by Guest/Tag user
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -1936,10 +2022,7 @@
                     break;
                 case 2:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -1959,10 +2042,8 @@
                     
                 case 1:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    
+                    //Report Post
+                    [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
@@ -1972,30 +2053,54 @@
         case kTag_TextShare1:
         {
             switch (buttonIndex) {
-                    
                 case 0:
                 {
-                    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
-                    
-                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportEvent) userInfo:nil repeats:NO];
-                    
+                    [NSTimer scheduledTimerWithTimeInterval:2.0f target:self selector:@selector(reportPost) userInfo:nil repeats:NO];
                 }
                 default:
                     break;
             }
         }
             break;
+            
         case kTag_PDF_Select:
         {
             switch (buttonIndex) {
                 case 0:
-                    [self exportToPDFAll];
+                    exportModeOfPDF = @"all";
+                    [self performSelector:@selector(profileModeForPDF) withObject:nil afterDelay:0.1];
                     break;
                 case 1:
-                    [self exportToPDFWithSelect];
+                    exportModeOfPDF = @"custom";
+                    [self performSelector:@selector(profileModeForPDF) withObject:nil afterDelay:0.1];
                     break;
                 default:
                     break;
+            }
+        }
+            break;
+            
+        case kTag_PDF_Profile_Mode:
+        {
+            
+            switch (buttonIndex) {
+                case 0:
+                    profileModeInPDF = @"user_profile";
+                    break;
+                case 1:
+                    profileModeInPDF = @"company_profile";
+                    break;
+                default:
+                    profileModeInPDF = @"";
+                    break;
+            }
+            
+            if (![profileModeInPDF isEqualToString:@""]) {
+                if ([exportModeOfPDF isEqualToString:@"all"]) {
+                    [self exportToPDFAll];
+                } else if ([exportModeOfPDF isEqualToString:@"custom"]) {
+                    [self exportToPDFWithSelect];
+                }
             }
         }
             break;
@@ -2055,12 +2160,72 @@
 }
 
 //Report
-
 - (void)reportEvent
 {
-    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-    
-    [OMGlobal showAlertTips:@"Reported successfully. Your report will be reviewed by Administrator." title:nil];
+    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+    PFQuery *query = [PFQuery queryWithClassName:@"ReportedContent"];
+    [query whereKey:@"targetEvent" equalTo:currentObject];
+    [query whereKey:@"targetPost" equalTo:[NSNull null]];
+    [query whereKey:@"reportedBy" equalTo:[PFUser currentUser]];
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        if (!error) {
+            if (number == 0) {
+                PFObject *obj = [PFObject objectWithClassName:@"ReportedContent"];
+                obj[@"targetEvent"] = currentObject;
+                obj[@"reportedBy"] = [PFUser currentUser];
+                [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    if (succeeded) {
+                        [OMGlobal showAlertTips:@"Reported successfully. Your report will be reviewed by Administrator." title:nil];
+                    } else {
+                        [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+                    }
+                }];
+            } else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [OMGlobal showAlertTips:@"You have already reported this event. Your report will be reviewed by Administrator."
+                                  title:nil];
+            }
+        } else {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+        }
+    }];
+}
+
+//Report Event's post
+- (void)reportPost
+{
+    [MBProgressHUD showMessag:@"Progressing..." toView:self.view];
+    PFQuery *query = [PFQuery queryWithClassName:@"ReportedContent"];
+    [query whereKey:@"targetEvent" equalTo:currentObject];
+    [query whereKey:@"targetPost" equalTo:tempObejct];
+    [query whereKey:@"reportedBy" equalTo:[PFUser currentUser]];
+    [query countObjectsInBackgroundWithBlock:^(int number, NSError * _Nullable error) {
+        if (!error) {
+            if (number == 0) {
+                PFObject *obj = [PFObject objectWithClassName:@"ReportedContent"];
+                obj[@"targetEvent"] = currentObject;
+                obj[@"targetPost"] = tempObejct;
+                obj[@"reportedBy"] = [PFUser currentUser];
+                [obj saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES];
+                    if (succeeded) {
+                        [OMGlobal showAlertTips:@"Post reported successfully. Your report will be reviewed by Administrator." title:nil];
+                    } else {
+                        [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+                    }
+                }];
+            } else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [OMGlobal showAlertTips:@"You have already reported this post. Your report will be reviewed by Administrator."
+                                  title:nil];
+            }
+        } else {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            [OMGlobal showAlertTips:error.localizedDescription title:@"Error"];
+        }
+    }];
 }
 
 #pragma mark ActionSheet Actions
@@ -2071,15 +2236,17 @@
 {
     OMMediaCell* tmpCell = (OMMediaCell*)currentMediaCell;
     UIImage* cellImage = tmpCell.imageViewForMedia.image;
-    PFFile *postFile = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([cellImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
-    currentObject[@"thumbImage"] = postFile;
+    PFFile *postFile1 = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([cellImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+    currentObject[@"thumbImage"] = postFile1;
+    
+    PFFile *postFile = [PFFile fileWithName:@"postImage.jpg" data:UIImagePNGRepresentation(cellImage)];
+    currentObject[@"postImage"] = postFile;
+    
     [MBProgressHUD showMessag:@"Changing thumbnail Image..." toView:self.view];
     
     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-        
-        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         [tblForDetailList reloadData];
-        
     }];
 }
 
@@ -2152,6 +2319,8 @@
     
     [contentPDF setObject:currentObject forKey:@"currentObject"];
     [contentPDF setObject:arrTargetForGeo forKey:@"arrDetail"];
+    [contentPDF setObject:PFUser.currentUser[@"company"] forKey:@"companyName"];
+    [contentPDF setObject:profileModeInPDF forKey:@"profileMode"];
     
     [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
     pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
@@ -2168,11 +2337,11 @@
         previewController.modalPresentationStyle = UIModalPresentationFormSheet;
     }
     
-    [self presentViewController:previewController animated:YES completion:^{
-        
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-    }];
-
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self presentViewController:previewController animated:YES completion:^{
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        }];
+    });
 }
 
 -(void)getLocationFromObject{
@@ -2294,13 +2463,18 @@
     }
 }
 
--(void) exportToPDF {
+- (void) profileModeForPDF {
+    UIActionSheet* shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Display User Profile", @"Display Name + Company", nil];
     
+    [shareAction showInView:self.view];
+    shareAction.tag = kTag_PDF_Profile_Mode;
+}
+
+- (void) exportToPDF {
     UIActionSheet* shareAction = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Select All" otherButtonTitles:@"Select Items", nil];
     
     [shareAction showInView:self.view];
     shareAction.tag = kTag_PDF_Select;
-    
 }
 
 - (void) exportToPDFWithSelect
@@ -2630,16 +2804,10 @@
                             [MBProgressHUD hideHUDForView:self.view animated:YES];
                             [GlobalVar getInstance].isPosting = NO;
                             if (error == nil) {
-                                
-                                [self loadContents];
-                                
-                                
-                                if([currentObject[@"postedObjects"] containsObject:tempObejct])
-                                {
+                                if([currentObject[@"postedObjects"] containsObject:tempObejct]) {
                                     [currentObject[@"postedObjects"] removeObject:tempObejct];
-                                    if(error == nil) NSLog(@"DetailEventVC:Badge Processing - remove from one PostObj on Event Field");
                                 }
-                                
+                                [self loadContents];
                             }
                         }];
                     }
@@ -2666,23 +2834,17 @@
                 [hud show:YES];
                 
                 [GlobalVar getInstance].isPosting = YES;
-                [currentObject deleteInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                [currentObject setObject:[dateFormatter stringFromDate:[NSDate date]] forKey:@"deletedAt"];
+                [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
                     [hud hide:YES];
                     [GlobalVar getInstance].isPosting = NO;
                     if (succeeded) {
-                        
-                        // for me
-                        for (PFObject *postObj in currentObject[@"postedObjects"]) {
-                            [postObj deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                                if(error == nil) NSLog(@"DetailEventVC:Deleting - Delete PostObjs linked CurEvent");
-                            }];
-                        }
-                        
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                         [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
-                        
                         [self.navigationController popViewControllerAnimated:YES];
-                        
                     }
                 }];
             }
@@ -2763,7 +2925,9 @@
         if (currentMediaCell)
         {
             OMMediaCell* tmpCell = (OMMediaCell* )currentMediaCell;
-            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:tmpCell.imageViewForMedia];
+            UIImageView *imgView = [[UIImageView alloc] initWithImage:tmpCell.imageViewForMedia.image];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:imgView];
         }
         else
             return nil;
@@ -2776,7 +2940,9 @@
         if (currentMediaCell)
         {
             OMMediaCell* tmpCell = (OMMediaCell* )currentMediaCell;
-            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:tmpCell.imageViewForMedia];
+            UIImageView *imgView = [[UIImageView alloc] initWithImage:tmpCell.imageViewForMedia.image];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            return [[TGRImageZoomAnimationController alloc] initWithReferenceImageView:imgView];
         }
         else
             return nil;
@@ -2907,11 +3073,11 @@
 //        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
     
-    if (![GlobalVar getInstance].isPosting){
+    if (![GlobalVar getInstance].isPosting) {
         
         [self reloadContents];
         
-        if (networkStatus != NotReachable)
+        if (networkStatus != NotReachable && appDel.network_state) //Check both Reachability & Network Status
         {
             OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
             
@@ -3042,14 +3208,11 @@
     OMEventNotiViewController *notiVC = [self.storyboard instantiateViewControllerWithIdentifier:@"NotiEventVC"];
     notiVC.event = (OMSocialEvent*)currentObject;
     notiVC.curEventIndex = curEventIndex;
-    
+    notiVC.delegate = self;
     [self.navigationController pushViewController:notiVC animated:YES];
 }
 
--(void)processBadges:(NSNotification*)not{
-    //Remove the notification.
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"descount_bagdes" object:nil];
-    
+-(void)processBadges:(NSNotification*)not{    
     OMSocialEvent *temp = (OMSocialEvent*)[[GlobalVar getInstance].gArrEventList objectAtIndex:curEventIndex];
     
     if (temp.badgeCount == 0) {
@@ -3069,9 +3232,16 @@
         [lbl_card_count setText:[NSString stringWithFormat:@"%lu",(long)temp.badgeCount]];
         btnNotification.enabled = YES;
     }
-    
-    //Register again.
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(processBadges:) name:@"descount_bagdes" object:nil];
+}
+
+#pragma mark - Delegate method of OMEventNotiViewController
+- (void)notificationSelected:(PFObject *)post {
+    NSInteger section = [arrForDetail indexOfObject:post];
+    if (section != NSNotFound) {
+        [self processBadges:nil];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:section+1];
+        [self.tblForDetailList scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+    }
 }
 
 @end

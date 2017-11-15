@@ -225,7 +225,7 @@
     txtViewForTitle.text = currentObj[@"title"];
     txtViewForDes.text = currentObj[@"description"];
     
-    constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:txtViewForTitle.frame.size.width].height + 20;
+    constraintForTitle.constant = [OMGlobal getBoundingOfString:currentObj[@"title"] width:txtViewForTitle.frame.size.width].height + 30;
     constraintForDescription.constant = [OMGlobal getBoundingOfString:currentObj[@"description"] width:txtViewForDes.frame.size.width].height + 30;
     
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"IS_GEOCODE_ENABLED"]) {
@@ -332,6 +332,8 @@
         [_playButton removeFromSuperview];
         _playButton = nil;
     }
+    btnForPlay.hidden = YES;
+    
     //-------------------------------------------------//
     // Fixed the blue check button.
     /////////////////////////////////////////////////////
@@ -391,7 +393,6 @@
         [viewForMedia bringSubviewToFront:btnCheckForExport];
         
     } else if ([currentObj[@"postType"] isEqualToString:@"photo"]) {
-        
         [btnForVideoPlay setHidden:YES];
         [_videoPlayerController.view setHidden:YES];
         
@@ -441,6 +442,7 @@
         btnForPlay.tag = 10;
         btnForPlay.center = imageViewForMedia.center;
         [btnForPlay setImage:[UIImage imageNamed:@"btn_playaudio"] forState:UIControlStateNormal];
+        btnForPlay.hidden = NO;
         [viewForMedia addSubview:btnForPlay];
         
         [btnForPlay addTarget:self action:@selector(playAudio) forControlEvents:UIControlEventTouchUpInside];
@@ -792,15 +794,25 @@
         beforeDescription = txtViewForDes.text;
     }
     
-    if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-        CGPoint pointInTable = [textView.superview convertPoint:textView.frame.origin toView:textView.superview.superview.superview.superview];
-        
+    if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]) {
+        CGPoint pointInTable = [textView.superview convertPoint:textView.frame.origin
+                                                         toView:textView.superview.superview.superview.superview];
         NSDictionary *userInfo = @{
                                    @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
                                    @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y + 40] stringValue],
                                    @"textFieldHeight": [[NSNumber numberWithFloat:textView.inputAccessoryView.frame.size.height] stringValue]
                                    };
         
+        [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
+    }
+    else if ([textView.superview.superview.superview isKindOfClass:[UITableView class]]) { //for iOS 11
+        CGPoint pointInTable = [textView.superview convertPoint:textView.frame.origin
+                                                         toView:textView.superview.superview.superview];        
+        NSDictionary *userInfo = @{
+                                   @"pointInTable_x": [[NSNumber numberWithFloat:pointInTable.x] stringValue],
+                                   @"pointInTable_y": [[NSNumber numberWithFloat:pointInTable.y + 40] stringValue],
+                                   @"textFieldHeight": [[NSNumber numberWithFloat:textView.inputAccessoryView.frame.size.height] stringValue]
+                                   };
         [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardShow object:nil userInfo:userInfo];
     }
 }
@@ -874,8 +886,20 @@
             [txtViewForDes resignFirstResponder];
         }
         
-        if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]){
-            CGPoint bottomPosition = [textView convertPoint:textView.frame.origin toView:textView.superview.superview.superview.superview];
+        if ([textView.superview.superview.superview.superview isKindOfClass:[UITableView class]]) {
+            CGPoint bottomPosition = [textView convertPoint:textView.frame.origin
+                                                     toView:textView.superview.superview.superview.superview];
+            
+            NSDictionary *userInfo = @{
+                                       @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],
+                                       @"pointInTable_y": [[NSNumber numberWithFloat:bottomPosition.y] stringValue]
+                                       };
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationKeyboardHide object:nil userInfo:userInfo];
+        }
+        else if ([textView.superview.superview.superview isKindOfClass:[UITableView class]]) { //iOS 11
+            CGPoint bottomPosition = [textView convertPoint:textView.frame.origin
+                                                     toView:textView.superview.superview.superview];
             
             NSDictionary *userInfo = @{
                                        @"pointInTable_x": [[NSNumber numberWithFloat:bottomPosition.x] stringValue],

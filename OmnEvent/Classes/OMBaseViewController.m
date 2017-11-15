@@ -254,6 +254,9 @@
 
 }
 
+- (void)setBadgeCounter:(int)count {
+    barButton.badgeValue = [NSString stringWithFormat:@"%i", count];
+}
 
 #pragma mark
 

@@ -44,37 +44,18 @@
     object = _object;
     user = (PFUser *)_object;
     [lblForUsername setText:user.username];
-    
-    //    user = object[@"Commenter"];
-    
+
+    imageViewForAvatar.image = [UIImage imageNamed:@""];
     if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
         PFFile *avatarFile = (PFFile *)user[@"ProfileImage"];
         if (avatarFile) {
             [OMGlobal setImageURLWithAsync:avatarFile.url positionView:self displayImgView:imageViewForAvatar];
         }
-        
     }
     else if ([user[@"loginType"] isEqualToString:@"facebook"])
     {
         [OMGlobal setImageURLWithAsync:user[@"profileURL"] positionView:self displayImgView:imageViewForAvatar];
-    }
-    
-    
-    
-//    if ([user[@"loginType"] isEqualToString:@"email"] || [user[@"loginType"] isEqualToString:@"gmail"]) {
-//        PFFile *profileImgFile = (PFFile *)object[@"ProfileImage"];
-//
-//        if (profileImgFile) {
-//            [OMGlobal setImageURLWithAsync:profileImgFile.url positionView:self displayImgView:imageViewForAvatar];
-//        }
-//
-//    }
-//    else
-//    {
-//        [lblForUsername setText:user[@"Name"]];
-//    }
-//
-    
+    }    
 }
 
 - (IBAction)showProfileAction:(id)sender {

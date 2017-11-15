@@ -19,10 +19,12 @@
     IBOutlet UILabel *lblForNewEvent;
     IBOutlet UILabel *lblForBadge;
     IBOutlet UIButton *btnForVideo;
+    IBOutlet UIActivityIndicatorView    *activityIndicator;
 }
 
 @property (strong, nonatomic) id delegate;
 @property (strong, nonatomic) OMSocialEvent *currentObj;
 @property (strong, nonatomic) PFUser   *user;
+
 
 @end

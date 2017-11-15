@@ -74,16 +74,16 @@
     [[FBSession activeSession] closeAndClearTokenInformation];
     
     [PFFacebookUtils logInWithPermissions:arrForPermission block:^(PFUser *user, NSError *error) {
-        
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
-        
         if (!user) {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             if (!error) {
+                [OMGlobal showAlertTips:@"Uh, The user cancelled the Facebook login." title:nil];
                 NSLog(@"Uh, The user cancelled the FB login");
                 return;
             }
             else
             {
+                [OMGlobal showAlertTips:error.localizedDescription title:nil];
                 NSLog(@"An error occured %@",error.localizedDescription);
                 return;
             }
@@ -91,12 +91,12 @@
         else if (user.isNew)
         {
             NSLog(@"user with fb signed up and logged in");
-            [self registerUser];
+            [self registerUser:YES];
             
         }else
         {
             NSLog(@"User with FB logged");
-            [self registerUser];
+            [self registerUser:NO];
             
         }
         
@@ -104,19 +104,17 @@
 
 }
 
-- (void)registerUser
+- (void)registerUser:(BOOL)isNewUser
 {
     NSLog(@"Registering user information");
     
     if ([FBSession activeSession].isOpen) {
-        
         NSMutableDictionary* params = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"name, location, gender, birthday, relationship_status, first_name, last_name", @"fields", nil];
         
         FBRequest *request = [FBRequest requestWithGraphPath:@"me" parameters:params HTTPMethod:nil];
-                [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error)
+        [request startWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error)
         {
             NSLog(@"error %@", error);
-            
             if (!error)
             {
                 NSDictionary *userData = (NSDictionary *)result;
@@ -137,7 +135,7 @@
                     BOOL status = [[currentUser objectForKey:@"Status"] boolValue];
                     if (!status)
                     {
-                        [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
                         [[[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Your account is suspended." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
                         return;
                     }
@@ -169,42 +167,53 @@
                     
                 }
                 currentUser[@"loginType"] = @"facebook";
-                [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    if (succeeded) {
-                        if (![PFFacebookUtils isLinkedWithUser:currentUser])
-                        {
-                            [PFFacebookUtils linkUser:currentUser permissions:nil block:^(BOOL succeeded, NSError *error) {
-                                if (succeeded) {
-                                    NSLog(@"User logged in with FB");
-                                }
-                            }];
+                
+                PFQuery *query = [PFQuery queryWithClassName:@"_Role"];
+                [query getObjectInBackgroundWithId:@"XVr1sAmAQl" block:^(PFObject * _Nullable object, NSError * _Nullable error) {
+                    if (isNewUser) {
+                        currentUser[@"user_type"] = object;
+                    }
+                    [currentUser saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        if (succeeded) {
+                            if (![PFFacebookUtils isLinkedWithUser:currentUser])
+                            {
+                                [PFFacebookUtils linkUser:currentUser permissions:nil block:^(BOOL succeeded, NSError *error) {
+                                    if (succeeded) {
+                                        NSLog(@"User logged in with FB");
+                                    }
+                                }];
+                            }
+                            
+                            PFInstallation *installation = [PFInstallation currentInstallation];
+                            [installation setObject:currentUser forKey:@"user"];
+                            [installation saveEventually];
                         }
                         
-                        PFInstallation *installation = [PFInstallation currentInstallation];
-                        [installation setObject:currentUser forKey:@"user"];
-                        [installation saveEventually];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
                         
-                    }
-                    
-                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFeedData object:nil];
-                    
-                    if ([APP_DELEGATE logOut])
-                    {
+                        if ([APP_DELEGATE logOut])
+                        {
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFolderData object:nil];
+                        }
                         
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadSearchData object:nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFriendData object:nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadProfileData object:nil];
-                        [[NSNotificationCenter defaultCenter] postNotificationName:kLoadFolderData object:nil];
-                    }
-                    
-                    [self.navigationController dismissViewControllerAnimated:YES completion:^{
-                        
-                        [APP_DELEGATE setLogOut:NO];
-                        [OMGlobal setLogInUserDefault];
+                        [self.navigationController dismissViewControllerAnimated:YES completion:^{
+                            [APP_DELEGATE setLogOut:NO];
+                            [OMGlobal setLogInUserDefault];
+                        }];
                     }];
                 }];
+            } else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                [OMGlobal showAlertTips:@"Your Facebook session has been expired. Please try to login again." title:nil];
             }
         }];
+    } else {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        [OMGlobal showAlertTips:@"Your Facebook session has been expired. Please try to login again." title:nil];
     }
 }
 
@@ -244,9 +253,7 @@
         NSURLRequest *userURLRequest = [NSURLRequest requestWithURL:profileUrl cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:10.0f];
         [NSURLConnection sendAsynchronousRequest:userURLRequest queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
             
-            [MBProgressHUD hideHUDForView:self.view animated:YES];
-            if(connectionError == nil){
-                
+            if(connectionError == nil) {
                 PFFile *profilePicture = [PFFile fileWithName:@"avatar.jpg" data:data];
                 newUser[@"ProfileImage"] = profilePicture;
                 
@@ -257,31 +264,28 @@
                 newUser[@"loginType"] = loginType;
                 //newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
                 
-                [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-                
                 // SignUp with gmail information on Parse
-                [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                    
-                    if (succeeded) {
-                        
-                        NSLog(@"Login success with profile Image");
-                        
-                        PFInstallation *installation = [PFInstallation currentInstallation];
-                        [installation setObject:newUser forKey:@"user"];
-                        [installation setObject:newUser.objectId forKey:@"userID"];
-                        [installation saveEventually];
-                        [OMGlobal setLogInUserDefault];
-                        
-                        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                    }
-                    else
-                    {
-                        [OMGlobal showAlertTips:[error localizedDescription] title:@"Failed to Sign Up!"];
-                        
-                    }
+                PFQuery *query = [PFQuery queryWithClassName:@"_Role"];
+                [query getObjectInBackgroundWithId:@"XVr1sAmAQl" block:^(PFObject * _Nullable object, NSError * _Nullable error) {
+                    newUser[@"user_type"] = object;
+                    [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        [MBProgressHUD hideHUDForView:self.view animated:YES];
+                        if (succeeded) {
+                            NSLog(@"Login success with profile Image");
+                            PFInstallation *installation = [PFInstallation currentInstallation];
+                            [installation setObject:newUser forKey:@"user"];
+                            [installation setObject:newUser.objectId forKey:@"userID"];
+                            [installation saveEventually];
+                            [OMGlobal setLogInUserDefault];
+                            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                        }
+                        else {
+                            [OMGlobal showAlertTips:[error localizedDescription] title:@"Failed to Sign Up!"];
+                        }
+                    }];
                 }];
-            }else{
+            } else {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
                 [OMGlobal showAlertTips:connectionError.localizedDescription title:@"SignUp with Gmail"];
             }
         }];
@@ -290,7 +294,6 @@
     // In Case with no profile Image
     else
     {
-        
         [newUser setUsername:userName];
         [newUser setEmail:userEmail];
         [newUser setPassword:userPassword];
@@ -299,27 +302,24 @@
         //newUser[@"emailVerified"] = [NSNumber numberWithBool:YES];
         
         // SignUp with gmail information on Parse
-        [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-            
-            if (succeeded) {
-                
-                 NSLog(@"Login success with No profile Image");
-                
-                PFInstallation *installation = [PFInstallation currentInstallation];
-                [installation setObject:newUser forKey:@"user"];
-                [installation setObject:newUser.objectId forKey:@"userID"];
-                [installation saveEventually];
-                [OMGlobal setLogInUserDefault];
-                
-                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-            }
-            else
-            {
-                [OMGlobal showAlertTips:[error localizedDescription] title:@"Failed to Sign Up!"];
-                
-            }
+        PFQuery *query = [PFQuery queryWithClassName:@"_Role"];
+        [query getObjectInBackgroundWithId:@"XVr1sAmAQl" block:^(PFObject * _Nullable object, NSError * _Nullable error) {
+            newUser[@"user_type"] = object;
+            [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
+                if (succeeded) {
+                    NSLog(@"Login success with profile Image");
+                    PFInstallation *installation = [PFInstallation currentInstallation];
+                    [installation setObject:newUser forKey:@"user"];
+                    [installation setObject:newUser.objectId forKey:@"userID"];
+                    [installation saveEventually];
+                    [OMGlobal setLogInUserDefault];
+                    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                }
+                else {
+                    [OMGlobal showAlertTips:[error localizedDescription] title:@"Failed to Sign Up!"];
+                }
+            }];
         }];
     }
 }

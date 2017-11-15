@@ -201,8 +201,7 @@
             return;
         }
         if (!objects || [objects count] == 0) {
-            
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             [[[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Wrong email. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
             return;
         }
@@ -214,13 +213,14 @@
             BOOL status = [[userObj objectForKey:@"Status"] boolValue];
             if (!status)
             {
-                [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
                 [[[UIAlertView alloc] initWithTitle:@"Oops!" message:@"Your account is suspended." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
                 return;
             }
         }
+        
         [PFUser logInWithUsernameInBackground:[userObj valueForKey:@"username"] password:txtForPassword.text block:^(PFUser *user, NSError *error) {
-            [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
             if (!error) {
                 if(user)
                 {
@@ -264,8 +264,6 @@
             }
         }];
     }];
-
-    
 }
 
 - (BOOL)validateTextFiels
