@@ -1474,6 +1474,12 @@
         strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
     }
     
+    NSInteger index = [arrForTaggedFriend indexOfObject:USER.objectId];
+    NSString *strAuthLevel = @"";
+    if (index != NSNotFound) {
+        strAuthLevel = [arrTagFriendAuthorities objectAtIndex:index];
+    }    
+    
     if ([user.objectId isEqualToString:USER.objectId] || [strAuthLevel isEqualToString:@"Full"]) {
         shareAction1 = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel"
                                      destructiveButtonTitle:@"Share via Email"
