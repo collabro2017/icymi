@@ -22,6 +22,9 @@
 #import <GoogleSignIn/GoogleSignIn.h>
 #import "OMTermsAndConditionsViewController.h"
 
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
 // Test
 
 //#define PARSE_APP_ID @"i5GXnqwQYfjS0xlNql2Oi29jEdCg6zFhLAZSE0t1"
@@ -37,7 +40,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
+    //Install Fabric
+    [Fabric with:@[[Crashlytics class]]];
     
     self.logOut = NO;
     m_fLoadingPostView = NO;
