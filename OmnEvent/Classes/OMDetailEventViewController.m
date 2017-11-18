@@ -678,7 +678,7 @@
         
         NSLog(@"There IS internet connection");
         
-        if (appDel.network_state){
+        if (appDel.network_state) {
             
             appDel.network_state = NO;
             
@@ -691,45 +691,65 @@
             
             UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
             [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+
+            if (appDel.m_offlinePosts.count == 0) {
+                return;
+            }
             
-            for(PFObject* post in appDel.m_offlinePosts){
+            //Show Alert Controller
+            NSString *msg = [[NSString alloc] initWithFormat:@"You created %lu posts in offline mode. Do you want to sync them?", (unsigned long)appDel.m_offlinePosts.count];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Confirm" message:msg
+                                                                              preferredStyle: UIAlertControllerStyleAlert];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"YES" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 [GlobalVar getInstance].isPosting = YES;
-                //Request a background execution task to allow us to finish uploading the photo even if the app is background
-                self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                }];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [MBProgressHUD showMessag:@"Syncing..." toView:appDel.window];
+                });
                 
-                if ([currentObject[@"postedObjects"] containsObject:post]) {
-                    [currentObject[@"postedObjects"] removeObject:post];
+                dispatch_group_t group = dispatch_group_create();
+                
+                for (PFObject* post in appDel.m_offlinePosts) {
+                    dispatch_group_enter(group);
+                    //Request a background execution task to allow us to finish uploading the photo even if the app is background
+                    self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+                    }];
+                    
+                    if ([currentObject[@"postedObjects"] containsObject:post]) {
+                        [currentObject[@"postedObjects"] removeObject:post];
+                    }
+                    
+                    [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                        if (succeeded) {
+                            NSLog(@"Success ---- Post");
+                            // add new Post object on postedObjects array: for badge
+                            [currentObject[@"postedObjects"] addObject:post];
+                            [currentObject saveInBackgroundWithBlock:nil];
+                            
+                            [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                                [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
+                                [appDel.m_offlinePosts removeObject:post];
+                                dispatch_group_leave(group);
+                            }];
+                            
+                        } else {
+                            NSLog(@"Error ---- Post = %@", error);
+                        }
+                        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+                    }];
                 }
                 
-                [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
-                    if (succeeded) {
-                        NSLog(@"Success ---- Post");
-                        
-                        
-                        // add new Post object on postedObjects array: for badge
-                        [currentObject[@"postedObjects"] addObject:post];
-                        [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                            [GlobalVar getInstance].isPosting = NO;
-                        }];
-                        
-                        [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                            
-                            [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-                            [appDel.m_offlinePosts removeObject:post];
-                            
-                        }];
-                        
-                    } else {
-                        
-                        NSLog(@"Error ---- Post = %@", error);
-                        
-                    }
-                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                }];
-            }
+                dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+                    NSLog(@"All group tasks are done!");
+                    [GlobalVar getInstance].isPosting = NO;
+                    [MBProgressHUD hideHUDForView:appDel.window animated:YES];
+                });
+                
+            }]];
+            [alertController addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                [appDel.m_offlinePosts removeAllObjects];
+            }]];
+            [self presentViewController:alertController animated:YES completion:nil];
         }
     }
     
