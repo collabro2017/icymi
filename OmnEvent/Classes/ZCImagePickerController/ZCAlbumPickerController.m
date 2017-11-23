@@ -60,11 +60,14 @@ static const CGFloat kRowHeight = 57.0;
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     }
     
-    ALAssetsGroup *assetsGroup = (ALAssetsGroup *)[self.assetsGroups objectAtIndex:indexPath.row];
-    NSInteger assetsCount = [assetsGroup numberOfAssets];
+    if(indexPath.row < self.assetsGroups.count) {
     
-    cell.textLabel.text = [NSString stringWithFormat:@"%@ (%d)", [assetsGroup valueForProperty:ALAssetsGroupPropertyName], assetsCount];
-    cell.imageView.image = [UIImage imageWithCGImage:[assetsGroup posterImage]];
+        ALAssetsGroup *assetsGroup = (ALAssetsGroup *)[self.assetsGroups objectAtIndex:indexPath.row];
+        NSInteger assetsCount = [assetsGroup numberOfAssets];
+        
+        cell.textLabel.text = [NSString stringWithFormat:@"%@ (%d)", [assetsGroup valueForProperty:ALAssetsGroupPropertyName], assetsCount];
+        cell.imageView.image = [UIImage imageWithCGImage:[assetsGroup posterImage]];
+    }
 	
     return cell;
 }
@@ -73,10 +76,13 @@ static const CGFloat kRowHeight = 57.0;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSString *assetsGroupPersistentID = [((ALAssetsGroup *)[self.assetsGroups objectAtIndex:indexPath.row]) valueForProperty:ALAssetsGroupPropertyPersistentID];
-    ZCAssetTablePicker *assetTablePicker = [[ZCAssetTablePicker alloc] initWithGroupPersistentID:assetsGroupPersistentID];
+    if(indexPath.row < self.assetsGroups.count) {
     
-	[self.navigationController pushViewController:assetTablePicker animated:YES];
+        NSString *assetsGroupPersistentID = [((ALAssetsGroup *)[self.assetsGroups objectAtIndex:indexPath.row]) valueForProperty:ALAssetsGroupPropertyPersistentID];
+        ZCAssetTablePicker *assetTablePicker = [[ZCAssetTablePicker alloc] initWithGroupPersistentID:assetsGroupPersistentID];
+        
+        [self.navigationController pushViewController:assetTablePicker animated:YES];
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
