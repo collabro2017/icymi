@@ -472,9 +472,9 @@
     
     //display comment count
     
-    if (currentObj[@"commentsUsers"]) {
+    if (currentObj[@"commentsArray"]) {
         
-        [btnForCommentCount setTitle:[NSString stringWithFormat:@"%lu",(unsigned long) [currentObj[@"commentsUsers"] count]] forState:UIControlStateNormal];
+        [btnForCommentCount setTitle:[NSString stringWithFormat:@"%lu",(unsigned long) [currentObj[@"commentsArray"] count]] forState:UIControlStateNormal];
         
     } else
         [btnForCommentCount setTitle:[NSString stringWithFormat:@"0"] forState:UIControlStateNormal];
