@@ -75,9 +75,12 @@
         [OMGlobal setImageURLWithAsync:_currentUser[@"profileURL"] positionView:self displayImgView:_imageViewForProfile];
     }
     
+    NSString *strComment = [_currentObj[@"Comments"] stringByReplacingOccurrencesOfString:@"  " withString:@""];
     
-    _constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:_currentObj[@"Comments"]];
-    [_lblForDes setText:_currentObj[@"Comments"]];
+    strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    
+    _constraintForCommentHeight.constant = [OMGlobal heightForCellWithPost:strComment];
+    [_lblForDes setText:strComment];
     [_lblForUsername setText:_currentUser.username];
     
     //******************

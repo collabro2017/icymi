@@ -359,6 +359,10 @@
 {
 
     PFObject *obj = [arrForComment objectAtIndex:indexPath.row];
-    return [OMGlobal heightForCellWithPost:obj[@"Comments"]]+ 20.0f;
+    
+    NSString *strComment = [obj[@"Comments"] stringByReplacingOccurrencesOfString:@"  " withString:@""];
+    strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+    
+    return [OMGlobal heightForCellWithPost:strComment]+ 20.0f;
 }
 @end
