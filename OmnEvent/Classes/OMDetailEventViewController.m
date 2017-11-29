@@ -93,7 +93,6 @@
     NSString *exportModeOfPDF;
     NSString *profileModeInPDF;
     
-    NSTimer *reloadTimer;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
@@ -178,6 +177,8 @@
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
             }
+            
+            [self loadAnyMissingComments];
             
             [tblForDetailList reloadData];
         }
@@ -520,115 +521,13 @@
                 }
             }
             
+            [self loadAnyMissingComments];
+            
             [tblForDetailList reloadData];
-         
-            
-            if(reloadTimer != nil && [reloadTimer isValid]) {
-                [reloadTimer invalidate];
-                
-                reloadTimer = nil;
-            }
-            
-            reloadTimer =  [NSTimer scheduledTimerWithTimeInterval:5.0f target:self selector:@selector(repeatedReloadContents)
-                                           userInfo:nil repeats:YES];
+
         }
     }];
 }
-
-
-- (void)repeatedReloadContents {
-    
-    if(currentObject == nil) return;
-    [GlobalVar getInstance].isPosting = YES;
-    //[tblForDetailList setContentOffset:CGPointZero animated:NO];
-    
-    [GlobalVar getInstance].isPostLoading = YES;
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
-    [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
-    
-    if ([is_type isEqualToString:@"text"]
-        || [is_type isEqualToString:@"video"]
-        || [is_type isEqualToString:@"audio"]
-        || [is_type isEqualToString:@"photo"])
-    {
-        [mainQuery whereKey:@"postType" equalTo:is_type];
-    }
-    
-    [mainQuery includeKey:@"user"];
-    [mainQuery includeKey:@"commentsArray"];
-    [mainQuery orderByDescending:@"createdAt"];
-    [mainQuery orderByDescending:@"postOrder"];
-    
-    [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        
-        [GlobalVar getInstance].isPostLoading = NO;
-        [GlobalVar getInstance].isPosting = NO;
-        
-        if (error == nil) {
-            
-            if([arrForDetail count] != 0)[arrForDetail removeAllObjects];
-            if([offlineURLs count] != 0)[offlineURLs removeAllObjects];
-            
-            if([objects count] > 0) [arrForDetail addObjectsFromArray:objects];
-            
-            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i++ ) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
-                }
-            }
-            
-            //Sort Posts on postOrder
-            if (appDel.m_offlinePosts.count > 0) {
-                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
-                    NSNumber *postOrder1 = obj1[@"postOrder"];
-                    NSNumber *postOrder2 = obj2[@"postOrder"];
-                    if (postOrder1.intValue > postOrder2.intValue) {
-                        return NSOrderedAscending;
-                    } else if (postOrder1.intValue < postOrder2.intValue) {
-                        return NSOrderedDescending;
-                    }
-                    return NSOrderedSame;
-                }];
-            }
-            
-            if (isActionSheetReverseSelected) {
-                arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
-            }
-            
-            //Save the postOrder for those posts who don't have postOrder with null value
-            for (int i=0; i<arrForDetail.count; i++) {
-                PFObject *item = arrForDetail[i];
-                if (!item[@"postOrder"]) {
-                    item[@"postOrder"] = [NSNumber numberWithInt:i+1];
-                    [item save];
-                }
-            }
-            
-            // Current Test feature. lets check these again.
-            PFUser *eventUser = currentObject[@"user"];
-            if([eventUser.objectId isEqualToString: USER.objectId])
-            {
-                currentObject[@"postedObjects"] = arrForDetail;
-                if (appDel.network_state) {
-                    [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-                        if(error == nil) NSLog(@"DetailEventVC: added Post objs on postedObjects on Event");
-                    }];
-                }
-            }
-            
-            [tblForDetailList reloadData];
-            
-        }
-    }];
-}
-
 
 - (void)reloadContents
 {
@@ -690,9 +589,64 @@
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
             }
             
+            [self loadAnyMissingComments];
+            
             [tblForDetailList reloadData];
         }
     }];
+}
+
+- (void)loadAnyMissingComments
+{
+    
+    for(int i = 0; i < arrForDetail.count; ++i) {
+
+        PFObject *tempObj = [arrForDetail objectAtIndex:i];
+        NSMutableArray *arr = [[NSMutableArray alloc]init];
+        
+        if (tempObj[@"commentsArray"]) {
+            arr = tempObj[@"commentsArray"];
+        }
+        
+        
+        for(int j = 0; j < arr.count; ++j) {
+            PFObject* _obj = (PFObject* )[arr objectAtIndex:j];
+            NSString* strComments =  _obj[@"Comments"];
+    
+            if([strComments isKindOfClass:[NSNull class]] || strComments == nil) {
+                
+                PFQuery *query = [PFQuery queryWithClassName:@"Comments"];
+                [query whereKey:@"postMedia" equalTo:tempObj];
+                [query includeKey:@"Commenter"];
+                
+                NSError *error;
+                NSArray *objects = [query findObjects:&error];
+                
+                if(error == nil) {
+                    
+                    if ([objects count] == 0 || !objects) {
+                        break;
+                    }
+                    for (PFObject *commObj in objects)
+                    {
+                        NSString *objId = commObj.objectId;
+                        
+                        for(int k = 0; k < arr.count; ++k) {
+                            NSString *commObjID = tempObj[@"commentsArray"][k][@"objectId"];
+                            if([objId isEqualToString:commObjID])
+                            {
+                                tempObj[@"commentsArray"][k] = commObj;
+                            }
+                        }
+                    }
+                    
+                    break;
+                }
+            }
+            
+        }
+    }
+    
 }
 
 
@@ -1526,7 +1480,10 @@
                 PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
                 NSString* strComments =  _obj[@"Comments"];
                 
-                return [OMGlobal heightForCellWithPost:strComments] + 30;
+                NSString *strComment = [strComments stringByReplacingOccurrencesOfString:@"  " withString:@""];
+                strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                
+                return [OMGlobal heightForCellWithPost:strComment] + 30;
             }
         }
         else
@@ -1547,7 +1504,10 @@
                 PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
                 NSString* strComments =  _obj[@"Comments"];
                 
-                return [OMGlobal heightForCellWithPost:strComments] + 30;
+                NSString *strComment = [strComments stringByReplacingOccurrencesOfString:@"  " withString:@""];
+                strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                
+                return [OMGlobal heightForCellWithPost:strComment] + 30;
             }
         }
     }
