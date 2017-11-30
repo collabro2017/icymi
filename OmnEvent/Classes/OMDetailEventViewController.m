@@ -93,6 +93,9 @@
     NSString *exportModeOfPDF;
     NSString *profileModeInPDF;
     
+    UIView *offlineView;
+    Reachability *internetReachability;
+    
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tblForDetailList;
@@ -234,6 +237,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShow:) name:kNotificationKeyboardShow object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHide:) name:kNotificationKeyboardHide object:nil];
     
+    [self registerForNetworkNotifications];
+    
     [GlobalVar getInstance].isPosting = NO;
     currentMediaCell = nil;
     curEventIndex = [GlobalVar getInstance].gEventIndex;
@@ -243,6 +248,9 @@
     // DetailEvent contents Loading...
     [self loadContents];
     arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
+    
+    
+    
 }
 
 - (void)firstViewLoad {
@@ -259,9 +267,13 @@
     if (appDel.network_state) {
         UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+        
+        [self hideOfflineModeMessage];
     } else {
         UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+        
+        [self showOfflineModeMessage];
     }
     
     autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
@@ -650,6 +662,74 @@
 }
 
 
+- (void) registerForNetworkNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChanged:) name:kReachabilityChangedNotification object:nil];
+    
+    internetReachability = [Reachability reachabilityForInternetConnection];
+    [internetReachability startNotifier];
+}
+
+- (void) networkStatusChanged:(NSNotification *) notification
+{
+    Reachability *raObj = (Reachability *)notification.object;
+    
+    NetworkStatus networkStatus = [raObj currentReachabilityStatus];
+    
+    if (networkStatus == NotReachable) {
+        [self showOfflineModeMessage];
+    }
+    else{
+        [self hideOfflineModeMessage];
+    }
+}
+
+- (void) showOfflineModeMessage
+{
+    if(offlineView == nil) {
+ 
+        CGFloat yPos = tblForDetailList.frame.origin.y;
+        offlineView = [[UIView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.frame) * -1, yPos, CGRectGetWidth(self.view.frame), 20)];
+        [offlineView setBackgroundColor:[UIColor redColor]];
+        [offlineView setAlpha:0.80];
+        
+        UILabel *lblMsg = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(offlineView.frame), CGRectGetHeight(offlineView.frame))];
+        lblMsg.text = @"You are now in offline mode";
+        [lblMsg setTextAlignment:NSTextAlignmentCenter];
+        [lblMsg setTextColor:[UIColor whiteColor]];
+        [offlineView addSubview:lblMsg];
+        
+        [self.view addSubview:offlineView];
+        
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut  animations:^{
+            //code with animation
+            offlineView.frame = CGRectMake(0, yPos, CGRectGetWidth(self.view.frame), 20);
+        } completion:^(BOOL finished) {
+            //code for completion
+        }];
+    }
+}
+
+- (void) hideOfflineModeMessage
+{
+    
+    if(offlineView != nil) {
+        CGFloat yPos = tblForDetailList.frame.origin.y;
+        offlineView.frame = CGRectMake(0, yPos, CGRectGetWidth(self.view.frame), 20);
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut  animations:^{
+            //code with animation
+            offlineView.frame = CGRectMake(CGRectGetWidth(self.view.frame) * -1, yPos, CGRectGetWidth(self.view.frame), 20);
+            
+        } completion:^(BOOL finished) {
+            //code for completion
+            [offlineView removeFromSuperview];
+            offlineView = nil;
+            
+        }];
+    }
+    
+}
+
 - (void)backAction
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadEventDataWithGlobal object:nil];
@@ -734,6 +814,8 @@
         UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
         
+        [self showOfflineModeMessage];
+        
     } else {
         
         NSLog(@"There IS internet connection");
@@ -745,9 +827,14 @@
             UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
             [btnForNetState setImage:btnImage forState:UIControlStateNormal];
             
+            
+            [self showOfflineModeMessage];
+            
         } else {
             
             appDel.network_state = YES;
+            
+            [self hideOfflineModeMessage];
             
             UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
             [btnForNetState setImage:btnImage forState:UIControlStateNormal];
