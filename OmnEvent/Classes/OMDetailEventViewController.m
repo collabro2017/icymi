@@ -149,41 +149,30 @@
         {
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
-            
-            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i ++) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
-                }
-            }
-            
-            //Sort Posts on postOrder
-            if (appDel.m_offlinePosts.count > 0) {
-                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
-                    NSNumber *postOrder1 = obj1[@"postOrder"];
-                    NSNumber *postOrder2 = obj2[@"postOrder"];
-                    if (postOrder1.intValue > postOrder2.intValue) {
-                        return NSOrderedAscending;
-                    } else if (postOrder1.intValue < postOrder2.intValue) {
-                        return NSOrderedDescending;
-                    }
-                    return NSOrderedSame;
-                }];
-            }
-            
+        
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
             }
             
             [self loadAnyMissingComments];
             
+            [self loadContentsFromLocalStorage];
+            
+            
+            [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                NSNumber *postOrder1 = obj1[@"postOrder"];
+                NSNumber *postOrder2 = obj2[@"postOrder"];
+                if (postOrder1.intValue > postOrder2.intValue) {
+                    return NSOrderedAscending;
+                } else if (postOrder1.intValue < postOrder2.intValue) {
+                    return NSOrderedDescending;
+                }
+                return NSOrderedSame;
+            }];
+            
             [tblForDetailList reloadData];
+            
+            
         }
     }];
 }
@@ -482,31 +471,6 @@
             if([objects count] > 0) [arrForDetail addObjectsFromArray:objects];
             
             OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i++ ) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
-                }
-            }
-            
-            //Sort Posts on postOrder
-            if (appDel.m_offlinePosts.count > 0) {
-                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
-                    NSNumber *postOrder1 = obj1[@"postOrder"];
-                    NSNumber *postOrder2 = obj2[@"postOrder"];
-                    if (postOrder1.intValue > postOrder2.intValue) {
-                        return NSOrderedAscending;
-                    } else if (postOrder1.intValue < postOrder2.intValue) {
-                        return NSOrderedDescending;
-                    }
-                    return NSOrderedSame;
-                }];
-            }
             
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
@@ -535,11 +499,80 @@
             
             [self loadAnyMissingComments];
             
+            [self loadContentsFromLocalStorage];
+            
+            
+            [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                NSNumber *postOrder1 = obj1[@"postOrder"];
+                NSNumber *postOrder2 = obj2[@"postOrder"];
+                if (postOrder1.intValue > postOrder2.intValue) {
+                    return NSOrderedAscending;
+                } else if (postOrder1.intValue < postOrder2.intValue) {
+                    return NSOrderedDescending;
+                }
+                return NSOrderedSame;
+            }];
+            
             [tblForDetailList reloadData];
+            
+            
 
         }
     }];
 }
+
+
+- (void)loadContentsFromLocalStorage {
+    
+    if(currentObject == nil) return;
+
+    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
+    [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
+    
+    if ([is_type isEqualToString:@"text"]
+        || [is_type isEqualToString:@"video"]
+        || [is_type isEqualToString:@"audio"]
+        || [is_type isEqualToString:@"photo"])
+    {
+        [mainQuery whereKey:@"postType" equalTo:is_type];
+    }
+    
+    [mainQuery includeKey:@"user"];
+    [mainQuery includeKey:@"commentsArray"];
+    [mainQuery orderByDescending:@"createdAt"];
+    [mainQuery orderByDescending:@"postOrder"];
+    
+    [mainQuery fromLocalDatastore];
+    
+    NSArray * objects = [mainQuery findObjects];
+    
+    if(objects == nil || objects.count == 0){
+        return;
+    }
+    
+    //Save the postOrder for those posts who don't have postOrder with null value
+    for (int i=0; i<objects.count; i++) {
+        PFObject *item = objects[i];
+        BOOL blnAlreadyExist = false;
+        for (int i=0; i<arrForDetail.count; i++) {
+            PFObject *objs = arrForDetail[i];
+            if ([item.objectId isEqualToString:objs.objectId]) {
+                blnAlreadyExist = true;
+                break;
+            }
+        }
+        
+        if(blnAlreadyExist == false) {
+            [arrForDetail addObject:item];
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            
+            if(![appDel.m_offlinePosts containsObject:item]){
+                [appDel.m_offlinePosts addObject:item];
+            }
+        }
+    }
+}
+
 
 - (void)reloadContents
 {
@@ -570,40 +603,29 @@
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
             
-            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i ++) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
-                }
-            }
-            
-            //Sort Posts on postOrder
-            if (appDel.m_offlinePosts.count > 0) {
-                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
-                    NSNumber *postOrder1 = obj1[@"postOrder"];
-                    NSNumber *postOrder2 = obj2[@"postOrder"];
-                    if (postOrder1.intValue > postOrder2.intValue) {
-                        return NSOrderedAscending;
-                    } else if (postOrder1.intValue < postOrder2.intValue) {
-                        return NSOrderedDescending;
-                    }
-                    return NSOrderedSame;
-                }];
-            }
-            
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
             }
             
             [self loadAnyMissingComments];
             
+            [self loadContentsFromLocalStorage];
+            
+            
+            [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                NSNumber *postOrder1 = obj1[@"postOrder"];
+                NSNumber *postOrder2 = obj2[@"postOrder"];
+                if (postOrder1.intValue > postOrder2.intValue) {
+                    return NSOrderedAscending;
+                } else if (postOrder1.intValue < postOrder2.intValue) {
+                    return NSOrderedDescending;
+                }
+                return NSOrderedSame;
+            }];
+            
             [tblForDetailList reloadData];
+            
+            
         }
     }];
 }
@@ -866,6 +888,28 @@
                         [currentObject[@"postedObjects"] removeObject:post];
                     }
                     
+                    PFFile *file = (PFFile *)post[@"postFile"];
+                    if(file != nil && file.getData == nil) {
+                        
+                        NSString *fileLocalPath = post[@"fileLocalPath"];
+                        
+                        if(fileLocalPath != nil) {
+                            NSString * offlinePostsDataDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"OfflinePostsData"];
+                            NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                        
+                            UIImage *tempImage = [UIImage imageWithContentsOfFile:fullPath];
+                            
+                            if(tempImage != nil) {
+                                PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
+                                post[@"postFile"]       = postFile;
+                                
+                                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+                                post[@"thumbImage"]     = thumbFile;
+                            }
+                        }
+                        
+                    }
+                    
                     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                         if (succeeded) {
                             NSLog(@"Success ---- Post");
@@ -876,6 +920,7 @@
                             [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                                 [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
                                 [appDel.m_offlinePosts removeObject:post];
+                                [post unpin];
                                 dispatch_group_leave(group);
                             }];
                             
@@ -1424,7 +1469,8 @@
                         cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - 1];
                         
                     } else {
-                        cell.file = nil;
+                        //cell.file = nil;
+                        cell.file = (PFFile *)tempObj[@"postFile"];
                         cell.offline_url = nil;
                     }
                     
@@ -3261,6 +3307,30 @@
                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
                 }];
                 
+                
+                PFFile *file = (PFFile *)post[@"postFile"];
+                if(file != nil && file.getData == nil) {
+                    
+                    NSString *fileLocalPath = post[@"fileLocalPath"];
+                    
+                    if(fileLocalPath != nil) {
+                        NSString * offlinePostsDataDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"OfflinePostsData"];
+                        NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                        
+                        UIImage *tempImage = [UIImage imageWithContentsOfFile:fullPath];
+                        
+                        if(tempImage != nil) {
+                            PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
+                            post[@"postFile"]       = postFile;
+                            
+                            PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+                            post[@"thumbImage"]     = thumbFile;
+                        }
+                    }
+                    
+                }
+
+                
                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     if (succeeded) {
                         NSLog(@"Auto Refresh with offline mode:Post Success!");
@@ -3268,6 +3338,8 @@
                         [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
                             [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
                             [appDel.m_offlinePosts removeObject:post];
+                            
+                            [post unpin];
                         }];
                     }
                     else

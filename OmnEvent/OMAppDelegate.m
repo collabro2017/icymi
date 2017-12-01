@@ -385,4 +385,23 @@
     [self.window makeKeyAndVisible];
 }
 
+#pragma mark - Public Methods
+
+- (void) preserveOfflineMediaPost:(PFObject *) post mediaURL:(NSURL *) mediaURL
+{
+    [self.m_offlinePosts addObject:post];
+    [self.m_offlinePostURLs addObject:mediaURL];
+    return;
+}
+
+- (NSString *) applicationDocumentDirectoryPath
+{
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, true);
+    NSString *documentPath = [paths objectAtIndex:0];
+    return documentPath;
+}
+
+
+
+
 @end

@@ -779,15 +779,19 @@
                     
                     NSLog(@"Is Offline Mode");
                     
-                    [appDel.m_offlinePosts addObject:post];
-                   
+                    NSURL *url;
                     
                     if (_outPutURL != nil){
-                        [appDel.m_offlinePostURLs addObject:_outPutURL];
+                        url =_outPutURL;
                     } else {
                         NSURL *baseURL = [NSURL fileURLWithPath:@"file://path/to/user/"];
-                        [appDel.m_offlinePostURLs addObject:baseURL];
+                        url = baseURL;
                     }
+                    
+                    
+                    //[appDel preserveOfflineMediaPost:post mediaURL:url];
+                    
+                    [post pinInBackgroundWithBlock:nil];
                     
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
@@ -913,11 +917,51 @@
         
         /**********************************************/
         post[@"postType"]       = @"photo";
-        //image upload
-        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
-        post[@"postFile"]       = postFile;
+        
+        OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+        
+        if (!appDel.network_state) {
+            
+            NSString * offlinePostsDataDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"OfflinePostsData"];
+            
+            BOOL isDir;
+            if(![[NSFileManager defaultManager] fileExistsAtPath:offlinePostsDataDirPath isDirectory:&isDir]) {
+                
+                NSError * error = nil;
+                BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath: offlinePostsDataDirPath
+                                                         withIntermediateDirectories:YES
+                                                                          attributes:nil
+                                                                               error:&error];
+                if (!success)
+                    NSLog(@"Failed to create directory at path : %@ ", offlinePostsDataDirPath);
+                else
+                    NSLog(@"Successfully created offline posts data directory at path : %@ ", offlinePostsDataDirPath);
+            }
+            
+            NSTimeInterval timestamp = [[[NSDate alloc] init] timeIntervalSince1970];
+            NSString *postFilePathPostfix = [NSString stringWithFormat:@"%@_%f" ,lblForTitle.text ,timestamp];
+            NSString *postFilePath = [offlinePostsDataDirPath stringByAppendingPathComponent:postFilePathPostfix];
+            
+            BOOL blnResult = [UIImageJPEGRepresentation(tempImage, 0.7) writeToFile:postFilePath atomically:YES];
+            
+            if(blnResult == YES) {
+                PFFile *postFile = [PFFile fileWithName:@"image.jpg" contentsAtPath:postFilePath];
+                post[@"postFile"]       = postFile;
+                post[@"fileLocalPath"] = postFilePathPostfix;
+            }
+            
+        }
+        else{
+            //image upload
+            PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
+            post[@"postFile"]       = postFile;
+            
+        }
+        
+        
         PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
         post[@"thumbImage"]     = thumbFile;
+        
         /**********************************************/
         
         //Request a background execution task to allow us to finish uploading the photo even if the app is background
@@ -990,14 +1034,17 @@
                 
                 NSLog(@"Is Offline Mode");
                 
-                [appDel.m_offlinePosts addObject:post];
+                NSURL *url;
                 
                 if (_outPutURL != nil){
-                    [appDel.m_offlinePostURLs addObject:_outPutURL];
+                    url = _outPutURL;
                 } else {
                     NSURL *baseURL = [NSURL fileURLWithPath:@"file://path/to/user/"];
-                    [appDel.m_offlinePostURLs addObject:baseURL];
+                    
+                    url = baseURL;
                 }
+                
+                //[appDel preserveOfflineMediaPost:post mediaURL:url];
                 
                 //Increment the postOrder for other posts
                 for (int i=0; i<=self.postOrder; i++) {
@@ -1011,6 +1058,9 @@
                     [allPosts insertObject:post atIndex:self.postOrder+1];
                     curObj[@"postedObjects"] = allPosts;
                 }
+                
+
+                [post pinInBackgroundWithBlock:nil];
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
                 

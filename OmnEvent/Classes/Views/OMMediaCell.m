@@ -403,7 +403,18 @@
         
         if (_file != nil){
             
-            [imageViewForMedia setImage:[UIImage imageWithData:_file.getData]];
+            if(_file.getData != nil) {
+                [imageViewForMedia setImage:[UIImage imageWithData:_file.getData]];
+            }
+            else{
+                NSString *fileLocalPath = currentObj[@"fileLocalPath"];
+                
+                if(fileLocalPath != nil) {
+                     NSString * offlinePostsDataDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"OfflinePostsData"];
+                    NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                    [imageViewForMedia setImage:[UIImage imageWithContentsOfFile:fullPath]];
+                }
+            }
         }
         
         if (!postImgFile) {
