@@ -10,4 +10,6 @@
 
 @interface OMUtilities : NSObject
 
++(NSString *) getOfflinePostDataDirPath;
+
 @end

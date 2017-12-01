@@ -42,6 +42,8 @@
 //--------------------------------------------------
 #import "OMEventNotiViewController.h"
 
+#import "OMUtilities.h"
+
 #define kTag_NewPhoto           4000
 #define kTag_NewVideo           5000
 #define kTag_NewAudio           6000
@@ -752,6 +754,63 @@
     
 }
 
+- (void) preparePostForSync:(PFObject *) post
+{
+    PFFile *file = (PFFile *)post[@"postFile"];
+    if(file != nil && file.getData == nil) {
+        
+        NSString *fileLocalPath = post[@"fileLocalPath"];
+        
+        if(fileLocalPath != nil) {
+            NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
+            NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+            
+            if ([post[@"postType"] isEqualToString:@"video"])
+            {
+                NSData *videoData = [[NSData alloc] initWithContentsOfFile:fullPath];
+                
+                PFFile *audioFile       = [PFFile fileWithName:@"video.mov" data:videoData];
+                post[@"postFile"]       = audioFile;
+                
+                NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
+                NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
+                UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
+                
+                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
+                post[@"thumbImage"]     = thumbFile;
+
+            }
+            else if ([post[@"postType"] isEqualToString:@"audio"]) {
+                
+                NSData *audioData = [[NSData alloc] initWithContentsOfFile:fullPath];
+                
+                PFFile *audioFile       = [PFFile fileWithName:@"audio.wav" data:audioData];
+                post[@"postFile"]       = audioFile;
+                
+                NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
+                NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
+                UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
+                
+                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
+                post[@"thumbImage"]     = thumbFile;
+            }
+            else if ([post[@"postType"] isEqualToString:@"photo"]) {
+             
+                UIImage *tempImage = [UIImage imageWithContentsOfFile:fullPath];
+                
+                if(tempImage != nil) {
+                    PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
+                    post[@"postFile"]       = postFile;
+                    
+                    PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+                    post[@"thumbImage"]     = thumbFile;
+                }
+            }
+        }
+        
+    }
+}
+
 - (void)backAction
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadEventDataWithGlobal object:nil];
@@ -891,23 +950,7 @@
                     PFFile *file = (PFFile *)post[@"postFile"];
                     if(file != nil && file.getData == nil) {
                         
-                        NSString *fileLocalPath = post[@"fileLocalPath"];
-                        
-                        if(fileLocalPath != nil) {
-                            NSString * offlinePostsDataDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"OfflinePostsData"];
-                            NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
-                        
-                            UIImage *tempImage = [UIImage imageWithContentsOfFile:fullPath];
-                            
-                            if(tempImage != nil) {
-                                PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
-                                post[@"postFile"]       = postFile;
-                                
-                                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
-                                post[@"thumbImage"]     = thumbFile;
-                            }
-                        }
-                        
+                        [self preparePostForSync:post];
                     }
                     
                     [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
@@ -3307,29 +3350,7 @@
                     [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
                 }];
                 
-                
-                PFFile *file = (PFFile *)post[@"postFile"];
-                if(file != nil && file.getData == nil) {
-                    
-                    NSString *fileLocalPath = post[@"fileLocalPath"];
-                    
-                    if(fileLocalPath != nil) {
-                        NSString * offlinePostsDataDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"OfflinePostsData"];
-                        NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
-                        
-                        UIImage *tempImage = [UIImage imageWithContentsOfFile:fullPath];
-                        
-                        if(tempImage != nil) {
-                            PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
-                            post[@"postFile"]       = postFile;
-                            
-                            PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
-                            post[@"thumbImage"]     = thumbFile;
-                        }
-                    }
-                    
-                }
-
+                [self preparePostForSync:post];
                 
                 [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
                     if (succeeded) {

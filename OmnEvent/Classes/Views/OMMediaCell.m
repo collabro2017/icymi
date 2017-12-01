@@ -10,7 +10,7 @@
 #import "OMSocialEvent.h"
 #import "FTWCache.h"
 #import "NSString+MD5.h"
-
+#import "OMUtilities.h"
 
 @implementation OMMediaCell
 {
@@ -388,6 +388,20 @@
             NSString *urlString = [_offline_url absoluteString];
             _videoPlayerController.videoPath = urlString;            
         }
+        else{
+            if(_file != nil) {
+                
+                if(_file.getData == nil) {
+                    NSString *fileLocalPath = currentObj[@"fileLocalPath"];
+                    
+                    if(fileLocalPath != nil) {
+                        NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
+                        NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                        _videoPlayerController.videoPath = fullPath;
+                    }
+                }
+            }
+        }
         
         [viewForMedia bringSubviewToFront:btnForVideoPlay];
         [viewForMedia bringSubviewToFront:btnCheckForExport];
@@ -410,7 +424,7 @@
                 NSString *fileLocalPath = currentObj[@"fileLocalPath"];
                 
                 if(fileLocalPath != nil) {
-                     NSString * offlinePostsDataDirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"OfflinePostsData"];
+                    NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
                     NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
                     [imageViewForMedia setImage:[UIImage imageWithContentsOfFile:fullPath]];
                 }
@@ -444,7 +458,19 @@
             if (thumbImageFile.url != nil) {
                 [imageViewForMedia setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImageFile.url]]]];
             } else {
-                [imageViewForMedia setImage:[UIImage imageWithData:thumbImageFile.getData]];
+                
+                if(thumbImageFile.getData != nil) {
+                    [imageViewForMedia setImage:[UIImage imageWithData:thumbImageFile.getData]];
+                }
+                else{
+                    NSString *fileLocalPath = currentObj[@"thumbImageFileLocalPath"];
+                    
+                    if(fileLocalPath != nil) {
+                        NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
+                        NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                        [imageViewForMedia setImage:[UIImage imageWithContentsOfFile:fullPath]];
+                    }
+                }
             }
         } else
             [imageViewForMedia setImage:[UIImage imageNamed:@"layer_audio"]];  ////audio special
