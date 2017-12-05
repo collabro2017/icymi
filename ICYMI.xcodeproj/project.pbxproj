@@ -13,6 +13,7 @@
 		0AB04E901B81613100A308ED /* OMFolderListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AB04E8F1B81613100A308ED /* OMFolderListCell.m */; };
 		1F39C80C1B3A898000FA9FCE /* ParseFacebookUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F39C80B1B3A898000FA9FCE /* ParseFacebookUtils.framework */; };
 		1F39C80E1B3ADA8B00FA9FCE /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F39C80D1B3ADA8B00FA9FCE /* FacebookSDK.framework */; };
+		317C302A1FD0019600D9FA36 /* OMUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 317C30291FD0019600D9FA36 /* OMUtilities.m */; };
 		3C0283AD198929EC00EA3864 /* OMEventCells.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C0283AC198929EC00EA3864 /* OMEventCells.xib */; };
 		3C0283BA198960D800EA3864 /* OMEventCells.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0283B9198960D800EA3864 /* OMEventCells.m */; };
 		3C0283C1198973C100EA3864 /* OMPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0283C0198973C100EA3864 /* OMPhotoCell.m */; };
@@ -636,6 +637,8 @@
 		0AB04E8F1B81613100A308ED /* OMFolderListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMFolderListCell.m; sourceTree = "<group>"; };
 		1F39C80B1B3A898000FA9FCE /* ParseFacebookUtils.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseFacebookUtils.framework; sourceTree = "<group>"; };
 		1F39C80D1B3ADA8B00FA9FCE /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
+		317C30281FD0019600D9FA36 /* OMUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OMUtilities.h; sourceTree = "<group>"; };
+		317C30291FD0019600D9FA36 /* OMUtilities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OMUtilities.m; sourceTree = "<group>"; };
 		3C0283AC198929EC00EA3864 /* OMEventCells.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OMEventCells.xib; sourceTree = "<group>"; };
 		3C0283B8198960D800EA3864 /* OMEventCells.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OMEventCells.h; sourceTree = "<group>"; };
 		3C0283B9198960D800EA3864 /* OMEventCells.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OMEventCells.m; sourceTree = "<group>"; };
@@ -1907,6 +1910,8 @@
 				3C093F9C19848B3900AEBDBD /* YFInputBar */,
 				3C12844F1978D82B00EB7744 /* MHTextField.h */,
 				3C1284501978D82B00EB7744 /* MHTextField.m */,
+				317C30281FD0019600D9FA36 /* OMUtilities.h */,
+				317C30291FD0019600D9FA36 /* OMUtilities.m */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -3598,6 +3603,7 @@
 				3EB570C41AC5CD3C0033C151 /* OMCustomProfileInfoView.m in Sources */,
 				A9193FCA1AD1305B00692A50 /* OMMessageViewController.m in Sources */,
 				B40B561C1DE591C50016E121 /* ZCAssetTablePicker.m in Sources */,
+				317C302A1FD0019600D9FA36 /* OMUtilities.m in Sources */,
 				E4B0BA911C3E0FA100F6CCB9 /* PDFRenderer.m in Sources */,
 				B40B569F1DE6EB570016E121 /* CLHueEffect.m in Sources */,
 				B40B56A11DE6EB570016E121 /* CLPosterizeEffect.m in Sources */,

@@ -42,6 +42,8 @@
 //--------------------------------------------------
 #import "OMEventNotiViewController.h"
 
+#import "OMUtilities.h"
+
 #define kTag_NewPhoto           4000
 #define kTag_NewVideo           5000
 #define kTag_NewAudio           6000
@@ -92,6 +94,10 @@
     
     NSString *exportModeOfPDF;
     NSString *profileModeInPDF;
+    
+    UIView *offlineView;
+    Reachability *internetReachability;
+    BOOL goOnlineMessagePresentedOnce;
     
 }
 
@@ -146,41 +152,30 @@
         {
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
-            
-            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i ++) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
-                }
-            }
-            
-            //Sort Posts on postOrder
-            if (appDel.m_offlinePosts.count > 0) {
-                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
-                    NSNumber *postOrder1 = obj1[@"postOrder"];
-                    NSNumber *postOrder2 = obj2[@"postOrder"];
-                    if (postOrder1.intValue > postOrder2.intValue) {
-                        return NSOrderedAscending;
-                    } else if (postOrder1.intValue < postOrder2.intValue) {
-                        return NSOrderedDescending;
-                    }
-                    return NSOrderedSame;
-                }];
-            }
-            
+        
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
             }
             
             [self loadAnyMissingComments];
             
+            [self loadContentsFromLocalStorage];
+            
+            
+            [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                NSNumber *postOrder1 = obj1[@"postOrder"];
+                NSNumber *postOrder2 = obj2[@"postOrder"];
+                if (postOrder1.intValue > postOrder2.intValue) {
+                    return NSOrderedAscending;
+                } else if (postOrder1.intValue < postOrder2.intValue) {
+                    return NSOrderedDescending;
+                }
+                return NSOrderedSame;
+            }];
+            
             [tblForDetailList reloadData];
+            
+            
         }
     }];
 }
@@ -234,6 +229,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardShow:) name:kNotificationKeyboardShow object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardHide:) name:kNotificationKeyboardHide object:nil];
     
+    [self registerForNetworkNotifications];
+    
     [GlobalVar getInstance].isPosting = NO;
     currentMediaCell = nil;
     curEventIndex = [GlobalVar getInstance].gEventIndex;
@@ -243,6 +240,8 @@
     // DetailEvent contents Loading...
     [self loadContents];
     arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
+ 
+    goOnlineMessagePresentedOnce = false;
 }
 
 - (void)firstViewLoad {
@@ -259,9 +258,13 @@
     if (appDel.network_state) {
         UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+        
+        [self hideOfflineModeMessage];
     } else {
         UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
         [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+        
+        [self showOfflineModeMessage];
     }
     
     autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
@@ -470,31 +473,6 @@
             if([objects count] > 0) [arrForDetail addObjectsFromArray:objects];
             
             OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i++ ) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
-                }
-            }
-            
-            //Sort Posts on postOrder
-            if (appDel.m_offlinePosts.count > 0) {
-                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
-                    NSNumber *postOrder1 = obj1[@"postOrder"];
-                    NSNumber *postOrder2 = obj2[@"postOrder"];
-                    if (postOrder1.intValue > postOrder2.intValue) {
-                        return NSOrderedAscending;
-                    } else if (postOrder1.intValue < postOrder2.intValue) {
-                        return NSOrderedDescending;
-                    }
-                    return NSOrderedSame;
-                }];
-            }
             
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
@@ -523,11 +501,80 @@
             
             [self loadAnyMissingComments];
             
+            [self loadContentsFromLocalStorage];
+            
+            
+            [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                NSNumber *postOrder1 = obj1[@"postOrder"];
+                NSNumber *postOrder2 = obj2[@"postOrder"];
+                if (postOrder1.intValue > postOrder2.intValue) {
+                    return NSOrderedAscending;
+                } else if (postOrder1.intValue < postOrder2.intValue) {
+                    return NSOrderedDescending;
+                }
+                return NSOrderedSame;
+            }];
+            
             [tblForDetailList reloadData];
+            
+            
 
         }
     }];
 }
+
+
+- (void)loadContentsFromLocalStorage {
+    
+    if(currentObject == nil) return;
+
+    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
+    [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
+    
+    if ([is_type isEqualToString:@"text"]
+        || [is_type isEqualToString:@"video"]
+        || [is_type isEqualToString:@"audio"]
+        || [is_type isEqualToString:@"photo"])
+    {
+        [mainQuery whereKey:@"postType" equalTo:is_type];
+    }
+    
+    [mainQuery includeKey:@"user"];
+    [mainQuery includeKey:@"commentsArray"];
+    [mainQuery orderByDescending:@"createdAt"];
+    [mainQuery orderByDescending:@"postOrder"];
+    
+    [mainQuery fromLocalDatastore];
+    
+    NSArray * objects = [mainQuery findObjects];
+    
+    if(objects == nil || objects.count == 0){
+        return;
+    }
+    
+    //Save the postOrder for those posts who don't have postOrder with null value
+    for (int i=0; i<objects.count; i++) {
+        PFObject *item = objects[i];
+        BOOL blnAlreadyExist = false;
+        for (int i=0; i<arrForDetail.count; i++) {
+            PFObject *objs = arrForDetail[i];
+            if ([item.objectId isEqualToString:objs.objectId]) {
+                blnAlreadyExist = true;
+                break;
+            }
+        }
+        
+        if(blnAlreadyExist == false) {
+            [arrForDetail addObject:item];
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            
+            if(![appDel.m_offlinePosts containsObject:item]){
+                [appDel.m_offlinePosts addObject:item];
+            }
+        }
+    }
+}
+
 
 - (void)reloadContents
 {
@@ -558,40 +605,29 @@
             [arrForDetail removeAllObjects];
             [arrForDetail addObjectsFromArray:objects];
             
-            OMAppDelegate* appDel = (OMAppDelegate *)[UIApplication sharedApplication].delegate;
-            offline_data_num = appDel.m_offlinePosts.count;
-            
-            for (NSUInteger i = 0; i < offline_data_num; i ++) {
-                PFObject *temp_object = [appDel.m_offlinePosts objectAtIndex:i];
-                PFObject *temp_targetEventObject = temp_object[@"targetEvent"];
-                
-                if ([temp_targetEventObject.objectId isEqualToString:currentObject.objectId]) {
-                    [arrForDetail addObject:temp_object];
-                    [offlineURLs addObject:[appDel.m_offlinePostURLs objectAtIndex:i]];
-                }
-            }
-            
-            //Sort Posts on postOrder
-            if (appDel.m_offlinePosts.count > 0) {
-                [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
-                    NSNumber *postOrder1 = obj1[@"postOrder"];
-                    NSNumber *postOrder2 = obj2[@"postOrder"];
-                    if (postOrder1.intValue > postOrder2.intValue) {
-                        return NSOrderedAscending;
-                    } else if (postOrder1.intValue < postOrder2.intValue) {
-                        return NSOrderedDescending;
-                    }
-                    return NSOrderedSame;
-                }];
-            }
-            
             if (isActionSheetReverseSelected) {
                 arrForDetail = [[[arrForDetail reverseObjectEnumerator] allObjects] mutableCopy];
             }
             
             [self loadAnyMissingComments];
             
+            [self loadContentsFromLocalStorage];
+            
+            
+            [arrForDetail sortUsingComparator:^NSComparisonResult(PFObject *obj1, PFObject *obj2) {
+                NSNumber *postOrder1 = obj1[@"postOrder"];
+                NSNumber *postOrder2 = obj2[@"postOrder"];
+                if (postOrder1.intValue > postOrder2.intValue) {
+                    return NSOrderedAscending;
+                } else if (postOrder1.intValue < postOrder2.intValue) {
+                    return NSOrderedDescending;
+                }
+                return NSOrderedSame;
+            }];
+            
             [tblForDetailList reloadData];
+            
+            
         }
     }];
 }
@@ -649,6 +685,144 @@
     
 }
 
+
+- (void) registerForNetworkNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkStatusChanged:) name:kReachabilityChangedNotification object:nil];
+    
+    internetReachability = [Reachability reachabilityForInternetConnection];
+    [internetReachability startNotifier];
+}
+
+- (void) networkStatusChanged:(NSNotification *) notification
+{
+    Reachability *raObj = (Reachability *)notification.object;
+    
+    NetworkStatus networkStatus = [raObj currentReachabilityStatus];
+    
+    if (networkStatus == NotReachable) {
+        [self showOfflineModeMessage];
+    }
+    else{
+        [self resumeOfflineContentSync];
+    }
+}
+
+- (void) showOfflineModeMessage
+{
+    if(offlineView == nil) {
+ 
+        CGFloat yPos = tblForDetailList.frame.origin.y;
+        offlineView = [[UIView alloc] initWithFrame:CGRectMake(CGRectGetWidth(self.view.frame) * -1, yPos, CGRectGetWidth(self.view.frame), 20)];
+        [offlineView setBackgroundColor:[UIColor redColor]];
+        [offlineView setAlpha:0.80];
+        
+        UILabel *lblMsg = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(offlineView.frame), CGRectGetHeight(offlineView.frame))];
+        lblMsg.text = @"You are now in offline mode";
+        [lblMsg setTextAlignment:NSTextAlignmentCenter];
+        [lblMsg setTextColor:[UIColor whiteColor]];
+        [offlineView addSubview:lblMsg];
+        
+        [self.view addSubview:offlineView];
+        
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut  animations:^{
+            //code with animation
+            offlineView.frame = CGRectMake(0, yPos, CGRectGetWidth(self.view.frame), 20);
+        } completion:^(BOOL finished) {
+            //code for completion
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            appDel.network_state = NO;
+            
+            UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
+            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+            
+        }];
+    }
+}
+
+- (void) hideOfflineModeMessage
+{
+    
+    if(offlineView != nil) {
+        CGFloat yPos = tblForDetailList.frame.origin.y;
+        offlineView.frame = CGRectMake(0, yPos, CGRectGetWidth(self.view.frame), 20);
+        [UIView animateWithDuration:0.25 delay:0 options:UIViewAnimationOptionCurveEaseInOut  animations:^{
+            //code with animation
+            offlineView.frame = CGRectMake(CGRectGetWidth(self.view.frame) * -1, yPos, CGRectGetWidth(self.view.frame), 20);
+            
+        } completion:^(BOOL finished) {
+            //code for completion
+            [offlineView removeFromSuperview];
+            offlineView = nil;
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            appDel.network_state = YES;
+            
+            UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
+            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+            
+        }];
+    }
+    
+}
+
+- (void) preparePostForSync:(PFObject *) post
+{
+    PFFile *file = (PFFile *)post[@"postFile"];
+    if(file != nil && file.getData == nil) {
+        
+        NSString *fileLocalPath = post[@"fileLocalPath"];
+        
+        if(fileLocalPath != nil) {
+            NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
+            NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+            
+            if ([post[@"postType"] isEqualToString:@"video"])
+            {
+                NSData *videoData = [[NSData alloc] initWithContentsOfFile:fullPath];
+                
+                PFFile *audioFile       = [PFFile fileWithName:@"video.mov" data:videoData];
+                post[@"postFile"]       = audioFile;
+                
+                NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
+                NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
+                UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
+                
+                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
+                post[@"thumbImage"]     = thumbFile;
+
+            }
+            else if ([post[@"postType"] isEqualToString:@"audio"]) {
+                
+                NSData *audioData = [[NSData alloc] initWithContentsOfFile:fullPath];
+                
+                PFFile *audioFile       = [PFFile fileWithName:@"audio.wav" data:audioData];
+                post[@"postFile"]       = audioFile;
+                
+                NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
+                NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
+                UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
+                
+                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
+                post[@"thumbImage"]     = thumbFile;
+            }
+            else if ([post[@"postType"] isEqualToString:@"photo"]) {
+             
+                UIImage *tempImage = [UIImage imageWithContentsOfFile:fullPath];
+                
+                if(tempImage != nil) {
+                    PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
+                    post[@"postFile"]       = postFile;
+                    
+                    PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([tempImage resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+                    post[@"thumbImage"]     = thumbFile;
+                }
+            }
+        }
+        
+    }
+}
 
 - (void)backAction
 {
@@ -729,87 +903,23 @@
             [OMGlobal showAlertTips:@"No Access Network!" title:@"Newwork State"];
         }
         
-        appDel.network_state = NO;
-        
-        UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
-        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+        [self showOfflineModeMessage];
         
     } else {
         
         NSLog(@"There IS internet connection");
         
         if (appDel.network_state) {
-            
-            appDel.network_state = NO;
-            
-            UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
-            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+            [self showOfflineModeMessage];
             
         } else {
             
-            appDel.network_state = YES;
-            
-            UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
-            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
-
             if (appDel.m_offlinePosts.count == 0) {
-                return;
+                [self hideOfflineModeMessage];
             }
-            
-            //Show Alert Controller
-            NSString *msg = [[NSString alloc] initWithFormat:@"You created %lu posts in offline mode. Do you want to sync them?", (unsigned long)appDel.m_offlinePosts.count];
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Confirm" message:msg
-                                                                              preferredStyle: UIAlertControllerStyleAlert];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"YES" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [GlobalVar getInstance].isPosting = YES;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [MBProgressHUD showMessag:@"Syncing..." toView:appDel.window];
-                });
-                
-                dispatch_group_t group = dispatch_group_create();
-                
-                for (PFObject* post in appDel.m_offlinePosts) {
-                    dispatch_group_enter(group);
-                    //Request a background execution task to allow us to finish uploading the photo even if the app is background
-                    self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                    }];
-                    
-                    if ([currentObject[@"postedObjects"] containsObject:post]) {
-                        [currentObject[@"postedObjects"] removeObject:post];
-                    }
-                    
-                    [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                        if (succeeded) {
-                            NSLog(@"Success ---- Post");
-                            // add new Post object on postedObjects array: for badge
-                            [currentObject[@"postedObjects"] addObject:post];
-                            [currentObject saveInBackgroundWithBlock:nil];
-                            
-                            [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                                [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-                                [appDel.m_offlinePosts removeObject:post];
-                                dispatch_group_leave(group);
-                            }];
-                            
-                        } else {
-                            NSLog(@"Error ---- Post = %@", error);
-                        }
-                        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                    }];
-                }
-                
-                dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-                    NSLog(@"All group tasks are done!");
-                    [GlobalVar getInstance].isPosting = NO;
-                    [MBProgressHUD hideHUDForView:appDel.window animated:YES];
-                });
-                
-            }]];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [appDel.m_offlinePosts removeAllObjects];
-            }]];
-            [self presentViewController:alertController animated:YES completion:nil];
+            else{
+                [self resumeOfflineContentSync];
+            }
         }
     }
     
@@ -1337,7 +1447,8 @@
                         cell.offline_url = [offlineURLs objectAtIndex:indexPath.section - 1];
                         
                     } else {
-                        cell.file = nil;
+                        //cell.file = nil;
+                        cell.file = (PFFile *)tempObj[@"postFile"];
                         cell.offline_url = nil;
                     }
                     
@@ -3138,57 +3249,24 @@
 #pragma mark Newwork connecting Check - help and Auto refresh features
 -(void) callAfterSixtySecond:(NSTimer*) t {
     
-    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
     Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
     
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
-    if (networkStatus == NotReachable && appDel.network_state) {
+    if (networkStatus == NotReachable) {
         
         NSLog(@"There IS NO internet connection");
-        appDel.network_state = NO;
+        [self showOfflineModeMessage];
         
-        UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
-        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
-        
-    } else {
-        
-//        NSLog(@"There IS internet connection");
-//        appDel.network_state = YES;
-//
-//        UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
-//        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
     
     if (![GlobalVar getInstance].isPosting) {
         
         [self reloadContents];
         
-        if (networkStatus != NotReachable && appDel.network_state) //Check both Reachability & Network Status
+        if (networkStatus != NotReachable) //Check both Reachability & Network Status
         {
-            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-            
-            for(PFObject* post in appDel.m_offlinePosts)
-            {
-                //Request a background execution task to allow us to finish uploading the photo even if the app is background
-                self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                }];
-                
-                [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    if (succeeded) {
-                        NSLog(@"Auto Refresh with offline mode:Post Success!");
-                        
-                        [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                            [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-                            [appDel.m_offlinePosts removeObject:post];
-                        }];
-                    }
-                    else
-                    {
-                        NSLog(@"Post Error = %@", error.description);
-                    }
-                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                }];
+            if(goOnlineMessagePresentedOnce == false) {
+                [self resumeOfflineContentSync];
             }
         }
     }
@@ -3196,6 +3274,85 @@
     {
         NSLog(@"Skipped Auto Refreshing due to in posting!!");
     }
+}
+
+
+- (void) resumeOfflineContentSync
+{
+    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+
+    if (appDel.m_offlinePosts.count == 0) {
+        
+        if(appDel.network_state == YES){
+            [self hideOfflineModeMessage];
+        }
+        return;
+    }
+    
+    //Show Alert Controller
+    NSString *msg = [[NSString alloc] initWithFormat:@"We have detected a stable connection. You can now go back to online."];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Switch To Online Mode" message:msg
+                                                                      preferredStyle: UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Ignore" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self showOfflineModeMessage];
+    }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Go Online" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self hideOfflineModeMessage];
+        [GlobalVar getInstance].isPosting = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBProgressHUD showMessag:@"Syncing..." toView:appDel.window];
+        });
+        
+        dispatch_group_t group = dispatch_group_create();
+        
+        for (PFObject* post in appDel.m_offlinePosts) {
+            dispatch_group_enter(group);
+            //Request a background execution task to allow us to finish uploading the photo even if the app is background
+            self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+            }];
+            
+            if ([currentObject[@"postedObjects"] containsObject:post]) {
+                [currentObject[@"postedObjects"] removeObject:post];
+            }
+            
+            PFFile *file = (PFFile *)post[@"postFile"];
+            if(file != nil && file.getData == nil) {
+                [self preparePostForSync:post];
+            }
+            
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    NSLog(@"Success ---- Post");
+                    // add new Post object on postedObjects array: for badge
+                    [currentObject[@"postedObjects"] addObject:post];
+                    [currentObject saveInBackgroundWithBlock:nil];
+                    
+                    [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                        [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
+                        [appDel.m_offlinePosts removeObject:post];
+                        [post unpin];
+                        dispatch_group_leave(group);
+                    }];
+                    
+                } else {
+                    NSLog(@"Error ---- Post = %@", error);
+                }
+                [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+            }];
+        }
+        
+        dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+            NSLog(@"All group tasks are done!");
+            [GlobalVar getInstance].isPosting = NO;
+            [MBProgressHUD hideHUDForView:appDel.window animated:YES];
+        });
+        
+    }]];
+    
+    goOnlineMessagePresentedOnce = true;
+    [self presentViewController:alertController animated:YES completion:nil];
+
 }
 
 //----------------------------------------------------------//
