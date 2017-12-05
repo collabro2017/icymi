@@ -97,6 +97,7 @@
     
     UIView *offlineView;
     Reachability *internetReachability;
+    BOOL goOnlineMessagePresentedOnce;
     
 }
 
@@ -239,9 +240,8 @@
     // DetailEvent contents Loading...
     [self loadContents];
     arrPrevTagFriends = [currentObject[@"TagFriends"] copy];
-    
-    
-    
+ 
+    goOnlineMessagePresentedOnce = false;
 }
 
 - (void)firstViewLoad {
@@ -704,7 +704,7 @@
         [self showOfflineModeMessage];
     }
     else{
-        [self hideOfflineModeMessage];
+        [self resumeOfflineContentSync];
     }
 }
 
@@ -730,6 +730,13 @@
             offlineView.frame = CGRectMake(0, yPos, CGRectGetWidth(self.view.frame), 20);
         } completion:^(BOOL finished) {
             //code for completion
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            appDel.network_state = NO;
+            
+            UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
+            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
+            
         }];
     }
 }
@@ -748,6 +755,12 @@
             //code for completion
             [offlineView removeFromSuperview];
             offlineView = nil;
+            
+            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+            appDel.network_state = YES;
+            
+            UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
+            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
             
         }];
     }
@@ -890,11 +903,6 @@
             [OMGlobal showAlertTips:@"No Access Network!" title:@"Newwork State"];
         }
         
-        appDel.network_state = NO;
-        
-        UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
-        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
-        
         [self showOfflineModeMessage];
         
     } else {
@@ -902,89 +910,16 @@
         NSLog(@"There IS internet connection");
         
         if (appDel.network_state) {
-            
-            appDel.network_state = NO;
-            
-            UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
-            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
-            
-            
             [self showOfflineModeMessage];
             
         } else {
             
-            appDel.network_state = YES;
-            
-            [self hideOfflineModeMessage];
-            
-            UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
-            [btnForNetState setImage:btnImage forState:UIControlStateNormal];
-
             if (appDel.m_offlinePosts.count == 0) {
-                return;
+                [self hideOfflineModeMessage];
             }
-            
-            //Show Alert Controller
-            NSString *msg = [[NSString alloc] initWithFormat:@"You created %lu posts in offline mode. Do you want to sync them?", (unsigned long)appDel.m_offlinePosts.count];
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Confirm" message:msg
-                                                                              preferredStyle: UIAlertControllerStyleAlert];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"YES" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [GlobalVar getInstance].isPosting = YES;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [MBProgressHUD showMessag:@"Syncing..." toView:appDel.window];
-                });
-                
-                dispatch_group_t group = dispatch_group_create();
-                
-                for (PFObject* post in appDel.m_offlinePosts) {
-                    dispatch_group_enter(group);
-                    //Request a background execution task to allow us to finish uploading the photo even if the app is background
-                    self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                    }];
-                    
-                    if ([currentObject[@"postedObjects"] containsObject:post]) {
-                        [currentObject[@"postedObjects"] removeObject:post];
-                    }
-                    
-                    PFFile *file = (PFFile *)post[@"postFile"];
-                    if(file != nil && file.getData == nil) {
-                        
-                        [self preparePostForSync:post];
-                    }
-                    
-                    [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                        if (succeeded) {
-                            NSLog(@"Success ---- Post");
-                            // add new Post object on postedObjects array: for badge
-                            [currentObject[@"postedObjects"] addObject:post];
-                            [currentObject saveInBackgroundWithBlock:nil];
-                            
-                            [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                                [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-                                [appDel.m_offlinePosts removeObject:post];
-                                [post unpin];
-                                dispatch_group_leave(group);
-                            }];
-                            
-                        } else {
-                            NSLog(@"Error ---- Post = %@", error);
-                        }
-                        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                    }];
-                }
-                
-                dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-                    NSLog(@"All group tasks are done!");
-                    [GlobalVar getInstance].isPosting = NO;
-                    [MBProgressHUD hideHUDForView:appDel.window animated:YES];
-                });
-                
-            }]];
-            [alertController addAction:[UIAlertAction actionWithTitle:@"NO" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                [appDel.m_offlinePosts removeAllObjects];
-            }]];
-            [self presentViewController:alertController animated:YES completion:nil];
+            else{
+                [self resumeOfflineContentSync];
+            }
         }
     }
     
@@ -3314,61 +3249,24 @@
 #pragma mark Newwork connecting Check - help and Auto refresh features
 -(void) callAfterSixtySecond:(NSTimer*) t {
     
-    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
     Reachability *networkReachability = [Reachability reachabilityForInternetConnection];
     
     NetworkStatus networkStatus = [networkReachability currentReachabilityStatus];
-    if (networkStatus == NotReachable && appDel.network_state) {
+    if (networkStatus == NotReachable) {
         
         NSLog(@"There IS NO internet connection");
-        appDel.network_state = NO;
+        [self showOfflineModeMessage];
         
-        UIImage *btnImage = [UIImage imageNamed:@"offline_state.png"];
-        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
-        
-    } else {
-        
-//        NSLog(@"There IS internet connection");
-//        appDel.network_state = YES;
-//
-//        UIImage *btnImage = [UIImage imageNamed:@"online_state.png"];
-//        [btnForNetState setImage:btnImage forState:UIControlStateNormal];
     }
     
     if (![GlobalVar getInstance].isPosting) {
         
         [self reloadContents];
         
-        if (networkStatus != NotReachable && appDel.network_state) //Check both Reachability & Network Status
+        if (networkStatus != NotReachable) //Check both Reachability & Network Status
         {
-            OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
-            
-            for(PFObject* post in appDel.m_offlinePosts)
-            {
-                //Request a background execution task to allow us to finish uploading the photo even if the app is background
-                self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
-                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                }];
-                
-                [self preparePostForSync:post];
-                
-                [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                    if (succeeded) {
-                        NSLog(@"Auto Refresh with offline mode:Post Success!");
-                        
-                        [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
-                            [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
-                            [appDel.m_offlinePosts removeObject:post];
-                            
-                            [post unpin];
-                        }];
-                    }
-                    else
-                    {
-                        NSLog(@"Post Error = %@", error.description);
-                    }
-                    [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
-                }];
+            if(goOnlineMessagePresentedOnce == false) {
+                [self resumeOfflineContentSync];
             }
         }
     }
@@ -3376,6 +3274,85 @@
     {
         NSLog(@"Skipped Auto Refreshing due to in posting!!");
     }
+}
+
+
+- (void) resumeOfflineContentSync
+{
+    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+
+    if (appDel.m_offlinePosts.count == 0) {
+        
+        if(appDel.network_state == YES){
+            [self hideOfflineModeMessage];
+        }
+        return;
+    }
+    
+    //Show Alert Controller
+    NSString *msg = [[NSString alloc] initWithFormat:@"We have detected a stable connection. You can now go back to online."];
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Switch To Online Mode" message:msg
+                                                                      preferredStyle: UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Ignore" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self showOfflineModeMessage];
+    }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"Go Online" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self hideOfflineModeMessage];
+        [GlobalVar getInstance].isPosting = YES;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [MBProgressHUD showMessag:@"Syncing..." toView:appDel.window];
+        });
+        
+        dispatch_group_t group = dispatch_group_create();
+        
+        for (PFObject* post in appDel.m_offlinePosts) {
+            dispatch_group_enter(group);
+            //Request a background execution task to allow us to finish uploading the photo even if the app is background
+            self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+                [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+            }];
+            
+            if ([currentObject[@"postedObjects"] containsObject:post]) {
+                [currentObject[@"postedObjects"] removeObject:post];
+            }
+            
+            PFFile *file = (PFFile *)post[@"postFile"];
+            if(file != nil && file.getData == nil) {
+                [self preparePostForSync:post];
+            }
+            
+            [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    NSLog(@"Success ---- Post");
+                    // add new Post object on postedObjects array: for badge
+                    [currentObject[@"postedObjects"] addObject:post];
+                    [currentObject saveInBackgroundWithBlock:nil];
+                    
+                    [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                        [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
+                        [appDel.m_offlinePosts removeObject:post];
+                        [post unpin];
+                        dispatch_group_leave(group);
+                    }];
+                    
+                } else {
+                    NSLog(@"Error ---- Post = %@", error);
+                }
+                [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+            }];
+        }
+        
+        dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+            NSLog(@"All group tasks are done!");
+            [GlobalVar getInstance].isPosting = NO;
+            [MBProgressHUD hideHUDForView:appDel.window animated:YES];
+        });
+        
+    }]];
+    
+    goOnlineMessagePresentedOnce = true;
+    [self presentViewController:alertController animated:YES completion:nil];
+
 }
 
 //----------------------------------------------------------//
