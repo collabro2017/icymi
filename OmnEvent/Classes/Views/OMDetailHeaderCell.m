@@ -46,6 +46,28 @@
     
     _currentObj = obj;
     
+    NSString *eventType = _currentObj[@"event_type"];
+    
+    if(eventType != nil && ![eventType isKindOfClass:[NSNull class]] && [[eventType lowercaseString] isEqualToString:@"web-console"]) {
+        [ccHeaderView setHidden:NO];
+        
+        lblEventTitle.text = _currentObj[@"eventname"];
+        lblCompany.text = _currentObj[@"company"];
+        lblTime.text = [NSString stringWithFormat:@"Start Time : %@", _currentObj[@"startTime"]];
+        lblAddress.text = _currentObj[@"country"];
+        
+        PFFile *logo = (PFFile *)_currentObj[@"thumbImage"];
+        
+        if (logo) {
+            
+            [companyLogo setImageWithURL:[NSURL URLWithString:logo.url]];
+            
+        }
+    }
+    else{
+        [ccHeaderView setHidden:YES];
+    }
+    
     user = _currentObj[@"user"];
     
     //Display avatar image
