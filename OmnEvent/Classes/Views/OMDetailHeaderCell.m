@@ -45,10 +45,11 @@
 {
     
     _currentObj = obj;
-    
+
     NSString *eventType = _currentObj[@"event_type"];
     
     if(eventType != nil && ![eventType isKindOfClass:[NSNull class]] && [[eventType lowercaseString] isEqualToString:@"web-console"]) {
+        
         [ccHeaderView setHidden:NO];
         
         lblEventTitle.text = _currentObj[@"eventname"];
@@ -121,6 +122,10 @@
         [imageViewForPost setImageWithURL:[NSURL URLWithString:postImgFile.url]];
     }
     //
+    
+    if([ccHeaderView isHidden] == NO) {
+        [imageViewForPost setImage:nil];
+    }
     
     
     if (_currentObj[@"commenters"]) {

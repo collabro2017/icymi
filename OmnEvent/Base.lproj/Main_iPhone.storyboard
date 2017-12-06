@@ -3900,7 +3900,7 @@
                                                     </constraints>
                                                 </view>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OGr-wa-nCu">
-                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="320" height="280"/>
                                                     <subviews>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="gSn-eF-f0q">
                                                             <rect key="frame" x="72" y="27" width="175" height="60"/>
@@ -3946,7 +3946,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="powered_by" translatesAutoresizingMaskIntoConstraints="NO" id="jku-MR-zzJ">
-                                                            <rect key="frame" x="162" y="271" width="150" height="47"/>
+                                                            <rect key="frame" x="162" y="231" width="150" height="47"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="47" id="1Pd-pY-Usb"/>
                                                                 <constraint firstAttribute="width" constant="150" id="beD-2N-eAB"/>
@@ -3988,7 +3988,7 @@
                                                 <constraint firstItem="OGr-wa-nCu" firstAttribute="top" secondItem="Vxc-1s-J55" secondAttribute="top" id="U0I-ki-1OZ"/>
                                                 <constraint firstAttribute="trailing" secondItem="OGr-wa-nCu" secondAttribute="trailing" id="iee-Vw-4gJ"/>
                                                 <constraint firstItem="1O8-cN-Gr8" firstAttribute="top" secondItem="Vxc-1s-J55" secondAttribute="topMargin" constant="-8" id="rAi-7v-omH"/>
-                                                <constraint firstAttribute="bottom" secondItem="OGr-wa-nCu" secondAttribute="bottom" id="x8b-f3-OPk"/>
+                                                <constraint firstAttribute="bottom" secondItem="OGr-wa-nCu" secondAttribute="bottom" constant="40" id="x8b-f3-OPk"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
