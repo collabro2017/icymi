@@ -110,7 +110,8 @@
     //----------------------------------------//
     NSLog(@"================================ %d", checkMode);
     //----------------------------------------//
-
+    
+    
     UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showDetailPage:)];
     gesture.numberOfTapsRequired = 1;
     
@@ -391,7 +392,7 @@
         else{
             if(_file != nil) {
                 
-                if(_file.getData == nil) {
+                if([_file isDataAvailable] == FALSE) {
                     NSString *fileLocalPath = currentObj[@"fileLocalPath"];
                     
                     if(fileLocalPath != nil) {
@@ -417,8 +418,18 @@
         
         if (_file != nil){
             
-            if(_file.getData != nil) {
-                [imageViewForMedia setImage:[UIImage imageWithData:_file.getData]];
+            if([_file isDataAvailable] == YES) {
+                
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+
+                    UIImage *img = [UIImage imageWithData:_file.getData];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        // Update the UI
+                        [imageViewForMedia setImage:img];
+                    });
+                });
+                
+                
             }
             else{
                 NSString *fileLocalPath = currentObj[@"fileLocalPath"];
@@ -459,8 +470,18 @@
                 [imageViewForMedia setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImageFile.url]]]];
             } else {
                 
-                if(thumbImageFile.getData != nil) {
-                    [imageViewForMedia setImage:[UIImage imageWithData:thumbImageFile.getData]];
+                if([thumbImageFile isDataAvailable] == YES) {
+                    
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                        
+                        UIImage *img = [UIImage imageWithData:thumbImageFile.getData];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            // Update the UI
+                             [imageViewForMedia setImage:img];
+                        });
+                    });
+                    
+                   
                 }
                 else{
                     NSString *fileLocalPath = currentObj[@"thumbImageFileLocalPath"];
@@ -546,6 +567,7 @@
     }
     
     [self setLikeButtonStatus:liked];
+    
 }
 
 - (void)setLikeButtonStatus:(BOOL) _status {

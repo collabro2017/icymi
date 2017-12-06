@@ -28,6 +28,7 @@
             NSLog(@"Successfully created offline posts data directory at path : %@ ", offlinePostsDataDirPath);
     }
     
+    NSLog(@"Offline Data Path : %@ ", offlinePostsDataDirPath);
     return offlinePostsDataDirPath;
 }
 
