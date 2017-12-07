@@ -11,5 +11,6 @@
 @interface OMUtilities : NSObject
 
 +(NSString *) getOfflinePostDataDirPath;
++(BOOL) isEventCreatedFromWebConsole:(NSString *) type;
 
 @end

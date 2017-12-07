@@ -2530,6 +2530,16 @@
     [contentPDF setObject:PFUser.currentUser[@"company"] forKey:@"companyName"];
     [contentPDF setObject:profileModeInPDF forKey:@"profileMode"];
     
+    NSString *eventType = currentObject[@"event_type"];
+    
+    if([OMUtilities isEventCreatedFromWebConsole:eventType]) {
+        
+        OMDetailHeaderCell *cell = [tblForDetailList dequeueReusableCellWithIdentifier:kDetailHeaderCell];
+        if(cell != nil ) {
+            [contentPDF setObject:[cell getHeaderSnapshot] forKey:@"headerSnapshot"];
+        }
+    }
+    
     [PDFRenderer createPDF:[self getPDFFilePath] content:contentPDF];
     pdfURL = [NSURL fileURLWithPath:[self getPDFFilePath]];
     

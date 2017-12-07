@@ -7,6 +7,7 @@
 //
 
 #import "OMDetailHeaderCell.h"
+#import "OMUtilities.h"
 
 @implementation OMDetailHeaderCell
 @synthesize user,delegate;
@@ -48,7 +49,7 @@
 
     NSString *eventType = _currentObj[@"event_type"];
     
-    if(eventType != nil && ![eventType isKindOfClass:[NSNull class]] && [[eventType lowercaseString] isEqualToString:@"web-console"]) {
+    if([OMUtilities isEventCreatedFromWebConsole:eventType]) {
         
         [ccHeaderView setHidden:NO];
         
@@ -173,8 +174,6 @@
         liked = NO;
     }
     [self setLikeButtonStatus:liked];
-    
-    
 }
 
 - (void)setLikeButtonStatus:(BOOL) _status
@@ -244,8 +243,33 @@
     
     if ([delegate respondsToSelector:@selector(shareEvent:)]) {
         [delegate performSelector:@selector(shareEvent:) withObject:_currentObj];
+        //[self performSelector:@selector(generateSnapshot) withObject:nil afterDelay:0.5];
+        
+        [self generateSnapshot];
     }
     
+}
+
+- (UIImage *) getHeaderSnapshot
+{
+    NSString *path = [OMUtilities getOfflinePostDataDirPath];
+    path = [path stringByAppendingPathComponent:@"headerSnapshot.jpeg"];
+    
+    return [UIImage imageWithContentsOfFile:path];
+}
+
+- (void) generateSnapshot
+{
+    UIView *headerView = ccHeaderView;
+    UIGraphicsBeginImageContextWithOptions(headerView.bounds.size, headerView.opaque, 0.0f);
+    [headerView drawViewHierarchyInRect:headerView.bounds afterScreenUpdates:NO];
+    UIImage *snapshotImageFromMyView = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    NSString *path = [OMUtilities getOfflinePostDataDirPath];
+    path = [path stringByAppendingPathComponent:@"headerSnapshot.jpeg"];
+    NSLog(@"Snapshot Path : %@ ", path);
+    [UIImageJPEGRepresentation(snapshotImageFromMyView, 0.7) writeToFile:path atomically:YES];
 }
 
 

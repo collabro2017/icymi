@@ -63,4 +63,6 @@
 - (IBAction)showCommentersAction:(id)sender;
 - (IBAction)moreAction:(id)sender;
 
+- (UIImage *) getHeaderSnapshot;
+
 @end

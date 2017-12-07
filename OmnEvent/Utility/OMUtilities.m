@@ -31,5 +31,15 @@
     NSLog(@"Offline Data Path : %@ ", offlinePostsDataDirPath);
     return offlinePostsDataDirPath;
 }
++ (BOOL) isEventCreatedFromWebConsole:(NSString *)type
+{
+    NSString *eventType = type;
+    BOOL blnResult = NO;
+    if(eventType != nil && ![eventType isKindOfClass:[NSNull class]] && [[eventType lowercaseString] isEqualToString:@"web-console"]) {
+        blnResult = YES;
+    }
+    
+    return blnResult;
+}
 
 @end
