@@ -7,6 +7,8 @@
 //
 
 #import "PDFRenderer.h"
+#import "OMUtilities.h"
+
 #define PDF_PAGE_WIDTH 612.0f
 #define PDF_PAGE_HEIGHT 792.0f
 #define PDF_CONTENT_HEIGHT 720.0f
@@ -540,12 +542,26 @@
     PFFile *postImgFile = (PFFile *)currentObject[@"thumbImage"];
     
     if (postImgFile) {
+    
         
-        UIImage* postImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:postImgFile.url]]];
+        NSString *eventType = currentObject[@"event_type"];
         
-        CGRect frame = CGRectMake(0, 0, PDF_PAGE_WIDTH, PDF_PAGE_WIDTH);
-        
-        [PDFRenderer drawImage:postImage inRect:frame];
+        if([OMUtilities isEventCreatedFromWebConsole:eventType]) {
+            
+            UIImage* postImage = [contentDic objectForKey:@"headerSnapshot"];
+            
+            CGRect frame = CGRectMake(0, 0, PDF_PAGE_WIDTH, PDF_PAGE_WIDTH);
+            
+            [PDFRenderer drawImage:postImage inRect:frame];
+        }
+        else{
+            
+            UIImage* postImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:postImgFile.url]]];
+            
+            CGRect frame = CGRectMake(0, 0, PDF_PAGE_WIDTH, PDF_PAGE_WIDTH);
+            
+            [PDFRenderer drawImage:postImage inRect:frame];
+        }
     }
     //
     
