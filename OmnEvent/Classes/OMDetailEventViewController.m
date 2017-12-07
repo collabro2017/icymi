@@ -704,6 +704,7 @@
         [self showOfflineModeMessage];
     }
     else{
+        [self hideOfflineModeMessage];
         [self resumeOfflineContentSync];
     }
 }
@@ -3297,31 +3298,37 @@
     if (appDelegate.m_offlinePosts.count == 0) {
         
         if(appDelegate.network_state == NO){
-            [self hideOfflineModeMessage];
+            //[self hideOfflineModeMessage];
         }
         return;
     }
     
-    //Show Alert Controller
-    NSString *msg = [[NSString alloc] initWithFormat:@"We have detected a stable connection. You can now go back to online."];
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Switch To Online Mode" message:msg
-                                                                      preferredStyle: UIAlertControllerStyleAlert];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Ignore" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self showOfflineModeMessage];
-    }]];
-    [alertController addAction:[UIAlertAction actionWithTitle:@"Go Online" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self hideOfflineModeMessage];
-        [GlobalVar getInstance].isPosting = YES;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [MBProgressHUD showMessag:@"Syncing..." toView:appDelegate.window];
-        });
-        
-        [self performSelector:@selector(performSync) withObject:nil afterDelay:0.25];
-        
-    }]];
+    if(appDelegate.network_state == NO) {
     
-    goOnlineMessagePresentedOnce = true;
-    [self presentViewController:alertController animated:YES completion:nil];
+        //Show Alert Controller
+        NSString *msg = [[NSString alloc] initWithFormat:@"We have detected a stable connection. You can now go back to online."];
+        UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Switch To Online Mode" message:msg
+                                                                          preferredStyle: UIAlertControllerStyleAlert];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Ignore" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self showOfflineModeMessage];
+        }]];
+        [alertController addAction:[UIAlertAction actionWithTitle:@"Go Online" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [self hideOfflineModeMessage];
+            [GlobalVar getInstance].isPosting = YES;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [MBProgressHUD showMessag:@"Syncing..." toView:appDelegate.window];
+            });
+            
+            [self performSelector:@selector(performSync) withObject:nil afterDelay:0.25];
+            
+        }]];
+        
+        goOnlineMessagePresentedOnce = true;
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
+    else {
+        [self performSilentSync];
+    }
 
 }
 
@@ -3367,6 +3374,46 @@
     
     [self reloadContents];
 }
+
+- (void) performSilentSync
+{
+    [GlobalVar getInstance].isPosting = YES;
+    for (int i = 0; i < appDelegate.m_offlinePosts.count; ++i) {
+        
+        NSLog(@"Uploading : %lu/%lu",(unsigned long)i, (unsigned long)appDelegate.m_offlinePosts.count);
+        
+        PFObject* post = [appDelegate.m_offlinePosts objectAtIndex:i];
+        
+        if ([currentObject[@"postedObjects"] containsObject:post]) {
+            [currentObject[@"postedObjects"] removeObject:post];
+        }
+        
+        [self preparePostForSync:post checkDataAvailabilty:YES];
+        
+        NSError *error;
+        BOOL succeeded = [post save:&error];
+        
+        if(succeeded == YES) {
+            
+            NSLog(@"Success ---- Post");
+            // add new Post object on postedObjects array: for badge
+            [currentObject[@"postedObjects"] addObject:post];
+            [currentObject saveInBackgroundWithBlock:nil];
+            
+            [post unpin];
+        }
+        else{
+            NSLog(@"Error ---- Post = %@", error);
+            [self performSilentSyncFor:post];
+        }
+    }
+    
+    [appDelegate.m_offlinePosts removeAllObjects];
+    [GlobalVar getInstance].isPosting = NO;
+    
+    [self reloadContents];
+}
+
 
 - (void) performSilentSyncFor:(PFObject *) post
 {
