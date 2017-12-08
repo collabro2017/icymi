@@ -417,29 +417,7 @@
         }
         
         if (_file != nil){
-            
-            if([_file isDataAvailable] == YES) {
-                
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-
-                    UIImage *img = [UIImage imageWithData:_file.getData];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        // Update the UI
-                        [imageViewForMedia setImage:img];
-                    });
-                });
-                
-                
-            }
-            else{
-                NSString *fileLocalPath = currentObj[@"fileLocalPath"];
-                
-                if(fileLocalPath != nil) {
-                    NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
-                    NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
-                    [imageViewForMedia setImage:[UIImage imageWithContentsOfFile:fullPath]];
-                }
-            }
+            [self setImageFor:imageViewForMedia fileObj:_file localFileName:currentObj[@"fileLocalPath"]];
         }
         
         if (!postImgFile) {
@@ -467,31 +445,17 @@
         if (thumbImageFile){
             
             if (thumbImageFile.url != nil) {
-                [imageViewForMedia setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImageFile.url]]]];
-            } else {
                 
-                if([thumbImageFile isDataAvailable] == YES) {
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                     
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-                        
-                        UIImage *img = [UIImage imageWithData:thumbImageFile.getData];
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            // Update the UI
-                             [imageViewForMedia setImage:img];
-                        });
+                    UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImageFile.url]]];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        // Update the UI
+                        [imageViewForMedia setImage:img];
                     });
-                    
-                   
-                }
-                else{
-                    NSString *fileLocalPath = currentObj[@"thumbImageFileLocalPath"];
-                    
-                    if(fileLocalPath != nil) {
-                        NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
-                        NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
-                        [imageViewForMedia setImage:[UIImage imageWithContentsOfFile:fullPath]];
-                    }
-                }
+                });
+            } else {
+                [self setImageFor:imageViewForMedia fileObj:_file localFileName:currentObj[@"thumbImageFileLocalPath"]];
             }
         } else
             [imageViewForMedia setImage:[UIImage imageNamed:@"layer_audio"]];  ////audio special
@@ -568,6 +532,51 @@
     
     [self setLikeButtonStatus:liked];
     
+}
+
+- (void) setImageFor:(UIImageView *) imageView fileObj:(PFFile *) fileObj localFileName:(NSString *) localFileName
+{
+    if([fileObj isDataAvailable] == YES) {
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            
+            UIImage *img = [UIImage imageWithData:fileObj.getData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // Update the UI
+                [imageView setImage:img];
+            });
+        });
+        
+        
+    }
+    else{
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            
+            if(fileObj.getData != nil) {
+                UIImage *img = [UIImage imageWithData:fileObj.getData];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    // Update the UI
+                    [imageView setImage:img];
+                });
+            }
+            else{
+                NSString *fileLocalPath = localFileName;
+                
+                if(fileLocalPath != nil) {
+                    NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
+                    NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        // Update the UI
+                        [imageView setImage:[UIImage imageWithContentsOfFile:fullPath]];
+                    });
+                    
+                }
+            }
+        });
+        
+    }
+
 }
 
 - (void)setLikeButtonStatus:(BOOL) _status {
