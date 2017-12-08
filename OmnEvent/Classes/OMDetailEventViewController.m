@@ -3337,12 +3337,12 @@
         [self presentViewController:alertController animated:YES completion:nil];
     }
     else {
-        [self performSilentSync];
+        [self performSelector:@selector(performSilentSync) withObject:nil afterDelay:0.25];
     }
 
 }
 
-- (void) performSync
+/*- (void) performSync
 {
     for (int i = 0; i < appDelegate.m_offlinePosts.count; ++i) {
         
@@ -3384,8 +3384,62 @@
     
     [self reloadContents];
 }
+ */
 
-- (void) performSilentSync
+
+- (void) performSync
+{
+    dispatch_group_t group = dispatch_group_create();
+
+    //Request a background execution task to allow us to finish uploading the photo even if the app is background
+    self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        NSLog(@"Ending background upload task!");
+        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+    }];
+    
+    for (PFObject* post in appDelegate.m_offlinePosts) {
+        
+        [GlobalVar getInstance].isPosting = YES;
+        
+        dispatch_group_enter(group);
+        
+        if ([currentObject[@"postedObjects"] containsObject:post]) {
+            [currentObject[@"postedObjects"] removeObject:post];
+        }
+        
+        [self preparePostForSync:post checkDataAvailabilty:YES];
+        
+        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"Success ---- Post");
+                // add new Post object on postedObjects array: for badge
+                [currentObject[@"postedObjects"] addObject:post];
+                [currentObject saveInBackgroundWithBlock:nil];
+                
+                [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
+                    [appDelegate.m_offlinePosts removeObject:post];
+                    [post unpin];
+                    dispatch_group_leave(group);
+                }];
+                
+            } else {
+                NSLog(@"Error ---- Post = %@", error);
+                [self performSilentSyncFor:post];
+                dispatch_group_leave(group);
+            }
+        }];
+    }
+    
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        NSLog(@"All group tasks are done!");
+        [GlobalVar getInstance].isPosting = NO;
+        [MBProgressHUD hideHUDForView:appDelegate.window animated:YES];
+        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+    });
+}
+
+/*- (void) performSilentSync
 {
     [GlobalVar getInstance].isPosting = YES;
     for (int i = 0; i < appDelegate.m_offlinePosts.count; ++i) {
@@ -3423,9 +3477,66 @@
     
     [self reloadContents];
 }
+ */
+
+- (void) performSilentSync
+{
+
+    dispatch_group_t group = dispatch_group_create();
+    
+    //Request a background execution task to allow us to finish uploading the photo even if the app is background
+    self.fileUploadBackgroundTaskId = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+        NSLog(@"Ending background upload task!");
+        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+    }];
+    
+    for (PFObject* post in appDelegate.m_offlinePosts) {
+        
+        [GlobalVar getInstance].isPosting = YES;
+        dispatch_group_enter(group);
+        
+        if ([currentObject[@"postedObjects"] containsObject:post]) {
+            [currentObject[@"postedObjects"] removeObject:post];
+        }
+        
+        [self preparePostForSync:post checkDataAvailabilty:YES];
+        
+        [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+            if (succeeded) {
+                NSLog(@"Success ---- Post");
+                // add new Post object on postedObjects array: for badge
+                [currentObject[@"postedObjects"] addObject:post];
+                [currentObject saveInBackgroundWithBlock:nil];
+                
+                [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                    [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
+                    [appDelegate.m_offlinePosts removeObject:post];
+                    [post unpin];
+                    dispatch_group_leave(group);
+                }];
+                
+            } else {
+                NSLog(@"Error ---- Post = %@", error);
+                [self performSilentSyncFor:post];
+                dispatch_group_leave(group);
+            }
+        }];
+    }
+    
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        NSLog(@"All group tasks are done!");
+        [GlobalVar getInstance].isPosting = NO;
+        [MBProgressHUD hideHUDForView:appDelegate.window animated:YES];
+        [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
+    });
+    
+    [self reloadContents];
+}
 
 
-- (void) performSilentSyncFor:(PFObject *) post
+
+
+/*- (void) performSilentSyncFor:(PFObject *) post
 {
     [self preparePostForSync:post checkDataAvailabilty:NO];
     
@@ -3445,8 +3556,30 @@
         NSLog(@"Error ---- Post = %@", error);
     }
 }
+*/
 
-
+- (void) performSilentSyncFor:(PFObject *) post
+{
+    [self preparePostForSync:post checkDataAvailabilty:NO];
+    
+    [post saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        if (succeeded) {
+            NSLog(@"Success ---- Post");
+            // add new Post object on postedObjects array: for badge
+            [currentObject[@"postedObjects"] addObject:post];
+            [currentObject saveInBackgroundWithBlock:nil];
+            
+            [post fetchIfNeededInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+                [[OMPushServiceManager sharedInstance] sendNotificationToTaggedFriends:object];
+                [appDelegate.m_offlinePosts removeObject:post];
+                [post unpin];
+            }];
+            
+        } else {
+            NSLog(@"Error ---- Post = %@", error);
+        }
+    }];
+}
 
 //----------------------------------------------------------//
 //---delegate method
