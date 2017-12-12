@@ -12,5 +12,6 @@
 
 +(NSString *) getOfflinePostDataDirPath;
 +(BOOL) isEventCreatedFromWebConsole:(NSString *) type;
++(NSString *) dateToString:(NSDate *) date format:(NSString *) strFormat;
 
 @end

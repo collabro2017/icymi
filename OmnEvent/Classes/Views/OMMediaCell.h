@@ -60,6 +60,8 @@
     IBOutlet NSLayoutConstraint *constraintForTitle;
     
     IBOutlet NSLayoutConstraint *constraintForDescription;
+    
+    IBOutlet UIActivityIndicatorView *imageLoaderIndicator;
 }
 
 @property (strong, nonatomic) id delegate;

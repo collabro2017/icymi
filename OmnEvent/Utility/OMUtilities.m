@@ -42,4 +42,16 @@
     return blnResult;
 }
 
++ (NSString *) dateToString:(NSDate *) date format:(NSString *) strFormat
+{
+    //******************
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
+    [dateFormat setDateFormat:strFormat];//Dec 14 2011 1:50 PM
+    
+    NSString *str_date = [dateFormat stringFromDate:date];
+    
+    return str_date;
+}
+
 @end

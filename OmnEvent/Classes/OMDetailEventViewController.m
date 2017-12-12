@@ -244,7 +244,8 @@
         [self showOfflineModeMessage];
     }
     
-    autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 10.0 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
+    [self callAfterSixtySecond:nil];
+    autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 5 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
     
     //---------------------------------------------//
     [self initializeBadges];
@@ -1394,7 +1395,7 @@
     else // Event Detail Content with Post detail contents
     {
         
-        if([arrForDetail count] > 0)
+        if([arrForDetail count] > 0 && [arrForDetail count] > (indexPath.section - 1))
         {
             PFObject *tempObj;
             
@@ -3294,6 +3295,9 @@
             if(goOnlineMessagePresentedOnce == false) {
                 [self resumeOfflineContentSync];
             }
+        }
+        else{
+            [self checkLocalageStorage];
         }
     }
     else
