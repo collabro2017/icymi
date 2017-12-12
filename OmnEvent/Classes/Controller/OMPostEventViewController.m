@@ -873,6 +873,8 @@
                     
                     NSLog(@"Is Offline Mode");
                     
+                    post[@"localTimestamp"] = [OMUtilities dateToString:[NSDate date] format:@"MMM dd yyyy hh:mm a"];
+                    
                     [post pinInBackgroundWithBlock:nil];
                     
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
@@ -1102,6 +1104,7 @@
                 }
                 
 
+                post[@"localTimestamp"] = [OMUtilities dateToString:[NSDate date] format:@"MMM dd yyyy hh:mm a"];
                 [post pinInBackgroundWithBlock:nil];
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];

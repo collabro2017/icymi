@@ -2610,7 +2610,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="518"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Kpf-6g-V4e">
-                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="48"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -2912,7 +2912,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="qHk-Os-jfg">
-                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="48"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -3654,6 +3654,9 @@
                                                         <constraint firstItem="my5-rb-M3c" firstAttribute="leading" secondItem="lmI-fO-99V" secondAttribute="trailing" id="zrv-Ud-d3L"/>
                                                     </constraints>
                                                 </view>
+                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="fO2-FO-8EI">
+                                                    <rect key="frame" x="150" y="211" width="20" height="20"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="Asb-gu-s0H" secondAttribute="trailing" constant="8" id="1NY-jA-X1b"/>
@@ -3664,6 +3667,7 @@
                                                 <constraint firstAttribute="bottom" secondItem="F3K-kv-oaJ" secondAttribute="bottom" id="4YB-op-a66"/>
                                                 <constraint firstAttribute="trailing" secondItem="37A-tT-xXl" secondAttribute="trailing" id="4bu-wm-FdY"/>
                                                 <constraint firstItem="4Z6-jI-hAL" firstAttribute="top" secondItem="ypI-ij-H34" secondAttribute="top" id="4i7-s8-spo"/>
+                                                <constraint firstItem="fO2-FO-8EI" firstAttribute="centerY" secondItem="ypI-ij-H34" secondAttribute="centerY" id="5F8-zX-Mng"/>
                                                 <constraint firstItem="PVn-Fi-bMU" firstAttribute="top" secondItem="4Z6-jI-hAL" secondAttribute="bottom" constant="34" id="6k8-dZ-Z0J"/>
                                                 <constraint firstItem="F3K-kv-oaJ" firstAttribute="top" secondItem="rbk-tD-Spw" secondAttribute="bottom" constant="8" id="B4R-j8-JRp"/>
                                                 <constraint firstItem="4Z6-jI-hAL" firstAttribute="leading" secondItem="ypI-ij-H34" secondAttribute="leading" id="Cq9-yb-lux"/>
@@ -3684,6 +3688,7 @@
                                                 <constraint firstItem="HU8-a3-jij" firstAttribute="top" secondItem="4Z6-jI-hAL" secondAttribute="bottom" constant="7" id="lAt-fn-eOM"/>
                                                 <constraint firstItem="PVn-Fi-bMU" firstAttribute="leading" secondItem="ypI-ij-H34" secondAttribute="leading" constant="42" id="oPq-35-FP8"/>
                                                 <constraint firstItem="gEP-Kq-wJq" firstAttribute="leading" secondItem="HU8-a3-jij" secondAttribute="trailing" constant="8" id="rYZ-up-UPJ"/>
+                                                <constraint firstItem="fO2-FO-8EI" firstAttribute="centerX" secondItem="ypI-ij-H34" secondAttribute="centerX" id="rbd-jk-xSd"/>
                                                 <constraint firstAttribute="trailing" secondItem="rbk-tD-Spw" secondAttribute="trailing" constant="26" id="sSw-Qa-sSF"/>
                                                 <constraint firstItem="Asb-gu-s0H" firstAttribute="leading" secondItem="HU8-a3-jij" secondAttribute="trailing" constant="8" id="tWt-0b-BHV"/>
                                                 <constraint firstItem="gEP-Kq-wJq" firstAttribute="top" secondItem="4Z6-jI-hAL" secondAttribute="bottom" constant="13" id="wvU-Mb-9s2"/>
@@ -3702,6 +3707,7 @@
                                             <outlet property="btnForVideoPlay" destination="kg8-Kk-vFK" id="jYi-PZ-4sl"/>
                                             <outlet property="constraintForDescription" destination="M32-g8-Alz" id="7oQ-CP-0jI"/>
                                             <outlet property="constraintForTitle" destination="Wbl-Ck-OFg" id="cnZ-Lw-09f"/>
+                                            <outlet property="imageLoaderIndicator" destination="fO2-FO-8EI" id="3nD-OF-Ggn"/>
                                             <outlet property="imageViewForAvatar" destination="HU8-a3-jij" id="ZdS-fY-ix5"/>
                                             <outlet property="imageViewForMedia" destination="eSb-dW-DhO" id="iXy-ed-YTe"/>
                                             <outlet property="lblForLocation" destination="BVw-YG-Scm" id="2sw-oE-jLl"/>
@@ -4693,7 +4699,7 @@
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <size key="freeformSize" width="320" height="523"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="iRT-5X-f0f">
-                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="48"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -5121,7 +5127,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="114" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="rhQ-ZG-H59">
-                                <rect key="frame" x="0.0" y="64" width="375" height="553"/>
+                                <rect key="frame" x="0.0" y="68" width="375" height="549"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="FeedOtherCommentCell" rowHeight="70" id="De1-YO-vQl" customClass="OMFeedOtherCommentCell">
@@ -5689,7 +5695,7 @@
             <objects>
                 <navigationController id="ypM-8d-ArT" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="j16-Fn-jFd">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="20" width="375" height="48"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -6193,7 +6199,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <webView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BnE-93-BRJ">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="68" width="375" height="599"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
                                     <outlet property="delegate" destination="ofJ-nf-0tf" id="E2f-nE-5la"/>
@@ -6597,7 +6603,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="PnO-2D-Fal">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="68" width="375" height="599"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <prototypes>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TagFriendCell" id="CCX-C6-Imx" customClass="OMTagFriendCell">

@@ -209,15 +209,23 @@
     
     [lblForUsername setText:user.username];
     
-    [lblForTimer setText:[OMGlobal showTime:currentObj.createdAt]];
-    
     //******************
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
 //    [dateFormat setDateFormat:@"EEE, MMM dd yyyy hh:mm a"];//Wed, Dec 14 2011 1:50 PM
     [dateFormat setDateFormat:@"MMM dd yyyy hh:mm a"];//Dec 14 2011 1:50 PM
 
     NSString *str_date = [dateFormat stringFromDate:currentObj.createdAt];
-    [lblForTimer setText:str_date];
+    
+    if(str_date == nil || str_date.length == 0) {
+        str_date = currentObj[@"localTimestamp"];
+        if(str_date == nil || str_date.length == 0) {
+            str_date = [dateFormat stringFromDate:[NSDate date]];
+        }
+        [lblForTimer setText:str_date];
+    }
+    else{
+        [lblForTimer setText:str_date];
+    }
     
     [lblForTimer setTextColor:HEXCOLOR(0x6F7179FF)];
 
@@ -419,13 +427,37 @@
         if (_file != nil){
             [self setImageFor:imageViewForMedia fileObj:_file localFileName:currentObj[@"fileLocalPath"]];
         }
-        
-        if (!postImgFile) {
+        else if (!postImgFile) {
             
             PFFile *postFile = (PFFile *)currentObj[@"postFile"];
             
             if (postFile) {
-                [imageViewForMedia setImageWithURL:[NSURL URLWithString:postFile.url]];
+                
+                if (postFile.url != nil) {
+                    
+                    [imageLoaderIndicator startAnimating];
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+                        
+                        UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:postFile.url]]];
+                        if(img != nil) {
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                // Update the UI
+                                [imageLoaderIndicator stopAnimating];
+                                [imageViewForMedia setImage:img];
+                            });
+                        }
+                        else{
+                            [self setImageFor:imageViewForMedia fileObj:postFile localFileName:currentObj[@"fileLocalPath"]];
+                        }
+                    });
+                }
+                else{
+                    [self setImageFor:imageViewForMedia fileObj:postFile localFileName:currentObj[@"fileLocalPath"]];
+                }
+            }
+            else{
+                [self setImageFor:imageViewForMedia fileObj:postFile localFileName:currentObj[@"fileLocalPath"]];
             }
         }
         
@@ -446,16 +478,24 @@
             
             if (thumbImageFile.url != nil) {
                 
+                [imageLoaderIndicator startAnimating];
                 dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
                     
                     UIImage *img = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:thumbImageFile.url]]];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        // Update the UI
-                        [imageViewForMedia setImage:img];
-                    });
+                    if(img != nil) {
+                    
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            // Update the UI
+                            [imageLoaderIndicator stopAnimating];
+                            [imageViewForMedia setImage:img];
+                        });
+                    }
+                    else{
+                        [self setImageFor:imageViewForMedia fileObj:thumbImageFile localFileName:currentObj[@"thumbImageFileLocalPath"]];
+                    }
                 });
             } else {
-                [self setImageFor:imageViewForMedia fileObj:_file localFileName:currentObj[@"thumbImageFileLocalPath"]];
+                [self setImageFor:imageViewForMedia fileObj:thumbImageFile localFileName:currentObj[@"thumbImageFileLocalPath"]];
             }
         } else
             [imageViewForMedia setImage:[UIImage imageNamed:@"layer_audio"]];  ////audio special
@@ -538,25 +578,20 @@
 {
     if([fileObj isDataAvailable] == YES) {
         
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // Update the UI
+            [imageLoaderIndicator startAnimating];
+        });
+        
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             
             UIImage *img = [UIImage imageWithData:fileObj.getData];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                // Update the UI
-                [imageView setImage:img];
-            });
-        });
-        
-        
-    }
-    else{
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
             
-            if(fileObj.getData != nil) {
-                UIImage *img = [UIImage imageWithData:fileObj.getData];
+            if(img != nil) {
+            
                 dispatch_async(dispatch_get_main_queue(), ^{
                     // Update the UI
+                    [imageLoaderIndicator stopAnimating];
                     [imageView setImage:img];
                 });
             }
@@ -566,11 +601,82 @@
                 if(fileLocalPath != nil) {
                     NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
                     NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                    UIImage *img = [UIImage imageWithContentsOfFile:fullPath];
+                    
+                    if(img != nil) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            // Update the UI
+                            [imageLoaderIndicator stopAnimating];
+                            [imageView setImage:img];
+                        });
+                    }
+                    else{
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            // Update the UI
+                            [imageLoaderIndicator stopAnimating];
+                        });
+                    }
+                    
+                }
+                else{
                     dispatch_async(dispatch_get_main_queue(), ^{
                         // Update the UI
-                        [imageView setImage:[UIImage imageWithContentsOfFile:fullPath]];
+                        [imageLoaderIndicator stopAnimating];
                     });
+                }
+            }
+            
+        });
+    }
+    else{
+        
+        
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // Update the UI
+            [imageLoaderIndicator startAnimating];
+        });
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+            
+            if(fileObj.getData != nil) {
+                UIImage *img = [UIImage imageWithData:fileObj.getData];
+                
+                if(img != nil) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        // Update the UI
+                        [imageLoaderIndicator stopAnimating];
+                        [imageView setImage:img];
+                    });
+                }
+            }
+            else{
+                NSString *fileLocalPath = localFileName;
+                
+                if(fileLocalPath != nil) {
+                    NSString * offlinePostsDataDirPath = [OMUtilities getOfflinePostDataDirPath];
+                    NSString *fullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:fileLocalPath];
+                    UIImage *img = [UIImage imageWithContentsOfFile:fullPath];
                     
+                    if(img != nil) {
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            // Update the UI
+                            [imageLoaderIndicator stopAnimating];
+                            [imageView setImage:img];
+                        });
+                    }
+                    else{
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            // Update the UI
+                            [imageLoaderIndicator stopAnimating];
+                        });
+                    }
+                }
+                else{
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        // Update the UI
+                        [imageLoaderIndicator stopAnimating];
+                    });
                 }
             }
         });
