@@ -803,35 +803,41 @@
             {
                 NSData *videoData = [[NSData alloc] initWithContentsOfFile:fullPath];
                 
-                PFFile *audioFile       = [PFFile fileWithName:@"video.mov" data:videoData];
-                post[@"postFile"]       = audioFile;
+                if(videoData != nil) {
                 
-                NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
-                NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
-                UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
-                
-                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
-                post[@"thumbImage"]     = thumbFile;
+                    PFFile *audioFile       = [PFFile fileWithName:@"video.mov" data:videoData];
+                    post[@"postFile"]       = audioFile;
+                    
+                    NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
+                    NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
+                    UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
+                    
+                    PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
+                    post[@"thumbImage"]     = thumbFile;
+                }
 
             }
             else if ([post[@"postType"] isEqualToString:@"audio"]) {
                 
                 NSData *audioData = [[NSData alloc] initWithContentsOfFile:fullPath];
                 
-                PFFile *audioFile       = [PFFile fileWithName:@"audio.wav" data:audioData];
-                post[@"postFile"]       = audioFile;
+                if(audioData != nil) {
                 
-                NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
-                NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
-                UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
-                
-                PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
-                post[@"thumbImage"]     = thumbFile;
+                    PFFile *audioFile       = [PFFile fileWithName:@"audio.wav" data:audioData];
+                    post[@"postFile"]       = audioFile;
+                    
+                    NSString *thumbFileLocalPath = post[@"thumbImageFileLocalPath"];
+                    NSString *thumbImageFullPath = [offlinePostsDataDirPath stringByAppendingPathComponent:thumbFileLocalPath];
+                    UIImage *tempImage = [UIImage imageWithContentsOfFile:thumbImageFullPath];
+                    
+                    PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(tempImage, 1.0f)];
+                    post[@"thumbImage"]     = thumbFile;
+                }
             }
             else if ([post[@"postType"] isEqualToString:@"photo"]) {
              
                 UIImage *tempImage = [UIImage imageWithContentsOfFile:fullPath];
-                
+        
                 if(tempImage != nil) {
                     PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(tempImage, 0.7)];
                     post[@"postFile"]       = postFile;
