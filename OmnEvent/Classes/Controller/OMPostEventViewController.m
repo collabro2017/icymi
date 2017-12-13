@@ -727,18 +727,29 @@
             switch (captureOption) {
                 case kTypeCapturePhoto:
                 {
-                    post[@"postType"]       = @"photo";                    
-                    //image upload
-                    if (self.panoFlag == YES) {
-                        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
-                        post[@"postFile"]       = postFile;
-                        PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7f)];
-                        post[@"thumbImage"]     = thumbFile;
-                    }else{
-                        PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
-                        post[@"postFile"]       = postFile;
-                        PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([_imageForPost resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
-                        post[@"thumbImage"]     = thumbFile;
+                    post[@"postType"]       = @"photo";
+                    
+                    
+                    OMAppDelegate* appDel = (OMAppDelegate* )[UIApplication sharedApplication].delegate;
+                    
+                    if (!appDel.network_state) {
+                        UIImage *tempImage = [UIImage imageWithData:UIImageJPEGRepresentation(_imageForPost, 0.7)];
+                        [self addImageInPostForOfflineMode:post image:tempImage];
+                    }
+                    else{
+                    
+                        //image upload
+                        if (self.panoFlag == YES) {
+                            PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
+                            post[@"postFile"]       = postFile;
+                            PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7f)];
+                            post[@"thumbImage"]     = thumbFile;
+                        }else{
+                            PFFile *postFile        = [PFFile fileWithName:@"image.jpg" data:UIImageJPEGRepresentation(_imageForPost, 0.7)];
+                            post[@"postFile"]       = postFile;
+                            PFFile *thumbFile       = [PFFile fileWithName:@"thumb.jpg" data:UIImageJPEGRepresentation([_imageForPost resizedImageToSize:CGSizeMake(THUMBNAIL_SIZE, THUMBNAIL_SIZE)], 0.8f)];
+                            post[@"thumbImage"]     = thumbFile;
+                        }
                     }
                     
                 }
@@ -877,9 +888,13 @@
                     
                     [post pinInBackgroundWithBlock:nil];
                     
+                    [GlobalVar getInstance].isPosting = NO;
+                    
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+                    
+                    
 
                 } else {
                     
@@ -1106,6 +1121,8 @@
 
                 post[@"localTimestamp"] = [OMUtilities dateToString:[NSDate date] format:@"MMM dd yyyy hh:mm a"];
                 [post pinInBackgroundWithBlock:nil];
+                
+                [GlobalVar getInstance].isPosting = NO;
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
                 

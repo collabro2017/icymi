@@ -244,7 +244,7 @@
         [self showOfflineModeMessage];
     }
     
-    [self callAfterSixtySecond:nil];
+    //[self callAfterSixtySecond:nil];
     autoRefreshTimer = [NSTimer scheduledTimerWithTimeInterval: 5 target: self selector: @selector(callAfterSixtySecond:) userInfo: nil repeats: YES];
     
     //---------------------------------------------//
@@ -501,6 +501,8 @@
         return;
     }
     
+    //[appDelegate.m_offlinePosts removeAllObjects];
+    
     //Save the postOrder for those posts who don't have postOrder with null value
     for (int i=0; i<objects.count; i++) {
         PFObject *item = objects[i];
@@ -524,7 +526,11 @@
             [arrayOfObjects addObject:item];
             
             if(![appDelegate.m_offlinePosts containsObject:item]){
-                [appDelegate.m_offlinePosts addObject:item];
+                
+                if(item.objectId == nil) {
+                
+                    [appDelegate.m_offlinePosts addObject:item];
+                }
             }
             
         }
@@ -3346,50 +3352,6 @@
 
 }
 
-/*- (void) performSync
-{
-    for (int i = 0; i < appDelegate.m_offlinePosts.count; ++i) {
-        
-        NSLog(@"Uploading : %lu/%lu",(unsigned long)i, (unsigned long)appDelegate.m_offlinePosts.count);
-        
-        PFObject* post = [appDelegate.m_offlinePosts objectAtIndex:i];
-        
-        if ([currentObject[@"postedObjects"] containsObject:post]) {
-            [currentObject[@"postedObjects"] removeObject:post];
-        }
-        
-        [self preparePostForSync:post checkDataAvailabilty:YES];
-        
-        NSError *error;
-        BOOL succeeded = [post save:&error];
-        
-        if(succeeded == YES) {
-            
-            NSLog(@"Success ---- Post");
-            // add new Post object on postedObjects array: for badge
-            [currentObject[@"postedObjects"] addObject:post];
-            [currentObject saveInBackgroundWithBlock:nil];
-            
-            [post unpin];
-        }
-        else{
-            NSLog(@"Error ---- Post = %@", error);
-            [self performSilentSyncFor:post];
-        }
-    }
-    
-    [appDelegate.m_offlinePosts removeAllObjects];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSLog(@"All group tasks are done!");
-        [GlobalVar getInstance].isPosting = NO;
-        [MBProgressHUD hideHUDForView:appDelegate.window animated:YES];
-    });
-    
-    [self reloadContents];
-}
- */
-
 
 - (void) performSync
 {
@@ -3400,6 +3362,8 @@
         NSLog(@"Ending background upload task!");
         [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
     }];
+    
+    NSLog(@"Offline Posts ---- %lu ", (unsigned long)appDelegate.m_offlinePosts.count);
     
     for (PFObject* post in appDelegate.m_offlinePosts) {
         
@@ -3442,46 +3406,6 @@
         [[UIApplication sharedApplication] endBackgroundTask:self.fileUploadBackgroundTaskId];
     });
 }
-
-/*- (void) performSilentSync
-{
-    [GlobalVar getInstance].isPosting = YES;
-    for (int i = 0; i < appDelegate.m_offlinePosts.count; ++i) {
-        
-        NSLog(@"Uploading : %lu/%lu",(unsigned long)i, (unsigned long)appDelegate.m_offlinePosts.count);
-        
-        PFObject* post = [appDelegate.m_offlinePosts objectAtIndex:i];
-        
-        if ([currentObject[@"postedObjects"] containsObject:post]) {
-            [currentObject[@"postedObjects"] removeObject:post];
-        }
-        
-        [self preparePostForSync:post checkDataAvailabilty:YES];
-        
-        NSError *error;
-        BOOL succeeded = [post save:&error];
-        
-        if(succeeded == YES) {
-            
-            NSLog(@"Success ---- Post");
-            // add new Post object on postedObjects array: for badge
-            [currentObject[@"postedObjects"] addObject:post];
-            [currentObject saveInBackgroundWithBlock:nil];
-            
-            [post unpin];
-        }
-        else{
-            NSLog(@"Error ---- Post = %@", error);
-            [self performSilentSyncFor:post];
-        }
-    }
-    
-    [appDelegate.m_offlinePosts removeAllObjects];
-    [GlobalVar getInstance].isPosting = NO;
-    
-    [self reloadContents];
-}
- */
 
 - (void) performSilentSync
 {
@@ -3536,31 +3460,6 @@
     
     [self reloadContents];
 }
-
-
-
-
-/*- (void) performSilentSyncFor:(PFObject *) post
-{
-    [self preparePostForSync:post checkDataAvailabilty:NO];
-    
-    NSError *error;
-    BOOL succeeded = [post save:&error];
-    
-    if(succeeded == YES) {
-        
-        NSLog(@"Success ---- Post");
-        // add new Post object on postedObjects array: for badge
-        [currentObject[@"postedObjects"] addObject:post];
-        [currentObject saveInBackgroundWithBlock:nil];
-        
-        [post unpin];
-    }
-    else{
-        NSLog(@"Error ---- Post = %@", error);
-    }
-}
-*/
 
 - (void) performSilentSyncFor:(PFObject *) post
 {
