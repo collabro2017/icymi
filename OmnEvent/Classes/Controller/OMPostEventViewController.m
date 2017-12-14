@@ -892,7 +892,7 @@
                     
                     [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                    [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:kReLoadLocalComponentData object:nil];
                     
                     
 

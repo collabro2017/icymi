@@ -202,6 +202,7 @@
     
     is_type = @"";
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkLocalageStorage) name:kReLoadLocalComponentData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadContents) name:kLoadComponentsData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCurrentObject) name:kLoadCurrentEventData object:nil];
     
@@ -540,38 +541,44 @@
 
 - (void)reloadContents
 {
-    NSLog(@"Auto Refresh Progressing...");
-    PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
-    [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
-    [GlobalVar getInstance].isPosting = YES;
     
-    if ([is_type isEqualToString:@"text"]
-        || [is_type isEqualToString:@"video"]
-        || [is_type isEqualToString:@"audio"]
-        || [is_type isEqualToString:@"photo"])
-    {
-        [mainQuery whereKey:@"postType" equalTo:is_type];
-    }
-    
-    [mainQuery includeKey:@"user"];
-    [mainQuery includeKey:@"commentsArray"];
-    [mainQuery orderByDescending:@"createdAt"];
-    [mainQuery orderByDescending:@"postOrder"];
-    
-    [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        [MBProgressHUD hideHUDForView:self.view animated:YES];
+    if([GlobalVar getInstance].isPosting == NO) {
+        NSLog(@"Auto Refresh Progressing...");
+        PFQuery *mainQuery = [PFQuery queryWithClassName:@"Post"];
+        [mainQuery whereKey:@"targetEvent" equalTo:currentObject];
+        [GlobalVar getInstance].isPosting = YES;
         
-        if(error == nil)
+        if ([is_type isEqualToString:@"text"]
+            || [is_type isEqualToString:@"video"]
+            || [is_type isEqualToString:@"audio"]
+            || [is_type isEqualToString:@"photo"])
         {
-            if(objects != nil && objects.count > 0) {
-                [self populateFeedWith:objects];
-            }
-            else{
-                [self checkLocalageStorage];
-            }
+            [mainQuery whereKey:@"postType" equalTo:is_type];
         }
-        [GlobalVar getInstance].isPosting = NO;
-    }];
+        
+        [mainQuery includeKey:@"user"];
+        [mainQuery includeKey:@"commentsArray"];
+        [mainQuery orderByDescending:@"createdAt"];
+        [mainQuery orderByDescending:@"postOrder"];
+        
+        [mainQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+            
+            if(error == nil)
+            {
+                if(objects != nil && objects.count > 0) {
+                    [self populateFeedWith:objects];
+                }
+                else{
+                    [self checkLocalageStorage];
+                }
+            }
+            [GlobalVar getInstance].isPosting = NO;
+        }];
+    }
+    else{
+         NSLog(@"Skipped Auto Refreshing due to in posting!!");
+    }
 }
 
 - (void) populateFeedWith:(NSArray *) objects{
@@ -3306,6 +3313,9 @@
         {
             if(goOnlineMessagePresentedOnce == false) {
                 [self resumeOfflineContentSync];
+            }
+            else{
+                [self reloadContents];
             }
         }
         else{
