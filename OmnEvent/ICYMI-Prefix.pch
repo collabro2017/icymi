@@ -91,6 +91,8 @@
 #define  kLoadComponentsData    @"loadComponentsData"
 #define  kLoadEventDataWithGlobal @"reloadEventWithGlobal"
 
+#define  kReLoadLocalComponentData    @"reloadLocalComponentData"
+
 #define  kOpenPostEvent         @"openPostEvent"
 
 #define  kLoadSearchData        @"loadSearchData"
