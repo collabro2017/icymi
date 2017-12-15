@@ -1124,7 +1124,7 @@
                 
                 [GlobalVar getInstance].isPosting = NO;
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:kLoadComponentsData object:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:kReLoadLocalComponentData object:nil];
                 
                 [_imageArray removeObject:[_imageArray firstObject]];
                 [self uploadBulkImages];
