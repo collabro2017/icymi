@@ -627,23 +627,6 @@
             });
         });
     }
-    
-    //Current Test feature. lets check these again.
-    /*
-     currentObject[@"postedObjects"] = arrForDetail;
-     PFUser *eventUser = currentObject[@"user"];
-     if([eventUser.objectId isEqualToString: USER.objectId])
-     {
-     currentObject[@"postedObjects"] = arrForDetail;
-     if (appDel.network_state) {
-     [currentObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-     if(error == nil) NSLog(@"DetailEventVC: added Post objs on postedObjects on Event");
-     }];
-     }
-     }
-     */
-    
-    
 }
 
 - (void)loadAnyMissingComments:(NSMutableArray *) objects
@@ -855,6 +838,15 @@
             }
         }
         
+    }
+}
+
+- (BOOL) hasPostDataFor:(NSInteger) index {
+    if([arrForDetail count] > 0 && [arrForDetail count] > index){
+        return YES;
+    }
+    else{
+        return NO;
     }
 }
 
@@ -1414,7 +1406,7 @@
     else // Event Detail Content with Post detail contents
     {
         
-        if([arrForDetail count] > 0 && [arrForDetail count] > (indexPath.section - 1))
+        if([self hasPostDataFor:indexPath.section - 1])
         {
             PFObject *tempObj;
             
@@ -1532,8 +1524,13 @@
     }
     else
     {
-        PFObject *tempObj = [arrForDetail objectAtIndex:section - 1];
-        return [self cellCount:tempObj];
+        if([self hasPostDataFor:section - 1]){
+            PFObject *tempObj = [arrForDetail objectAtIndex:section - 1];
+            return [self cellCount:tempObj];
+        }
+        else{
+            return 0;
+        }
     }
     
 }
@@ -1546,33 +1543,36 @@
     }
     else
     {
-        PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
-        if ([tempObj[@"postType"] isEqualToString:@"text"])
-        {
-            return;
-        }
-        else
-        {
-            
-            if (indexPath.row == 0)
+        if([self hasPostDataFor:indexPath.section - 1]) {
+        
+            PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
+            if ([tempObj[@"postType"] isEqualToString:@"text"])
             {
-                if ([cell isKindOfClass:[OMMediaCell class]]) {
-                    OMMediaCell *_cell = (OMMediaCell *)cell;
-                    if (_cell)
-                    {
-                        if ([tempObj[@"postType"] isEqualToString:@"video"])
+                return;
+            }
+            else
+            {
+                
+                if (indexPath.row == 0)
+                {
+                    if ([cell isKindOfClass:[OMMediaCell class]]) {
+                        OMMediaCell *_cell = (OMMediaCell *)cell;
+                        if (_cell)
                         {
-                            [_cell stopVideo];
-                        }
-                        else if ([tempObj[@"postType"] isEqualToString:@"audio"]) {
-                            [_cell stopAudio];
+                            if ([tempObj[@"postType"] isEqualToString:@"video"])
+                            {
+                                [_cell stopVideo];
+                            }
+                            else if ([tempObj[@"postType"] isEqualToString:@"audio"]) {
+                                [_cell stopAudio];
+                            }
                         }
                     }
                 }
-            }
-            else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
-            {
-                return;
+                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+                {
+                    return;
+                }
             }
         }
     }
@@ -1603,53 +1603,56 @@
     }
     else
     {
-        PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
+        if([self hasPostDataFor:indexPath.section - 1]) {
         
-        if ([tempObj[@"postType"] isEqualToString:@"text"])
-        {
-            if (indexPath.row == 0) {
-                
-                return [OMGlobal heightForCellWithPost:tempObj[@"title"]] + [OMGlobal heightForCellWithPost:tempObj[@"description"]] + 80;
-            }
-            else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+            PFObject *tempObj = [arrForDetail objectAtIndex:indexPath.section - 1];
+            
+            if ([tempObj[@"postType"] isEqualToString:@"text"])
             {
-                NSMutableArray *arr = [[NSMutableArray alloc]init];
-                
-                if (tempObj[@"commentsArray"]) {
-                    arr = tempObj[@"commentsArray"];
+                if (indexPath.row == 0) {
+                    
+                    return [OMGlobal heightForCellWithPost:tempObj[@"title"]] + [OMGlobal heightForCellWithPost:tempObj[@"description"]] + 80;
                 }
-                
-                PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
-                NSString* strComments =  _obj[@"Comments"];
-                
-                NSString *strComment = [strComments stringByReplacingOccurrencesOfString:@"  " withString:@""];
-                strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                
-                return [OMGlobal heightForCellWithPost:strComment] + 30;
+                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+                {
+                    NSMutableArray *arr = [[NSMutableArray alloc]init];
+                    
+                    if (tempObj[@"commentsArray"]) {
+                        arr = tempObj[@"commentsArray"];
+                    }
+                    
+                    PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
+                    NSString* strComments =  _obj[@"Comments"];
+                    
+                    NSString *strComment = [strComments stringByReplacingOccurrencesOfString:@"  " withString:@""];
+                    strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    
+                    return [OMGlobal heightForCellWithPost:strComment] + 30;
+                }
             }
-        }
-        else
-        {
-            if (indexPath.row == 0) {
-                PFObject *tempObj = (PFObject*)[arrForDetail objectAtIndex:indexPath.section - 1];
-                CGFloat height = [OMGlobal heightForCellWithPost:tempObj[@"title"]] + [OMGlobal heightForCellWithPost:tempObj[@"description"]] - 55;
-                return IS_IPAD? SCREEN_WIDTH_ROTATED + 130 + height: 450 + height;
-            }
-            else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+            else
             {
-                NSMutableArray *arr = [[NSMutableArray alloc]init];
-                
-                if (tempObj[@"commentsArray"]) {
-                    arr = tempObj[@"commentsArray"];
+                if (indexPath.row == 0) {
+                    PFObject *tempObj = (PFObject*)[arrForDetail objectAtIndex:indexPath.section - 1];
+                    CGFloat height = [OMGlobal heightForCellWithPost:tempObj[@"title"]] + [OMGlobal heightForCellWithPost:tempObj[@"description"]] - 55;
+                    return IS_IPAD? SCREEN_WIDTH_ROTATED + 130 + height: 450 + height;
                 }
-                
-                PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
-                NSString* strComments =  _obj[@"Comments"];
-                
-                NSString *strComment = [strComments stringByReplacingOccurrencesOfString:@"  " withString:@""];
-                strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                
-                return [OMGlobal heightForCellWithPost:strComment] + 30;
+                else if (indexPath.row > 0 && indexPath.row < [self cellCount:tempObj])
+                {
+                    NSMutableArray *arr = [[NSMutableArray alloc]init];
+                    
+                    if (tempObj[@"commentsArray"]) {
+                        arr = tempObj[@"commentsArray"];
+                    }
+                    
+                    PFObject* _obj = (PFObject* )[arr objectAtIndex:(arr.count - indexPath.row )];
+                    NSString* strComments =  _obj[@"Comments"];
+                    
+                    NSString *strComment = [strComments stringByReplacingOccurrencesOfString:@"  " withString:@""];
+                    strComment = [strComment stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+                    
+                    return [OMGlobal heightForCellWithPost:strComment] + 30;
+                }
             }
         }
     }
