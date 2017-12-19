@@ -142,10 +142,16 @@ static const CGFloat kFooterHeight = 60.0;
         [self.selectedAssetsURLs addObject:assetURL];
     }
     else {
-        [self.selectedAssets removeObject:asset];
+        
+        if([self.selectedAssets containsObject:asset]) {
+            [self.selectedAssets removeObject:asset];
+        }
         
         NSURL *assetURL = [[asset.asset defaultRepresentation] url];
-        [self.selectedAssetsURLs removeObject:assetURL];
+        
+        if([self.selectedAssetsURLs containsObject:assetURL]) {
+            [self.selectedAssetsURLs removeObject:assetURL];
+        }
     }
     [self updateNavigationBarStatus];
 }
