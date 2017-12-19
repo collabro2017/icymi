@@ -139,7 +139,10 @@ static const CGFloat kFooterHeight = 60.0;
         [self.selectedAssets addObject:asset];
         
         NSURL *assetURL = [[asset.asset defaultRepresentation] url];
-        [self.selectedAssetsURLs addObject:assetURL];
+        
+        if(assetURL != nil) {
+            [self.selectedAssetsURLs addObject:assetURL];
+        }
     }
     else {
         
@@ -149,8 +152,10 @@ static const CGFloat kFooterHeight = 60.0;
         
         NSURL *assetURL = [[asset.asset defaultRepresentation] url];
         
-        if([self.selectedAssetsURLs containsObject:assetURL]) {
-            [self.selectedAssetsURLs removeObject:assetURL];
+        if(assetURL != nil) {
+            if([self.selectedAssetsURLs containsObject:assetURL]) {
+                [self.selectedAssetsURLs removeObject:assetURL];
+            }
         }
     }
     [self updateNavigationBarStatus];
