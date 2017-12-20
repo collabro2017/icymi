@@ -153,7 +153,7 @@
                 [self populateFeedWith:objects];
             }
             else{
-                [self checkLocalageStorage];
+                [self checkLocalStorage];
             }
         }
         
@@ -202,7 +202,7 @@
     
     is_type = @"";
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkLocalageStorage) name:kReLoadLocalComponentData object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkLocalStorage) name:kReLoadLocalComponentData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadContents) name:kLoadComponentsData object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadCurrentObject) name:kLoadCurrentEventData object:nil];
     
@@ -455,7 +455,7 @@
                 [self populateFeedWith:objects];
             }
             else{
-                [self checkLocalageStorage];
+                [self checkLocalStorage];
             }
         }
         
@@ -464,7 +464,7 @@
     }];
 }
 
-- (void) checkLocalageStorage
+- (void) checkLocalStorage
 {
     NSMutableArray *tempArray = [[NSMutableArray alloc] init];
     [self loadContentsFromLocalStorage: tempArray];
@@ -570,7 +570,7 @@
                     [self populateFeedWith:objects];
                 }
                 else{
-                    [self checkLocalageStorage];
+                    [self checkLocalStorage];
                 }
             }
             [GlobalVar getInstance].isPosting = NO;
@@ -617,7 +617,7 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 // Update the UI
-                
+        
                 [arrForDetail removeAllObjects];
                 [arrForDetail addObjectsFromArray:tempArray];
                 
@@ -3315,14 +3315,21 @@
         if (networkStatus != NotReachable) //Check both Reachability & Network Status
         {
             if(goOnlineMessagePresentedOnce == false) {
-                [self resumeOfflineContentSync];
+                
+                if (appDelegate.m_offlinePosts.count == 0) {
+                    [self reloadContents];
+                }
+                else{
+                
+                    [self resumeOfflineContentSync];
+                }
             }
             else{
                 [self reloadContents];
             }
         }
         else{
-            [self checkLocalageStorage];
+            [self checkLocalStorage];
         }
     }
     else
