@@ -112,13 +112,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) uses camera</string>
+	<string>$(PRODUCT_NAME) uses camera to capture images &amp; videos for media posts</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Collabro wants to use your current location</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>$(PRODUCT_NAME) uses microphone</string>
+	<string>$(PRODUCT_NAME) uses microphone to capture voice memo for audio posts</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) uses photos</string>
+	<string>$(PRODUCT_NAME) uses photos for media posts</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Roboto-Bold.ttf</string>
